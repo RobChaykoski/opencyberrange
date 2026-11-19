@@ -2127,6 +2127,19 @@
                 Configure the SMTP relay used for registration and test email.
                 Save the settings before sending a test.
               </p>
+              <p v-if="activeSettingsCategory === 'notifications'" class="section-desc">
+                Choose which account emails the platform sends. These are
+                transactional service messages, not marketing. Turning one off
+                does not change the account or approval state.
+              </p>
+              <p v-if="activeSettingsCategory === 'email-templates'" class="section-desc">
+                Customize the subject and body for each account email. Leave a
+                field blank to use the built-in default. Placeholders:
+                <code>{platform_name}</code>, <code>{display_name}</code>,
+                <code>{username}</code>, <code>{email}</code>,
+                <code>{login_url}</code>, <code>{support_email}</code>, and
+                <code>{usernames}</code>.
+              </p>
               <p v-if="activeSettingsCategory === 'security'" class="section-desc">
                 Configure sign-in and session policy, authorization and tenant
                 boundaries, privacy defaults, security-event handling, and the
@@ -2318,6 +2331,15 @@
                           class="form-input form-input--sm"
                         />
                       </div>
+                    </template>
+                    <template v-else-if="row.key.endsWith('_body')">
+                      <textarea
+                        v-model="settingsEdits[row.key]"
+                        rows="8"
+                        :aria-label="friendlyLabel(row.key)"
+                        class="form-input settings-textarea"
+                        spellcheck="false"
+                      ></textarea>
                     </template>
                     <template v-else-if="row.key === 'rangebox_capacity_percent'">
                       <div class="setting-input-group">
@@ -5356,7 +5378,7 @@ const settingsCategories = computed(() => {
   // Only show a category tab if it has at least one visible setting (so an
   // emptied category -- e.g. General after platform_name/deployment_mode were
   // removed -- doesn't render as a blank tab).
-  const order = ['general', 'exports', 'security', 'wiki', 'labs', 'vpn', 'email', 'features']
+  const order = ['general', 'exports', 'security', 'wiki', 'labs', 'vpn', 'email', 'notifications', 'email-templates', 'features']
   const populated = new Set(
     Object.entries(allSettings.value)
       .filter(([key]) => !hiddenSettingKeys.value.has(key))
@@ -5380,7 +5402,7 @@ const settingsCategories = computed(() => {
   if (Object.keys(modules.value || {}).length > 0) base.push('modules')
   return base
 })
-const categoryLabels = { general: 'General', exports: 'Data labels', security: 'Security', wiki: 'Wiki', labs: 'Exercises', vpn: 'VPN', email: 'Email', features: 'Features', modules: 'Modules', achievements: 'Achievements', 'question-banks': 'Question banks', identity: 'Identity providers', 'open-badges': 'Open Badges', lti: 'LTI platforms' }
+const categoryLabels = { general: 'General', exports: 'Data labels', security: 'Security', wiki: 'Wiki', labs: 'Exercises', vpn: 'VPN', email: 'Email', notifications: 'Notifications', 'email-templates': 'Email templates', features: 'Features', modules: 'Modules', achievements: 'Achievements', 'question-banks': 'Question banks', identity: 'Identity providers', 'open-badges': 'Open Badges', lti: 'LTI platforms' }
 const categoryLabel = (cat) => categoryLabels[cat] || cat.charAt(0).toUpperCase() + cat.slice(1)
 
 function onSettingsTabKeydown(event, index) {
@@ -12371,6 +12393,15 @@ watch(activeTab, (tab) => {
 .form-input--sm {
   padding: 0.45rem 0.75rem;
   font-size: 0.85rem;
+}
+
+.settings-textarea {
+  width: 100%;
+  min-height: 10rem;
+  resize: vertical;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.8rem;
+  line-height: 1.5;
 }
 
 .assign-labs-form h4 {

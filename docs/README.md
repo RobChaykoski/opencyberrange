@@ -67,13 +67,36 @@ capstones and analytics, scale, federation, then the AI mentor.
 
 - [Learning framework](LEARNING-FRAMEWORK.md)
 - [Lab metadata schema](LAB-METADATA-SCHEMA.md) and [lab outcomes](LAB-OUTCOMES.md)
+- [Lab Definitions Repository](LAB-DEFINITIONS-REPOSITORY.md) and
+  [exercise export/import](EXERCISE-EXPORT-IMPORT.md)
 - [Competency contracts](COMPETENCY-CONTRACTS.md)
 - [Active Directory pathway](ACTIVE-DIRECTORY-PATHWAY.md)
 - [Modern application-security pathway](MODERN-APP-SECURITY-PATHWAY.md)
 - [DFIR pathway](DFIR-PATHWAY.md) and [detection engineering](DETECTION-ENGINEERING-PATHWAY.md)
+- [AI governance and security pathway](AI-GOVERNANCE-AND-SECURITY-PATHWAY.md)
+- [Supply chain security pathway](SUPPLY-CHAIN-SECURITY-PATHWAY.md)
 - [Content gap analysis](CONTENT-GAP-ANALYSIS.md)
+- [Employer capability gaps](EMPLOYER-CAPABILITY-GAPS.md)
 - [Curriculum drift report](CURRICULUM-DRIFT-REPORT.md)
 - [Educational provenance and external-source licence boundaries](EDUCATIONAL-PROVENANCE.md)
+
+## Workforce readiness and learning analytics
+
+- [Cyber Workforce Readiness Framework](CYBER-WORKFORCE-READINESS-FRAMEWORK.md)
+- [Employer capability gaps](EMPLOYER-CAPABILITY-GAPS.md)
+- [Role readiness scoring](ROLE-READINESS-SCORING.md) and
+  [job matching](WORKFORCE-READINESS-JOB-MATCHING.md)
+- [Digital Cyber Transcript](DIGITAL-CYBER-TRANSCRIPT.md)
+- [Competency matrix and lab health](COMPETENCY-MATRIX-AND-LAB-HEALTH.md)
+- [Learner Development Vector](LEARNER-DEVELOPMENT-VECTOR.md)
+- [Learning signal indices](LEARNING-SIGNAL-INDICES.md)
+- [Learner archetypes](LEARNER-ARCHETYPES.md)
+- [Cyber Workforce Risk Score](CYBER-WORKFORCE-RISK-SCORE.md) and
+  [student risk engine](STUDENT-RISK-ENGINE.md)
+- [Multi-student incident scenarios](MULTI-STUDENT-SCENARIOS.md)
+- [Attack simulation dashboard](ATTACK-SIMULATION-DASHBOARD.md)
+- [Information design: progressive disclosure](INFORMATION-DESIGN-PROGRESSIVE-DISCLOSURE.md)
+
 
 ## Privacy and data protection
 
@@ -87,6 +110,8 @@ capstones and analytics, scale, federation, then the AI mentor.
 ## Operations and procurement
 
 - [OS support](OS-SUPPORT.md) and [browser matrix](BROWSER-MATRIX.md)
+- [MinIO object storage design note](MINIO-OBJECT-STORAGE.md)
+- [Simulated cloud range](SIMULATED-CLOUD.md)
 - [Deployment status](status-dashboard.md)
 - [Procurement requirements](PROCUREMENT-REQUIREMENTS.md) and [compliance](COMPLIANCE.md)
 - [HECVAT](HECVAT.md)

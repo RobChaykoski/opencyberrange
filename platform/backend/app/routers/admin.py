@@ -4,6 +4,7 @@ Admin routes for user, lab, and session management
 
 from fastapi import (
     APIRouter,
+    BackgroundTasks,
     Depends,
     File,
     Form,
@@ -63,6 +64,7 @@ from app import entitlement
 from app.security.dependencies import require_permission
 from app.security.permissions import PolicyDecision
 from app.services import auth_sessions
+from app.services import mail
 from app.services import mfa as mfa_service
 from app.services import reauth as reauth_service
 from app.services.docker_manager import DockerManager, get_subnet_id
@@ -725,6 +727,7 @@ async def update_user(
     user_id: int,
     user_request: UpdateUserRequest,
     http_request: Request,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_institution_admin_user),
     _reauth: object = Depends(
@@ -733,6 +736,7 @@ async def update_user(
 ):
     """Update user details"""
     user = _visible_user_or_404(db, admin, user_id)
+    was_approved = bool(user.is_approved)
     if not _platform_admin(admin):
         if user_request.role == "admin" or user_request.is_admin is True:
             raise HTTPException(
@@ -861,7 +865,17 @@ async def update_user(
         bump_security_version(user)
     db.commit()
     db.refresh(user)
-    
+
+    if bool(user.is_approved) != was_approved and user.email:
+        background_tasks.add_task(
+            mail.send_account_status_email,
+            user_id=user.id,
+            email=user.email,
+            username=user.username,
+            display_name=getattr(user, "display_name", "") or "",
+            approved=bool(user.is_approved),
+        )
+
     # Audit log
     log_admin_action(
         action=AuditActions.USER_UPDATED,
@@ -880,6 +894,7 @@ async def update_user(
 @router.post("/users/approve")
 async def approve_user(
     user_id: int,
+    background_tasks: BackgroundTasks,
     approved: bool = True,
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user)
@@ -888,7 +903,8 @@ async def approve_user(
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    
+
+    was_approved = bool(user.is_approved)
     user.is_approved = approved
     db.commit()
 
@@ -896,6 +912,15 @@ async def approve_user(
         log_activity(db, EventTypes.USER_APPROVED,
                       actor_id=admin.id, target_type="user",
                       target_id=user.id, target_label=user.username)
+    if approved != was_approved and user.email:
+        background_tasks.add_task(
+            mail.send_account_status_email,
+            user_id=user.id,
+            email=user.email,
+            username=user.username,
+            display_name=getattr(user, "display_name", "") or "",
+            approved=approved,
+        )
 
     return {"message": f"User {'approved' if approved else 'rejected'}"}
 

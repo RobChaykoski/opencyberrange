@@ -47,6 +47,14 @@ LIQUIDITY_TRACKER = "liquidity_tracker"
 DIGITAL_FRONTIER = "digital_frontier"
 AD_PATHFINDER = "ad_pathfinder"
 APPSEC_ARCHITECT = "appsec_architect"
+AI_PATHFINDER = "ai_pathfinder"
+IDENTITY_GUARDIAN = "identity_guardian"
+OT_DEFENDER = "ot_defender"
+MALWARE_ANALYST = "malware_analyst"
+METASPLOIT_OPERATOR = "metasploit_operator"
+HIGH_SCHOOL_EXPLORER = "high_school_explorer"
+FORENSICS_CHAMPION = "forensics_champion"
+OSINT_INVESTIGATOR = "osint_investigator"
 QUIZ_ACE = "quiz_ace"
 QUIZ_EXPLORER = "quiz_explorer"
 QUIZ_SCHOLAR = "quiz_scholar"
@@ -134,6 +142,14 @@ ACHIEVEMENT_LABELS = {
     DIGITAL_FRONTIER: "Digital Frontier",
     AD_PATHFINDER: "Directory Pathfinder",
     APPSEC_ARCHITECT: "AppSec Architect",
+    AI_PATHFINDER: "AI Pathfinder",
+    IDENTITY_GUARDIAN: "Identity Guardian",
+    OT_DEFENDER: "OT Defender",
+    MALWARE_ANALYST: "Malware Analyst",
+    METASPLOIT_OPERATOR: "Metasploit Operator",
+    HIGH_SCHOOL_EXPLORER: "Cyber Foundations Explorer",
+    FORENSICS_CHAMPION: "Forensics Champion",
+    OSINT_INVESTIGATOR: "OSINT Investigator",
     LEARNING_1H: "Curious Mind",
     LEARNING_5H: "Deep Dive",
     LEARNING_15H: "Dedicated Learner",
@@ -183,6 +199,14 @@ ACHIEVEMENT_DESCRIPTIONS = {
     DIGITAL_FRONTIER: "Completed the MFA, media provenance, and crypto rug-pull labs",
     AD_PATHFINDER: "Completed all nine Active Directory pathway exercises",
     APPSEC_ARCHITECT: "Completed all ten Modern Application Security pathway exercises",
+    AI_PATHFINDER: "Completed all three AI security exercises",
+    IDENTITY_GUARDIAN: "Completed all three identity and access exercises",
+    OT_DEFENDER: "Completed all four OT and industrial protocol exercises",
+    MALWARE_ANALYST: "Completed every malware analysis exercise",
+    METASPLOIT_OPERATOR: "Completed every Metasploit operations exercise",
+    HIGH_SCHOOL_EXPLORER: "Completed all eight Grade 9 cyber foundations exercises",
+    FORENSICS_CHAMPION: "Completed all five Digital Forensics exercises, including topology and live memory",
+    OSINT_INVESTIGATOR: "Completed all eight OSINT exercises",
     LEARNING_1H: "Spent at least 1 hour learning on exercises",
     LEARNING_5H: "Spent at least 5 hours learning on exercises",
     LEARNING_15H: "Spent at least 15 hours learning on exercises",
@@ -271,6 +295,82 @@ APPSEC_PATHWAY_LAB_SLUGS = (
     "web-11-10-modern-appsec-capstone",
 )
 
+# Newer tracks and themed collections. Each tuple is the full published set at
+# the time of the release; the award requires every slug to resolve, so a
+# missing lab cannot quietly shorten the badge.
+AI_LAB_SLUGS = (
+    "ai-1-1-prompt-injection-basics",
+    "ai-1-2-jailbreak-policy-bypass",
+    "ai-1-3-indirect-prompt-injection",
+)
+
+IDENTITY_LAB_SLUGS = (
+    "identity-1-1-secure-authentication",
+    "identity-1-2-oauth-oidc-sso",
+    "identity-2-1-identity-lifecycle",
+)
+
+OT_LAB_SLUGS = (
+    "ot-1-1-modbus-register-analysis",
+    "ot-1-2-modbus-setpoint-tampering",
+    "ot-1-3-modbus-gateway-bypass",
+    "ot-2-1-s7comm-register-access",
+)
+
+MALWARE_LAB_SLUGS = (
+    "malware-1-1-eicar-triage",
+    "malware-1-2-strings-static-analysis",
+    "malware-1-3-ghidra-static-reversing",
+    "malware-1-4-c2-pcap-wireshark",
+    "malware-1-5-inetsim-c2-detection",
+    "malware-1-6-email-attachment-analysis",
+    "malware-1-7-embedded-js-worddoc-inetsim",
+    "malware-2-1-pe-header-analysis",
+    "malware-2-2-yara-fundamentals",
+    "malware-2-3-yara-incident-triage",
+)
+
+METASPLOIT_LAB_SLUGS = (
+    "metasploit-1-1-workspace-and-modules",
+    "metasploit-1-2-service-discovery",
+    "metasploit-1-3-validate-before-exploit",
+    "metasploit-1-4-first-shell",
+    "metasploit-2-1-meterpreter-session",
+    "metasploit-2-2-database-credentials",
+    "metasploit-2-3-pivot-to-local-service",
+    "metasploit-2-4-persistence-and-reporting",
+)
+
+HIGH_SCHOOL_GRADE9_LAB_SLUGS = (
+    "high-school-9-1-rangebox-first-steps",
+    "high-school-9-2-rangebox-file-hunt",
+    "high-school-9-3-cyberchef-base64-basics",
+    "high-school-9-4-cyberchef-caesar-shift",
+    "high-school-9-5-cyberchef-layered-message",
+    "high-school-9-6-read-the-link",
+    "high-school-9-7-know-the-file",
+    "high-school-9-8-forwarded-message",
+)
+
+FORENSICS_ALL_LAB_SLUGS = (
+    "forensics-1-1-windows-memory-volatility",
+    "forensics-2-1-voip-call-reconstruction",
+    "forensics-2-2-topology-forensics-guided",
+    "forensics-2-3-topology-forensics-independent",
+    "forensics-3-1-live-linux-memory",
+)
+
+OSINT_LAB_SLUGS = (
+    "osint-1-1-public-footprint",
+    "osint-1-2-image-intelligence",
+    "osint-1-3-exif-metadata",
+    "osint-2-1-source-code-intelligence",
+    "osint-2-2-public-homepage",
+    "osint-2-3-responsive-leak",
+    "osint-2-4-public-profile",
+    "osint-2-5-public-banner",
+)
+
 # Triggers available to admin-defined achievements. The value is what the
 # settings UI shows; the evaluator below implements each one.
 CUSTOM_ACHIEVEMENT_TRIGGERS = {
@@ -320,6 +420,14 @@ BUILTIN_ACHIEVEMENT_ICONS = {
     DIGITAL_FRONTIER: "\U0001F9ED",
     AD_PATHFINDER: "\U0001F5DD\uFE0F",
     APPSEC_ARCHITECT: "\U0001F6E1\uFE0F",
+    AI_PATHFINDER: "\U0001F916",
+    IDENTITY_GUARDIAN: "\U0001F510",
+    OT_DEFENDER: "\U0001F3ED",
+    MALWARE_ANALYST: "\U0001F9A0",
+    METASPLOIT_OPERATOR: "\U0001F6E0\uFE0F",
+    HIGH_SCHOOL_EXPLORER: "\U0001F392",
+    FORENSICS_CHAMPION: "\U0001F50E",
+    OSINT_INVESTIGATOR: "\U0001F575\uFE0F",
     LEARNING_1H: "\U0001F331",
     LEARNING_5H: "\U0001F50D",
     LEARNING_15H: "\U0001F4DA",
@@ -666,29 +774,31 @@ def _check_collection_achievements(db: Session, user_id: int):
             row[0] for row in db.query(Lab.id).filter(Lab.slug.in_(slugs)).all()
         }
 
-    rangebox_ids = _lab_ids(RANGEBOX_BASIC_LAB_SLUGS)
-    if rangebox_ids and rangebox_ids.issubset(completed):
-        _award(db, user_id, None, None, RANGEBOX_RANGER)
+    def _complete(slugs):
+        """True only when every published slug resolves and was completed."""
+        unique = set(slugs)
+        ids = _lab_ids(unique)
+        return len(ids) == len(unique) and ids.issubset(completed)
 
-    stage2_ids = _lab_ids(STAGE2_LAB_SLUGS)
-    if stage2_ids and stage2_ids.issubset(completed):
-        _award(db, user_id, None, None, STAGE2_EXPLORER)
-
-    forensics_ids = _lab_ids(FORENSICS_LAB_SLUGS)
-    if forensics_ids and forensics_ids.issubset(completed):
-        _award(db, user_id, None, None, FORENSICS_PATHFINDER)
-
-    frontier_ids = _lab_ids(DIGITAL_FRONTIER_LAB_SLUGS)
-    if frontier_ids and frontier_ids.issubset(completed):
-        _award(db, user_id, None, None, DIGITAL_FRONTIER)
-
-    ad_ids = _lab_ids(AD_PATHWAY_LAB_SLUGS)
-    if ad_ids and ad_ids.issubset(completed):
-        _award(db, user_id, None, None, AD_PATHFINDER)
-
-    appsec_ids = _lab_ids(APPSEC_PATHWAY_LAB_SLUGS)
-    if appsec_ids and appsec_ids.issubset(completed):
-        _award(db, user_id, None, None, APPSEC_ARCHITECT)
+    collections = (
+        (RANGEBOX_BASIC_LAB_SLUGS, RANGEBOX_RANGER),
+        (STAGE2_LAB_SLUGS, STAGE2_EXPLORER),
+        (FORENSICS_LAB_SLUGS, FORENSICS_PATHFINDER),
+        (FORENSICS_ALL_LAB_SLUGS, FORENSICS_CHAMPION),
+        (DIGITAL_FRONTIER_LAB_SLUGS, DIGITAL_FRONTIER),
+        (AD_PATHWAY_LAB_SLUGS, AD_PATHFINDER),
+        (APPSEC_PATHWAY_LAB_SLUGS, APPSEC_ARCHITECT),
+        (AI_LAB_SLUGS, AI_PATHFINDER),
+        (IDENTITY_LAB_SLUGS, IDENTITY_GUARDIAN),
+        (OT_LAB_SLUGS, OT_DEFENDER),
+        (MALWARE_LAB_SLUGS, MALWARE_ANALYST),
+        (METASPLOIT_LAB_SLUGS, METASPLOIT_OPERATOR),
+        (HIGH_SCHOOL_GRADE9_LAB_SLUGS, HIGH_SCHOOL_EXPLORER),
+        (OSINT_LAB_SLUGS, OSINT_INVESTIGATOR),
+    )
+    for slugs, badge in collections:
+        if _complete(slugs):
+            _award(db, user_id, None, None, badge)
 
 
 def _check_competition_achievements(

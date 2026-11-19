@@ -74,3 +74,44 @@ def test_admin_user_detail_includes_last_sign_in(client, db_session):
     body = resp.json()
     assert body["last_login_at"] is not None
     assert body["role"] == "admin"
+
+
+def test_approve_user_sends_approval_email(client, db_session, monkeypatch):
+    from app.routers import admin as admin_router
+
+    sent = []
+    monkeypatch.setattr(
+        admin_router.mail,
+        "send_account_status_email",
+        lambda **kwargs: sent.append(kwargs),
+    )
+
+    _, headers = _make_admin(client, db_session)
+    suffix = uuid.uuid4().hex[:8]
+    pending = User(
+        username=f"pytest_pending_{suffix}",
+        email=f"pytest_pending_{suffix}@example.org",
+        hashed_password=get_password_hash(PASSWORD),
+        is_active=True,
+        is_approved=False,
+        role="student",
+    )
+    db_session.add(pending)
+    db_session.commit()
+    db_session.refresh(pending)
+
+    resp = client.post(
+        f"/api/admin/users/approve?user_id={pending.id}&approved=true",
+        headers=headers,
+    )
+
+    assert resp.status_code == 200, resp.text
+    assert sent == [
+        {
+            "user_id": pending.id,
+            "email": pending.email,
+            "username": pending.username,
+            "display_name": pending.display_name,
+            "approved": True,
+        }
+    ]

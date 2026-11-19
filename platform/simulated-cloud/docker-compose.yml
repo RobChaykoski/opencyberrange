@@ -1,0 +1,284 @@
+name: ocr-simulated-cloud
+
+# Local simulator for cloud-security labs. Every credential is synthetic.
+# Start the core profile with: docker compose up -d
+# Add the AWS-like, Azure-storage, SIEM, or tooling profiles when needed:
+#   docker compose --profile aws --profile azure --profile siem --profile tools up -d
+#
+# This stack is not part of the production OpenCyberRange deployment.
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+x-hardening: &default-hardening
+  security_opt:
+    - no-new-privileges:true
+  logging: *default-logging
+
+services:
+  keycloak-db:
+    image: postgres:17-alpine
+    container_name: ocr-cloud-keycloak-db
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: ${KEYCLOAK_DB_PASSWORD:-change-me-keycloak-db}
+    volumes:
+      - keycloak_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U keycloak -d keycloak"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    mem_limit: 384m
+    networks:
+      - cloud_control
+    <<: *default-hardening
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.3
+    container_name: ocr-cloud-keycloak
+    command: ["start-dev", "--import-realm", "--http-port=8080"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN:-admin}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-change-me-keycloak}
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak-db:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD:-change-me-keycloak-db}
+      KC_HOSTNAME_STRICT: "false"
+      KC_HTTP_ENABLED: "true"
+      KC_HEALTH_ENABLED: "true"
+    ports:
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - ./keycloak/realm.json:/opt/keycloak/data/import/realm.json:ro
+    depends_on:
+      keycloak-db:
+        condition: service_healthy
+    mem_limit: 768m
+    networks:
+      - cloud_control
+    <<: *default-hardening
+
+  openldap:
+    image: osixia/openldap:1.5.0
+    container_name: ocr-cloud-openldap
+    environment:
+      LDAP_ORGANISATION: OCR Simulated Cloud
+      LDAP_DOMAIN: ocr.local
+      LDAP_ADMIN_PASSWORD: ${LDAP_ADMIN_PASSWORD:-change-me-ldap}
+      LDAP_TLS: "false"
+    ports:
+      - "127.0.0.1:389:389"
+    volumes:
+      - openldap_data:/var/lib/ldap
+      - openldap_config:/etc/ldap/slapd.d
+    healthcheck:
+      test: ["CMD-SHELL", "ldapsearch -x -H ldap://localhost -b dc=ocr,dc=local -D cn=admin,dc=ocr,dc=local -w \"$$LDAP_ADMIN_PASSWORD\" -s base >/dev/null 2>&1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+    mem_limit: 256m
+    networks:
+      - cloud_control
+    <<: *default-hardening
+
+  minio:
+    image: quay.io/minio/minio:latest
+    container_name: ocr-cloud-minio
+    command: ["server", "/data", "--console-address", ":9001"]
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-ocr-cloud-admin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-change-me-minio}
+      MINIO_BROWSER_REDIRECT_URL: http://localhost:9001
+    ports:
+      - "127.0.0.1:9000:9000"
+      - "127.0.0.1:9001:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:9000/minio/health/live >/dev/null || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+    mem_limit: 512m
+    networks:
+      - cloud_control
+    <<: *default-hardening
+
+  vault:
+    image: hashicorp/vault:1.20
+    container_name: ocr-cloud-vault
+    # Dev mode is for the simulator only. It stores everything in memory and
+    # uses a fixed root token. Never use dev mode outside this range.
+    command: ["server", "-dev", "-dev-root-token-id=${VAULT_DEV_ROOT_TOKEN:-change-me-vault}", "-dev-listen-address=0.0.0.0:8200"]
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: ${VAULT_DEV_ROOT_TOKEN:-change-me-vault}
+      VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:8200
+      VAULT_ADDR: http://0.0.0.0:8200
+    cap_add:
+      - IPC_LOCK
+    ports:
+      - "127.0.0.1:8200:8200"
+    mem_limit: 256m
+    networks:
+      - cloud_control
+    <<: *default-hardening
+
+  opensearch:
+    image: opensearchproject/opensearch:2.19.0
+    container_name: ocr-cloud-opensearch
+    environment:
+      discovery.type: single-node
+      DISABLE_SECURITY_PLUGIN: "true"
+      DISABLE_INSTALL_DEMO_CONFIG: "true"
+      bootstrap.memory_lock: "true"
+      OPENSEARCH_JAVA_OPTS: ${OPENSEARCH_JAVA_OPTS:--Xms512m -Xmx512m}
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "127.0.0.1:9200:9200"
+    volumes:
+      - opensearch_data:/usr/share/opensearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:9200/_cluster/health >/dev/null || exit 1"]
+      interval: 20s
+      timeout: 5s
+      retries: 15
+      start_period: 40s
+    mem_limit: 1g
+    networks:
+      - cloud_control
+    <<: *default-hardening
+
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:2.19.0
+    container_name: ocr-cloud-dashboards
+    environment:
+      OPENSEARCH_HOSTS: '["http://opensearch:9200"]'
+      DISABLE_SECURITY_DASHBOARDS_PLUGIN: "true"
+    ports:
+      - "127.0.0.1:5601:5601"
+    depends_on:
+      opensearch:
+        condition: service_healthy
+    mem_limit: 512m
+    networks:
+      - cloud_control
+    <<: *default-hardening
+
+  n8n:
+    image: n8nio/n8n:1.90.0
+    container_name: ocr-cloud-n8n
+    environment:
+      N8N_BASIC_AUTH_ACTIVE: "true"
+      N8N_BASIC_AUTH_USER: ${N8N_BASIC_AUTH_USER:-ocr}
+      N8N_BASIC_AUTH_PASSWORD: ${N8N_BASIC_AUTH_PASSWORD:-change-me-n8n}
+      N8N_HOST: localhost
+      N8N_PORT: "5678"
+      N8N_PROTOCOL: http
+      WEBHOOK_URL: http://localhost:5678/
+      GENERIC_TIMEZONE: UTC
+    ports:
+      - "127.0.0.1:5678:5678"
+    volumes:
+      - n8n_data:/home/node/.n8n
+    mem_limit: 512m
+    networks:
+      - cloud_control
+    <<: *default-hardening
+
+  # AWS-like control plane. Optional; enable with --profile aws.
+  localstack:
+    image: localstack/localstack:4
+    container_name: ocr-cloud-localstack
+    profiles: ["aws"]
+    environment:
+      SERVICES: s3,iam,sts,secretsmanager,cloudtrail,logs,events
+      DEBUG: "0"
+      AWS_DEFAULT_REGION: us-east-1
+      PERSISTENCE: "1"
+    ports:
+      - "127.0.0.1:4566:4566"
+    volumes:
+      - localstack_data:/var/lib/localstack
+    mem_limit: 2g
+    networks:
+      - cloud_control
+    <<: *default-hardening
+
+  # Azure Storage only. Optional; enable with --profile azure.
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite:3.35.0
+    container_name: ocr-cloud-azurite
+    profiles: ["azure"]
+    command: ["azurite", "--blobHost", "0.0.0.0", "--queueHost", "0.0.0.0", "--tableHost", "0.0.0.0", "--location", "/data"]
+    ports:
+      - "127.0.0.1:10000:10000"
+      - "127.0.0.1:10001:10001"
+      - "127.0.0.1:10002:10002"
+    volumes:
+      - azurite_data:/data
+    mem_limit: 256m
+    networks:
+      - cloud_control
+    <<: *default-hardening
+
+  # Optional Wazuh manager for the Sentinel-like SIEM profile. It is not wired
+  # to OpenSearch by default; see the README for the forwarding step.
+  wazuh-manager:
+    image: wazuh/wazuh-manager:4.12.0
+    container_name: ocr-cloud-wazuh
+    profiles: ["siem"]
+    ports:
+      - "127.0.0.1:1514:1514/udp"
+      - "127.0.0.1:1515:1515"
+      - "127.0.0.1:55000:55000"
+    volumes:
+      - wazuh_data:/var/ossec/data
+    mem_limit: 1g
+    networks:
+      - cloud_control
+    <<: *default-hardening
+
+  # Cloud-posture scanner. Optional; enable with --profile tools.
+  scanner:
+    build:
+      context: ./scanner
+    container_name: ocr-cloud-scanner
+    profiles: ["tools"]
+    environment:
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-ocr-cloud-admin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-change-me-minio}
+      LOCALSTACK_ENDPOINT: http://localstack:4566
+      OPENSearch_URL: http://opensearch:9200
+    depends_on:
+      minio:
+        condition: service_healthy
+    mem_limit: 256m
+    networks:
+      - cloud_control
+    <<: *default-hardening
+
+networks:
+  cloud_control:
+    name: ocr-cloud-control
+    driver: bridge
+
+volumes:
+  keycloak_db:
+  openldap_data:
+  openldap_config:
+  minio_data:
+  opensearch_data:
+  n8n_data:
+  localstack_data:
+  azurite_data:
+  wazuh_data:

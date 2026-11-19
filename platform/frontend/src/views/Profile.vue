@@ -574,6 +574,9 @@
           <ExpandableSection title="Career readiness" meta="What your evidence supports today">
             <RoleReadinessPanel hide-select />
           </ExpandableSection>
+          <ExpandableSection title="Career direction check" meta="Eight questions, not a personality test">
+            <CareerAssessmentPanel />
+          </ExpandableSection>
           <ExpandableSection title="Portfolio evidence" meta="Work you can show an employer">
             <PortfolioPanel />
           </ExpandableSection>
@@ -1326,6 +1329,7 @@ import CareerAtlas from '../components/CareerAtlas.vue'
 import PortfolioPanel from '../components/PortfolioPanel.vue'
 import RoleReadinessPanel from '../components/RoleReadinessPanel.vue'
 import CareerGps from '../components/CareerGps.vue'
+import CareerAssessmentPanel from '../components/CareerAssessmentPanel.vue'
 import CompetencyTaxonomy from '../components/CompetencyTaxonomy.vue'
 import ExpandableSection from '../components/ExpandableSection.vue'
 import UserAvatar from '../components/UserAvatar.vue'

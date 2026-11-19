@@ -14,6 +14,9 @@
           <span class="rangebox__status-dot"></span>
           {{ statusLabel }}
         </div>
+        <span v-if="fullscreenMessage" class="rangebox__fullscreen-note" role="status">
+          {{ fullscreenMessage }}
+        </span>
         <span class="rangebox__label">{{ toolbarLabel }}</span>
         <span v-if="impersonation" class="rangebox__impersonate-badge">
           IMPERSONATING {{ impersonation.username }}
@@ -241,6 +244,7 @@ const vncContainer = ref(null)
 const connectionState = ref('connecting') // connecting | connected | disconnected
 const connectionMessage = ref('')
 const isFullscreen = ref(false)
+const fullscreenMessage = ref('')
 const isCollapsed = ref(false)
 const showClipboard = ref(false)
 const clipboardText = ref('')
@@ -698,30 +702,65 @@ async function readClipboardIntoPanel() {
 }
 
 const handleFullscreenChange = () => {
+  const active = document.fullscreenElement === rangeboxRoot.value
+  if (active) {
+    isFullscreen.value = true
+    fullscreenMessage.value = ''
+    return
+  }
   if (!document.fullscreenElement) isFullscreen.value = false
 }
 
+const handleFullscreenError = () => {
+  // Edge can refuse the native request when the page is embedded, when an
+  // enterprise policy disables it, or when the gesture is lost. Fall back to
+  // the in-page focus layout so the desktop is still usable.
+  isFullscreen.value = true
+  fullscreenMessage.value = 'Native fullscreen was blocked. Using focus mode; open the desktop in its own tab for true full screen.'
+}
+
+const clearFullscreenMode = async () => {
+  isFullscreen.value = false
+  if (document.fullscreenElement === rangeboxRoot.value) {
+    try { await document.exitFullscreen() } catch {}
+  }
+}
+
 const toggleFullscreen = async () => {
-  if (isFullscreen.value) {
-    isFullscreen.value = false
-    try {
-      if (document.fullscreenElement) await document.exitFullscreen()
-    } catch {}
+  fullscreenMessage.value = ''
+  if (document.fullscreenElement === rangeboxRoot.value) {
+    await clearFullscreenMode()
     return
   }
-  isFullscreen.value = true
+  if (isFullscreen.value) {
+    isFullscreen.value = false
+    return
+  }
+
+  const root = rangeboxRoot.value
+  if (!root) return
   if (isCollapsed.value) isCollapsed.value = false
+
+  if (document.fullscreenEnabled === false || typeof root.requestFullscreen !== 'function') {
+    isFullscreen.value = true
+    fullscreenMessage.value = 'Native fullscreen is unavailable here. Using focus mode.'
+    return
+  }
+
   try {
-    await rangeboxRoot.value?.requestFullscreen?.()
+    await root.requestFullscreen()
+    isFullscreen.value = true
   } catch {
-    // The CSS fullscreen class still works when the browser refuses native
-    // fullscreen (for example inside an iframe without allowfullscreen).
+    isFullscreen.value = true
+    fullscreenMessage.value = 'Native fullscreen was blocked. Using focus mode; open the desktop in its own tab for true full screen.'
   }
 }
 
 const toggleCollapse = () => {
   isCollapsed.value = !isCollapsed.value
-  if (isCollapsed.value && isFullscreen.value) isFullscreen.value = false
+  if (isCollapsed.value && isFullscreen.value) {
+    clearFullscreenMode()
+  }
 }
 
 const toggleClipboard = () => {
@@ -803,9 +842,10 @@ const receiveClipboard = () => {
   }
 }
 
-// Handle Escape key to exit fullscreen
+// Escape is the browser's own fullscreen exit key. Keep the in-page focus
+// fallback in step when native fullscreen is not active.
 const handleKeydown = (e) => {
-  if (e.key === 'Escape' && isFullscreen.value) {
+  if (e.key === 'Escape' && isFullscreen.value && !document.fullscreenElement) {
     isFullscreen.value = false
   }
 }
@@ -813,6 +853,7 @@ const handleKeydown = (e) => {
 onMounted(async () => {
   window.addEventListener('keydown', handleKeydown)
   document.addEventListener('fullscreenchange', handleFullscreenChange)
+  document.addEventListener('fullscreenerror', handleFullscreenError)
 
   // Watch viewport container for size changes and re-trigger noVNC scaling
   if (vncContainer.value) {
@@ -838,6 +879,10 @@ onUnmounted(() => {
   unmounted = true
   window.removeEventListener('keydown', handleKeydown)
   document.removeEventListener('fullscreenchange', handleFullscreenChange)
+  document.removeEventListener('fullscreenerror', handleFullscreenError)
+  if (document.fullscreenElement === rangeboxRoot.value) {
+    document.exitFullscreen().catch(() => {})
+  }
   stopTimer()
   if (resizeObserver) { resizeObserver.disconnect(); resizeObserver = null }
   if (reconnectTimer) clearTimeout(reconnectTimer)
@@ -918,6 +963,17 @@ watch(() => props.sessionId, (newVal, oldVal) => {
   color: #a0a0c0;
   letter-spacing: 0.05em;
   text-transform: uppercase;
+}
+
+.rangebox__fullscreen-note {
+  max-width: 34rem;
+  padding: 0.15rem 0.5rem;
+  border: 1px solid rgba(240, 173, 78, 0.4);
+  border-radius: 4px;
+  background: rgba(240, 173, 78, 0.12);
+  color: #f0ad4e;
+  font-size: 0.68rem;
+  line-height: 1.4;
 }
 
 .rangebox__impersonate-badge {

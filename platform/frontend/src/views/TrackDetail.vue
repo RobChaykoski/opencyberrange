@@ -1035,7 +1035,10 @@
               aria-valuemin="35"
               aria-valuemax="80"
               tabindex="0"
-              :style="{ left: `calc(${splitV}% - 0.5rem)` }"
+              :style="{
+                left: `calc(${splitV}% - 0.5rem)`,
+                height: `calc(${effectiveSplitH}% - 0.5rem)`,
+              }"
               @pointerdown.prevent="startWorkspaceSplit('vertical', $event)"
               @keydown.left.prevent="adjustWorkspaceSplit('vertical', -4)"
               @keydown.right.prevent="adjustWorkspaceSplit('vertical', 4)"

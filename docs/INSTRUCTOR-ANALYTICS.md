@@ -24,6 +24,12 @@ them ranks an individual learner.
 - **Aggregate only.** No individual ranking, leaderboard, or "at risk" label.
   The instructor can open a learner record they are entitled to see, but the
   dashboard does not expose one.
+
+  Individual support triage is a separate, authorised workflow, not a programme
+  analytics view. It follows the
+  [CWRS](CYBER-WORKFORCE-RISK-SCORE.md) rules: minimum evidence, confidence,
+  context flags, human review, no public ranking, and no automated decision. It
+  must not be added to this aggregate dashboard as a learner leaderboard.
 - **Small-cohort suppression.** No aggregate is shown for fewer than 5 learners.
   A suppressed tile says so; it does not show a partial value.
 - **Under-18 exclusion.** Learners who identify as under 18 are excluded from

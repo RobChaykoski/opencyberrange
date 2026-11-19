@@ -5,6 +5,11 @@ Status: **development preview** (11 November 2026). Gated by
 
 This layer answers three questions on the learner's **Portfolio** tab:
 
+Related: [role readiness scoring](ROLE-READINESS-SCORING.md),
+[job matching](WORKFORCE-READINESS-JOB-MATCHING.md),
+[CWRS](CYBER-WORKFORCE-RISK-SCORE.md), and the
+[Learner Development Vector](LEARNER-DEVELOPMENT-VECTOR.md).
+
 1. **Where am I?** Evidence by domain, category, and competency.
 2. **I want to become a SOC Analyst. What do I need?** Role readiness, gaps, next
    workbooks, capstone, certifications, and employer evidence.

@@ -1,5 +1,5 @@
 version: '1.0'
-reviewed_at: '2026-11-14'
+reviewed_at: '2026-11-18'
 status: admin-curated; original practice mapped to current public objectives and career pathways
 notes: 'These are original practice items written to published objectives and public, openly available references.
   They are not copied exam questions and are not a certification exam. Every item carries the objective it tests,
@@ -210,6 +210,105 @@ pathways:
       label: 'NIST Cybersecurity Framework 2.0: Supply chain risk'
       url: https://www.nist.gov/cyberframework
     career: GRC analyst
+  - id: secplus-1-03
+    domain: '1'
+    objective: 1.1 Explain the importance of security concepts in an enterprise environment.
+    difficulty: standard
+    style: scenario
+    prompt: A legacy application cannot be patched, and the business records in writing that it accepts
+      the remaining risk. Which risk response is this?
+    options:
+    - Risk acceptance
+    - Risk avoidance
+    - Risk transference
+    - Risk mitigation
+    correct: 0
+    explanation: Risk acceptance acknowledges the risk and documents the decision to live with it. Avoidance
+      removes the activity, transference shifts the financial impact, and mitigation reduces the risk.
+    reference:
+      label: 'NIST SP 800-39: Managing Information Security Risk'
+      url: https://csrc.nist.gov/pubs/sp/800/39/final
+    career: Security analyst
+  - id: secplus-2-03
+    domain: '2'
+    objective: 2.3 Explain various types of vulnerabilities.
+    difficulty: standard
+    style: scenario
+    prompt: A vulnerability is exploited in the wild before the vendor publishes a patch. What is this MOST
+      accurately called?
+    options:
+    - A zero-day vulnerability
+    - A known exploited vulnerability
+    - A privilege escalation
+    - A supply-chain attack
+    correct: 0
+    explanation: A zero-day is exploited before a fix exists. A known exploited vulnerability is already
+      in the CISA KEV catalogue and has a patch or mitigation, while the other terms describe different
+      attack outcomes or vectors.
+    reference:
+      label: 'CISA: Known Exploited Vulnerabilities Catalog'
+      url: https://www.cisa.gov/known-exploited-vulnerabilities-catalog
+    career: Vulnerability analyst
+  - id: secplus-3-03
+    domain: '3'
+    objective: 3.3 Given a scenario, implement secure network architecture concepts.
+    difficulty: standard
+    style: scenario
+    prompt: A company wants every request authenticated and authorised regardless of whether it comes from
+      the office LAN. Which model is this?
+    options:
+    - Zero trust
+    - Castle-and-moat
+    - Air gap
+    - Implicit trust
+    correct: 0
+    explanation: Zero trust removes implicit trust based on network location and verifies every request.
+      A castle-and-moat design trusts the internal network, an air gap isolates a network physically, and
+      implicit trust is the weakness zero trust removes.
+    reference:
+      label: 'NIST SP 800-207: Zero Trust Architecture'
+      url: https://csrc.nist.gov/pubs/sp/800/207/final
+    career: Network security engineer
+  - id: secplus-4-04
+    domain: '4'
+    objective: 4.7 Explain the importance of automation and orchestration related to secure operations.
+    difficulty: standard
+    style: scenario
+    prompt: A repeated phishing triage sequence should run the same enrichment and containment steps every
+      time. Which capability BEST provides this?
+    options:
+    - Security orchestration, automation, and response
+    - A packet capture
+    - A full-disk backup
+    - A vulnerability scan
+    correct: 0
+    explanation: SOAR coordinates tools and automates repeatable response playbooks. Packet capture, backup,
+      and vulnerability scanning provide evidence or coverage but do not orchestrate the triage workflow.
+    reference:
+      label: 'Microsoft: What is SOAR?'
+      url: https://www.microsoft.com/en-us/security/business/security-101/what-is-soar
+    career: SOC analyst
+  - id: secplus-5-03
+    domain: '5'
+    objective: 5.1 Summarize elements of effective security governance.
+    difficulty: standard
+    style: scenario
+    prompt: Which document identifies critical business processes and the maximum tolerable downtime after
+      a disruption?
+    options:
+    - Business impact analysis
+    - Acceptable use policy
+    - Incident response plan
+    - Disaster recovery test
+    correct: 0
+    explanation: A business impact analysis identifies critical processes, dependencies, and recovery objectives.
+      An acceptable use policy sets user behaviour, an incident response plan guides handling, and a disaster
+      recovery test exercises the plan.
+    reference:
+      label: 'NIST SP 800-34 Rev. 1: Contingency Planning Guide'
+      url: https://csrc.nist.gov/pubs/sp/800/34/r1/final
+    career: GRC analyst
+
   careers:
   - SOC analyst
   - Security administrator
@@ -413,6 +512,105 @@ pathways:
       label: 'NIST SP 800-137: Information Security Continuous Monitoring'
       url: https://csrc.nist.gov/pubs/sp/800/137/final
     career: SOC lead
+  - id: cysa-1-04
+    domain: '1'
+    objective: 1.3 Explain the importance of proactive threat hunting.
+    difficulty: advanced
+    style: scenario
+    prompt: An analyst searches the estate for a rare parent-child process pair that would indicate malware,
+      without waiting for an alert. Which activity is this?
+    options:
+    - Threat hunting
+    - Vulnerability scanning
+    - Penetration testing
+    - Asset inventory
+    correct: 0
+    explanation: Threat hunting starts from a hypothesis and searches telemetry for evidence that controls
+      missed. Scanning finds weaknesses, penetration testing validates exploitability, and asset inventory
+      records what exists.
+    reference:
+      label: 'MITRE ATT&CK: Adversary tactics and techniques'
+      url: https://attack.mitre.org/
+    career: Threat hunter
+  - id: cysa-2-03
+    domain: '2'
+    objective: 2.1 Explain the importance of vulnerability management.
+    difficulty: advanced
+    style: scenario
+    prompt: A scanner flags a missing patch on a Linux host, but the distribution has backported the fix.
+      What should the analyst do before raising the finding?
+    options:
+    - Validate the installed package version and vendor advisory
+    - Close the finding as a false positive without evidence
+    - Rebuild the host immediately
+    - Ignore every scanner result from that subnet
+    correct: 0
+    explanation: Package version and vendor backport advisories determine whether the vulnerability is actually
+      present. The finding should be validated and documented, not closed blindly or remediated with an
+      unnecessary rebuild.
+    reference:
+      label: 'FIRST: Common Vulnerability Scoring System'
+      url: https://www.first.org/cvss/
+    career: Vulnerability analyst
+  - id: cysa-3-03
+    domain: '3'
+    objective: 3.1 Explain the importance of incident response procedures.
+    difficulty: standard
+    style: scenario
+    prompt: After an incident is contained, which phase removes the root cause and restores a trusted state?
+    options:
+    - Eradication
+    - Preparation
+    - Detection and analysis
+    - Post-incident activity
+    correct: 0
+    explanation: Eradication removes malware, closes the entry point, and restores a trusted configuration.
+      Preparation happens before the event, detection and analysis identify it, and post-incident activity
+      captures lessons learned.
+    reference:
+      label: 'NIST SP 800-61 Rev. 2: Incident Handling Guide'
+      url: https://csrc.nist.gov/pubs/sp/800/61/r2/final
+    career: Incident responder
+  - id: cysa-4-03
+    domain: '4'
+    objective: 4.1 Explain the importance of communication during the incident response process.
+    difficulty: standard
+    style: scenario
+    prompt: A breach may require a regulatory notification and a public statement. Who should approve the
+      external wording before release?
+    options:
+    - Legal counsel and the communications lead through the incident command process
+    - The first analyst who saw the alert
+    - Any on-call engineer
+    - The vendor that supplied the firewall
+    correct: 0
+    explanation: External notifications carry legal and reputational risk, so legal and communications review
+      the wording through the incident command process. Analysts provide facts but do not authorise public
+      disclosure.
+    reference:
+      label: 'NIST SP 800-61 Rev. 2: Incident Handling Guide'
+      url: https://csrc.nist.gov/pubs/sp/800/61/r2/final
+    career: SOC lead
+  - id: cysa-1-05
+    domain: '1'
+    objective: 1.2 Given a scenario, apply security concepts in support of organizational risk mitigation.
+    difficulty: standard
+    style: scenario
+    prompt: A SIEM rule fires only when five failed logins from one source occur within two minutes. What
+      is this rule using?
+    options:
+    - A threshold and a time window
+    - Full packet replay
+    - Static asset inventory
+    - A cryptographic hash comparison
+    correct: 0
+    explanation: The rule correlates a count against a rolling time window. Packet replay, asset inventory,
+      and hash comparison are different telemetry and detection methods.
+    reference:
+      label: 'Microsoft Sentinel: Custom analytics rules'
+      url: https://learn.microsoft.com/en-us/azure/sentinel/detect-threats-custom
+    career: SOC analyst
+
   careers:
   - SOC analyst
   - Threat hunter
@@ -614,6 +812,104 @@ pathways:
       label: 'MITRE ATT&CK: Post-Exploitation'
       url: https://attack.mitre.org/tactics/TA0008/
     career: Red team operator
+  - id: pentest-1-03
+    domain: '1'
+    objective: 1.1 Compare and contrast governance, risk, and compliance concepts.
+    difficulty: standard
+    style: scenario
+    prompt: During an authorised test, the tester finds a serious flaw in a system that was explicitly excluded
+      from scope. What should the tester do?
+    options:
+    - Stop, document the observation, and notify the client without exploiting it
+    - Exploit it because the flaw is serious
+    - Post it publicly to pressure the vendor
+    - Ignore it and finish the original scope
+    correct: 0
+    explanation: The rules of engagement define the legal scope. The tester should not expand scope unilaterally;
+      they document what they saw and escalate it to the client for a new authorisation.
+    reference:
+      label: 'NIST SP 800-115: Technical Guide to Information Security Testing'
+      url: https://csrc.nist.gov/pubs/sp/800/115/final
+    career: Penetration tester
+  - id: pentest-2-03
+    domain: '2'
+    objective: 2.1 Given a scenario, perform information gathering and enumeration.
+    difficulty: standard
+    style: scenario
+    prompt: Which scan completes the TCP three-way handshake and is therefore easier for the target to log
+      than a SYN scan?
+    options:
+    - A TCP connect scan
+    - A SYN stealth scan
+    - A UDP scan
+    - An idle scan
+    correct: 0
+    explanation: A TCP connect scan completes the handshake through the operating system, so the service
+      records a full connection. A SYN scan does not complete the handshake, and the other scan types use
+      different behaviour.
+    reference:
+      label: 'Nmap: TCP Connect Scan'
+      url: https://nmap.org/book/scan-methods-connect-scan.html
+    career: Penetration tester
+  - id: pentest-3-03
+    domain: '3'
+    objective: 3.2 Given a scenario, analyse findings and validate vulnerabilities.
+    difficulty: advanced
+    style: scenario
+    prompt: A tester confirms SQL injection by measuring a consistent server delay when a conditional sleeper
+      payload is sent. Which technique is this?
+    options:
+    - Time-based blind SQL injection
+    - Error-based SQL injection
+    - Union-based SQL injection
+    - Cross-site scripting
+    correct: 0
+    explanation: Time-based blind injection infers a true condition from a measurable delay. Error-based
+      and union-based techniques return data directly, and cross-site scripting executes in the browser.
+    reference:
+      label: 'OWASP: Blind SQL Injection'
+      url: https://owasp.org/www-community/attacks/Blind_SQL_Injection
+    career: Penetration tester
+  - id: pentest-4-03
+    domain: '4'
+    objective: 4.1 Given a scenario, perform password attacks.
+    difficulty: advanced
+    style: scenario
+    prompt: An attacker poisons LLMNR responses to capture NetNTLM challenge-response traffic for offline
+      cracking. Which technique is this?
+    options:
+    - Name resolution poisoning
+    - Password spraying
+    - Kerberoasting
+    - Credential stuffing
+    correct: 0
+    explanation: LLMNR/NBT-NS poisoning answers broadcast name lookups so the victim authenticates to the
+      attacker. Password spraying, Kerberoasting, and credential stuffing target different credential flows.
+    reference:
+      label: 'MITRE ATT&CK T1557.001: LLMNR/NBT-NS Poisoning'
+      url: https://attack.mitre.org/techniques/T1557/001/
+    career: Red team operator
+  - id: pentest-5-03
+    domain: '5'
+    objective: 5.1 Given a scenario, perform lateral movement.
+    difficulty: advanced
+    style: scenario
+    prompt: After obtaining an NTLM hash, an attacker reuses it to authenticate without cracking the password.
+      What is this technique?
+    options:
+    - Pass-the-hash
+    - Kerberoasting
+    - Golden ticket
+    - Credential stuffing
+    correct: 0
+    explanation: Pass-the-hash reuses the hash as an authenticator. Kerberoasting requests service tickets
+      for offline cracking, a golden ticket forges Kerberos tickets, and credential stuffing replays username
+      and password pairs.
+    reference:
+      label: 'MITRE ATT&CK T1550.002: Pass the Hash'
+      url: https://attack.mitre.org/techniques/T1550/002/
+    career: Red team operator
+
   careers:
   - Penetration tester
   - Red team operator
@@ -808,6 +1104,100 @@ pathways:
       label: CompTIA Network+ N10-009 objectives
       url: https://www.comptia.org/en-us/certifications/network/
     career: Network administrator
+  - id: netplus-1-03
+    domain: '1'
+    objective: 1.2 Explain the characteristics of network topologies and types.
+    difficulty: starter
+    style: scenario
+    prompt: Which statement BEST describes the relationship between a VLAN and an IP subnet?
+    options:
+    - A VLAN is a Layer 2 broadcast domain; a subnet is a Layer 3 address range
+    - A VLAN and a subnet are always the same thing
+    - A subnet is a Layer 2 broadcast domain
+    - A VLAN requires public IP addresses
+    correct: 0
+    explanation: A VLAN segments a Layer 2 broadcast domain, while a subnet defines a Layer 3 address range.
+      One VLAN commonly maps to one subnet, but the two concepts are not identical.
+    reference:
+      label: 'Cisco: What is a VLAN?'
+      url: https://www.cisco.com/c/en/us/products/switches/what-is-a-vlan.html
+    career: Network technician
+  - id: netplus-2-03
+    domain: '2'
+    objective: 2.1 Compare and contrast various devices and their appropriate placement on the network.
+    difficulty: standard
+    style: scenario
+    prompt: Which control requires a device to authenticate before a switch allows it onto the network?
+    options:
+    - 802.1X
+    - DHCP snooping
+    - Port mirroring
+    - Quality of service
+    correct: 0
+    explanation: 802.1X performs port-based authentication with a supplicant, authenticator, and authentication
+      server. DHCP snooping, port mirroring, and QoS perform different Layer 2 functions.
+    reference:
+      label: 'Cisco: Identity Services Engine and 802.1X'
+      url: https://www.cisco.com/c/en/us/products/security/identity-services-engine/index.html
+    career: Network administrator
+  - id: netplus-3-03
+    domain: '3'
+    objective: 3.1 Explain the purpose of organizational processes and procedures.
+    difficulty: starter
+    style: scenario
+    prompt: A team needs to centralise device logs with timestamps and severity levels. Which protocol should
+      they use?
+    options:
+    - Syslog
+    - SNMP traps only
+    - SMTP
+    - NTP
+    correct: 0
+    explanation: Syslog carries event messages with severity and facility fields to a central collector.
+      SNMP traps are device notifications, SMTP is email, and NTP synchronises time but does not transport
+      log messages.
+    reference:
+      label: 'RFC 5424: The Syslog Protocol'
+      url: https://www.rfc-editor.org/rfc/rfc5424
+    career: NOC analyst
+  - id: netplus-4-03
+    domain: '4'
+    objective: 4.1 Explain important factors of physical installations.
+    difficulty: standard
+    style: scenario
+    prompt: Which practice reduces the risk of an unauthorised laptop connecting to an access switch?
+    options:
+    - Network access control
+    - Spanning Tree Protocol
+    - Link aggregation
+    - Port mirroring
+    correct: 0
+    explanation: Network access control authenticates and profiles devices before granting access. Spanning
+      Tree prevents loops, link aggregation adds bandwidth, and port mirroring copies traffic for monitoring.
+    reference:
+      label: 'Cisco: Network Access Control'
+      url: https://www.cisco.com/c/en/us/products/security/network-access-control/index.html
+    career: Network security engineer
+  - id: netplus-5-03
+    domain: '5'
+    objective: 5.1 Given a scenario, troubleshoot general networking issues.
+    difficulty: starter
+    style: scenario
+    prompt: A workstation has an address in 169.254.0.0/16 and cannot reach the server. What is the MOST
+      likely cause?
+    options:
+    - It could not obtain a DHCP lease
+    - Its default gateway is too fast
+    - Its DNS record is missing
+    - Its cable is set to full duplex
+    correct: 0
+    explanation: The 169.254.0.0/16 link-local range is self-assigned when DHCP fails. A missing DNS record
+      would produce a name-resolution error, not a link-local address.
+    reference:
+      label: 'RFC 3927: IPv4 Link-Local Addresses'
+      url: https://www.rfc-editor.org/rfc/rfc3927
+    career: Help desk technician
+
   careers:
   - Network administrator
   - Network engineer
@@ -984,6 +1374,98 @@ pathways:
       label: journalctl(1) manual
       url: https://man7.org/linux/man-pages/man1/journalctl.1.html
     career: Site reliability engineer
+  - id: linuxplus-1-03
+    domain: '1'
+    objective: 1.3 Given a scenario, configure and manage system services.
+    difficulty: starter
+    style: scenario
+    prompt: Which command enables a systemd unit to start automatically at boot without starting it immediately?
+    options:
+    - systemctl enable <unit>
+    - systemctl start <unit>
+    - systemctl status <unit>
+    - systemctl stop <unit>
+    correct: 0
+    explanation: enable creates the boot-time links without starting the service now. start runs it immediately,
+      status reports state, and stop halts it.
+    reference:
+      label: systemctl manual page
+      url: https://man7.org/linux/man-pages/man1/systemctl.1.html
+    career: Linux administrator
+  - id: linuxplus-2-03
+    domain: '2'
+    objective: 2.1 Given a scenario, manage users and groups.
+    difficulty: starter
+    style: scenario
+    prompt: Which command locks a local user account without deleting it?
+    options:
+    - usermod -L <user>
+    - userdel -r <user>
+    - passwd -S <user>
+    - chage -l <user>
+    correct: 0
+    explanation: usermod -L prefixes the password hash to prevent logins while keeping the account and its
+      files. userdel removes the account, passwd -S reports status, and chage -l shows aging information.
+    reference:
+      label: usermod manual page
+      url: https://man7.org/linux/man-pages/man8/usermod.8.html
+    career: Linux administrator
+  - id: linuxplus-3-03
+    domain: '3'
+    objective: 3.1 Given a scenario, implement security best practices.
+    difficulty: standard
+    style: scenario
+    prompt: Which change most directly reduces SSH password-guessing exposure on a public server?
+    options:
+    - Disable password authentication and require keys
+    - Change the SSH port only
+    - Allow root login with a strong password
+    - Enable X11 forwarding
+    correct: 0
+    explanation: Disabling password authentication removes the guessing path and requires a key. Moving
+      the port only slows casual scanning, root login increases impact, and X11 forwarding adds exposure.
+    reference:
+      label: 'OpenSSH: Manual pages'
+      url: https://www.openssh.com/manual.html
+    career: Linux administrator
+  - id: linuxplus-4-03
+    domain: '4'
+    objective: 4.1 Given a scenario, automate and schedule tasks.
+    difficulty: standard
+    style: scenario
+    prompt: Which cron entry runs a script at 02:30 every day?
+    options:
+    - 30 2 * * * /usr/local/bin/backup.sh
+    - 2 30 * * * /usr/local/bin/backup.sh
+    - 30 2 1 * * /usr/local/bin/backup.sh
+    - '*/30 2 * * * /usr/local/bin/backup.sh'
+    correct: 0
+    explanation: Cron fields are minute, hour, day of month, month, and day of week. 30 2 * * * means minute
+      30 of hour 2 every day; the other entries run at a different time or on a different schedule.
+    reference:
+      label: crontab(5) manual page
+      url: https://man7.org/linux/man-pages/man5/crontab.5.html
+    career: Linux administrator
+  - id: linuxplus-5-03
+    domain: '5'
+    objective: 5.1 Given a scenario, troubleshoot system issues.
+    difficulty: advanced
+    style: scenario
+    prompt: A service starts manually but fails at boot with a relative path error. What is the MOST likely
+      cause?
+    options:
+    - The unit uses a relative ExecStart path without a WorkingDirectory
+    - The service has too many log lines
+    - The server has too much free memory
+    - The unit has a valid absolute path
+    correct: 0
+    explanation: Boot-time units run with a different working directory, so a relative ExecStart path can
+      fail. Use an absolute path or set WorkingDirectory. Log volume and free memory do not cause this error.
+    reference:
+      label: systemd.service manual page
+      url: https://man7.org/linux/man-pages/man5/systemd.service.5.html
+    career: Linux administrator
+
   careers:
   - Linux systems administrator
   - Systems engineer
@@ -1159,6 +1641,122 @@ pathways:
       label: 'Microsoft Learn: Purview Compliance Manager'
       url: https://learn.microsoft.com/en-us/purview/compliance-manager
     career: Compliance analyst
+  - id: sc900-1-03
+    domain: '1'
+    objective: 1.1 Describe the concepts of security, compliance, and identity.
+    difficulty: starter
+    style: scenario
+    prompt: In the shared responsibility model for a SaaS application, who is responsible for the physical
+      datacentre?
+    options:
+    - The cloud provider
+    - The customer
+    - Both equally
+    - The end user
+    correct: 0
+    explanation: The provider owns the physical hosts, network, and datacentre for SaaS. The customer remains
+      responsible for data, identities, devices, and access decisions.
+    reference:
+      label: 'Microsoft: Shared responsibility model'
+      url: https://learn.microsoft.com/en-us/azure/security/fundamentals/shared-responsibility
+    career: Cloud security analyst
+  - id: sc900-2-04
+    domain: '2'
+    objective: 2.2 Describe the capabilities of Microsoft Entra ID.
+    difficulty: standard
+    style: scenario
+    prompt: Which Entra feature gives users just-in-time privileged roles with approval and time limits?
+    options:
+    - Privileged Identity Management
+    - Access packages
+    - Conditional Access
+    - Self-service password reset
+    correct: 0
+    explanation: Privileged Identity Management activates eligible roles for a limited period with approval
+      and audit. Access packages govern resource bundles, Conditional Access evaluates signals, and SSPR
+      resets passwords.
+    reference:
+      label: Microsoft Entra Privileged Identity Management
+      url: https://learn.microsoft.com/en-us/entra/id-governance/privileged-identity-management/pim-configure
+    career: Identity administrator
+  - id: sc900-2-05
+    domain: '2'
+    objective: 2.3 Describe the capabilities of Microsoft Entra ID Governance.
+    difficulty: standard
+    style: scenario
+    prompt: A manager must periodically confirm that guest accounts still need access. Which Entra ID Governance
+      feature should be used?
+    options:
+    - Access reviews
+    - Conditional Access
+    - Microsoft Defender for Cloud Apps
+    - Azure Policy
+    correct: 0
+    explanation: Access reviews ask reviewers to confirm or remove access on a schedule. Conditional Access
+      enforces sign-in rules, Defender for Cloud Apps monitors cloud apps, and Azure Policy governs resource
+      configuration.
+    reference:
+      label: 'Microsoft Entra: Access reviews'
+      url: https://learn.microsoft.com/en-us/entra/id-governance/access-reviews-overview
+    career: Identity administrator
+  - id: sc900-3-03
+    domain: '3'
+    objective: 3.1 Describe the capabilities of Microsoft security solutions.
+    difficulty: standard
+    style: scenario
+    prompt: Which Microsoft tool provides a secure score and recommendations for cloud resources?
+    options:
+    - Microsoft Defender for Cloud
+    - Microsoft Intune
+    - Microsoft Purview
+    - Entra ID Governance
+    correct: 0
+    explanation: Defender for Cloud calculates a secure score and recommends controls for cloud workloads.
+      Intune manages devices, Purview governs data, and Entra ID Governance manages identity lifecycle.
+    reference:
+      label: 'Microsoft Defender for Cloud: Secure score'
+      url: https://learn.microsoft.com/en-us/azure/defender-for-cloud/secure-score-security-controls
+    career: Cloud security analyst
+  - id: sc900-3-04
+    domain: '3'
+    objective: 3.2 Describe the capabilities of Microsoft Defender XDR.
+    difficulty: standard
+    style: scenario
+    prompt: Which Defender solution detects compromised identities by using signals from on-premises Active
+      Directory?
+    options:
+    - Microsoft Defender for Identity
+    - Microsoft Defender for Endpoint
+    - Microsoft Defender for Cloud Apps
+    - Microsoft Defender for Office 365
+    correct: 0
+    explanation: Defender for Identity monitors domain controller and Active Directory signals for identity
+      attacks. The other Defender workloads cover endpoints, cloud apps, and email collaboration.
+    reference:
+      label: Microsoft Defender for Identity
+      url: https://learn.microsoft.com/en-us/defender-for-identity/what-is
+    career: Security operations analyst
+  - id: sc900-4-03
+    domain: '4'
+    objective: 4.1 Describe the capabilities of Microsoft compliance solutions.
+    difficulty: standard
+    style: scenario
+    prompt: A file must be retained for seven years but still be editable during that period. Which Purview
+      control should be applied?
+    options:
+    - A retention label
+    - A sensitivity label only
+    - A data loss prevention policy only
+    - An access review
+    correct: 0
+    explanation: A retention label controls how long content is kept and what happens afterwards without
+      making it read-only. Sensitivity labels classify and protect content, DLP enforces sharing rules,
+      and access reviews recertify access.
+    reference:
+      label: 'Microsoft Purview: Retention'
+      url: https://learn.microsoft.com/en-us/purview/retention
+    career: Compliance administrator
+
   careers:
   - Identity and access administrator
   - Security operations analyst
@@ -1355,6 +1953,100 @@ pathways:
       label: 'FIPS 180-4: Secure Hash Standard'
       url: https://csrc.nist.gov/pubs/fips/180-4/upd1/final
     career: Security operations analyst
+  - id: cc-1-03
+    domain: '1'
+    objective: 1.1 Understand security concepts.
+    difficulty: starter
+    style: scenario
+    prompt: A denial-of-service attack primarily affects which part of the CIA triad?
+    options:
+    - Availability
+    - Confidentiality
+    - Integrity
+    - Non-repudiation
+    correct: 0
+    explanation: A denial-of-service attack exhausts or blocks resources so legitimate users cannot access
+      them, which is an availability impact. Confidentiality, integrity, and non-repudiation describe other
+      security properties.
+    reference:
+      label: 'NIST CSRC Glossary: Denial of Service'
+      url: https://csrc.nist.gov/glossary/term/denial_of_service
+    career: SOC analyst
+  - id: cc-2-03
+    domain: '2'
+    objective: 2.1 Understand business continuity.
+    difficulty: standard
+    style: scenario
+    prompt: Which metric states the target time to restore a service after a disruption?
+    options:
+    - Recovery time objective
+    - Recovery point objective
+    - Maximum tolerable downtime
+    - Service level agreement
+    correct: 0
+    explanation: The recovery time objective is the target duration for restoring service. The recovery
+      point objective describes acceptable data loss, maximum tolerable downtime is the outer limit before
+      unacceptable harm, and an SLA is a service commitment.
+    reference:
+      label: 'NIST SP 800-34 Rev. 1: Contingency Planning Guide'
+      url: https://csrc.nist.gov/pubs/sp/800/34/r1/final
+    career: Business continuity analyst
+  - id: cc-3-03
+    domain: '3'
+    objective: 3.1 Understand access control concepts.
+    difficulty: starter
+    style: scenario
+    prompt: Which access control model lets the owner of a file decide who may access it?
+    options:
+    - Discretionary access control
+    - Mandatory access control
+    - Role-based access control
+    - Rule-based access control
+    correct: 0
+    explanation: Discretionary access control lets the resource owner set permissions. Mandatory access
+      control uses system labels, role-based access control uses job roles, and rule-based access control
+      uses system-wide rules.
+    reference:
+      label: 'NIST SP 800-53 Rev. 5: Access Control'
+      url: https://csrc.nist.gov/pubs/sp/800/53/r5/upd1/final
+    career: IAM analyst
+  - id: cc-4-03
+    domain: '4'
+    objective: 4.1 Understand network security.
+    difficulty: starter
+    style: scenario
+    prompt: Which technology creates an encrypted tunnel for remote users over an untrusted network?
+    options:
+    - A virtual private network
+    - HTTP
+    - FTP
+    - SNMP
+    correct: 0
+    explanation: A VPN encrypts and encapsulates traffic between a remote user and a trusted network. HTTP,
+      FTP, and SNMP are application protocols that do not provide a general encrypted tunnel by themselves.
+    reference:
+      label: 'NIST SP 800-77 Rev. 1: IPsec VPN Guide'
+      url: https://csrc.nist.gov/pubs/sp/800/77/r1/final
+    career: Network administrator
+  - id: cc-5-03
+    domain: '5'
+    objective: 5.1 Understand security operations.
+    difficulty: starter
+    style: scenario
+    prompt: What is the primary purpose of a change management process?
+    options:
+    - Control changes and reduce unintended disruption
+    - Increase the number of changes per week
+    - Replace incident response
+    - Remove the need for testing
+    correct: 0
+    explanation: Change management reviews, approves, tests, and records changes so they do not create outages
+      or security gaps. It complements incident response and does not remove testing.
+    reference:
+      label: 'NIST SP 800-128: Security-Focused Configuration Management'
+      url: https://csrc.nist.gov/pubs/sp/800/128/final
+    career: IT operations analyst
+
   careers:
   - Security analyst
   - Access control administrator
@@ -1583,6 +2275,101 @@ pathways:
       label: OWASP Logging Cheat Sheet
       url: https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html
     career: SOC analyst
+  - id: owasp-a01-02
+    domain: A01
+    objective: A01:2021 Broken Access Control.
+    difficulty: standard
+    style: scenario
+    prompt: A regular user sends a request directly to an admin-only API endpoint with their own token and
+      receives admin data because the server trusts the hidden UI. Which weakness is this?
+    options:
+    - Missing function-level authorization
+    - SQL injection
+    - Cross-site scripting
+    - Security misconfiguration
+    correct: 0
+    explanation: Hiding a function in the UI is not authorization. The server must check the caller's permission
+      for every function, which is broken access control.
+    reference:
+      label: 'OWASP Top 10: A01 Broken Access Control'
+      url: https://owasp.org/Top10/A01_2021-Broken_Access_Control/
+    career: AppSec analyst
+  - id: owasp-a03-02
+    domain: A03
+    objective: A03:2021 Injection.
+    difficulty: standard
+    style: scenario
+    prompt: A login form is vulnerable to SQL injection. Which additional control limits what an attacker
+      can read if the query is exploited?
+    options:
+    - A least-privilege database account
+    - A longer session timeout
+    - A custom 404 page
+    - A larger database connection pool
+    correct: 0
+    explanation: A least-privilege database account restricts the data and actions available to the vulnerable
+      query. It is defence in depth, not a substitute for parameterised queries.
+    reference:
+      label: 'OWASP: SQL Injection Prevention Cheat Sheet'
+      url: https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html
+    career: AppSec engineer
+  - id: owasp-a05-02
+    domain: A05
+    objective: A05:2021 Security Misconfiguration.
+    difficulty: starter
+    style: scenario
+    prompt: A new server is deployed with the vendor's default admin password. Which OWASP category is this?
+    options:
+    - Security misconfiguration
+    - Injection
+    - Broken access control
+    - Insecure design
+    correct: 0
+    explanation: Default credentials are a configuration mistake that should be removed during hardening.
+      Injection, broken access control, and insecure design describe different root causes.
+    reference:
+      label: 'OWASP Top 10: A05 Security Misconfiguration'
+      url: https://owasp.org/Top10/A05_2021-Security_Misconfiguration/
+    career: AppSec analyst
+  - id: owasp-a07-02
+    domain: A07
+    objective: A07:2021 Identification and Authentication Failures.
+    difficulty: advanced
+    style: scenario
+    prompt: An attacker sets a victim's session identifier before login so the attacker can reuse it afterwards.
+      What is this?
+    options:
+    - Session fixation
+    - Session hijacking
+    - Credential stuffing
+    - Clickjacking
+    correct: 0
+    explanation: Session fixation forces a known session ID on the victim before authentication. The server
+      should issue a new session identifier after login. Hijacking steals an existing session, stuffing
+      replays credentials, and clickjacking overlays UI.
+    reference:
+      label: 'OWASP: Session Management Cheat Sheet'
+      url: https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html
+    career: AppSec engineer
+  - id: owasp-a10-02
+    domain: A10
+    objective: A10:2021 Server-Side Request Forgery.
+    difficulty: advanced
+    style: scenario
+    prompt: Which cloud metadata address is a common target for server-side request forgery?
+    options:
+    - 169.254.169.254
+    - 127.0.0.53
+    - 10.0.0.1
+    - 224.0.0.1
+    correct: 0
+    explanation: 169.254.169.254 is the link-local metadata endpoint used by major cloud providers. SSRF
+      defences should block it and restrict outbound destinations to an allowlist.
+    reference:
+      label: 'OWASP Top 10: A10 Server-Side Request Forgery'
+      url: https://owasp.org/Top10/A10_2021-Server-Side_Request_Forgery_%28SSRF%29/
+    career: AppSec engineer
+
   careers:
   - Application security engineer
   - Web developer
@@ -1809,6 +2596,121 @@ pathways:
       label: OWASP LLM10:2025 Unbounded Consumption
       url: https://genai.owasp.org/llmrisk/llm102025-unbounded-consumption/
     career: AI security engineer
+  - id: llm-01-02
+    domain: LLM01
+    objective: 'LLM01: Prompt Injection.'
+    difficulty: advanced
+    style: scenario
+    prompt: An attacker hides white text in a resume PDF that tells an LLM screening tool to rank the candidate
+      first. What is this?
+    options:
+    - Indirect prompt injection
+    - Model poisoning
+    - Sensitive information disclosure
+    - Hallucination
+    correct: 0
+    explanation: Instructions embedded in content the model retrieves or processes are indirect prompt injection.
+      The model may treat untrusted document text as instructions.
+    reference:
+      label: 'OWASP LLM01: Prompt Injection'
+      url: https://genai.owasp.org/llmrisk/llm01-prompt-injection/
+    career: AI security analyst
+  - id: llm-02-02
+    domain: LLM02
+    objective: 'LLM02: Sensitive Information Disclosure.'
+    difficulty: standard
+    style: scenario
+    prompt: Which control BEST reduces sensitive information disclosure when sending records to a hosted
+      model?
+    options:
+    - Redact and minimise sensitive fields before sending the prompt
+    - Increase the model temperature
+    - Disable logging entirely
+    - Use a larger context window
+    correct: 0
+    explanation: Data minimisation and redaction keep sensitive fields out of the prompt and provider logs.
+      Temperature, logging choices, and context size do not remove the data.
+    reference:
+      label: 'OWASP LLM02: Sensitive Information Disclosure'
+      url: https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/
+    career: AI security engineer
+  - id: llm-05-02
+    domain: LLM05
+    objective: 'LLM05: Improper Output Handling.'
+    difficulty: advanced
+    style: scenario
+    prompt: Model output is used to build a file path that is passed to a shell command. Which risk is MOST
+      direct?
+    options:
+    - Command injection through unvalidated output
+    - Model denial of service
+    - Training data drift
+    - System prompt leakage
+    correct: 0
+    explanation: Output that reaches a shell without validation can contain metacharacters or traversal
+      sequences. Treat model output as untrusted input and encode or allowlist it before use.
+    reference:
+      label: 'OWASP LLM05: Improper Output Handling'
+      url: https://genai.owasp.org/llmrisk/llm052025-improper-output-handling/
+    career: AppSec engineer
+  - id: llm-06-02
+    domain: LLM06
+    objective: 'LLM06: Excessive Agency.'
+    difficulty: standard
+    style: scenario
+    prompt: An agent can read email, modify files, and issue payments with one unrestricted token. Which
+      control should be applied?
+    options:
+    - Least-privilege tool scopes and human approval for high-impact actions
+    - A longer system prompt
+    - Higher token limits
+    - More training data
+    correct: 0
+    explanation: Split capabilities, grant only the scopes each task needs, and require human approval for
+      irreversible or financial actions. Prompt length, token limits, and training data do not bound the
+      agent's authority.
+    reference:
+      label: 'OWASP LLM06: Excessive Agency'
+      url: https://genai.owasp.org/llmrisk/llm062025-excessive-agency/
+    career: AI security engineer
+  - id: llm-08-02
+    domain: LLM08
+    objective: 'LLM08: Vector and Embedding Weaknesses.'
+    difficulty: advanced
+    style: scenario
+    prompt: Two tenants share a vector index, and one tenant's query returns another tenant's chunks. Which
+      LLM risk is this?
+    options:
+    - Vector and embedding weaknesses
+    - Unbounded consumption
+    - Misinformation
+    - Supply chain
+    correct: 0
+    explanation: Missing tenant isolation in the vector store leaks another tenant's embeddings and source
+      text. Partition the index by tenant and enforce access control at retrieval time.
+    reference:
+      label: 'OWASP LLM08: Vector and Embedding Weaknesses'
+      url: https://genai.owasp.org/llmrisk/llm082025-vector-and-embedding-weaknesses/
+    career: AI security engineer
+  - id: llm-10-02
+    domain: LLM10
+    objective: 'LLM10: Unbounded Consumption.'
+    difficulty: standard
+    style: scenario
+    prompt: Which control limits cost and denial-of-service risk from unlimited model calls?
+    options:
+    - Per-user rate limits and token budgets
+    - A larger model
+    - Disabling authentication
+    - Longer prompts
+    correct: 0
+    explanation: Rate limits, quotas, and token budgets bound the resources one caller can consume. Larger
+      models, open access, and longer prompts increase cost and exposure.
+    reference:
+      label: 'OWASP LLM10: Unbounded Consumption'
+      url: https://genai.owasp.org/llmrisk/llm102025-unbounded-consumption/
+    career: AI platform engineer
+
   careers:
   - AI security engineer
   - ML engineer

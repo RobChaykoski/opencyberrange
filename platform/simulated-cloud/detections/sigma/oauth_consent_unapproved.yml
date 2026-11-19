@@ -1,0 +1,26 @@
+title: OAuth consent granted to an unapproved application
+id: 8f1c2d4e-7a10-4b2f-9c3d-ocrcloud001
+status: experimental
+description: Detects a consent grant for an application outside the approved list.
+references:
+  - https://genai.owasp.org/
+author: OpenCyberRange simulated cloud
+date: 2026/11/18
+tags:
+  - attack.credential_access
+  - attack.t1528
+logsource:
+  product: keycloak
+  service: events
+detection:
+  selection:
+    event: consent
+    action: oauth.consent.granted
+  filter_approved:
+    app:
+      - cloud-portal
+      - cloud-cli
+  condition: selection and not filter_approved
+falsepositives:
+  - A newly approved application that has not yet been added to the allowlist
+level: high

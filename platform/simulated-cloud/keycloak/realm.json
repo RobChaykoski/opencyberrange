@@ -1,0 +1,102 @@
+{
+  "realm": "ocr-cloud",
+  "enabled": true,
+  "displayName": "OCR Simulated Cloud",
+  "displayNameHtml": "<strong>OCR</strong> Simulated Cloud",
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "editUsernameAllowed": false,
+  "bruteForceProtected": true,
+  "permanentLockout": false,
+  "maxFailureWaitSeconds": 900,
+  "minimumQuickLoginWaitSeconds": 60,
+  "waitIncrementSeconds": 60,
+  "quickLoginCheckMilliSeconds": 1000,
+  "maxDeltaTimeSeconds": 43200,
+  "failureFactor": 5,
+  "roles": {
+    "realm": [
+      {
+        "name": "student",
+        "description": "Learner in the simulated cloud range"
+      },
+      {
+        "name": "cloud-analyst",
+        "description": "Can read logs and storage evidence"
+      },
+      {
+        "name": "cloud-auditor",
+        "description": "Can review IAM and configuration findings"
+      },
+      {
+        "name": "cloud-admin",
+        "description": "Can change simulated tenant configuration"
+      }
+    ]
+  },
+  "groups": [
+    {
+      "name": "cohort-2027",
+      "path": "/cohort-2027"
+    },
+    {
+      "name": "healthcare-prod",
+      "path": "/healthcare-prod"
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "cloud-portal",
+      "name": "Cloud Portal",
+      "description": "Local portal used by the simulated cloud labs",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "redirectUris": [
+        "http://localhost:5173/*",
+        "http://localhost:8080/*"
+      ],
+      "webOrigins": [
+        "http://localhost:5173",
+        "http://localhost:8080"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256"
+      }
+    },
+    {
+      "clientId": "cloud-cli",
+      "name": "Cloud CLI",
+      "description": "Device or password grant used by local CLI exercises",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": true
+    }
+  ],
+  "clientScopes": [
+    {
+      "name": "cloud.audit",
+      "description": "Read simulated audit events",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true"
+      }
+    }
+  ],
+  "defaultDefaultClientScopes": [
+    "role_list",
+    "profile",
+    "email",
+    "roles",
+    "web-origins",
+    "acr",
+    "basic",
+    "cloud.audit"
+  ]
+}

@@ -43,6 +43,7 @@ from app.services.achievements import (
     resolve_achievement_label,
 )
 from app.services.career_explorer import build_career_atlas
+from app.services.career_assessment import public_questions, score_answers
 from app.consent import service as consent_service
 from app.consent.dependencies import consent_detail
 from app.services.competency_assessment import build_competency_assessment_profile
@@ -85,6 +86,12 @@ class GpsRequest(BaseModel):
     """Optional GPS answers. They are used for this response and never stored."""
 
     answers: dict[str, str] = Field(default_factory=dict)
+
+
+class CareerAssessmentRequest(BaseModel):
+    """Short career-direction answers. Used for this response only."""
+
+    answers: dict[str, int] = Field(default_factory=dict)
 
 
 def _iso(value: Optional[datetime]) -> Optional[str]:
@@ -811,6 +818,36 @@ async def post_gps(
     answers = payload.answers if payload else {}
     gps = build_gps(db, current_user, answers=answers, summary=summary)
     return JSONResponse(content=gps, headers={"Cache-Control": "no-store"})
+
+
+@router.get("/career-assessment", summary="Short career-direction questions")
+async def get_career_assessment(
+    current_user: User = Depends(get_current_active_user),
+):
+    """Return eight reflection questions. No answers are stored."""
+    return JSONResponse(
+        content={"questions": public_questions()},
+        headers={"Cache-Control": "no-store"},
+    )
+
+
+@router.post("/career-assessment", summary="Score a short career-direction check")
+@limiter.limit("20/minute")
+async def post_career_assessment(
+    request: Request,
+    payload: CareerAssessmentRequest,
+    current_user: User = Depends(get_current_active_user),
+):
+    """Score optional answers for this response only.
+
+    The result is a reflection aid, not a personality test or a career decision.
+    Nothing is persisted, logged, or shared with the cohort.
+    """
+    try:
+        result = score_answers(payload.answers)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return JSONResponse(content=result, headers={"Cache-Control": "no-store"})
 
 
 @router.put("/title", summary="Equip an unlocked achievement title")

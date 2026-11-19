@@ -56,7 +56,10 @@ markdown_extensions:
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
 
 extra_css:
-  - stylesheets/extra.css
+  - stylesheets/extra.css?v=5
+
+extra_javascript:
+  - javascripts/pdf-export.js?v=3
 
 nav:
   - Home: index.md

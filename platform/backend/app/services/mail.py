@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import html
 import logging
+import re
 import smtplib
 import ssl
 from email.message import EmailMessage
@@ -19,6 +20,73 @@ from sqlalchemy.orm import Session
 from app.services import settings_service
 
 logger = logging.getLogger(__name__)
+
+# Built-in defaults for account emails. Administrators can override the subject
+# and body in Settings -> Email templates. Blank settings fall back here.
+TEMPLATE_DEFAULTS = {
+    "registration_received": {
+        "subject": "Your {platform_name} registration was received",
+        "body": (
+            "Hi {display_name},\n\n"
+            "Your {platform_name} account has been created.\n\n"
+            "Username: {username}\n\n"
+            "An administrator must approve your account before you can sign in.\n\n"
+            "If you did not create this account, contact {support_email}.\n\n"
+            "Powered by OpenCyberRange."
+        ),
+    },
+    "registration_approved": {
+        "subject": "Your {platform_name} account is ready",
+        "body": (
+            "Hi {display_name},\n\n"
+            "Your {platform_name} account is ready.\n\n"
+            "Username: {username}\n\n"
+            "Sign in at {login_url}.\n\n"
+            "If you did not create this account, contact {support_email}.\n\n"
+            "Powered by OpenCyberRange."
+        ),
+    },
+    "account_approved": {
+        "subject": "Your {platform_name} account has been approved",
+        "body": (
+            "Hi {display_name},\n\n"
+            "An administrator has approved your {platform_name} account.\n\n"
+            "Username: {username}\n\n"
+            "You can sign in at {login_url}.\n\n"
+            "Powered by OpenCyberRange."
+        ),
+    },
+    "account_rejected": {
+        "subject": "Your {platform_name} account request",
+        "body": (
+            "Hi {display_name},\n\n"
+            "Your {platform_name} account request was not approved.\n\n"
+            "If you believe this is a mistake, contact {support_email}.\n\n"
+            "Powered by OpenCyberRange."
+        ),
+    },
+    "username_reminder": {
+        "subject": "Your {platform_name} username",
+        "body": (
+            "You asked us to remind you of the username for the {platform_name} "
+            "account registered to this email address.\n\n"
+            "{usernames}\n\n"
+            "Sign in at {login_url}.\n\n"
+            "For your security, this message does not include your password. If you "
+            "did not ask for this reminder, you can ignore it.\n\n"
+            "Powered by OpenCyberRange."
+        ),
+    },
+}
+
+TEMPLATE_SETTING_PREFIX = "mail_template_"
+NOTIFICATION_SETTINGS = {
+    "registration_received": "notify_registration_received",
+    "registration_approved": "notify_registration_approved",
+    "account_approved": "notify_account_approved",
+    "account_rejected": "notify_account_rejected",
+    "username_reminder": "notify_username_reminder",
+}
 
 
 def _clean(value) -> str:
@@ -87,6 +155,98 @@ def public_base_url(db: Session, request_base: str = "") -> str:
         return host.rstrip("/")
 
     return (request_base or "").rstrip("/")
+
+
+def _setting(db: Session | None, key: str, default: str = "") -> str:
+    if db is None:
+        return default
+    try:
+        value = settings_service.get_setting(db, key, default)
+    except Exception:
+        logger.warning("Could not read setting %s; using default", key)
+        return default
+    return default if value is None or str(value).strip() == "" else str(value)
+
+
+def _format_placeholders(value: str, context: dict) -> str:
+    """Replace {name} placeholders and leave unknown ones visible."""
+    def replace(match):
+        name = match.group(1)
+        return str(context.get(name, match.group(0)))
+
+    return re.sub(r"\{([a-zA-Z0-9_]+)\}", replace, value or "")
+
+
+def _html_from_text(value: str) -> str:
+    escaped = html.escape(value or "")
+    escaped = re.sub(
+        r"(https?://[^\s<]+)",
+        lambda match: f'<a href="{match.group(1)}">{match.group(1)}</a>',
+        escaped,
+    )
+    paragraphs = [
+        paragraph.replace("\n", "<br>")
+        for paragraph in escaped.split("\n\n")
+        if paragraph.strip()
+    ]
+    body = "".join(f"<p>{paragraph}</p>" for paragraph in paragraphs)
+    return (
+        "<!doctype html><html><body>"
+        f"{body}"
+        "<p style=\"margin-top:1.5em;font-size:12px;color:#64748b;\">"
+        "Powered by OpenCyberRange.</p>"
+        "</body></html>"
+    )
+
+
+def render_template(
+    db: Session | None,
+    template_key: str,
+    **context,
+) -> tuple[str, str, str]:
+    """Render an account email from settings, falling back to the default.
+
+    The caller passes the display values; unknown placeholders are left visible
+    so an administrator can spot a typo in a custom template.
+    """
+    defaults = TEMPLATE_DEFAULTS.get(template_key)
+    if defaults is None:
+        raise ValueError(f"unknown mail template: {template_key}")
+
+    platform_name = _setting(db, "mail_from_name", "SWOCTS Cyber Range")
+    values = {
+        "platform_name": platform_name,
+        "display_name": context.get("display_name") or context.get("username") or "there",
+        "username": context.get("username", ""),
+        "email": context.get("email", ""),
+        "login_url": context.get("login_url", ""),
+        "support_email": context.get("support_email", ""),
+        "usernames": context.get("usernames", ""),
+    }
+    subject_value = _setting(
+        db,
+        f"{TEMPLATE_SETTING_PREFIX}{template_key}_subject",
+        defaults["subject"],
+    )
+    body_value = _setting(
+        db,
+        f"{TEMPLATE_SETTING_PREFIX}{template_key}_body",
+        defaults["body"],
+    )
+    subject = _format_placeholders(subject_value, values).strip()
+    text_body = _format_placeholders(body_value, values).strip()
+    if not subject:
+        subject = _format_placeholders(defaults["subject"], values).strip()
+    if not text_body:
+        text_body = _format_placeholders(defaults["body"], values).strip()
+    return subject, text_body, _html_from_text(text_body)
+
+
+def notification_enabled(db: Session, template_key: str) -> bool:
+    key = NOTIFICATION_SETTINGS.get(template_key)
+    if not key:
+        return False
+    return _setting(db, key, "true").strip().lower() == "true"
 
 
 def render_registration_email(
@@ -313,13 +473,19 @@ def send_registration_email(
     db = None
     try:
         db = SessionLocal()
+        template_key = "registration_approved" if approved else "registration_received"
+        if not notification_enabled(db, template_key):
+            logger.debug("Registration email skipped by notification preference")
+            return False
         support_email = getattr(settings, "PRIVACY_CONTACT_EMAIL", "") or ""
         login_url = public_base_url(db, request_base)
         login_url = f"{login_url}/login" if login_url else ""
-        subject, text_body, html_body = render_registration_email(
+        subject, text_body, html_body = render_template(
+            db,
+            template_key,
+            email=email,
             username=username,
             display_name=display_name,
-            approved=approved,
             login_url=login_url,
             support_email=support_email,
         )
@@ -333,6 +499,58 @@ def send_registration_email(
         )
     except Exception as exc:
         logger.warning("Registration email for %s failed: %s", username, exc)
+        return False
+    finally:
+        if db is not None:
+            db.close()
+
+
+def send_account_status_email(
+    *,
+    user_id: int,
+    email: str,
+    username: str,
+    display_name: str = "",
+    approved: bool = True,
+    request_base: str = "",
+) -> bool:
+    """Send the administrator approval or rejection notice.
+
+    Opens its own database session because the request session is closed once
+    the response has been sent.
+    """
+    from app.database import SessionLocal
+    from app.config import settings
+
+    db = None
+    try:
+        db = SessionLocal()
+        template_key = "account_approved" if approved else "account_rejected"
+        if not notification_enabled(db, template_key):
+            logger.debug("Account status email skipped by notification preference")
+            return False
+        support_email = getattr(settings, "PRIVACY_CONTACT_EMAIL", "") or ""
+        login_url = public_base_url(db, request_base)
+        login_url = f"{login_url}/login" if login_url else ""
+        subject, text_body, html_body = render_template(
+            db,
+            template_key,
+            email=email,
+            username=username,
+            display_name=display_name,
+            login_url=login_url,
+            support_email=support_email,
+        )
+        return send_email(
+            db,
+            to_email=email,
+            subject=subject,
+            text_body=text_body,
+            html_body=html_body,
+            fresh_settings=True,
+        )
+    except Exception as exc:
+        logger.warning("Account status email for %s failed: %s", username, exc)
         return False
     finally:
         if db is not None:
@@ -356,11 +574,22 @@ def send_username_reminder_email(
     db = None
     try:
         db = SessionLocal()
+        if not notification_enabled(db, "username_reminder"):
+            logger.debug("Username reminder skipped by notification preference")
+            return False
         support_email = getattr(settings, "PRIVACY_CONTACT_EMAIL", "") or ""
         login_url = public_base_url(db, request_base)
         login_url = f"{login_url}/login" if login_url else ""
-        subject, text_body, html_body = render_username_reminder_email(
-            usernames=usernames,
+        clean_usernames = sorted({_clean(value) for value in usernames if _clean(value)})
+        if len(clean_usernames) == 1:
+            usernames_value = f"Username: {clean_usernames[0]}"
+        else:
+            usernames_value = "\n".join(f"- {name}" for name in clean_usernames)
+        subject, text_body, html_body = render_template(
+            db,
+            "username_reminder",
+            to_email=to_email,
+            usernames=usernames_value,
             login_url=login_url,
             support_email=support_email,
         )

@@ -220,10 +220,10 @@
       "sha256": "5e773728234f776d387017e7fe46368a308fc80167c64ffdd6d2a46e86cf4b9e"
     },
     "platform/frontend/nginx-ssl.conf": {
-      "sha256": "1bda0d8dd005ffeedab25cb16ed21fed94e3de51187c6b447bcac5f5319d4860"
+      "sha256": "046a34da8d78513265704bdd0941e9bf2e28d3f6488383bce2244c16754d2acc"
     },
     "platform/frontend/nginx.conf": {
-      "sha256": "de3f29cd52cfcd2875a792d8dbfb1ca116c24047070cff0048010e51f204eafa"
+      "sha256": "1d69a8442ac2d7be1f64e8481f56171f8afc86a81688853ab60cb921a8f04c02"
     },
     "platform/frontend/package-lock.json": {
       "sha256": "76c7afdcd9855159ff433060072ddd3e6917f78c48a452a6b8df815a85b4849e"
@@ -232,7 +232,7 @@
       "sha256": "ad3b29316b741671a2b2576952bb75a29342dfa888c91df1be0470a8584b3126"
     },
     "platform/frontend/security-headers.conf": {
-      "sha256": "b73d351dc1897888b5b4b5338f9199a00aebdb3bb97bc13b863259197ac7abbd"
+      "sha256": "5261428bf94b02a5585f466e1de692bf8c6aba8890d222fcf014e94788fbafb6"
     },
     "platform/frontend/src/composables/useToolPanel.js": {
       "sha256": "2af94f01e1971686c7dd0ca2b94552cd6537f1802a3c3ccf0974fce6611d951e"

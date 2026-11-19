@@ -1,0 +1,13 @@
+bucket = "tofu-state"
+key    = "students/s42/terraform.tfstate"
+
+endpoint = "http://localhost:9000"
+region   = "us-east-1"
+
+access_key = "ocr-cloud-admin"
+secret_key = "change-me-minio"
+
+skip_credentials_validation = true
+skip_region_validation      = true
+skip_requesting_account_id  = true
+use_path_style              = true

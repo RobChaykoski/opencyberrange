@@ -407,13 +407,12 @@ _MKDOCS_TEMPLATE = {
             }
         },
     ],
-    "extra_css": ["stylesheets/extra.css?v=4"],
+    "extra_css": ["stylesheets/extra.css?v=5"],
     "extra_javascript": [
         "javascripts/mermaid.min.js?v=1",
         "javascripts/embed-mode.js?v=1",
         "javascripts/mermaid-fix.js?v=4",
-        "javascripts/html2pdf.bundle.min.js?v=1",
-        "javascripts/pdf-export.js?v=2",
+        "javascripts/pdf-export.js?v=3",
     ],
 }
 

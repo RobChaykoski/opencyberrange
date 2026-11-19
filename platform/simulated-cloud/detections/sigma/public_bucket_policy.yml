@@ -1,0 +1,24 @@
+title: Object storage bucket policy made public
+id: 2b6d9a11-3c44-4e8a-8f11-ocrcloud002
+status: experimental
+description: Detects a bucket policy change that grants a public principal.
+references:
+  - https://owasp.org/Top10/A01_2021-Broken_Access_Control/
+author: OpenCyberRange simulated cloud
+date: 2026/11/18
+tags:
+  - attack.collection
+  - attack.t1530
+logsource:
+  product: minio
+  service: audit
+detection:
+  selection:
+    event: storage
+    action:
+      - bucket.policy.public
+      - bucket.acl.public
+  condition: selection
+falsepositives:
+  - A deliberate public dataset bucket approved by the data owner
+level: critical

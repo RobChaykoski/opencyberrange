@@ -35,11 +35,15 @@ def test_registration_email_for_pending_user_explains_approval():
     assert "sign in at https://range.example.com/login" not in text_body
 
 
+# security-delta: allow possible secret - test-only fixture password
+TEST_PASSWORD = "Strong#Pass1"
+
+
 def test_registration_email_is_opt_in_by_default():
     request = RegisterRequest(
         username="optinuser",
         email="optin@example.com",
-        password="Strong#Pass1",
+        password=TEST_PASSWORD,
     )
     assert request.send_registration_email is True
 
@@ -48,10 +52,42 @@ def test_registration_email_can_be_disabled():
     request = RegisterRequest(
         username="optoutuser",
         email="optout@example.com",
-        password="Strong#Pass1",
+        password=TEST_PASSWORD,
         send_registration_email=False,
     )
     assert request.send_registration_email is False
+
+
+def test_account_approval_template_uses_defaults_without_db():
+    subject, text_body, html_body = mail_service.render_template(
+        None,
+        "account_approved",
+        username="alice",
+        display_name="Alice Example",
+        login_url="https://range.example.com/login",
+        support_email="help@example.com",
+    )
+
+    assert "approved" in subject.lower()
+    assert "alice" in text_body
+    assert "https://range.example.com/login" in text_body
+    assert "https://range.example.com/login" in html_body
+
+
+def test_task_lifecycle_templates_render_placeholders():
+    subject, text_body, _ = mail_service.render_template(
+        None,
+        "registration_received",
+        username="bob",
+        display_name="Bob",
+        login_url="https://range.example.com/login",
+        support_email="help@example.com",
+    )
+
+    assert "received" in subject.lower()
+    assert "bob" in text_body
+    assert "approve" in text_body.lower()
+    assert "{username}" not in text_body
 
 
 def test_mail_config_requires_enabled_host_and_from_address():
