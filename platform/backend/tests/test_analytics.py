@@ -804,3 +804,40 @@ def test_course_exercises_distinguishes_no_evidence(client, db_session):
     assert exercise["completed_learners"] == 0
     assert exercise["completion_rate"] is None
     assert exercise["rag"] == "insufficient_evidence"
+
+
+def test_course_readiness_queue_and_lab_health(client, analytics_data):
+    headers = _login(client, analytics_data["instructor"])
+    course_id = analytics_data["course"].id
+
+    response = client.get(f"/api/analytics/courses/{course_id}/readiness", headers=headers)
+    assert response.status_code == 200, response.text
+    body = response.json()
+    assert body["provisional"] is True
+    assert body["students"]
+    assert body["lab_health"]["labs"]
+    student = body["students"][0]
+    assert 0 <= student["cwrs"] <= 100
+    assert set(student["components"]) == {
+        "performance", "engagement", "progression",
+        "competency", "behavioural", "infrastructure",
+    }
+    assert student["band"] in {
+        "healthy", "monitor", "elevated", "high_risk", "critical_intervention"
+    }
+
+
+def test_course_readiness_capabilities_are_scoped(client, analytics_data):
+    headers = _login(client, analytics_data["instructor"])
+    course_id = analytics_data["course"].id
+    student_id = analytics_data["student_one"].id
+
+    response = client.get(
+        f"/api/analytics/courses/{course_id}/students/{student_id}/capabilities",
+        headers=headers,
+    )
+    assert response.status_code == 200, response.text
+    body = response.json()
+    assert body["axes"]
+    assert "disclaimer" in body
+

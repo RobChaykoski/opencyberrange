@@ -2,6 +2,18 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [Unreleased]
+
+### Instructor readiness dashboard
+
+- Added a pilot **Readiness and lab health** panel to the instructor dashboard.
+- The support queue shows a provisional CWRS, band, confidence, component risk,
+  flags, and on-demand capability detail for one course.
+- Lab health separates degraded, warning, no-data, and healthy labs and hides
+  healthy labs by default.
+- Under-18 learners remain excluded from the course cohort view, and every score
+  is labelled provisional pending calibration.
+
 ## [5.18.0] - 2026-11-19
 
 ### Account email and notifications

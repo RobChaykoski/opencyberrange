@@ -1,6 +1,6 @@
 # Cyber Workforce Risk Score (CWRS)
 
-Status: **proposal** (18 November 2026). This is the canonical formula for the
+Status: **pilot implementation** (19 November 2026). The instructor support queue uses a provisional CWRS. Offline calibration and the full rubric remain. This is the canonical formula for the
 [student risk engine](STUDENT-RISK-ENGINE.md). It replaces the earlier ad-hoc
 weights and bands.
 

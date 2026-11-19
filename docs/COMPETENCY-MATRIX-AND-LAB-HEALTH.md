@@ -1,6 +1,6 @@
 # Competency matrix and lab health dashboard
 
-Status: **proposal** (18 November 2026). Builds on the existing
+Status: **pilot implementation** (19 November 2026). The instructor dashboard now exposes the support queue, lab health, and on-demand capability detail. Calibration and full validation remain. Builds on the existing
 [competency framework](COMPETENCY-FRAMEWORK.md),
 [instructor analytics](INSTRUCTOR-ANALYTICS.md), and
 [role readiness](ROLE-READINESS-SCORING.md).

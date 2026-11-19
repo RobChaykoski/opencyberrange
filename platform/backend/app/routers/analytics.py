@@ -34,6 +34,10 @@ from app.services.learning_time import (
     learning_minutes_by_pair,
     learning_minutes_by_user,
 )
+from app.services.readiness_dashboard import (
+    build_course_readiness,
+    build_student_capabilities,
+)
 from app.services.skill_dna import (
     SKILL_BRANCH_LABELS,
     SKILL_BRANCH_ORDER,
@@ -1270,6 +1274,57 @@ async def course_overview(
         "suppression": cohort,
         "generated_at": datetime.now(timezone.utc).isoformat(),
     }
+
+
+@router.get("/courses/{course_id}/readiness")
+async def course_readiness(
+    course_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_instructor_user),
+):
+    """Pilot instructor support queue and lab health for one course.
+
+    The response is descriptive and provisional. It does not rank learners
+    publicly, predict grades, or make an automated decision.
+    """
+    course = _course_or_403(db, course_id, current_user)
+    labs, user_ids, completions, sessions = _course_context(db, course)
+    if not user_ids:
+        return {
+            "formula_version": "cwrs-pilot-2026.1",
+            "provisional": True,
+            "cohort": {
+                "students": 0,
+                "assigned_exercises": len(labs),
+                "median_completed": 0,
+                "band_counts": {},
+            },
+            "students": [],
+            "lab_health": {"counts": {}, "labs": []},
+            "note": "No enrolled learners with evidence yet.",
+        }
+    return build_course_readiness(
+        db,
+        labs=labs,
+        user_ids=user_ids,
+        completions=completions,
+        sessions=sessions,
+    )
+
+
+@router.get("/courses/{course_id}/students/{user_id}/capabilities")
+async def student_capabilities(
+    course_id: int,
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_instructor_user),
+):
+    """Capability detail for one enrolled learner in the actor's course."""
+    course = _course_or_403(db, course_id, current_user)
+    _labs, user_ids, _completions, _sessions = _course_context(db, course)
+    if user_id not in user_ids:
+        raise HTTPException(status_code=404, detail="Learner not found in this course")
+    return build_student_capabilities(db, user_id)
 
 
 def _total_skill_tree(rows: list[dict]) -> dict:

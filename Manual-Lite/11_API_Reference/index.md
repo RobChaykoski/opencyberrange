@@ -249,6 +249,8 @@ owner-only unless an explicit share or break-glass grant exists.
 | `GET` | `/api/analytics/courses/{course_id}/exercises` | Course Exercises | OAuth2PasswordBearer |
 | `GET` | `/api/analytics/courses/{course_id}/overview` | Course Overview | OAuth2PasswordBearer |
 | `GET` | `/api/analytics/courses/{course_id}/pulse-comments` | Course Pulse Comments | OAuth2PasswordBearer |
+| `GET` | `/api/analytics/courses/{course_id}/readiness` | Course Readiness | OAuth2PasswordBearer |
+| `GET` | `/api/analytics/courses/{course_id}/students/{user_id}/capabilities` | Student Capabilities | OAuth2PasswordBearer |
 | `POST` | `/api/analytics/events/workbook-open` | Workbook Opened | OAuth2PasswordBearer |
 | `GET` | `/api/analytics/metrics` | Metric Dictionary | OAuth2PasswordBearer |
 | `GET` | `/api/analytics/pulse/{lab_id}` | Get Pulse | OAuth2PasswordBearer |
@@ -2396,6 +2398,45 @@ Cohort competency radar with median, IQR, target, and drill-down.
 | Parameter | In | Type | Required | Description |
 |---|---|---|---|---|
 | `course_id` | path | integer | yes |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `GET /api/analytics/courses/{course_id}/readiness`
+
+**Course Readiness**
+
+Pilot instructor support queue and lab health for one course.  The response is descriptive and provisional. It does not rank learners publicly, predict grades, or make an automated decision.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `course_id` | path | integer | yes |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `GET /api/analytics/courses/{course_id}/students/{user_id}/capabilities`
+
+**Student Capabilities**
+
+Capability detail for one enrolled learner in the actor's course.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `course_id` | path | integer | yes |  |
+| `user_id` | path | integer | yes |  |
 
 **Responses**
 

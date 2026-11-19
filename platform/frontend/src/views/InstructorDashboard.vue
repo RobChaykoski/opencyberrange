@@ -20,6 +20,11 @@
       class="teaching-snapshot"
     />
 
+    <InstructorReadinessPanel
+      v-model:course-id="selectedCourse"
+      :courses="filterCourses"
+    />
+
     <!-- System Health (admin only) -->
     <div v-if="showHealthCard" class="health-bar" :class="dashboardHealthClass ? `health-bar--${dashboardHealthClass}` : ''" @click="goToSystemHealth">
       <template v-if="dashboardHealthLoaded">
@@ -434,6 +439,7 @@ import {
 } from 'chart.js'
 import axios from '../api/axios'
 import ProgrammeOverview from '../components/ProgrammeOverview.vue'
+import InstructorReadinessPanel from '../components/InstructorReadinessPanel.vue'
 import PrivacyText from '../components/PrivacyText.vue'
 import { usePoll } from '../composables/usePoll'
 import { isAdmin } from '../utils/roles'

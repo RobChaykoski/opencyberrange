@@ -1,6 +1,6 @@
 # Student risk engine
 
-Status: **proposal** (18 November 2026). This is an instructor support tool, not
+Status: **pilot implementation** (19 November 2026). The read-only support queue and lab health are live in the instructor dashboard; calibration remains. This is an instructor support tool, not
 a prediction of dropout and not an automated academic decision.
 
 Presentation follows [progressive disclosure](INFORMATION-DESIGN-PROGRESSIVE-DISCLOSURE.md): summary first, detail on request, and the learner controls what stays visible.
