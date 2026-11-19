@@ -115,6 +115,9 @@ five devices, and three training prefixes.
 
 ## Capstone shapes
 
+See `docs/TRAINING-CAPSTONES.md` for the single-student and cohort runbooks and
+acceptance checks.
+
 - **Single student:** one Moodle course, one OCR lab, one evidence submission.
   Report scope is the learner and the assigned mentor.
 - **Multi-student cohort:** Moodle groups map to OCR course staff assignments and
