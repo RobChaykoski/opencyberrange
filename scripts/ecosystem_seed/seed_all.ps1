@@ -73,6 +73,7 @@ try {
     $assetsRunning = (& docker compose --profile assets ps --services --filter status=running 2>$null)
     if ($assetsRunning -contains 'ralph') {
         Write-Host '== Ralph admin =='
+        & docker compose exec -T -w /opt/ralph/ralph-core ralph /opt/ralph/ralph-core/bin/ralph migrate --noinput
         & docker compose exec -T -w /opt/ralph/ralph-core `
             -e "RALPH_ADMIN_USER=$($config['RALPH_ADMIN_USER'])" `
             -e "RALPH_ADMIN_EMAIL=$($config['RALPH_ADMIN_EMAIL'])" `

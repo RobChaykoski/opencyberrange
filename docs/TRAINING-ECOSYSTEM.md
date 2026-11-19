@@ -77,7 +77,9 @@ First-run notes:
   `docker compose --profile endpoint run --rm -T --entrypoint /bin/sh fleet -c 'fleet prepare db' < /dev/null`.
   If that command is interrupted, remove the Fleet database volume and run it
   again; a half-migrated lab database will not serve.
-- Ralph needs its first admin created in the web UI.
+- Ralph needs a one-time migration:
+  `docker compose exec -T -w /opt/ralph/ralph-core ralph /opt/ralph/ralph-core/bin/ralph migrate --noinput`.
+  The seeder then creates the lab admin from `RALPH_ADMIN_*`.
 - Authentik needs its initial `akadmin` password set from the container logs.
 
 ## Seed fake data

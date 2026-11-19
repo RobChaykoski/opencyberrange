@@ -45,6 +45,7 @@ fi
 
 echo "== Ralph =="
 if docker compose --profile assets ps --services --filter status=running | grep -qx ralph; then
+  docker compose exec -T -w /opt/ralph/ralph-core ralph /opt/ralph/ralph-core/bin/ralph migrate --noinput < /dev/null >/dev/null
   docker compose exec -T -w /opt/ralph/ralph-core \
     -e RALPH_ADMIN_USER="${RALPH_ADMIN_USER:-admin}" \
     -e RALPH_ADMIN_EMAIL="${RALPH_ADMIN_EMAIL:-admin@example.invalid}" \
