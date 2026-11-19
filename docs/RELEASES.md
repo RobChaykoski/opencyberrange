@@ -63,6 +63,17 @@ represent. It exists because the history contains several naming eras.
 `68A817762C831475F00DB54E775050A4C4921814`. The public key is
 `docs/release-signing-key.asc`.
 
+## Release 5.19.0 tag record
+
+| Item | Value |
+|---|---|
+| Tag | `v5.19.0` (signed annotated tag) |
+| Commit | `21d42407` |
+| Signature | **Good**, key `68A817762C831475F00DB54E775050A4C4921814` |
+| Released | 19 November 2026 |
+| GitHub release | https://github.com/RobChaykoski/opencyberrange/releases/tag/v5.19.0 |
+| CI | CI, Quality checks, CodeQL, Trivy, and OpenSSF Scorecard passed |
+
 ## Release 5.18.0 tag record
 
 | Item | Value |
