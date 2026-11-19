@@ -47,7 +47,7 @@ and learner machines can reach them:
 | Service | URL |
 |---|---|
 | Moodle | `http://172.16.16.44:8091/` |
-| Moodle (dev TLS) | `https://172.16.16.44:8443/` |
+| Moodle (dev TLS) | `https://172.16.16.44:9443/` |
 | Authentik | `http://172.16.16.44:9000/` |
 | NetBox | `http://172.16.16.44:8083/` |
 | Ralph | `http://172.16.16.44:8084/` |
@@ -90,7 +90,7 @@ First-run notes:
 
 ## Dev-only TLS for Moodle
 
-The `tls` profile adds Caddy on 8443 in front of Moodle. It uses Caddy's
+The `tls` profile adds Caddy on 9443 in front of Moodle. It uses Caddy's
 internal CA, so browsers and services must trust that CA; the certificate is not
 publicly trusted. Set `MOODLE_TLS_HOST` to the host learners and the dev range
 use (for example `172.16.16.44`) and keep the port on the dev network.

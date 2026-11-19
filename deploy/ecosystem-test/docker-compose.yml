@@ -64,8 +64,10 @@ services:
     restart: unless-stopped
     depends_on:
       - moodle
+    environment:
+      MOODLE_TLS_HOST: ${MOODLE_TLS_HOST:-localhost}
     ports:
-      - "${MOODLE_TLS_BIND:-127.0.0.1}:${MOODLE_TLS_PORT:-8443}:8443"
+      - "${MOODLE_TLS_BIND:-127.0.0.1}:${MOODLE_TLS_PORT:-9443}:8443"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
