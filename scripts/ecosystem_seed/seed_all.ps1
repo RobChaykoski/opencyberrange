@@ -64,6 +64,12 @@ try {
         }
     }
 
+    $ssoRunning = (& docker compose --profile sso ps --services --filter status=running 2>$null)
+    if ($ssoRunning -contains 'authentik-server') {
+        Write-Host '== Authentik seed =='
+        & docker compose exec -T authentik-server ak shell -c "exec(open('/seed/seed_authentik.py').read())"
+    }
+
     Write-Host 'Seeding complete.'
 } finally {
     Pop-Location

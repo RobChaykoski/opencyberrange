@@ -15,6 +15,7 @@ require_once($CFG->dirroot . '/course/lib.php');
 require_once($CFG->dirroot . '/user/lib.php');
 require_once($CFG->dirroot . '/group/lib.php');
 require_once($CFG->dirroot . '/cohort/lib.php');
+require_once($CFG->dirroot . '/course/modlib.php');
 
 global $DB;
 
@@ -127,6 +128,31 @@ function training_group_member(int $groupid, int $userid): void {
     }
 }
 
+function training_ensure_page(int $courseid, string $name, string $content): void {
+    global $DB;
+    if ($DB->record_exists('page', ['course' => $courseid, 'name' => $name])) {
+        return;
+    }
+    $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
+    $module = $DB->get_record('modules', ['name' => 'page'], '*', MUST_EXIST);
+    add_moduleinfo((object)[
+        'modulename' => 'page',
+        'module' => (int)$module->id,
+        'course' => $courseid,
+        'section' => 1,
+        'visible' => 1,
+        'name' => $name,
+        'intro' => '',
+        'introformat' => FORMAT_HTML,
+        'content' => $content,
+        'contentformat' => FORMAT_HTML,
+        'revision' => 1,
+        'display' => 0,
+        'printheading' => 1,
+        'printintro' => 0,
+    ], $course);
+}
+
 $categoryid = training_ensure_category('OpenCyberRange Training');
 
 $courses = [
@@ -197,6 +223,64 @@ foreach ($students as $userid) {
         cohort_add_member($cohortid, $userid);
     }
 }
+
+$singleBrief = <<<'HTML'
+<h3>Scenario</h3>
+<p>You are the only analyst on shift. A fake workstation has raised a suspicious
+login alert, and a fake web service shows unexpected scanning traffic.</p>
+<h3>Deliverables</h3>
+<ul>
+  <li>A short timeline of what happened, in order.</li>
+  <li>The evidence you used, with the system and time for each item.</li>
+  <li>One containment action and one hardening action.</li>
+  <li>A five-minute verbal defence of your conclusion.</li>
+</ul>
+<h3>Rules</h3>
+<p>Use only the training stack. Do not connect to production systems, real
+identity providers, or real data. Every account, host, and alert is synthetic.</p>
+HTML;
+
+$cohortBrief = <<<'HTML'
+<h3>Scenario</h3>
+<p>A fake multi-service environment is under a simulated intrusion. Two teams
+must produce one joint defence brief.</p>
+<h3>Team split</h3>
+<ul>
+  <li><strong>Cohort A:</strong> detection, endpoint, and network evidence.</li>
+  <li><strong>Cohort B:</strong> identity, asset ownership, and access review.</li>
+</ul>
+<h3>Joint deliverables</h3>
+<ul>
+  <li>One shared timeline with owners for each step.</li>
+  <li>One asset and identity map from the training inventory.</li>
+  <li>Three findings, each with evidence and a control reference.</li>
+  <li>One joint 10-minute defence.</li>
+</ul>
+<h3>Rules</h3>
+<p>Work in your Moodle group. Use only the training stack and fake data. Do not
+connect the lab to production services or real identity providers.</p>
+HTML;
+
+$foundGuide = <<<'HTML'
+<h3>Training services</h3>
+<ul>
+  <li><strong>Moodle:</strong> courses, groups, and submissions.</li>
+  <li><strong>Authentik:</strong> groups, MFA, and application access.</li>
+  <li><strong>NetBox:</strong> sites, devices, prefixes, and ownership.</li>
+  <li><strong>Ralph:</strong> asset lifecycle records.</li>
+  <li><strong>Fleet:</strong> endpoint posture and compliance.</li>
+</ul>
+<h3>Accounts</h3>
+<p>Staff and learner accounts are synthetic. Use the lab password from the
+training environment instructions. Never reuse a lab credential anywhere real.</p>
+<h3>Safety</h3>
+<p>This environment contains fake data only. Do not connect it to production
+systems, real patient or learner records, or a real identity provider.</p>
+HTML;
+
+training_ensure_page($courseids['OCR-CAP-SINGLE'], 'Capstone brief', $singleBrief);
+training_ensure_page($courseids['OCR-CAP-COHORT'], 'Cohort capstone brief', $cohortBrief);
+training_ensure_page($courseids['OCR-FOUND'], 'Training lab guide', $foundGuide);
 
 echo "Seeded Moodle training data.\n";
 echo "Admin: admin / (see .env MOODLE_ADMIN_PASSWORD)\n";

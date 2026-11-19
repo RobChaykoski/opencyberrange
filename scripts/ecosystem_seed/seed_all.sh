@@ -61,8 +61,11 @@ fi
 
 echo "== Authentik =="
 if docker compose --profile sso ps --services --filter status=running | grep -qx authentik-server; then
-  echo "Authentik is running. Create fake groups and users in the admin UI."
-  echo "  http://${AUTHENTIK_BIND:-127.0.0.1}:${AUTHENTIK_PORT:-9000}/"
+  # security-delta: allow exec (seeds the local Authentik training file)
+  docker compose exec -T authentik-server ak shell \
+    -c "exec(open('/seed/seed_authentik.py').read())" < /dev/null 2>&1 \
+    | grep -E 'Seeded|Groups:|Users:|Error|Traceback' || true
+  echo "Authentik training groups and users seeded."
 else
   echo "SKIP: Authentik is not running"
 fi

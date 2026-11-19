@@ -97,6 +97,15 @@ Moodle seed creates:
 - Staff `instructor01`, `mentor01`, `ta01`.
 - Students `student01` .. `student08`.
 - Groups `Cohort A` and `Cohort B`, plus cohort `OCR-TRAINING-COHORT`.
+- Capstone brief pages in `OCR-CAP-SINGLE` and `OCR-CAP-COHORT`, and a training
+  lab guide in `OCR-FOUND`.
+
+Authentik seed creates:
+
+- Groups `ocr-learners`, `ocr-mentors`, `ocr-teaching-assistants`,
+  `ocr-instructors`, `ocr-privacy-office`, and `ocr-auditors`.
+- Users `student01`..`student08`, `mentor01`, `ta01`, `instructor01`,
+  `privacy01`, and `auditor01` in the matching groups.
 
 Default fake password is `TrainLab!2026#Student`; override with
 `TRAINING_PASSWORD`. These accounts are not real people.
