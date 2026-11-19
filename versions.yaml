@@ -9,7 +9,7 @@
 # docs/decisions/0004-single-platform-release-version.md.
 platform:
   name: "SWOCTS Cyber Range"
-  version: "5.21.0"
+  version: "5.22.0"
   status: "release"
   date: "2026-11-19"
 

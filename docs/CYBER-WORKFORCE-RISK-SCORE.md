@@ -1,6 +1,6 @@
 # Cyber Workforce Risk Score (CWRS)
 
-Status: **pilot implementation** (19 November 2026). The instructor support queue uses a provisional CWRS. Release 5.20.0 adds context flags, support actions with outcomes, flag acknowledge/snooze/dismiss, and calibration evidence. Release 5.21.0 adds case ownership, priority, and a follow-up view. Offline calibration against instructor-confirmed cases and the full rubric remain. This is the canonical formula for the
+Status: **pilot implementation** (19 November 2026). The instructor support queue uses a provisional CWRS. Release 5.20.0 adds context flags, support actions with outcomes, flag acknowledge/snooze/dismiss, and calibration evidence. Release 5.21.0 adds case ownership, priority, and a follow-up view. Release 5.22.0 adds instructor calibration reviews of the provisional band. Offline calibration against instructor-confirmed cases and the full rubric remain. This is the canonical formula for the
 [student risk engine](STUDENT-RISK-ENGINE.md). It replaces the earlier ad-hoc
 weights and bands.
 
@@ -326,7 +326,12 @@ Rules:
 
 Release 5.20.0 implements context flags, support actions with outcomes, and
 flag states. Release 5.21.0 adds case ownership, priority, and the follow-up
-view. Alerts, cooldowns, and automated recommendations remain future work.
+view. Release 5.22.0 adds a calibration review: an instructor records whether
+the provisional band was confirmed, partly confirmed, not confirmed, or needs
+more context. The Calibration view reports counts by reviewed band and flags
+reviews whose band has since changed. It is evidence about instructor
+agreement, not a claim of model accuracy. Alerts, cooldowns, and automated
+recommendations remain future work.
 
 Recommended action library:
 
@@ -437,6 +442,7 @@ date. Earlier notes remain as history.
 - Platform incidents do not raise a learner's score.
 - Bonuses require reviewed evidence and are capped.
 - An instructor can record context and override with a reason.
+- An instructor can record whether the provisional band was confirmed.
 - The learner can see and correct their own data.
 - The score is versioned and never shared with an employer.
 - A human makes the support decision.

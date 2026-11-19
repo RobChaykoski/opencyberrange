@@ -1,6 +1,6 @@
 # Competency matrix and lab health dashboard
 
-Status: **pilot implementation** (19 November 2026). The instructor dashboard now exposes the support queue, lab health, on-demand capability detail, a support-record workflow, lab-health review history, and case follow-ups. Release 5.20.0 adds context flags, support actions with outcomes, flag states, and a calibration view. Release 5.21.0 adds case ownership, priority, overdue and due-soon follow-ups, and a Follow-ups view. Full validation remains. Builds on the existing
+Status: **pilot implementation** (19 November 2026). The instructor dashboard now exposes the support queue, lab health, on-demand capability detail, a support-record workflow, lab-health review history, and case follow-ups. Release 5.20.0 adds context flags, support actions with outcomes, flag states, and a calibration view. Release 5.21.0 adds case ownership, priority, overdue and due-soon follow-ups, and a Follow-ups view. Release 5.22.0 adds instructor calibration reviews of the provisional band. Full validation remains. Builds on the existing
 [competency framework](COMPETENCY-FRAMEWORK.md),
 [instructor analytics](INSTRUCTOR-ANALYTICS.md), and
 [role readiness](ROLE-READINESS-SCORING.md).

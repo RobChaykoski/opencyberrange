@@ -28,6 +28,19 @@ from app.services.competency_radar import build_individual_radar
 CWRS_FORMULA_VERSION = "cwrs-pilot-2026.1"
 CASE_DUE_WINDOW = timedelta(days=7)
 CASE_PRIORITIES = ("low", "normal", "high")
+CALIBRATION_STATES = (
+    "confirmed",
+    "partly_confirmed",
+    "not_confirmed",
+    "insufficient_context",
+)
+CALIBRATION_BANDS = (
+    "critical_intervention",
+    "high_risk",
+    "elevated",
+    "monitor",
+    "healthy",
+)
 CWRS_WEIGHTS = {
     "performance": 0.35,
     "engagement": 0.20,
@@ -204,6 +217,24 @@ def _case_payload(
     }
 
 
+def _calibration_payload(
+    note: ReadinessStudentNote,
+    reviewer_names: dict[int, str],
+) -> dict:
+    """Latest instructor judgement of the provisional band."""
+    key = note.key or ""
+    reviewed_band = key.split(":", 1)[1] if key.startswith("cwrs:") else None
+    return {
+        "id": note.id,
+        "state": note.state,
+        "reviewed_band": reviewed_band,
+        "note": note.note,
+        "reviewer_id": note.created_by_id,
+        "reviewer_name": reviewer_names.get(note.created_by_id),
+        "created_at": _as_aware(note.created_at).isoformat() if note.created_at else None,
+    }
+
+
 def build_course_readiness(
     db: Session,
     *,
@@ -225,14 +256,22 @@ def build_course_readiness(
         notes_by_user[note.learner_id].append(note)
 
     owner_ids = {note.owner_id for note in notes if note.owner_id}
-    owner_names = (
+    reviewer_ids = {
+        note.created_by_id
+        for note in notes
+        if note.kind == "calibration" and note.created_by_id
+    }
+    people_ids = owner_ids | reviewer_ids
+    people_names = (
         {
             row.id: (row.display_name or row.username)
-            for row in db.query(User).filter(User.id.in_(owner_ids)).all()
+            for row in db.query(User).filter(User.id.in_(people_ids)).all()
         }
-        if owner_ids
+        if people_ids
         else {}
     )
+    owner_names = people_names
+    reviewer_names = people_names
 
     reviews = (
         db.query(ReadinessLabReview)
@@ -393,9 +432,12 @@ def build_course_readiness(
         flag_states = {}
         actions = []
         case = None
+        calibration_review = None
         for note in student_notes:
             if note.kind == "case" and case is None:
                 case = _case_payload(note, owner_names, now)
+            elif note.kind == "calibration" and calibration_review is None:
+                calibration_review = _calibration_payload(note, reviewer_names)
             elif note.kind == "context":
                 starts = _as_aware(note.start_at)
                 ends = _as_aware(note.end_at)
@@ -435,6 +477,7 @@ def build_course_readiness(
                 "actions": actions,
                 "last_action": actions[0] if actions else None,
                 "case": case,
+                "calibration_review": calibration_review,
             }
         )
 
@@ -481,6 +524,27 @@ def build_course_readiness(
         ),
     }
 
+    calibration_reviews = []
+    for student in students:
+        review = student.get("calibration_review")
+        if not review:
+            continue
+        calibration_reviews.append(
+            {
+                "user_id": student["user_id"],
+                "username": student["username"],
+                "display_name": student["display_name"],
+                "current_band": student["band"],
+                "current_band_label": student["band_label"],
+                "band_changed": review["reviewed_band"] != student["band"],
+                **review,
+            }
+        )
+    calibration_reviews.sort(
+        key=lambda row: row["created_at"] or "",
+        reverse=True,
+    )
+
     lab_health = _build_lab_health(labs, completions, sessions, reviews_by_lab)
     band_counts = {key: 0 for _minimum, key, _label in BANDS}
     for row in students:
@@ -502,6 +566,7 @@ def build_course_readiness(
         "students": students,
         "follow_ups": follow_ups,
         "case_summary": case_summary,
+        "calibration_reviews": calibration_reviews,
         "lab_health": lab_health,
         "generated_at": now.isoformat(),
     }
@@ -637,6 +702,33 @@ def build_calibration_summary(db: Session, *, course_id: int, students: list[dic
             case_priority_counts[case["priority"]] += 1
         else:
             case_counts["closed"] += 1
+
+    calibration_counts: dict[str, int] = defaultdict(int)
+    calibration_band_counts: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
+    calibration_rows = []
+    for student in students:
+        review = student.get("calibration_review")
+        if not review:
+            continue
+        calibration_counts[review["state"] or "unknown"] += 1
+        band = review["reviewed_band"] or "unknown"
+        calibration_band_counts[band][review["state"] or "unknown"] += 1
+        calibration_rows.append(
+            {
+                "user_id": student["user_id"],
+                "username": student["username"],
+                "display_name": student["display_name"],
+                "current_band": student["band"],
+                "current_band_label": student["band_label"],
+                "band_changed": review["reviewed_band"] != student["band"],
+                **review,
+            }
+        )
+    calibration_rows.sort(
+        key=lambda row: row["created_at"] or "",
+        reverse=True,
+    )
+    reviewed = len(calibration_rows)
     return {
         "course_id": course_id,
         "students": len(students),
@@ -653,6 +745,15 @@ def build_calibration_summary(db: Session, *, course_id: int, students: list[dic
         "lab_health_counts": lab_health.get("counts", {}),
         "case_counts": case_counts,
         "case_priority_counts": dict(sorted(case_priority_counts.items())),
+        "calibration_counts": dict(sorted(calibration_counts.items())),
+        "calibration_band_counts": {
+            band: dict(sorted(states.items()))
+            for band, states in sorted(calibration_band_counts.items())
+        },
+        "calibration_reviews": calibration_rows,
+        "reviewed": reviewed,
+        "unreviewed": max(0, len(students) - reviewed),
+        "band_changed": sum(1 for row in calibration_rows if row["band_changed"]),
         "notes": len(notes),
         "reviews": len(reviews),
     }

@@ -936,3 +936,74 @@ def test_readiness_case_ownership_and_follow_up(client, analytics_data):
     assert not any(row["user_id"] == student_id for row in body["follow_ups"])
     assert body["case_summary"]["closed"] == 1
 
+
+def test_readiness_calibration_review(client, analytics_data):
+    headers = _login(client, analytics_data["instructor"])
+    course_id = analytics_data["course"].id
+
+    readiness = client.get(
+        f"/api/analytics/courses/{course_id}/readiness",
+        headers=headers,
+    )
+    assert readiness.status_code == 200, readiness.text
+    student = readiness.json()["students"][0]
+    band = student["band"]
+
+    reviewed = client.post(
+        f"/api/analytics/courses/{course_id}/students/{student['user_id']}/notes",
+        headers=headers,
+        json={
+            "kind": "calibration",
+            "key": "cwrs",
+            "state": "partly_confirmed",
+            "band": band,
+            "note": "Band direction was right, severity was high.",
+        },
+    )
+    assert reviewed.status_code == 200, reviewed.text
+    assert reviewed.json()["key"] == f"cwrs:{band}"
+
+    readiness = client.get(
+        f"/api/analytics/courses/{course_id}/readiness",
+        headers=headers,
+    )
+    row = next(
+        item for item in readiness.json()["students"]
+        if item["user_id"] == student["user_id"]
+    )
+    assert row["calibration_review"]["reviewed_band"] == band
+    assert row["calibration_review"]["state"] == "partly_confirmed"
+
+    calibration = client.get(
+        f"/api/analytics/courses/{course_id}/readiness/calibration",
+        headers=headers,
+    )
+    assert calibration.status_code == 200, calibration.text
+    body = calibration.json()
+    assert body["calibration_counts"]["partly_confirmed"] == 1
+    assert body["reviewed"] == 1
+    assert body["unreviewed"] == body["students"] - 1
+    assert body["band_changed"] == 0
+    assert body["calibration_reviews"][0]["user_id"] == student["user_id"]
+
+    stale_band = "healthy" if band != "healthy" else "monitor"
+    stale = client.post(
+        f"/api/analytics/courses/{course_id}/students/{student['user_id']}/notes",
+        headers=headers,
+        json={
+            "kind": "calibration",
+            "key": "cwrs",
+            "state": "confirmed",
+            "band": stale_band,
+        },
+    )
+    assert stale.status_code == 200, stale.text
+
+    calibration = client.get(
+        f"/api/analytics/courses/{course_id}/readiness/calibration",
+        headers=headers,
+    )
+    body = calibration.json()
+    assert body["calibration_counts"]["confirmed"] == 1
+    assert body["band_changed"] == 1
+

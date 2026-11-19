@@ -259,6 +259,54 @@
                 </div>
               </div>
 
+              <div class="readiness-calibration">
+                <div class="readiness-workflow__head">
+                  <h3>Band calibration</h3>
+                  <span>{{ student.calibration_review ? 'Reviewed' : 'Not reviewed' }}</span>
+                </div>
+                <div class="readiness-workflow__row">
+                  <span class="readiness-band" :class="`readiness-band--${student.band}`">
+                    {{ student.band_label }}
+                  </span>
+                  <select v-model="calibrationForm.state" class="form-input form-input--sm">
+                    <option value="confirmed">Confirmed</option>
+                    <option value="partly_confirmed">Partly confirmed</option>
+                    <option value="not_confirmed">Not confirmed</option>
+                    <option value="insufficient_context">Need more context</option>
+                  </select>
+                  <input
+                    v-model="calibrationForm.note"
+                    class="form-input form-input--sm readiness-workflow__note"
+                    type="text"
+                    placeholder="Why? (optional)"
+                    maxlength="2000"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn--secondary btn--sm"
+                    :disabled="calibrationSaving"
+                    @click="saveCalibration(student)"
+                  >
+                    {{ calibrationSaving ? 'Saving...' : 'Save review' }}
+                  </button>
+                </div>
+                <p v-if="calibrationReviewError" class="readiness-panel__provisional" role="alert">
+                  {{ calibrationReviewError }}
+                </p>
+                <div v-if="student.calibration_review" class="readiness-workflow__existing">
+                  <span>Reviewed {{ calibrationLabel(student.calibration_review.state) }}</span>
+                  <span>{{ formatDate(student.calibration_review.created_at) }}</span>
+                  <span v-if="student.calibration_review.reviewer_name">by {{ student.calibration_review.reviewer_name }}</span>
+                  <span
+                    v-if="student.calibration_review.reviewed_band !== student.band"
+                    class="follow-up-state follow-up-state--overdue"
+                  >
+                    Band changed since review
+                  </span>
+                  <span v-if="student.calibration_review.note">· {{ student.calibration_review.note }}</span>
+                </div>
+              </div>
+
               <div class="readiness-workflow">
                 <div class="readiness-workflow__head">
                   <h3>Support record</h3>
@@ -591,6 +639,19 @@
               <p v-if="!Object.keys(calibration.flag_counts).length" class="muted">No flags recorded.</p>
             </section>
             <section class="calibration-card">
+              <h3>Band reviews</h3>
+              <p v-for="(count, key) in calibration.calibration_counts" :key="key">
+                <span>{{ calibrationLabel(key) }}</span><strong>{{ count }}</strong>
+              </p>
+              <p v-if="!Object.keys(calibration.calibration_counts || {}).length" class="muted">No band reviews yet.</p>
+            </section>
+            <section class="calibration-card">
+              <h3>Review coverage</h3>
+              <p><span>Reviewed</span><strong>{{ calibration.reviewed || 0 }}</strong></p>
+              <p><span>Not reviewed</span><strong>{{ calibration.unreviewed || 0 }}</strong></p>
+              <p><span>Band changed after review</span><strong>{{ calibration.band_changed || 0 }}</strong></p>
+            </section>
+            <section class="calibration-card">
               <h3>Cases</h3>
               <p v-for="(count, key) in calibration.case_counts" :key="key">
                 <span>{{ key }}</span><strong>{{ count }}</strong>
@@ -632,6 +693,66 @@
               <p v-if="!Object.keys(calibration.lab_review_counts).length" class="muted">No lab reviews yet.</p>
             </section>
           </div>
+
+          <template v-if="Object.keys(calibration.calibration_band_counts || {}).length">
+            <h3 class="readiness-subhead">Agreement by reviewed band</h3>
+            <div class="table-wrapper">
+              <table class="data-table readiness-table">
+                <caption class="sr-only">Instructor judgement by reviewed band</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Reviewed band</th>
+                    <th v-for="state in calibrationColumns" :key="state" scope="col">
+                      {{ calibrationLabel(state) }}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(states, band) in calibration.calibration_band_counts" :key="band">
+                    <td>{{ bandLabel(band) }}</td>
+                    <td v-for="state in calibrationColumns" :key="state">
+                      {{ states[state] || 0 }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </template>
+
+          <template v-if="calibration.calibration_reviews?.length">
+            <h3 class="readiness-subhead">Recent calibration reviews</h3>
+            <div class="table-wrapper">
+              <table class="data-table readiness-table">
+                <caption class="sr-only">Recent instructor reviews of the provisional band</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Learner</th>
+                    <th scope="col">Reviewed band</th>
+                    <th scope="col">Current band</th>
+                    <th scope="col">Review</th>
+                    <th scope="col">Reviewer</th>
+                    <th scope="col">Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="review in calibration.calibration_reviews" :key="review.id">
+                    <td>
+                      <strong>{{ review.display_name }}</strong>
+                      <small>{{ review.username }}</small>
+                    </td>
+                    <td>{{ bandLabel(review.reviewed_band) }}</td>
+                    <td>
+                      {{ bandLabel(review.current_band) }}
+                      <span v-if="review.band_changed" class="follow-up-state follow-up-state--due">Changed</span>
+                    </td>
+                    <td>{{ calibrationLabel(review.state) }}</td>
+                    <td>{{ review.reviewer_name || '—' }}</td>
+                    <td>{{ formatDate(review.created_at) }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </template>
         </template>
       </div>
     </template>
@@ -674,6 +795,15 @@ const onlyMyCases = ref(false)
 const caseForm = ref({ owner_id: '', priority: 'normal', follow_up_date: '', note: '' })
 const caseSaving = ref(false)
 const caseError = ref('')
+const calibrationForm = ref({ state: 'confirmed', note: '' })
+const calibrationSaving = ref(false)
+const calibrationReviewError = ref('')
+const calibrationColumns = [
+  'confirmed',
+  'partly_confirmed',
+  'not_confirmed',
+  'insufficient_context',
+]
 
 function readCurrentUserId() {
   try {
@@ -795,6 +925,13 @@ const priorityLabel = (key) => ({
   high: 'High priority',
 }[key] || key)
 
+const calibrationLabel = (key) => ({
+  confirmed: 'Confirmed',
+  partly_confirmed: 'Partly confirmed',
+  not_confirmed: 'Not confirmed',
+  insufficient_context: 'Need more context',
+}[key] || key)
+
 const toDateInput = (value) => {
   if (!value) return ''
   const date = new Date(value)
@@ -852,6 +989,7 @@ async function toggleStudent(student) {
   }
   expandedStudent.value = student.user_id
   syncCaseForm(student)
+  syncCalibrationForm(student)
   capabilities.value = null
   capabilitiesFor.value = null
   capabilitiesError.value = ''
@@ -868,6 +1006,40 @@ function syncCaseForm(student) {
   }
 }
 
+function syncCalibrationForm(student) {
+  calibrationReviewError.value = ''
+  calibrationForm.value = {
+    state: student.calibration_review?.state || 'confirmed',
+    note: '',
+  }
+}
+
+async function saveCalibration(student) {
+  if (!props.courseId) return
+  calibrationSaving.value = true
+  calibrationReviewError.value = ''
+  try {
+    await axios.post(
+      `/analytics/courses/${props.courseId}/students/${student.user_id}/notes`,
+      {
+        kind: 'calibration',
+        key: 'cwrs',
+        state: calibrationForm.value.state,
+        band: student.band,
+        note: calibrationForm.value.note || null,
+      },
+    )
+    calibration.value = null
+    await fetchReadiness()
+    const refreshed = data.value?.students?.find((row) => row.user_id === student.user_id)
+    if (refreshed) syncCalibrationForm(refreshed)
+  } catch (e) {
+    calibrationReviewError.value = e.response?.data?.detail || 'Could not save the calibration review.'
+  } finally {
+    calibrationSaving.value = false
+  }
+}
+
 async function openStudentFromFollowUp(followUp) {
   activeView.value = 'queue'
   showAllStudents.value = true
@@ -875,6 +1047,7 @@ async function openStudentFromFollowUp(followUp) {
   if (!student) return
   expandedStudent.value = student.user_id
   syncCaseForm(student)
+  syncCalibrationForm(student)
   capabilities.value = null
   capabilitiesFor.value = null
   capabilitiesError.value = ''
@@ -1418,6 +1591,7 @@ watch(
 
 .readiness-workflow,
 .readiness-case,
+.readiness-calibration,
 .lab-review {
   padding: 0.7rem;
   border: 1px solid var(--border-color);
@@ -1427,6 +1601,16 @@ watch(
 
 .readiness-case {
   border-left: 3px solid var(--accent);
+}
+
+.readiness-calibration {
+  border-left: 3px solid var(--purple);
+}
+
+.readiness-subhead {
+  margin: 0.2rem 0 0;
+  color: var(--text-primary);
+  font-size: 0.84rem;
 }
 
 .readiness-followup-filter {

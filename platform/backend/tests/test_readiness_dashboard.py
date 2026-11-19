@@ -6,6 +6,7 @@ from types import SimpleNamespace
 from app.services.readiness_dashboard import (
     _band,
     _build_lab_health,
+    _calibration_payload,
     _case_payload,
     _confidence,
     _login_risk,
@@ -155,6 +156,21 @@ def test_case_payload_marks_overdue_and_due_soon():
     )
     assert closed["is_open"] is False
     assert closed["overdue"] is False
+
+
+def test_calibration_payload_reads_reviewed_band():
+    note = SimpleNamespace(
+        id=3,
+        key="cwrs:high_risk",
+        state="partly_confirmed",
+        note="Evidence mixed",
+        created_by_id=2,
+        created_at=datetime(2026, 11, 19, 12, tzinfo=timezone.utc),
+    )
+    payload = _calibration_payload(note, {2: "Dr Martinez"})
+    assert payload["reviewed_band"] == "high_risk"
+    assert payload["state"] == "partly_confirmed"
+    assert payload["reviewer_name"] == "Dr Martinez"
 
 
 def test_lab_health_distinguishes_no_data_and_degraded():

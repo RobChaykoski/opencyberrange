@@ -59,6 +59,15 @@ const readiness = {
         due_soon: false,
         note: 'Check in after the missed lab',
       },
+      calibration_review: {
+        id: 11,
+        state: 'partly_confirmed',
+        reviewed_band: 'high_risk',
+        note: 'Direction was right; severity was high.',
+        reviewer_id: 2,
+        reviewer_name: 'Dr Martinez',
+        created_at: '2026-11-19T09:00:00Z',
+      },
     },
   ],
   follow_ups: [
@@ -119,10 +128,49 @@ const readiness = {
   generated_at: '2026-11-19T00:00:00Z',
 }
 
+const calibrationResponse = {
+  course_id: 7,
+  students: 1,
+  band_counts: { high_risk: 1 },
+  flag_counts: { engagement: 1 },
+  context_counts: {},
+  flag_state_counts: {},
+  action_counts: { contacted: 1 },
+  outcome_counts: { resolved: 1 },
+  lab_review_counts: { open: 1 },
+  lab_health_counts: { degraded: 1, warning: 0, no_data: 0, healthy: 1 },
+  case_counts: { open: 1, closed: 0, unassigned: 0, overdue: 1, due_soon: 0 },
+  case_priority_counts: { high: 1 },
+  calibration_counts: { partly_confirmed: 1 },
+  calibration_band_counts: { high_risk: { partly_confirmed: 1 } },
+  calibration_reviews: [
+    {
+      id: 11,
+      user_id: 4,
+      username: 'avery',
+      display_name: 'Avery One',
+      current_band: 'high_risk',
+      current_band_label: 'High risk',
+      reviewed_band: 'high_risk',
+      state: 'partly_confirmed',
+      band_changed: false,
+      note: 'Direction was right; severity was high.',
+      reviewer_name: 'Dr Martinez',
+      created_at: '2026-11-19T09:00:00Z',
+    },
+  ],
+  reviewed: 1,
+  unreviewed: 0,
+  band_changed: 0,
+  notes: 3,
+  reviews: 1,
+}
+
 describe('InstructorReadinessPanel', () => {
   beforeEach(() => {
     get.mockReset()
     get.mockImplementation((url) => {
+      if (url.endsWith('/readiness/calibration')) return Promise.resolve({ data: calibrationResponse })
       if (url.endsWith('/readiness')) return Promise.resolve({ data: readiness })
       if (url.includes('/capabilities')) {
         return Promise.resolve({
@@ -158,6 +206,8 @@ describe('InstructorReadinessPanel', () => {
     expect(get).toHaveBeenCalledWith('/analytics/courses/7/students/4/capabilities')
     expect(wrapper.text()).toContain('Capability detail')
     expect(wrapper.text()).toContain('Network systems')
+    expect(wrapper.text()).toContain('Band calibration')
+    expect(wrapper.text()).toContain('Partly confirmed')
   })
 
   it('shows only unhealthy labs by default', async () => {
@@ -202,5 +252,25 @@ describe('InstructorReadinessPanel', () => {
 
     expect(wrapper.text()).toContain('Case ownership')
     expect(wrapper.text()).toContain('Check in after the missed lab')
+  })
+
+  it('shows calibration review evidence', async () => {
+    const wrapper = mount(InstructorReadinessPanel, {
+      props: {
+        courseId: 7,
+        courses: [{ id: 7, code: 'CYB101', name: 'Cyber Foundations' }],
+      },
+    })
+    await flushPromises()
+
+    const buttons = wrapper.findAll('.readiness-panel__tab')
+    await buttons[3].trigger('click')
+    await flushPromises()
+
+    expect(wrapper.text()).toContain('Band reviews')
+    expect(wrapper.text()).toContain('Partly confirmed')
+    expect(wrapper.text()).toContain('Agreement by reviewed band')
+    expect(wrapper.text()).toContain('Recent calibration reviews')
+    expect(wrapper.text()).toContain('Dr Martinez')
   })
 })

@@ -2,6 +2,16 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.22.0] - 2026-11-19
+
+### Readiness calibration outcomes
+
+- Added an instructor review of the provisional band: confirmed, partly confirmed, not confirmed, or needs more context.
+- Added calibration counts, review coverage, agreement by reviewed band, and a recent-review table.
+- Added a band-changed signal when the learner's band no longer matches the band that was reviewed.
+- Added `band` to the readiness note request and stored the reviewed band with the note.
+- Regenerated the API manual.
+
 ## [5.21.0] - 2026-11-19
 
 ### Readiness case ownership and follow-ups

@@ -1280,11 +1280,23 @@ async def course_overview(
 
 
 class ReadinessNoteRequest(BaseModel):
-    """A context flag, support action, flag state, or case update."""
+    """A context flag, support action, flag state, case update, or calibration review."""
 
-    kind: Literal["context", "flag_state", "action", "case"]
+    kind: Literal["context", "flag_state", "action", "case", "calibration"]
     key: str = Field(..., min_length=1, max_length=64)
-    state: Optional[Literal["dismissed", "snoozed", "acknowledged", "open", "closed"]] = None
+    state: Optional[
+        Literal[
+            "dismissed",
+            "snoozed",
+            "acknowledged",
+            "open",
+            "closed",
+            "confirmed",
+            "partly_confirmed",
+            "not_confirmed",
+            "insufficient_context",
+        ]
+    ] = None
     note: Optional[str] = Field(None, max_length=2000)
     outcome: Optional[str] = Field(None, max_length=500)
     start_at: Optional[datetime] = None
@@ -1292,6 +1304,9 @@ class ReadinessNoteRequest(BaseModel):
     follow_up_at: Optional[datetime] = None
     owner_id: Optional[int] = None
     priority: Optional[Literal["low", "normal", "high"]] = None
+    band: Optional[
+        Literal["critical_intervention", "high_risk", "elevated", "monitor", "healthy"]
+    ] = None
 
 
 class ReadinessLabReviewRequest(BaseModel):
@@ -1329,6 +1344,7 @@ async def course_readiness(
             "students": [],
             "follow_ups": [],
             "case_summary": {"open": 0, "unassigned": 0, "overdue": 0, "due_soon": 0, "closed": 0},
+            "calibration_reviews": [],
             "lab_health": {"counts": {}, "labs": []},
             "note": "No enrolled learners with evidence yet.",
         }
@@ -1402,6 +1418,21 @@ async def add_readiness_note(
             status_code=400,
             detail="A case update requires state open or closed.",
         )
+    if payload.kind == "calibration" and payload.state not in (
+        "confirmed",
+        "partly_confirmed",
+        "not_confirmed",
+        "insufficient_context",
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail="A calibration review requires confirmed, partly_confirmed, not_confirmed, or insufficient_context.",
+        )
+    if payload.kind == "calibration" and not payload.band:
+        raise HTTPException(
+            status_code=400,
+            detail="A calibration review requires the band that was reviewed.",
+        )
     owner_id = None
     if payload.owner_id is not None:
         owner = (
@@ -1420,7 +1451,7 @@ async def add_readiness_note(
         course_id=course.id,
         learner_id=user_id,
         kind=payload.kind,
-        key=payload.key.strip(),
+        key=f"cwrs:{payload.band}" if payload.kind == "calibration" else payload.key.strip(),
         state=payload.state,
         note=(payload.note or "").strip() or None,
         outcome=(payload.outcome or "").strip() or None,

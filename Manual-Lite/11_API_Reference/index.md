@@ -2517,9 +2517,9 @@ Record context, a support action, a flag state, or a case update.
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `kind` | `context` | `flag_state` | `action` | `case` | yes |  |
+| `kind` | `context` | `flag_state` | `action` | `case` | `calibration` | yes |  |
 | `key` | string | yes |  |
-| `state` | `dismissed` | `snoozed` | `acknowledged` | `open` | `closed` or null | no |  |
+| `state` | `dismissed` | `snoozed` | `acknowledged` | `open` | `closed` | `confirmed` | `partly_confirmed` | `not_confirmed` | `insufficient_context` or null | no |  |
 | `note` | string or null | no |  |
 | `outcome` | string or null | no |  |
 | `start_at` | string or null | no |  |
@@ -2527,6 +2527,7 @@ Record context, a support action, a flag state, or a case update.
 | `follow_up_at` | string or null | no |  |
 | `owner_id` | integer or null | no |  |
 | `priority` | `low` | `normal` | `high` or null | no |  |
+| `band` | `critical_intervention` | `high_risk` | `elevated` | `monitor` | `healthy` or null | no |  |
 
 **Responses**
 
