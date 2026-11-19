@@ -1,5 +1,7 @@
 """NICE Framework ingestion and mapping tests."""
 
+import pytest
+
 from app.models import LabNiceComponent
 from app.services import nice_framework
 
@@ -233,5 +235,29 @@ def test_mark_lab_reviewed_without_editing(db_session):
         db_session.query(LabNiceMetadata).filter(
             LabNiceMetadata.lab_id == lab.id
         ).delete()
+        db_session.delete(lab)
+        db_session.commit()
+
+
+def test_mark_lab_reviewed_requires_a_mapping(db_session):
+    from app.models import Lab
+
+    lab = Lab(
+        name="Review without mapping",
+        slug="review-without-mapping-test",
+        description="Negative review test",
+        compose_file="services: {}\n",
+        is_active=True,
+        visibility="public",
+        duration_minutes=60,
+        difficulty="intermediate",
+    )
+    db_session.add(lab)
+    db_session.commit()
+    db_session.refresh(lab)
+    try:
+        with pytest.raises(ValueError):
+            nice_framework.mark_lab_reviewed(db_session, lab_id=lab.id)
+    finally:
         db_session.delete(lab)
         db_session.commit()
