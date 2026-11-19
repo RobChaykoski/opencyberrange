@@ -10,12 +10,11 @@ another document disagrees, this page and the signed tag win.
 | Item | Value |
 |---|---|
 | Edition | **Community / Academic** (`lite` entitlement, single-host) |
-| Release | **5.19.0** |
-| Signed tag | **`v5.19.0`** |
-| Runtime code commit | `21d42407` (signed tag `v5.19.0`) |
-| Previous release | `5.18.0` (signed tag `v5.18.0` at `8b8aae72`) |
-| Post-release content update | `e9b2c602` (XSS/CSRF study page, Web track knowledge-check items, IoT reference map; no schema or runtime code change) |
-| Alembic revision | **`0041_tenant_rls_legacy`** |
+| Release | **5.20.0** |
+| Signed tag | **`v5.20.0`** |
+| Runtime code commit | `0db34282` (signed tag `v5.20.0`) |
+| Previous release | `5.19.0` (signed tag `v5.19.0` at `21d42407`) |
+| Alembic revision | **`0043_readiness_tenant_fix`** |
 | Development host | `172.16.16.44` |
 | Production host | `172.16.16.41` / `https://ctfd.swocts.com` |
 | Repository | `RobChaykoski/opencyberrange` (`main`) |
@@ -27,7 +26,8 @@ another document disagrees, this page and the signed tag win.
 | 5.17.7 backup | `~/backups/ocr-backup-20261117-035821.dump` |
 | 19 November deploy backup | `~/backups/ocr-backup-20261119-024418.dump` |
 | 5.19.0 backup | `~/backups/ocr-backup-20261119-034307.dump` |
-| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 19 November deploy, and 5.19.0) |
+| 5.20.0 backup | `~/backups/ocr-backup-20261119-042354.dump` |
+| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 19 November deploy, 5.19.0, and 5.20.0) |
 
 ## Production cutover: COMPLETE
 

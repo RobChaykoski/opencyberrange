@@ -1,13 +1,13 @@
 # Deployment status
 
-Generated: `2026-11-19T03:46:35+00:00`
+Generated: `2026-11-19T04:25:33+00:00`
 
 **Overall:** `healthy` - All deployments are up and on the expected version.
 
 | Environment | Role | URL | Up | API | Version | Expected | Users | Setup | Build asset | Response |
 |---|---|---|---:|---:|---|---|---:|---|---|---:|
-| OCR | production | https://ctfd.swocts.com | yes | yes | `5.19.0` | `5.19.0 (OCR production deployment)` | yes | yes | `index-BER7onKg.js` | 59 ms |
-| OCR dev | development | https://172.16.16.44 | yes | yes | `5.19.0` | `5.19.0 (OCR development deployment)` | yes | yes | `index-BER7onKg.js` | 49 ms |
+| OCR | production | https://ctfd.swocts.com | yes | yes | `5.20.0` | `5.20.0 (OCR production deployment)` | yes | yes | `index-T3Nt-JH6.js` | 87 ms |
+| OCR dev | development | https://172.16.16.44 | yes | yes | `5.20.0` | `5.20.0 (OCR development deployment)` | yes | yes | `index-T3Nt-JH6.js` | 28 ms |
 
 Checks use public endpoints only: `/api/version`, `/api/setup/status`, and `/`.
 No login, learner records, secrets, or private data are read.
