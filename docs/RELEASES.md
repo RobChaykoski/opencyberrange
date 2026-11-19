@@ -7,7 +7,8 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.24.2` | SWOCTS Cyber Range Release 5.24.2 | Current patch release (signed annotated tag): idempotent `0044` readiness migration for the production `0043 -> 0045` jump |
+| `v5.25.0` | SWOCTS Cyber Range Release 5.25.0 | Current feature release (signed annotated tag): report access policy, privacy labels, small-cell suppression, and network engineering curriculum scaffold |
+| `v5.24.2` | SWOCTS Cyber Range Release 5.24.2 | Previous patch release (signed annotated tag): idempotent `0044` readiness migration for the production `0043 -> 0045` jump |
 | `v5.24.1` | SWOCTS Cyber Range Release 5.24.1 | Previous patch release (signed annotated tag): idempotent `0045` NICE migration for startup-created tables |
 | `v5.24.0` | SWOCTS Cyber Range Release 5.24.0 | Previous feature release (signed annotated tag): NICE Framework v2.2.0 ingestion, validated lab mapping picker, and IAM/VM/SOC/platform curriculum scaffolds |
 | `v5.23.0` | SWOCTS Cyber Range Release 5.23.0 | Previous feature release (signed annotated tag): live SWOCTS Hub community calendar and feed hardening |
@@ -69,6 +70,18 @@ represent. It exists because the history contains several naming eras.
 `v5.14.0` and later releases are signed with the current release key
 `68A817762C831475F00DB54E775050A4C4921814`. The public key is
 `docs/release-signing-key.asc`.
+
+## Release 5.25.0 tag record
+
+| Item | Value |
+|---|---|
+| Tag | `v5.25.0` (signed annotated tag) |
+| Commit | `3f20f5b7` |
+| Signature | **Good**, key `68A817762C831475F00DB54E775050A4C4921814` |
+| Released | 19 November 2026 |
+| GitHub release | https://github.com/RobChaykoski/opencyberrange/releases/tag/v5.25.0 |
+| CI | CI, Quality checks, CodeQL, Trivy, and OpenSSF Scorecard passed |
+| Deployed | Dev and production both on `5.25.0`, Alembic `0045_nice_framework` |
 
 ## Release 5.24.2 tag record
 
@@ -220,7 +233,7 @@ that feed Cyber DNA are Release 5.
 
 ## Choosing a version
 
-1. Use `main` or the latest `v5.x` tag (currently `v5.24.2`) for new installs.
+1. Use `main` or the latest `v5.x` tag (currently `v5.25.0`) for new installs.
 2. Keep `1.1.x` only for an existing Community / Academic maintenance install.
 3. Do not deploy a `v2.2.x`, `v2.3.x`, or `v3.x` tag as the current platform.
 4. Check `docs/SUPPORTED-VERSIONS.md` before changing a dependency or host OS.
