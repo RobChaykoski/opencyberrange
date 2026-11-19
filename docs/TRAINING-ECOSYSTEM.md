@@ -127,7 +127,9 @@ bash scripts/ecosystem_seed/seed_ocr.sh
 It creates the `OCR-CAP-COHORT` course, enrolls `student01`..`student08`,
 assigns `mentor01`, `ta01`, and `instructor01`, and assigns three labs:
 failed-login analysis, identity lifecycle, and firewall policy hardening. It
-refuses to run when the backend reports a production environment.
+also creates `OCR-CAP-SINGLE` without mentor or TA staff so cross-course scope
+denial can be tested. It refuses to run when the backend reports a production
+environment.
 
 ## Capstone shapes
 

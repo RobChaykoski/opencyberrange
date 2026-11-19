@@ -79,6 +79,14 @@ Checked against the seeded `OCR-CAP-COHORT` course on 19 November 2026:
 This confirms the role boundaries without exposing real data. Re-run the same
 checks after a seed or policy change.
 
+Cross-course scope is checked with a second course that is not assigned to the
+mentor or teaching assistant:
+
+| Course | `student01` | `mentor01` | `ta01` | `instructor01` |
+|---|---:|---:|---:|---:|
+| `OCR-CAP-COHORT` | 403 | 200 | 200 | 200 |
+| `OCR-CAP-SINGLE` | 403 | 403 | 403 | 200 |
+
 ## Acceptance checks
 
 - Moodle login page responds and shows the three training courses.

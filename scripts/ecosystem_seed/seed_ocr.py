@@ -169,8 +169,66 @@ def main() -> None:
                 )
             )
 
+        # A second course that is deliberately not assigned to the mentor or the
+        # teaching assistant. It proves cross-course scope denial.
+        single = session.query(Course).filter(Course.code == "OCR-CAP-SINGLE").first()
+        if single is None:
+            now = datetime.now(timezone.utc)
+            single = Course(
+                name="Capstone: Single-Student Security Operations",
+                code="OCR-CAP-SINGLE",
+                semester="2026F",
+                description=(
+                    "Synthetic single-student capstone. Not assigned to the "
+                    "cohort mentor or teaching assistant."
+                ),
+                invite_code="OCRTRAIN26S",
+                instructor_id=instructor.id,
+                institution_id="default",
+                start_date=now,
+                end_date=now + timedelta(days=120),
+                is_active=True,
+                cohort_strict=False,
+            )
+            session.add(single)
+            session.flush()
+        for student in students[:4]:
+            exists = (
+                session.query(CourseEnrollment)
+                .filter(
+                    CourseEnrollment.course_id == single.id,
+                    CourseEnrollment.user_id == student.id,
+                )
+                .first()
+            )
+            if exists is None:
+                session.add(
+                    CourseEnrollment(
+                        course_id=single.id,
+                        user_id=student.id,
+                        institution_id="default",
+                    )
+                )
+        single_lab = (
+            session.query(Lab)
+            .filter(Lab.slug == "linux-1-1-ssh-service-detection")
+            .first()
+        )
+        session.query(CourseLabAssignment).filter(
+            CourseLabAssignment.course_id == single.id
+        ).delete()
+        if single_lab is not None:
+            session.add(
+                CourseLabAssignment(
+                    course_id=single.id,
+                    lab_id=single_lab.id,
+                    sort_order=0,
+                )
+            )
+
         session.commit()
         print(f"Seeded OCR dev course {course.code} (id={course.id}).")
+        print(f"Seeded OCR dev course {single.code} (id={single.id}) without mentor/TA staff.")
         print("Enrolled students:", ", ".join(user.username for user in students))
         print("Staff: mentor01 (mentor), ta01 (teaching_assistant), instructor01 (co_instructor)")
         print("Assigned labs:", ", ".join(lab.slug for lab in labs))
