@@ -1280,16 +1280,18 @@ async def course_overview(
 
 
 class ReadinessNoteRequest(BaseModel):
-    """A context flag, support action, or flag acknowledgement."""
+    """A context flag, support action, flag state, or case update."""
 
-    kind: Literal["context", "flag_state", "action"]
+    kind: Literal["context", "flag_state", "action", "case"]
     key: str = Field(..., min_length=1, max_length=64)
-    state: Optional[Literal["dismissed", "snoozed", "acknowledged"]] = None
+    state: Optional[Literal["dismissed", "snoozed", "acknowledged", "open", "closed"]] = None
     note: Optional[str] = Field(None, max_length=2000)
     outcome: Optional[str] = Field(None, max_length=500)
     start_at: Optional[datetime] = None
     end_at: Optional[datetime] = None
     follow_up_at: Optional[datetime] = None
+    owner_id: Optional[int] = None
+    priority: Optional[Literal["low", "normal", "high"]] = None
 
 
 class ReadinessLabReviewRequest(BaseModel):
@@ -1325,6 +1327,8 @@ async def course_readiness(
                 "band_counts": {},
             },
             "students": [],
+            "follow_ups": [],
+            "case_summary": {"open": 0, "unassigned": 0, "overdue": 0, "due_soon": 0, "closed": 0},
             "lab_health": {"counts": {}, "labs": []},
             "note": "No enrolled learners with evidence yet.",
         }
@@ -1364,6 +1368,8 @@ def _readiness_note_payload(note: ReadinessStudentNote) -> dict:
         "start_at": note.start_at.isoformat() if note.start_at else None,
         "end_at": note.end_at.isoformat() if note.end_at else None,
         "follow_up_at": note.follow_up_at.isoformat() if note.follow_up_at else None,
+        "owner_id": note.owner_id,
+        "priority": note.priority,
         "created_by_id": note.created_by_id,
         "created_at": note.created_at.isoformat() if note.created_at else None,
     }
@@ -1377,13 +1383,38 @@ async def add_readiness_note(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_instructor_user),
 ):
-    """Record context, a support action, or a flag state for one learner."""
+    """Record context, a support action, a flag state, or a case update."""
     course = _course_or_403(db, course_id, current_user)
     _labs, user_ids, _completions, _sessions = _course_context(db, course)
     if user_id not in user_ids:
         raise HTTPException(status_code=404, detail="Learner not found in this course")
-    if payload.kind == "flag_state" and not payload.state:
-        raise HTTPException(status_code=400, detail="A flag state requires dismissed, snoozed, or acknowledged.")
+    if payload.kind == "flag_state" and payload.state not in (
+        "dismissed",
+        "snoozed",
+        "acknowledged",
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail="A flag state requires dismissed, snoozed, or acknowledged.",
+        )
+    if payload.kind == "case" and payload.state not in ("open", "closed"):
+        raise HTTPException(
+            status_code=400,
+            detail="A case update requires state open or closed.",
+        )
+    owner_id = None
+    if payload.owner_id is not None:
+        owner = (
+            db.query(User)
+            .filter(User.id == payload.owner_id, User.is_active.is_(True))
+            .first()
+        )
+        if owner is None or owner.role not in ("instructor", "admin"):
+            raise HTTPException(
+                status_code=400,
+                detail="The case owner must be an active instructor or administrator.",
+            )
+        owner_id = owner.id
     note = ReadinessStudentNote(
         institution_id=course.institution_id,
         course_id=course.id,
@@ -1396,6 +1427,8 @@ async def add_readiness_note(
         start_at=payload.start_at,
         end_at=payload.end_at,
         follow_up_at=payload.follow_up_at,
+        owner_id=owner_id if payload.kind == "case" else None,
+        priority=payload.priority if payload.kind == "case" else None,
         created_by_id=current_user.id,
     )
     db.add(note)

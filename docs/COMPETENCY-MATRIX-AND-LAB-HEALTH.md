@@ -1,6 +1,6 @@
 # Competency matrix and lab health dashboard
 
-Status: **pilot implementation** (19 November 2026). The instructor dashboard now exposes the support queue, lab health, on-demand capability detail, a support-record workflow, and lab-health review history. Release 5.20.0 adds context flags, support actions with outcomes, flag states, and a calibration view. Full validation remains. Builds on the existing
+Status: **pilot implementation** (19 November 2026). The instructor dashboard now exposes the support queue, lab health, on-demand capability detail, a support-record workflow, lab-health review history, and case follow-ups. Release 5.20.0 adds context flags, support actions with outcomes, flag states, and a calibration view. Release 5.21.0 adds case ownership, priority, overdue and due-soon follow-ups, and a Follow-ups view. Full validation remains. Builds on the existing
 [competency framework](COMPETENCY-FRAMEWORK.md),
 [instructor analytics](INSTRUCTOR-ANALYTICS.md), and
 [role readiness](ROLE-READINESS-SCORING.md).
@@ -255,6 +255,15 @@ Do not duplicate the competency taxonomy or the evidence ledger.
 4. Fix or annotate the lab.
 5. Recheck after the next cohort or the next 20 attempts.
 6. Keep the review history so the same issue is not rediscovered each term.
+
+For learner support, the same loop applies:
+
+1. Open a case from the support queue when a learner needs a human check-in.
+2. Assign an owner, a priority, and the next follow-up date.
+3. Record the action and its outcome in the append-only support record.
+4. Work the **Follow-ups** view; overdue and due-soon cases are prompts, not
+   compliance failures.
+5. Close the case when the support loop is complete.
 
 Never ask instructors to troubleshoot by email. The dashboard is the shared
 record.

@@ -2,8 +2,8 @@
 
 Operational commands for the two deployed environments.
 
-**Current release:** `5.20.0` (signed tag `v5.20.0`, Alembic
-`0043_readiness_tenant_fix`). The admin **System → Health → Release status**
+**Current release:** `5.21.0` (signed tag `v5.21.0`, Alembic
+`0044_readiness_case_owner`). The admin **System → Health → Release status**
 panel compares the installed version with the latest GitHub release or tag.
 The authoritative deployment state, including whether cutover has run, is in
 [`PRODUCTION-DEPLOYMENT-STATEMENT.md`](PRODUCTION-DEPLOYMENT-STATEMENT.md).

@@ -47,7 +47,6 @@ from app.models import (
     LabSession,
     LearnerSnapshot,
     QuizAttempt,
-    ReadinessLabReview,
     ReadinessStudentNote,
     RevokedToken,
     SsoLoginTicket,
@@ -104,6 +103,9 @@ _OPTIONAL_USER_REFERENCES: tuple[tuple[str, str, str], ...] = (
     ("llmr_defense_configs", "submitted_by", "null"),
     ("soc_exercise_attempts", "user_id", "delete"),
     ("soc_exercise_flags", "user_id", "delete"),
+    ("readiness_student_notes", "owner_id", "null"),
+    ("readiness_student_notes", "created_by_id", "null"),
+    ("readiness_lab_reviews", "owner_id", "null"),
 )
 
 
@@ -377,8 +379,6 @@ def erase_user(
         (Lab, Lab.created_by),
         (ExerciseTemplate, ExerciseTemplate.created_by),
         (Competition, Competition.created_by),
-        (ReadinessStudentNote, ReadinessStudentNote.created_by_id),
-        (ReadinessLabReview, ReadinessLabReview.owner_id),
     ):
         count = _null_where(db, model, column, user_id)
         if count:

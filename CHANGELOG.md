@@ -2,6 +2,16 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.21.0] - 2026-11-19
+
+### Readiness case ownership and follow-ups
+
+- Added an open/closed case per learner with an owner, priority, and next follow-up date.
+- Added a Follow-ups view with overdue, due-soon, unassigned, and closed counts.
+- Added case summaries to the calibration view.
+- Preserved support records when an instructor account is erased; author and owner links are nulled instead.
+- Added migration `0044_readiness_case_owner`.
+
 ## [5.20.0] - 2026-11-19
 
 ### Readiness calibration workflow

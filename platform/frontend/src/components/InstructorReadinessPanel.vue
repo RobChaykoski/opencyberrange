@@ -67,6 +67,19 @@
           <span>{{ data.cohort.students }}</span>
         </button>
         <button
+          id="readiness-tab-followups"
+          type="button"
+          role="tab"
+          class="readiness-panel__tab"
+          :class="{ 'readiness-panel__tab--active': activeView === 'followups' }"
+          :aria-selected="activeView === 'followups'"
+          aria-controls="readiness-panel-followups"
+          @click="activeView = 'followups'"
+        >
+          Follow-ups
+          <span>{{ data.case_summary?.open || 0 }} open</span>
+        </button>
+        <button
           id="readiness-tab-labs"
           type="button"
           role="tab"
@@ -183,6 +196,69 @@
                 <span v-if="student.provisional" class="readiness-panel__provisional">Provisional evidence</span>
               </div>
 
+              <div class="readiness-case">
+                <div class="readiness-workflow__head">
+                  <h3>Case ownership</h3>
+                  <span>{{ student.case?.is_open ? 'Open case' : 'No open case' }}</span>
+                </div>
+                <div class="readiness-workflow__row">
+                  <select v-model="caseForm.owner_id" class="form-input form-input--sm">
+                    <option value="">Unassigned</option>
+                    <option :value="String(currentUserId)">Me</option>
+                    <option
+                      v-if="student.case?.owner_id && student.case.owner_id !== currentUserId"
+                      :value="String(student.case.owner_id)"
+                    >
+                      {{ student.case.owner_name || 'Current owner' }}
+                    </option>
+                  </select>
+                  <select v-model="caseForm.priority" class="form-input form-input--sm">
+                    <option value="low">Low priority</option>
+                    <option value="normal">Normal priority</option>
+                    <option value="high">High priority</option>
+                  </select>
+                  <input
+                    v-model="caseForm.follow_up_date"
+                    class="form-input form-input--sm"
+                    type="date"
+                    aria-label="Next follow-up date"
+                  />
+                  <input
+                    v-model="caseForm.note"
+                    class="form-input form-input--sm readiness-workflow__note"
+                    type="text"
+                    placeholder="Case note (optional)"
+                    maxlength="2000"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn--secondary btn--sm"
+                    :disabled="caseSaving"
+                    @click="saveCase(student, 'open')"
+                  >
+                    {{ caseSaving ? 'Saving...' : 'Assign' }}
+                  </button>
+                  <button
+                    v-if="student.case?.is_open"
+                    type="button"
+                    class="btn btn--secondary btn--sm"
+                    :disabled="caseSaving"
+                    @click="saveCase(student, 'closed')"
+                  >
+                    Close case
+                  </button>
+                </div>
+                <p v-if="caseError" class="readiness-panel__provisional" role="alert">{{ caseError }}</p>
+                <div v-if="student.case" class="readiness-workflow__existing">
+                  <span>{{ student.case.owner_name || 'Unassigned' }}</span>
+                  <span>{{ priorityLabel(student.case.priority) }}</span>
+                  <span v-if="student.case.follow_up_at">Check-in {{ formatDate(student.case.follow_up_at) }}</span>
+                  <span v-if="student.case.overdue" class="follow-up-state follow-up-state--overdue">Overdue</span>
+                  <span v-else-if="student.case.due_soon" class="follow-up-state follow-up-state--due">Due soon</span>
+                  <span v-if="student.case.note">· {{ student.case.note }}</span>
+                </div>
+              </div>
+
               <div class="readiness-workflow">
                 <div class="readiness-workflow__head">
                   <h3>Support record</h3>
@@ -284,6 +360,84 @@
           >
             {{ showAllStudents ? 'Show top 5' : `Show all ${data.students.length} learners` }}
           </button>
+        </div>
+      </div>
+
+      <div
+        v-else-if="activeView === 'followups'"
+        id="readiness-panel-followups"
+        role="tabpanel"
+        aria-labelledby="readiness-tab-followups"
+        class="readiness-panel__view"
+      >
+        <div class="readiness-panel__bands">
+          <span class="readiness-band readiness-band--critical_intervention">
+            <strong>{{ data.case_summary?.overdue || 0 }}</strong> overdue
+          </span>
+          <span class="readiness-band readiness-band--high_risk">
+            <strong>{{ data.case_summary?.due_soon || 0 }}</strong> due in 7 days
+          </span>
+          <span class="readiness-band readiness-band--monitor">
+            <strong>{{ data.case_summary?.unassigned || 0 }}</strong> unassigned
+          </span>
+          <span class="readiness-band readiness-band--healthy">
+            <strong>{{ data.case_summary?.closed || 0 }}</strong> closed
+          </span>
+        </div>
+
+        <p class="readiness-panel__meta">
+          Open cases with an owner and a next check-in. Overdue follow-ups are
+          support prompts, not compliance failures.
+        </p>
+
+        <label class="readiness-followup-filter">
+          <input v-model="onlyMyCases" type="checkbox" />
+          Only my cases
+        </label>
+
+        <div v-if="!visibleFollowUps.length" class="readiness-panel__empty">
+          {{ onlyMyCases ? 'No open cases assigned to you.' : 'No open follow-ups. Assign a case from the support queue to start one.' }}
+        </div>
+
+        <div v-else class="table-wrapper">
+          <table class="data-table readiness-table">
+            <caption class="sr-only">Open readiness follow-ups for the selected course</caption>
+            <thead>
+              <tr>
+                <th scope="col">Learner</th>
+                <th scope="col">Priority</th>
+                <th scope="col">Owner</th>
+                <th scope="col">Next check-in</th>
+                <th scope="col">Status</th>
+                <th scope="col">Open</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="followUp in visibleFollowUps" :key="followUp.user_id">
+                <td>
+                  <strong>{{ followUp.display_name }}</strong>
+                  <small>{{ followUp.username }} · CWRS {{ followUp.cwrs }} · {{ followUp.band_label }}</small>
+                </td>
+                <td>
+                  <span class="case-priority" :class="`case-priority--${followUp.priority}`">
+                    {{ priorityLabel(followUp.priority) }}
+                  </span>
+                </td>
+                <td>{{ followUp.owner_name || 'Unassigned' }}</td>
+                <td>{{ formatDate(followUp.follow_up_at) }}</td>
+                <td>
+                  <span v-if="followUp.overdue" class="follow-up-state follow-up-state--overdue">Overdue</span>
+                  <span v-else-if="followUp.due_soon" class="follow-up-state follow-up-state--due">Due soon</span>
+                  <span v-else class="follow-up-state">Scheduled</span>
+                </td>
+                <td>
+                  <button type="button" class="btn btn--secondary btn--xs" @click="openStudentFromFollowUp(followUp)">
+                    Open case
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -437,6 +591,19 @@
               <p v-if="!Object.keys(calibration.flag_counts).length" class="muted">No flags recorded.</p>
             </section>
             <section class="calibration-card">
+              <h3>Cases</h3>
+              <p v-for="(count, key) in calibration.case_counts" :key="key">
+                <span>{{ key }}</span><strong>{{ count }}</strong>
+              </p>
+            </section>
+            <section class="calibration-card">
+              <h3>Open case priority</h3>
+              <p v-for="(count, key) in calibration.case_priority_counts" :key="key">
+                <span>{{ priorityLabel(key) }}</span><strong>{{ count }}</strong>
+              </p>
+              <p v-if="!Object.keys(calibration.case_priority_counts).length" class="muted">No open cases.</p>
+            </section>
+            <section class="calibration-card">
               <h3>Support actions</h3>
               <p v-for="(count, key) in calibration.action_counts" :key="key">
                 <span>{{ actionLabel(key) }}</span><strong>{{ count }}</strong>
@@ -503,6 +670,21 @@ const reviewLab = ref(null)
 const labReview = ref({ status: 'warning', finding: '', action: '', outcome: '' })
 const labReviewSaving = ref(false)
 const labReviewError = ref('')
+const onlyMyCases = ref(false)
+const caseForm = ref({ owner_id: '', priority: 'normal', follow_up_date: '', note: '' })
+const caseSaving = ref(false)
+const caseError = ref('')
+
+function readCurrentUserId() {
+  try {
+    const user = JSON.parse(localStorage.getItem('user') || '{}')
+    return Number(user.id) || null
+  } catch {
+    return null
+  }
+}
+
+const currentUserId = readCurrentUserId()
 
 const expandedStudentData = computed(
   () => data.value?.students?.find((student) => student.user_id === expandedStudent.value) || null,
@@ -555,6 +737,13 @@ const visibleStudents = computed(() => {
     : data.value.students.slice(0, defaultVisible)
 })
 
+const visibleFollowUps = computed(() => {
+  const rows = data.value?.follow_ups || []
+  if (!onlyMyCases.value) return rows
+  if (!currentUserId) return []
+  return rows.filter((row) => row.owner_id === currentUserId)
+})
+
 const visibleLabs = computed(() => {
   if (!data.value) return []
   const labs = data.value.lab_health.labs || []
@@ -599,6 +788,20 @@ const actionLabel = (key) => ({
   lab_reset: 'Lab reset',
   referral: 'Referral',
 }[key] || key)
+
+const priorityLabel = (key) => ({
+  low: 'Low priority',
+  normal: 'Normal priority',
+  high: 'High priority',
+}[key] || key)
+
+const toDateInput = (value) => {
+  if (!value) return ''
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return ''
+  const offset = date.getTimezoneOffset() * 60000
+  return new Date(date.getTime() - offset).toISOString().slice(0, 10)
+}
 
 const bandLabel = (key) => ({
   critical_intervention: 'Critical intervention',
@@ -648,10 +851,67 @@ async function toggleStudent(student) {
     return
   }
   expandedStudent.value = student.user_id
+  syncCaseForm(student)
   capabilities.value = null
   capabilitiesFor.value = null
   capabilitiesError.value = ''
   await loadCapabilities(student.user_id)
+}
+
+function syncCaseForm(student) {
+  caseError.value = ''
+  caseForm.value = {
+    owner_id: student.case?.owner_id ? String(student.case.owner_id) : '',
+    priority: student.case?.priority || 'normal',
+    follow_up_date: toDateInput(student.case?.follow_up_at),
+    note: '',
+  }
+}
+
+async function openStudentFromFollowUp(followUp) {
+  activeView.value = 'queue'
+  showAllStudents.value = true
+  const student = data.value?.students?.find((row) => row.user_id === followUp.user_id)
+  if (!student) return
+  expandedStudent.value = student.user_id
+  syncCaseForm(student)
+  capabilities.value = null
+  capabilitiesFor.value = null
+  capabilitiesError.value = ''
+  await loadCapabilities(student.user_id)
+}
+
+async function saveCase(student, state) {
+  if (!props.courseId) return
+  caseSaving.value = true
+  caseError.value = ''
+  try {
+    const body = {
+      kind: 'case',
+      key: 'ownership',
+      state,
+      priority: caseForm.value.priority,
+      note: caseForm.value.note || null,
+    }
+    if (caseForm.value.owner_id) {
+      body.owner_id = Number(caseForm.value.owner_id)
+    }
+    if (state === 'open' && caseForm.value.follow_up_date) {
+      body.follow_up_at = new Date(`${caseForm.value.follow_up_date}T12:00:00`).toISOString()
+    }
+    await axios.post(
+      `/analytics/courses/${props.courseId}/students/${student.user_id}/notes`,
+      body,
+    )
+    calibration.value = null
+    await fetchReadiness()
+    const refreshed = data.value?.students?.find((row) => row.user_id === student.user_id)
+    if (refreshed) syncCaseForm(refreshed)
+  } catch (e) {
+    caseError.value = e.response?.data?.detail || 'Could not save the case.'
+  } finally {
+    caseSaving.value = false
+  }
 }
 
 async function loadCapabilities(userId) {
@@ -756,6 +1016,7 @@ watch(
   () => {
     showAllStudents.value = false
     showHealthy.value = false
+    onlyMyCases.value = false
     expandedStudent.value = null
     capabilities.value = null
     capabilitiesFor.value = null
@@ -1156,11 +1417,55 @@ watch(
 }
 
 .readiness-workflow,
+.readiness-case,
 .lab-review {
   padding: 0.7rem;
   border: 1px solid var(--border-color);
   border-radius: 8px;
   background: var(--bg-secondary);
+}
+
+.readiness-case {
+  border-left: 3px solid var(--accent);
+}
+
+.readiness-followup-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--text-secondary);
+  font-size: 0.74rem;
+}
+
+.case-priority,
+.follow-up-state {
+  display: inline-block;
+  padding: 0.1rem 0.45rem;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  color: var(--text-secondary);
+  font-size: 0.66rem;
+  font-weight: 600;
+}
+
+.case-priority--high,
+.follow-up-state--overdue {
+  border-color: var(--danger);
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.case-priority--normal,
+.follow-up-state--due {
+  border-color: var(--warning);
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.case-priority--low {
+  border-color: var(--border-color);
+  background: var(--bg-tertiary);
+  color: var(--text-muted);
 }
 
 .readiness-workflow__head {

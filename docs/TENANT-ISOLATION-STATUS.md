@@ -12,8 +12,8 @@ Enterprise operation remains deferred past Release 5.
 ## Enforced with tenant columns, derivation triggers, and forced RLS
 
 `platform/backend/app/services/tenant_rls.py`, applied by migrations
-`0041_tenant_rls_legacy`, `0042_readiness_workflow`, and
-`0043_readiness_tenant_fix`, and at startup:
+`0041_tenant_rls_legacy`, `0042_readiness_workflow`,
+`0043_readiness_tenant_fix`, and `0044_readiness_case_owner`, and at startup:
 
 **Original set (0035)**
 

@@ -2500,7 +2500,7 @@ Capability detail for one enrolled learner in the actor's course.
 
 **Add Readiness Note**
 
-Record context, a support action, or a flag state for one learner.
+Record context, a support action, a flag state, or a case update.
 
 **Authentication:** OAuth2PasswordBearer
 
@@ -2517,14 +2517,16 @@ Record context, a support action, or a flag state for one learner.
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `kind` | `context` | `flag_state` | `action` | yes |  |
+| `kind` | `context` | `flag_state` | `action` | `case` | yes |  |
 | `key` | string | yes |  |
-| `state` | `dismissed` | `snoozed` | `acknowledged` or null | no |  |
+| `state` | `dismissed` | `snoozed` | `acknowledged` | `open` | `closed` or null | no |  |
 | `note` | string or null | no |  |
 | `outcome` | string or null | no |  |
 | `start_at` | string or null | no |  |
 | `end_at` | string or null | no |  |
 | `follow_up_at` | string or null | no |  |
+| `owner_id` | integer or null | no |  |
+| `priority` | `low` | `normal` | `high` or null | no |  |
 
 **Responses**
 

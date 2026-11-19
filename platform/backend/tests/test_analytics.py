@@ -874,3 +874,65 @@ def test_readiness_notes_calibration_and_lab_review(client, analytics_data):
     assert review.status_code == 200, review.text
     assert review.json()["finding"] == "Hints high"
 
+
+def test_readiness_case_ownership_and_follow_up(client, analytics_data):
+    headers = _login(client, analytics_data["instructor"])
+    course_id = analytics_data["course"].id
+    student_id = analytics_data["student_one"].id
+    instructor_id = analytics_data["instructor"].id
+    overdue = (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()
+
+    assigned = client.post(
+        f"/api/analytics/courses/{course_id}/students/{student_id}/notes",
+        headers=headers,
+        json={
+            "kind": "case",
+            "key": "ownership",
+            "state": "open",
+            "owner_id": instructor_id,
+            "priority": "high",
+            "follow_up_at": overdue,
+            "note": "Check in after the missed lab",
+        },
+    )
+    assert assigned.status_code == 200, assigned.text
+    assert assigned.json()["owner_id"] == instructor_id
+
+    readiness = client.get(
+        f"/api/analytics/courses/{course_id}/readiness",
+        headers=headers,
+    )
+    assert readiness.status_code == 200, readiness.text
+    body = readiness.json()
+    student = next(row for row in body["students"] if row["user_id"] == student_id)
+    assert student["case"]["is_open"] is True
+    assert student["case"]["owner_name"]
+    assert student["case"]["overdue"] is True
+    assert body["case_summary"]["open"] >= 1
+    assert any(row["user_id"] == student_id for row in body["follow_ups"])
+
+    calibration = client.get(
+        f"/api/analytics/courses/{course_id}/readiness/calibration",
+        headers=headers,
+    )
+    assert calibration.status_code == 200, calibration.text
+    assert calibration.json()["case_counts"]["open"] == 1
+    assert calibration.json()["case_counts"]["overdue"] == 1
+
+    closed = client.post(
+        f"/api/analytics/courses/{course_id}/students/{student_id}/notes",
+        headers=headers,
+        json={"kind": "case", "key": "ownership", "state": "closed", "outcome": "resolved"},
+    )
+    assert closed.status_code == 200, closed.text
+
+    readiness = client.get(
+        f"/api/analytics/courses/{course_id}/readiness",
+        headers=headers,
+    )
+    body = readiness.json()
+    student = next(row for row in body["students"] if row["user_id"] == student_id)
+    assert student["case"]["is_open"] is False
+    assert not any(row["user_id"] == student_id for row in body["follow_ups"])
+    assert body["case_summary"]["closed"] == 1
+

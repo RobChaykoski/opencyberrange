@@ -1,6 +1,6 @@
 # Cyber Workforce Risk Score (CWRS)
 
-Status: **pilot implementation** (19 November 2026). The instructor support queue uses a provisional CWRS. Release 5.20.0 adds context flags, support actions with outcomes, flag acknowledge/snooze/dismiss, and calibration evidence. Offline calibration against instructor-confirmed cases and the full rubric remain. This is the canonical formula for the
+Status: **pilot implementation** (19 November 2026). The instructor support queue uses a provisional CWRS. Release 5.20.0 adds context flags, support actions with outcomes, flag acknowledge/snooze/dismiss, and calibration evidence. Release 5.21.0 adds case ownership, priority, and a follow-up view. Offline calibration against instructor-confirmed cases and the full rubric remain. This is the canonical formula for the
 [student risk engine](STUDENT-RISK-ENGINE.md). It replaces the earlier ad-hoc
 weights and bands.
 
@@ -324,6 +324,10 @@ Rules:
 - The case records the action, owner, outcome, and follow-up date.
 - A dismissed alert is feedback, not a failure.
 
+Release 5.20.0 implements context flags, support actions with outcomes, and
+flag states. Release 5.21.0 adds case ownership, priority, and the follow-up
+view. Alerts, cooldowns, and automated recommendations remain future work.
+
 Recommended action library:
 
 - guided retry of the prerequisite lab;
@@ -391,6 +395,12 @@ with a three-score blend in one calculation.
 | `cwrs_overrides` | Snapshot, instructor, old band, new band, reason, created_at |
 | `cwrs_actions` | Flag, instructor, action, note, outcome, created_at |
 | `lab_health_incidents` | Platform incident window, lab, scope, excluded from infrastructure risk |
+
+The pilot implementation stores context, actions, flag states, and case
+ownership in `readiness_student_notes`, and lab reviews in
+`readiness_lab_reviews`. The case is the latest `case` note for a learner in a
+course: `open` or `closed`, with an optional owner, priority, and follow-up
+date. Earlier notes remain as history.
 
 ## 17. Governance and fairness
 

@@ -46,8 +46,39 @@ const readiness = {
       last_activity: '2026-11-18T08:00:00Z',
       days_since_activity: 12,
       provisional: true,
+      case: {
+        id: 9,
+        state: 'open',
+        status: 'open',
+        is_open: true,
+        owner_id: 2,
+        owner_name: 'Dr Martinez',
+        priority: 'high',
+        follow_up_at: '2026-11-18T12:00:00Z',
+        overdue: true,
+        due_soon: false,
+        note: 'Check in after the missed lab',
+      },
     },
   ],
+  follow_ups: [
+    {
+      user_id: 4,
+      username: 'avery',
+      display_name: 'Avery One',
+      cwrs: 76,
+      band: 'high_risk',
+      band_label: 'High risk',
+      owner_id: 2,
+      owner_name: 'Dr Martinez',
+      priority: 'high',
+      follow_up_at: '2026-11-18T12:00:00Z',
+      overdue: true,
+      due_soon: false,
+      note: 'Check in after the missed lab',
+    },
+  ],
+  case_summary: { open: 1, unassigned: 0, overdue: 1, due_soon: 0, closed: 0 },
   lab_health: {
     counts: { degraded: 1, warning: 0, no_data: 0, healthy: 1 },
     labs: [
@@ -139,10 +170,37 @@ describe('InstructorReadinessPanel', () => {
     await flushPromises()
 
     const buttons = wrapper.findAll('.readiness-panel__tab')
-    await buttons[1].trigger('click')
+    await buttons[2].trigger('click')
 
     expect(wrapper.text()).toContain('OAuth Attack')
     expect(wrapper.text()).not.toContain('Sentinel Intro')
     expect(wrapper.text()).toContain('Show healthy labs')
+  })
+
+  it('lists overdue follow-ups and opens the learner case', async () => {
+    const wrapper = mount(InstructorReadinessPanel, {
+      props: {
+        courseId: 7,
+        courses: [{ id: 7, code: 'CYB101', name: 'Cyber Foundations' }],
+      },
+    })
+    await flushPromises()
+
+    const buttons = wrapper.findAll('.readiness-panel__tab')
+    await buttons[1].trigger('click')
+
+    expect(wrapper.text()).toContain('Avery One')
+    expect(wrapper.text()).toContain('Dr Martinez')
+    expect(wrapper.text()).toContain('Overdue')
+
+    await wrapper.get('.readiness-followup-filter input').setValue(true)
+    expect(wrapper.text()).toContain('No open cases assigned to you.')
+
+    await wrapper.get('.readiness-followup-filter input').setValue(false)
+    await wrapper.get('.readiness-table tbody button').trigger('click')
+    await flushPromises()
+
+    expect(wrapper.text()).toContain('Case ownership')
+    expect(wrapper.text()).toContain('Check in after the missed lab')
   })
 })

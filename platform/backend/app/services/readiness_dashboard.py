@@ -26,6 +26,8 @@ from app.models import (
 from app.services.competency_radar import build_individual_radar
 
 CWRS_FORMULA_VERSION = "cwrs-pilot-2026.1"
+CASE_DUE_WINDOW = timedelta(days=7)
+CASE_PRIORITIES = ("low", "normal", "high")
 CWRS_WEIGHTS = {
     "performance": 0.35,
     "engagement": 0.20,
@@ -165,6 +167,38 @@ def _note_payload(note: ReadinessStudentNote) -> dict:
         "start_at": _as_aware(note.start_at).isoformat() if note.start_at else None,
         "end_at": _as_aware(note.end_at).isoformat() if note.end_at else None,
         "follow_up_at": _as_aware(note.follow_up_at).isoformat() if note.follow_up_at else None,
+        "owner_id": note.owner_id,
+        "priority": note.priority,
+        "created_by_id": note.created_by_id,
+        "created_at": _as_aware(note.created_at).isoformat() if note.created_at else None,
+    }
+
+
+def _case_payload(
+    note: ReadinessStudentNote,
+    owner_names: dict[int, str],
+    now: datetime,
+) -> dict:
+    """Current case state from the latest ``case`` note."""
+    due = _as_aware(note.follow_up_at)
+    is_open = (note.state or "open") == "open"
+    return {
+        "id": note.id,
+        "state": note.state or "open",
+        "status": note.state or "open",
+        "is_open": is_open,
+        "owner_id": note.owner_id,
+        "owner_name": owner_names.get(note.owner_id),
+        "priority": note.priority or "normal",
+        "follow_up_at": due.isoformat() if due else None,
+        "overdue": bool(is_open and due is not None and due < now),
+        "due_soon": bool(
+            is_open
+            and due is not None
+            and now <= due <= now + CASE_DUE_WINDOW
+        ),
+        "note": note.note,
+        "outcome": note.outcome,
         "created_by_id": note.created_by_id,
         "created_at": _as_aware(note.created_at).isoformat() if note.created_at else None,
     }
@@ -183,12 +217,22 @@ def build_course_readiness(
     notes = (
         db.query(ReadinessStudentNote)
         .filter(ReadinessStudentNote.course_id == course_id)
-        .order_by(ReadinessStudentNote.created_at.desc())
+        .order_by(ReadinessStudentNote.created_at.desc(), ReadinessStudentNote.id.desc())
         .all()
     )
     notes_by_user: dict[int, list[ReadinessStudentNote]] = defaultdict(list)
     for note in notes:
         notes_by_user[note.learner_id].append(note)
+
+    owner_ids = {note.owner_id for note in notes if note.owner_id}
+    owner_names = (
+        {
+            row.id: (row.display_name or row.username)
+            for row in db.query(User).filter(User.id.in_(owner_ids)).all()
+        }
+        if owner_ids
+        else {}
+    )
 
     reviews = (
         db.query(ReadinessLabReview)
@@ -348,8 +392,11 @@ def build_course_readiness(
         context_flags = []
         flag_states = {}
         actions = []
+        case = None
         for note in student_notes:
-            if note.kind == "context":
+            if note.kind == "case" and case is None:
+                case = _case_payload(note, owner_names, now)
+            elif note.kind == "context":
                 starts = _as_aware(note.start_at)
                 ends = _as_aware(note.end_at)
                 if (starts is None or starts <= now) and (ends is None or ends >= now):
@@ -387,10 +434,52 @@ def build_course_readiness(
                 "flag_states": flag_states,
                 "actions": actions,
                 "last_action": actions[0] if actions else None,
+                "case": case,
             }
         )
 
     students.sort(key=lambda row: (-row["cwrs"], row["display_name"]))
+
+    follow_ups = []
+    for student in students:
+        case = student.get("case")
+        if not case or not case["is_open"]:
+            continue
+        follow_ups.append(
+            {
+                "user_id": student["user_id"],
+                "username": student["username"],
+                "display_name": student["display_name"],
+                "cwrs": student["cwrs"],
+                "band": student["band"],
+                "band_label": student["band_label"],
+                "owner_id": case["owner_id"],
+                "owner_name": case["owner_name"],
+                "priority": case["priority"],
+                "follow_up_at": case["follow_up_at"],
+                "overdue": case["overdue"],
+                "due_soon": case["due_soon"],
+                "note": case["note"],
+            }
+        )
+    follow_ups.sort(
+        key=lambda row: (
+            row["follow_up_at"] is None,
+            row["follow_up_at"] or "",
+            -row["cwrs"],
+        )
+    )
+    case_summary = {
+        "open": len(follow_ups),
+        "unassigned": sum(1 for row in follow_ups if not row["owner_id"]),
+        "overdue": sum(1 for row in follow_ups if row["overdue"]),
+        "due_soon": sum(1 for row in follow_ups if row["due_soon"]),
+        "closed": sum(
+            1
+            for student in students
+            if student.get("case") and not student["case"]["is_open"]
+        ),
+    }
 
     lab_health = _build_lab_health(labs, completions, sessions, reviews_by_lab)
     band_counts = {key: 0 for _minimum, key, _label in BANDS}
@@ -411,6 +500,8 @@ def build_course_readiness(
             "band_counts": band_counts,
         },
         "students": students,
+        "follow_ups": follow_ups,
+        "case_summary": case_summary,
         "lab_health": lab_health,
         "generated_at": now.isoformat(),
     }
@@ -529,6 +620,23 @@ def build_calibration_summary(db: Session, *, course_id: int, students: list[dic
     review_counts: dict[str, int] = defaultdict(int)
     for review in reviews:
         review_counts[review.outcome or "open"] += 1
+    case_counts = {"open": 0, "closed": 0, "unassigned": 0, "overdue": 0, "due_soon": 0}
+    case_priority_counts: dict[str, int] = defaultdict(int)
+    for student in students:
+        case = student.get("case")
+        if not case:
+            continue
+        if case["is_open"]:
+            case_counts["open"] += 1
+            if not case["owner_id"]:
+                case_counts["unassigned"] += 1
+            if case["overdue"]:
+                case_counts["overdue"] += 1
+            if case["due_soon"]:
+                case_counts["due_soon"] += 1
+            case_priority_counts[case["priority"]] += 1
+        else:
+            case_counts["closed"] += 1
     return {
         "course_id": course_id,
         "students": len(students),
@@ -543,6 +651,8 @@ def build_calibration_summary(db: Session, *, course_id: int, students: list[dic
         "outcome_counts": dict(sorted(outcome_counts.items())),
         "lab_review_counts": dict(sorted(review_counts.items())),
         "lab_health_counts": lab_health.get("counts", {}),
+        "case_counts": case_counts,
+        "case_priority_counts": dict(sorted(case_priority_counts.items())),
         "notes": len(notes),
         "reviews": len(reviews),
     }

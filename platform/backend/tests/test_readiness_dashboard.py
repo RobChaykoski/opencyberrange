@@ -1,10 +1,12 @@
 """Pure unit checks for the pilot readiness formulas."""
 
+from datetime import datetime, timedelta, timezone
 from types import SimpleNamespace
 
 from app.services.readiness_dashboard import (
     _band,
     _build_lab_health,
+    _case_payload,
     _confidence,
     _login_risk,
     _performance_risk,
@@ -110,6 +112,49 @@ def _completion(user_id: int, lab_id: int):
         hints_used=0,
         time_spent_minutes=30,
     )
+
+
+def _case_note(*, state: str, follow_up_at: datetime | None):
+    return SimpleNamespace(
+        id=1,
+        state=state,
+        owner_id=7,
+        priority="high",
+        follow_up_at=follow_up_at,
+        note="Case note",
+        outcome=None,
+        created_by_id=2,
+        created_at=datetime(2026, 11, 19, 12, tzinfo=timezone.utc),
+    )
+
+
+def test_case_payload_marks_overdue_and_due_soon():
+    now = datetime(2026, 11, 19, 12, tzinfo=timezone.utc)
+    overdue = _case_payload(
+        _case_note(state="open", follow_up_at=now - timedelta(days=1)),
+        {7: "Ada Instructor"},
+        now,
+    )
+    assert overdue["is_open"] is True
+    assert overdue["owner_name"] == "Ada Instructor"
+    assert overdue["overdue"] is True
+    assert overdue["due_soon"] is False
+
+    due_soon = _case_payload(
+        _case_note(state="open", follow_up_at=now + timedelta(days=2)),
+        {7: "Ada Instructor"},
+        now,
+    )
+    assert due_soon["overdue"] is False
+    assert due_soon["due_soon"] is True
+
+    closed = _case_payload(
+        _case_note(state="closed", follow_up_at=now - timedelta(days=1)),
+        {7: "Ada Instructor"},
+        now,
+    )
+    assert closed["is_open"] is False
+    assert closed["overdue"] is False
 
 
 def test_lab_health_distinguishes_no_data_and_degraded():
