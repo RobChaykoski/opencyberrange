@@ -698,6 +698,12 @@
                 </div>
                 <button
                   class="btn btn--secondary btn--sm"
+                  @click="reviewNiceLab(item)"
+                >
+                  Open
+                </button>
+                <button
+                  class="btn btn--secondary btn--sm"
                   :disabled="niceReviewBusy === item.lab_id"
                   @click="markNiceReviewed(item)"
                 >
@@ -9788,6 +9794,11 @@ const markNiceReviewed = async (item) => {
   } finally {
     niceReviewBusy.value = null
   }
+}
+
+const reviewNiceLab = (item) => {
+  const lab = labs.value.find((entry) => entry.id === item?.lab_id)
+  if (lab) openLabEditModal(lab)
 }
 
 const loadRetention = async (courseId) => {
