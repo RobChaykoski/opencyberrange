@@ -3,6 +3,19 @@
 This runbook uses the dev-only training stack in `deploy/ecosystem-test`. It is
 for synthetic exercises only. Read `docs/TRAINING-ECOSYSTEM.md` first.
 
+## One-time setup
+
+On the development host:
+
+```bash
+bash scripts/ecosystem_seed/seed_all.sh
+bash scripts/ecosystem_seed/seed_ocr.sh
+```
+
+The first command seeds Moodle, Authentik, and NetBox. The second creates the
+matching `OCR-CAP-COHORT` course in the dev range, enrols the fake students, and
+assigns the mentor, teaching assistant, and co-instructor.
+
 ## Single-student capstone
 
 **Goal:** one learner completes an investigation and defends it.

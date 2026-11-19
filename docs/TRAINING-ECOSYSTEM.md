@@ -113,6 +113,18 @@ Default fake password is `TrainLab!2026#Student`; override with
 NetBox seed creates a synthetic tenant, site, manufacturers, device types, roles,
 five devices, and three training prefixes.
 
+OpenCyberRange dev seed:
+
+```bash
+# run on the development host
+bash scripts/ecosystem_seed/seed_ocr.sh
+```
+
+It creates the `OCR-CAP-COHORT` course, enrolls `student01`..`student08`,
+assigns `mentor01`, `ta01`, and `instructor01`, and assigns three labs:
+failed-login analysis, identity lifecycle, and firewall policy hardening. It
+refuses to run when the backend reports a production environment.
+
 ## Capstone shapes
 
 See `docs/TRAINING-CAPSTONES.md` for the single-student and cohort runbooks and
