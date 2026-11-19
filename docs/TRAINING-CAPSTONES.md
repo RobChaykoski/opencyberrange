@@ -90,6 +90,8 @@ mentor or teaching assistant:
 ## Acceptance checks
 
 - Moodle login page responds and shows the three training courses.
+- The `OpenCyberRange capstone lab` LTI activity launches through the OIDC flow
+  and returns the OCR ticket callback.
 - Capstone brief pages are present in both capstone courses.
 - Authentik shows the `ocr-*` groups and the fake users.
 - NetBox shows the `Training (synthetic)` tenant, five devices, and three
