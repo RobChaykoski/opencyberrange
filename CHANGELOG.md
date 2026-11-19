@@ -2,6 +2,27 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.27.0] - 2026-11-19
+
+### NICE lab coverage and manual navigation
+
+- Added provisional NICE v2.2.0 mappings for all 210 repository labs, generated from competency and category policy.
+- Added `lab_nice_metadata` for review status, provenance, confidence, and reviewer.
+- Added `GET /api/nice/coverage`, the provisional review queue, and `POST /api/nice/labs/seed`.
+- Added NICE coverage status and a seed action to Admin > Exercises.
+- Rebuilt the user manual with the full manual stylesheet and fixed the navigation rail/TOC scrolling and accent border at the page bottom.
+- Added NAPALM, Open vSwitch, Mininet, Cilium/Hubble, Calico, Istio, self-hosted GitLab CI, SonarQube, OWASP Dependency-Check, and ScanCode Toolkit to the planned network and platform tracks.
+- Added Nikto web-server scanning, OWASP ZAP web scanning, Lynis host hardening, and Fail2Ban host defense to the vulnerability-management and SOC tracks.
+
+### Ecosystem tooling and dev-only training stack
+
+- Added `docs/ECOSYSTEM-TOOLING-MAP.md` and the `ecosystem-tooling-and-reporting` skill, copied into OpenGRC, OpenDetectionEngine, and OpenEMR.
+- Added project integration notes for OpenGRC, OpenDetectionEngine/OpenDLP, and OpenEMR/DRButler.
+- Added `deploy/ecosystem-test/`, a dev-only compose stack with Moodle, Authentik, NetBox, Ralph, and Fleet, all bound to loopback by default.
+- Added fake-data seeders for Moodle courses, cohorts, staff, and learners and for a synthetic NetBox inventory.
+- Added a validator that refuses to run when `OCR_ENV` is production or prod, and documented the training ecosystem in `docs/TRAINING-ECOSYSTEM.md`.
+- The training stack never receives production credentials, identity providers, or records.
+
 ## [5.26.0] - 2026-11-19
 
 ### Course staff and governance dashboards
@@ -13,7 +34,7 @@ All notable changes to OpenCyberRange are recorded here.
 - Governance views are role-restricted and audited with `GOVERNANCE_VIEWED`.
 - Added a `/governance` route and sidebar entry for privacy officers, auditors, institution administrators, and administrators.
 - Added course-staff management to Admin > Courses > Manage.
-- Extended the planned network and platform tracks with NAPALM automation, Oxidized configuration backup, Open vSwitch and Mininet virtual networks, Cilium eBPF networking, security, and Hubble observability, Calico network policy and eBPF comparison, and Istio service mesh.
+- Extended the planned network and platform tracks with NAPALM automation, Oxidized configuration backup, Open vSwitch and Mininet virtual networks, Cilium eBPF networking, security, and Hubble observability, Calico network policy and eBPF comparison, Istio service mesh, self-hosted GitLab CI, and a SonarQube quality gate.
 
 ## [5.25.0] - 2026-11-19
 

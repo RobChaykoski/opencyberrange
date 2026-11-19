@@ -1,0 +1,3 @@
+# Test-stack local state and lab-only secrets.
+.env
+openiam/

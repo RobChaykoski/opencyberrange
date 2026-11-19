@@ -728,12 +728,12 @@ tracks:
         recommended_next: VM03
         status: planned
       - id: VM03
-        directory: CH_VM03_Nessus_Concepts_Comparison
-        display_name: "Nessus Concepts and Scan Comparison"
+        directory: CH_VM03_Nessus_Nikto_ZAP
+        display_name: "Nessus Concepts and Web Scanning with Nikto and OWASP ZAP"
         difficulty: "intermediate"
         prerequisites: [VM02]
-        exercises: 3
-        estimated_minutes: 360
+        exercises: 5
+        estimated_minutes: 600
         recommended_next: VM04
         status: planned
       - id: VM04
@@ -764,10 +764,19 @@ tracks:
         recommended_next: VM07
         status: planned
       - id: VM07
-        directory: CH_VM07_VM_Capstone
+        directory: CH_VM07_Lynis_Host_Hardening
+        display_name: "Host Hardening with Lynis"
+        difficulty: "intermediate"
+        prerequisites: [VM01, VM05]
+        exercises: 4
+        estimated_minutes: 480
+        recommended_next: VM08
+        status: planned
+      - id: VM08
+        directory: CH_VM08_VM_Capstone
         display_name: "Vulnerability Management Capstone"
         difficulty: "advanced"
-        prerequisites: [VM05, VM06]
+        prerequisites: [VM05, VM06, VM07]
         exercises: 2
         estimated_minutes: 360
         recommended_next: SOC01
@@ -815,7 +824,7 @@ tracks:
         status: planned
       - id: SOC04
         directory: CH_SOC04_Wazuh_Endpoint_Detection
-        display_name: "Endpoint Detection with Wazuh"
+        display_name: "Endpoint and Vulnerability Detection with Wazuh"
         difficulty: "intermediate"
         prerequisites: [SOC01]
         exercises: 5
@@ -841,10 +850,19 @@ tracks:
         recommended_next: SOC07
         status: planned
       - id: SOC07
-        directory: CH_SOC07_Security_Onion_Capstone
+        directory: CH_SOC07_Fail2Ban_Host_Defense
+        display_name: "Host Defense with Fail2Ban"
+        difficulty: "intermediate"
+        prerequisites: [SOC01]
+        exercises: 4
+        estimated_minutes: 480
+        recommended_next: SOC08
+        status: planned
+      - id: SOC08
+        directory: CH_SOC08_Security_Onion_Capstone
         display_name: "Security Onion Capstone"
         difficulty: "advanced"
-        prerequisites: [SOC03, SOC05, SOC06]
+        prerequisites: [SOC03, SOC05, SOC06, SOC07]
         exercises: 3
         estimated_minutes: 480
         recommended_next: FOR01
@@ -883,11 +901,11 @@ tracks:
         status: planned
       - id: PLAT03
         directory: CH_PLAT03_GitHub_Actions_CI
-        display_name: "CI/CD with GitHub Actions"
+        display_name: "CI/CD with GitHub Actions, GitLab, SonarQube, and Dependency-Check"
         difficulty: "intermediate"
         prerequisites: [PLAT01]
-        exercises: 5
-        estimated_minutes: 600
+        exercises: 6
+        estimated_minutes: 720
         recommended_next: PLAT04
         status: planned
       - id: PLAT04

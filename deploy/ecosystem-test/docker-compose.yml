@@ -1,0 +1,250 @@
+# Dev-only ecosystem test stack.
+#
+# Never deploy this on the production host. It exists to test Moodle, identity,
+# asset inventory, and endpoint management against disposable dev data.
+#
+#   cd deploy/ecosystem-test
+#   cp .env.example .env
+#   docker compose up -d                 # Moodle only
+#   docker compose --profile sso up -d   # + Authentik
+#   docker compose --profile assets up -d # + NetBox and Ralph
+#   docker compose --profile endpoint up -d # + Fleet
+#   bash ../../scripts/validate-ecosystem-test.sh
+
+services:
+  moodle-db:
+    image: bitnamilegacy/mariadb:latest
+    restart: unless-stopped
+    environment:
+      ALLOW_EMPTY_PASSWORD: "no"
+      MARIADB_ROOT_PASSWORD: ${MOODLE_DB_ROOT_PASSWORD}
+      MARIADB_DATABASE: bitnami_moodle
+      MARIADB_USER: bn_moodle
+      MARIADB_PASSWORD: ${MOODLE_DB_PASSWORD}
+      MARIADB_CHARACTER_SET: utf8mb4
+      MARIADB_COLLATE: utf8mb4_unicode_ci
+    volumes:
+      - moodle_db_data:/bitnami/mariadb
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p${MOODLE_DB_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  moodle:
+    image: bitnamilegacy/moodle:latest
+    restart: unless-stopped
+    depends_on:
+      moodle-db:
+        condition: service_healthy
+    environment:
+      ALLOW_EMPTY_PASSWORD: "no"
+      MOODLE_DATABASE_HOST: moodle-db
+      MOODLE_DATABASE_PORT_NUMBER: 3306
+      MOODLE_DATABASE_NAME: bitnami_moodle
+      MOODLE_DATABASE_USER: bn_moodle
+      MOODLE_DATABASE_PASSWORD: ${MOODLE_DB_PASSWORD}
+      MOODLE_USERNAME: ${MOODLE_ADMIN_USER}
+      MOODLE_PASSWORD: ${MOODLE_ADMIN_PASSWORD}
+      MOODLE_EMAIL: ${MOODLE_ADMIN_EMAIL}
+      MOODLE_SITE_URL: ${MOODLE_SITE_URL}
+      MOODLE_SKIP_BOOTSTRAP: "no"
+    ports:
+      - "${MOODLE_BIND:-127.0.0.1}:${MOODLE_PORT:-8091}:8080"
+    volumes:
+      - moodle_data:/bitnami/moodle
+      - moodledata_data:/bitnami/moodledata
+      - ../../scripts/ecosystem_seed:/seed:ro
+
+  authentik-postgresql:
+    image: postgres:16-alpine
+    profiles: ["sso"]
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: authentik
+      POSTGRES_USER: authentik
+      POSTGRES_PASSWORD: ${AUTHENTIK_DB_PASSWORD}
+    volumes:
+      - authentik_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U authentik -d authentik"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  authentik-redis:
+    image: redis:7-alpine
+    profiles: ["sso"]
+    restart: unless-stopped
+
+  authentik-server:
+    image: ghcr.io/goauthentik/server:${AUTHENTIK_VERSION:-2026.8.5}
+    profiles: ["sso"]
+    command: server
+    restart: unless-stopped
+    depends_on:
+      authentik-postgresql:
+        condition: service_healthy
+      authentik-redis:
+        condition: service_started
+    environment:
+      AUTHENTIK_REDIS__HOST: authentik-redis
+      AUTHENTIK_POSTGRESQL__HOST: authentik-postgresql
+      AUTHENTIK_POSTGRESQL__USER: authentik
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${AUTHENTIK_DB_PASSWORD}
+      AUTHENTIK_POSTGRESQL__NAME: authentik
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY}
+      AUTHENTIK_ERROR_REPORTING__ENABLED: "false"
+    ports:
+      - "${AUTHENTIK_BIND:-127.0.0.1}:${AUTHENTIK_PORT:-9000}:9000"
+
+  authentik-worker:
+    image: ghcr.io/goauthentik/server:${AUTHENTIK_VERSION:-2026.8.5}
+    profiles: ["sso"]
+    command: worker
+    restart: unless-stopped
+    depends_on:
+      authentik-postgresql:
+        condition: service_healthy
+      authentik-redis:
+        condition: service_started
+    environment:
+      AUTHENTIK_REDIS__HOST: authentik-redis
+      AUTHENTIK_POSTGRESQL__HOST: authentik-postgresql
+      AUTHENTIK_POSTGRESQL__USER: authentik
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${AUTHENTIK_DB_PASSWORD}
+      AUTHENTIK_POSTGRESQL__NAME: authentik
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY}
+      AUTHENTIK_ERROR_REPORTING__ENABLED: "false"
+
+  netbox-postgres:
+    image: postgres:16-alpine
+    profiles: ["assets"]
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: netbox
+      POSTGRES_USER: netbox
+      POSTGRES_PASSWORD: ${NETBOX_DB_PASSWORD}
+    volumes:
+      - netbox_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U netbox -d netbox"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  netbox-redis:
+    image: redis:7-alpine
+    profiles: ["assets"]
+    restart: unless-stopped
+
+  netbox:
+    image: netboxcommunity/netbox:latest
+    profiles: ["assets"]
+    restart: unless-stopped
+    depends_on:
+      netbox-postgres:
+        condition: service_healthy
+      netbox-redis:
+        condition: service_started
+    environment:
+      DB_HOST: netbox-postgres
+      DB_NAME: netbox
+      DB_USER: netbox
+      DB_PASSWORD: ${NETBOX_DB_PASSWORD}
+      REDIS_HOST: netbox-redis
+      SECRET_KEY: ${NETBOX_SECRET_KEY}
+      ALLOWED_HOSTS: "*"
+      SUPERUSER_EMAIL: ${NETBOX_ADMIN_EMAIL}
+      SUPERUSER_PASSWORD: ${NETBOX_ADMIN_PASSWORD}
+    ports:
+      - "${NETBOX_BIND:-127.0.0.1}:${NETBOX_PORT:-8083}:8080"
+
+  ralph-db:
+    image: mysql:8.4
+    profiles: ["assets"]
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ralph
+      MYSQL_USER: ralph
+      MYSQL_PASSWORD: ${RALPH_DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${RALPH_DB_ROOT_PASSWORD}
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
+    volumes:
+      - ralph_db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p${RALPH_DB_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  ralph:
+    image: allegro/ralph:latest
+    profiles: ["assets"]
+    restart: unless-stopped
+    depends_on:
+      ralph-db:
+        condition: service_healthy
+    environment:
+      DATABASE_ENGINE: django.db.backends.mysql
+      DATABASE_HOST: ralph-db
+      DATABASE_PORT: "3306"
+      DATABASE_NAME: ralph
+      DATABASE_USER: ralph
+      DATABASE_PASSWORD: ${RALPH_DB_PASSWORD}
+      SECRET_KEY: ${RALPH_SECRET_KEY}
+      ALLOWED_HOSTS: "*"
+    ports:
+      - "${RALPH_BIND:-127.0.0.1}:${RALPH_PORT:-8084}:8000"
+
+  fleet-mysql:
+    image: mysql:8.4
+    profiles: ["endpoint"]
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: fleet
+      MYSQL_USER: fleet
+      MYSQL_PASSWORD: ${FLEET_DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${FLEET_DB_ROOT_PASSWORD}
+    volumes:
+      - fleet_db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p${FLEET_DB_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  fleet-redis:
+    image: redis:7-alpine
+    profiles: ["endpoint"]
+    restart: unless-stopped
+
+  fleet:
+    image: fleetdm/fleet:latest
+    profiles: ["endpoint"]
+    restart: unless-stopped
+    depends_on:
+      fleet-mysql:
+        condition: service_healthy
+      fleet-redis:
+        condition: service_started
+    environment:
+      FLEET_MYSQL_ADDRESS: fleet-mysql:3306
+      FLEET_MYSQL_DATABASE: fleet
+      FLEET_MYSQL_USERNAME: fleet
+      FLEET_MYSQL_PASSWORD: ${FLEET_DB_PASSWORD}
+      FLEET_REDIS_ADDRESS: fleet-redis:6379
+      FLEET_SERVER_TLS: "false"
+      FLEET_SERVER_ADDRESS: 0.0.0.0:8080
+      FLEET_LOGGING_JSON: "false"
+    ports:
+      - "${FLEET_BIND:-127.0.0.1}:${FLEET_PORT:-8082}:8080"
+
+volumes:
+  moodle_db_data:
+  moodle_data:
+  moodledata_data:
+  authentik_db_data:
+  netbox_db_data:
+  ralph_db_data:
+  fleet_db_data:

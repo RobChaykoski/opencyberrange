@@ -63,6 +63,26 @@ POST /api/nice/refresh
 If the network is unavailable, use `{"source": "snapshot"}`. A failed refresh
 returns a useful error and leaves the existing version in place.
 
+## Existing lab coverage
+
+The repository includes `platform/backend/app/data/nice/lab-mappings.yaml`, a
+provisional mapping for all 210 labs. It is generated from each lab's competency
+keys and category:
+
+```bash
+python scripts/generate-nice-lab-mappings.py
+python scripts/generate-nice-lab-mappings.py --check
+```
+
+The mapping is deliberately labelled `provisional`. It only fills labs with no
+mapping, and a manual save in the exercise editor marks that lab `reviewed`.
+`GET /api/nice/coverage` returns mapped/unmapped totals and the review queue;
+`POST /api/nice/labs/seed` fills empty labs from the seed file.
+
+Do not present a provisional mapping as reviewed curriculum evidence. The review
+queue exists so a curriculum owner can confirm the work roles, tasks, and KSATs
+against the actual lab.
+
 ## Mapping rule
 
 Every new lab should select:

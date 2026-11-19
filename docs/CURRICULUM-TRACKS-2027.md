@@ -61,41 +61,48 @@ access certification, and separation of duties.
 
 - `VM01` Asset Inventory and Exposure
 - `VM02` Authenticated Scanning with OpenVAS
-- `VM03` Nessus Concepts and Scan Comparison
+- `VM03` Nessus Concepts and Web Scanning with Nikto and OWASP ZAP
 - `VM04` Risk Scoring and Prioritisation
 - `VM05` Patch Validation
 - `VM06` Exceptions and Remediation Workflow
-- `VM07` Vulnerability Management Capstone
+- `VM07` Host Hardening with Lynis
+- `VM08` Vulnerability Management Capstone
 
 NICE v2.2.0 alignment: `PD-WRL-007`, `PD-WRL-004`, `IO-WRL-006`,
 `PD-WRL-001`.
 
 Nessus stays conceptual and comparison-based unless the institution supplies a
-licence. OpenVAS/Greenbone is the runnable scanner. Risk scoring uses CVSS plus
-EPSS and CISA KEV, but the lab asks for an owner, a business context, and a
-decision, not a bare score.
+licence. OpenVAS/Greenbone is the runnable scanner. Nikto covers web-server
+scanning and finding triage. OWASP ZAP covers baseline and authenticated web
+scans, alert triage, and evidence suitable for a remediation ticket. Lynis
+covers host hardening and audit evidence.
+Risk scoring uses CVSS plus EPSS and CISA KEV, but the lab asks for an owner, a
+business context, and a decision, not a bare score.
 
 ## Security Operations (`soc`)
 
 - `SOC01` Telemetry Foundations
 - `SOC02` Network Detection with Suricata
 - `SOC03` Network Metadata and Hunting with Zeek
-- `SOC04` Endpoint Detection with Wazuh
+- `SOC04` Endpoint and Vulnerability Detection with Wazuh
 - `SOC05` Alert Triage and Case Management
 - `SOC06` Detection as Code
-- `SOC07` Security Onion Capstone
+- `SOC07` Host Defense with Fail2Ban
+- `SOC08` Security Onion Capstone
 
 NICE v2.2.0 alignment: `PD-WRL-001`, `PD-WRL-003`, `PD-WRL-006`,
 `PD-WRL-002`.
 
 Security Onion is the heaviest target. Keep it as an optional capstone profile
-so a small host can still run the earlier chapters.
+so a small host can still run the earlier chapters. Wazuh covers agent
+enrolment, decoders and rules, vulnerability detection, file-integrity
+monitoring, and active response.
 
 ## Platform Engineering (`platform`)
 
 - `PLAT01` Docker and Container Security
 - `PLAT02` Kubernetes Fundamentals and Hardening
-- `PLAT03` CI/CD with GitHub Actions
+- `PLAT03` CI/CD with GitHub Actions, GitLab, SonarQube, and Dependency-Check
 - `PLAT04` Terraform and Infrastructure as Code
 - `PLAT05` Ansible and Configuration Management
 - `PLAT06` Cilium eBPF Networking, Security, and Hubble
@@ -107,7 +114,13 @@ NICE v2.2.0 alignment: `DD-WRL-003`, `DD-WRL-004`, `DD-WRL-005`,
 `IO-WRL-005`, `DD-WRL-001`.
 
 GitHub Actions labs use a local workflow fixture and a fake registry; they do
-not require a live GitHub organisation. Kubernetes labs use a single-node
+not require a live GitHub organisation. GitLab CI labs use a self-hosted GitLab
+container and a Docker runner, installed with the official Docker instructions.
+SonarQube is used as a quality gate: project onboarding, scanner configuration,
+coverage import, and a reviewed quality profile. OWASP Dependency-Check covers
+software composition analysis, suppression files, and a fail-build policy for
+known vulnerable dependencies. ScanCode Toolkit covers licence and component
+scanning for the SBOM and third-party notices. Kubernetes labs use a single-node
 cluster with a strict resource budget. Cilium is used for eBPF network policy,
 service identity, flow observability, and the Hubble UI. Calico is used for
 network policy, IPAM, and the eBPF dataplane comparison, not as a second CNI at

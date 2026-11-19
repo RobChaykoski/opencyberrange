@@ -1,0 +1,4589 @@
+framework: NICE
+generated_at: '2026-11-19T07:33:17.088186+00:00'
+mappings:
+  ai-1-1-prompt-injection-basics:
+    confidence: medium
+    knowledge:
+    - K0744
+    - K0751
+    - K0752
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0466
+    - S0574
+    - S0509
+    source: derived_from_competency_and_category
+    tasks:
+    - T1281
+    - T1913
+    - T0311
+    work_roles:
+    - DD-WRL-003
+    - DD-WRL-005
+    - PD-WRL-006
+  ai-1-2-jailbreak-policy-bypass:
+    confidence: medium
+    knowledge:
+    - K0826
+    - K0917
+    - K0918
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0466
+    - S0509
+    - S0569
+    source: derived_from_competency_and_category
+    tasks:
+    - T0569
+    - T0707
+    - T1052
+    work_roles:
+    - DD-WRL-003
+    - DD-WRL-005
+    - PD-WRL-006
+  ai-1-3-indirect-prompt-injection:
+    confidence: medium
+    knowledge:
+    - K0826
+    - K0917
+    - K0918
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0466
+    - S0506
+    - S0509
+    source: derived_from_competency_and_category
+    tasks:
+    - T0751
+    - T1052
+    - T1083
+    work_roles:
+    - DD-WRL-003
+    - DD-WRL-005
+    - PD-WRL-006
+  forensics-1-1-windows-memory-volatility:
+    confidence: medium
+    knowledge:
+    - K0744
+    - K0809
+    - K0923
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0475
+    - S0599
+    - S0603
+    source: derived_from_competency_and_category
+    tasks:
+    - T0397
+    - T1175
+    - T1199
+    work_roles:
+    - PD-WRL-003
+    - PD-WRL-002
+    - IN-WRL-001
+  forensics-2-1-voip-call-reconstruction:
+    confidence: medium
+    knowledge:
+    - K0726
+    - K0809
+    - K1091
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0603
+    - S0604
+    - S0475
+    source: derived_from_competency_and_category
+    tasks:
+    - T1175
+    - T1260
+    - T1322
+    work_roles:
+    - PD-WRL-003
+    - PD-WRL-002
+    - IN-WRL-001
+  forensics-2-2-topology-forensics-guided:
+    confidence: medium
+    knowledge:
+    - K0716
+    - K0717
+    - K0854
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0572
+    - S0077
+    - S0470
+    source: derived_from_competency_and_category
+    tasks:
+    - T1051
+    - T1607
+    - T0172
+    work_roles:
+    - PD-WRL-003
+    - PD-WRL-002
+    - IN-WRL-001
+  forensics-2-3-topology-forensics-independent:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0854
+    - K0675
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0077
+    - S0470
+    - S0475
+    source: derived_from_competency_and_category
+    tasks:
+    - T1332
+    - T0510
+    - T1084
+    work_roles:
+    - PD-WRL-003
+    - PD-WRL-002
+    - IN-WRL-001
+  forensics-3-1-live-linux-memory:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0802
+    - K0854
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0077
+    - S0470
+    - S0475
+    source: derived_from_competency_and_category
+    tasks:
+    - T1175
+    - T1487
+    - T1324
+    work_roles:
+    - PD-WRL-003
+    - PD-WRL-002
+    - IN-WRL-001
+  high-school-10-1-rangebox-network-basics:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0742
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0615
+    - S0077
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1390
+    - T0081
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  high-school-10-2-rangebox-browser-and-source:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0742
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0077
+    - S0421
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1351
+    - T1390
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  high-school-10-3-email-metadata:
+    confidence: medium
+    knowledge:
+    - K0716
+    - K0717
+    - K0742
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0572
+    - S0425
+    - S0035
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1390
+    - T0081
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  high-school-10-4-mfa-lost-phone:
+    confidence: medium
+    knowledge:
+    - K0742
+    - K0685
+    - K0686
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0844
+    - S0141
+    - S0448
+    source: derived_from_competency_and_category
+    tasks:
+    - T1327
+    - T0309
+    - T0431
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  high-school-10-5-rangebox-log-review:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0783
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0077
+    - S0470
+    - S0475
+    source: derived_from_competency_and_category
+    tasks:
+    - T0510
+    - T1084
+    - T1085
+    work_roles:
+    - PD-WRL-003
+    - PD-WRL-002
+    - IN-WRL-001
+  high-school-10-6-rangebox-beginner-challenge:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0854
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0077
+    - S0470
+    - S0475
+    source: derived_from_competency_and_category
+    tasks:
+    - T0510
+    - T1084
+    - T1085
+    work_roles:
+    - PD-WRL-003
+    - PD-WRL-002
+    - IN-WRL-001
+  high-school-11-1-rangebox-log-detective:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0854
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0077
+    - S0470
+    - S0475
+    source: derived_from_competency_and_category
+    tasks:
+    - T0510
+    - T1084
+    - T1085
+    work_roles:
+    - PD-WRL-003
+    - PD-WRL-002
+    - IN-WRL-001
+  high-school-11-2-media-provenance:
+    confidence: medium
+    knowledge:
+    - K0724
+    - K0725
+    - K0726
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0695
+    - S0471
+    - S0512
+    source: derived_from_competency_and_category
+    tasks:
+    - T1260
+    - T0510
+    - T0751
+    work_roles:
+    - PD-WRL-006
+    - IN-WRL-001
+    - PD-WRL-003
+  high-school-12-1-devfest-community-portal:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0742
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0466
+    - S0465
+    - S0572
+    source: derived_from_competency_and_category
+    tasks:
+    - T1019
+    - T1084
+    - T1091
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  high-school-12-2-crypto-rug-pull:
+    confidence: medium
+    knowledge:
+    - K0701
+    - K0709
+    - K0724
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0695
+    - S0805
+    - S0806
+    source: derived_from_competency_and_category
+    tasks:
+    - T1260
+    - T0510
+    - T1250
+    work_roles:
+    - PD-WRL-006
+    - IN-WRL-001
+    - PD-WRL-003
+  high-school-9-1-rangebox-first-steps:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0742
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0572
+    - S0077
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1390
+    - T0081
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  high-school-9-2-rangebox-file-hunt:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0742
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0077
+    - S0421
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1390
+    - T0081
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  high-school-9-3-cyberchef-base64-basics:
+    confidence: medium
+    knowledge:
+    - K0891
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0657
+    source: derived_from_competency_and_category
+    tasks:
+    - T1108
+    - T1204
+    - T1489
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  high-school-9-4-cyberchef-caesar-shift:
+    confidence: low
+    knowledge:
+    - K0639
+    - K0674
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0172
+    - S0175
+    source: derived_from_competency_and_category
+    tasks:
+    - T1269
+    - T1489
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  high-school-9-5-cyberchef-layered-message:
+    confidence: low
+    knowledge:
+    - K0826
+    - K0917
+    - K0918
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0466
+    - S0569
+    - S0574
+    source: derived_from_competency_and_category
+    tasks:
+    - T1052
+    - T1083
+    - T1202
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  high-school-9-6-read-the-link:
+    confidence: medium
+    knowledge:
+    - K0716
+    - K0742
+    - K0685
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0466
+    - S0572
+    source: derived_from_competency_and_category
+    tasks:
+    - T0077
+    - T0311
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  high-school-9-7-know-the-file:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0854
+    - K0856
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0476
+    - S0612
+    - S0688
+    source: derived_from_competency_and_category
+    tasks:
+    - T0167
+    - T0172
+    - T1192
+    work_roles:
+    - PD-WRL-003
+    - PD-WRL-002
+    - IN-WRL-001
+  high-school-9-8-forwarded-message:
+    confidence: medium
+    knowledge:
+    - K0716
+    - K0742
+    - K0685
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0572
+    - S0642
+    source: derived_from_competency_and_category
+    tasks:
+    - T1020
+    - T1489
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  identity-1-1-secure-authentication:
+    confidence: medium
+    knowledge:
+    - K0686
+    - K0742
+    - K0759
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0844
+    - S0438
+    source: derived_from_competency_and_category
+    tasks:
+    - T1021
+    - T1130
+    - T1548
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  identity-1-2-oauth-oidc-sso:
+    confidence: medium
+    knowledge:
+    - K0686
+    - K0742
+    - K0685
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0484
+    - S0485
+    - S0597
+    source: derived_from_competency_and_category
+    tasks:
+    - T1021
+    - T1130
+    - T1428
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  identity-2-1-identity-lifecycle:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0742
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0844
+    - S0141
+    - S0448
+    source: derived_from_competency_and_category
+    tasks:
+    - T1021
+    - T1390
+    - T1569
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  linux-1-1-ssh-service-detection:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0689
+    - K0716
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0572
+    - S0575
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1214
+    - T1215
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  linux-1-2-multi-service-discovery:
+    confidence: medium
+    knowledge:
+    - K0716
+    - K0717
+    - K0742
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0572
+    - S0809
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1351
+    - T1390
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  linux-1-3-service-interaction:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0742
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0809
+    - S0077
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1351
+    - T1390
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  linux-1-4-non-standard-port-discovery:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0731
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0583
+    - S0077
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1050
+    - T1390
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  linux-1-5-nse-script-enumeration:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0849
+    - K0716
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0809
+    - S0077
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1351
+    - T1390
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  linux-1-6-version-vulnerability-identification:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0692
+    - K0716
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0572
+    - S0583
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1050
+    - T1248
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  linux-1-7-network-discovery:
+    confidence: medium
+    knowledge:
+    - K0716
+    - K0717
+    - K0742
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0572
+    - S0615
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1351
+    - T1390
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  linux-1-8-service-triage:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0742
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0688
+    - S0872
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1390
+    - T0020
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  linux-2-1-ssh-basic-login:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0742
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0576
+    - S0809
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1091
+    - T1351
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  linux-2-10-snmp-breadcrumb-trail:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0742
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0077
+    - S0421
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T0299
+    - T1214
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  linux-2-2-ssh-user-discovery:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0742
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0077
+    - S0421
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1351
+    - T1390
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  linux-2-3-ssh-file-discovery:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0742
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0077
+    - S0421
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T0299
+    - T1214
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  linux-2-4-ssh-command-execution:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0742
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0576
+    - S0688
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T0299
+    - T1091
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  linux-2-5-ssh-history-analysis:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0742
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0885
+    - S0425
+    - S0688
+    source: derived_from_competency_and_category
+    tasks:
+    - T1351
+    - T0129
+    - T0299
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  linux-2-6-ssh-privilege-escalation:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0742
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0077
+    - S0421
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1390
+    - T0081
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  linux-2-7-smb-share-enumeration:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0849
+    - K0716
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0077
+    - S0421
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1351
+    - T1390
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  linux-2-8-snmp-community-strings:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0685
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0688
+    - S0872
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T0299
+    - T1214
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  linux-2-9-smb-credential-hunt:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0742
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0688
+    - S0809
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1351
+    - T1390
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  linux-3-1-suid-privilege-escalation:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0849
+    - K0716
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0688
+    - S0844
+    - S0872
+    source: derived_from_competency_and_category
+    tasks:
+    - T0299
+    - T1140
+    - T1141
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  linux-3-2-password-hash-cracking:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0849
+    - K0692
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0141
+    - S0448
+    - S0449
+    source: derived_from_competency_and_category
+    tasks:
+    - T1390
+    - T1571
+    - T0020
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  linux-3-3-suid-maze:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0849
+    - K0716
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0141
+    - S0407
+    - S0408
+    source: derived_from_competency_and_category
+    tasks:
+    - T0299
+    - T1140
+    - T1141
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  linux-3-4-hash-relay:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0742
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0484
+    - S0485
+    - S0572
+    source: derived_from_competency_and_category
+    tasks:
+    - T1390
+    - T1571
+    - T0299
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  linux-4-1-credential-pivot-attack:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0707
+    - K0716
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0484
+    - S0485
+    - S0045
+    source: derived_from_competency_and_category
+    tasks:
+    - T1390
+    - T1571
+    - T0299
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  linux-4-2-post-exploitation-data-harvest:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0742
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0688
+    - S0872
+    - S0141
+    source: derived_from_competency_and_category
+    tasks:
+    - T1390
+    - T1571
+    - T0299
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  linux-4-3-three-hop-pivot:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0707
+    - K0716
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0045
+    - S0141
+    - S0448
+    source: derived_from_competency_and_category
+    tasks:
+    - T1390
+    - T1571
+    - T0299
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  linux-4-4-encrypted-exfiltration:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0849
+    - K0716
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0688
+    - S0872
+    - S0141
+    source: derived_from_competency_and_category
+    tasks:
+    - T1390
+    - T1571
+    - T0020
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  linux-5-4-suricata-live-detection:
+    confidence: medium
+    knowledge:
+    - K0924
+    - K0939
+    - K1193
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0875
+    - S0156
+    - S0612
+    source: derived_from_competency_and_category
+    tasks:
+    - T1322
+    - T0164
+    - T0172
+    work_roles:
+    - PD-WRL-003
+    - PD-WRL-002
+    - IN-WRL-001
+  linux-5-5-capstone-ctf:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0689
+    - K0716
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0475
+    - S0575
+    - S0576
+    source: derived_from_competency_and_category
+    tasks:
+    - T0168
+    - T1187
+    - T1192
+    work_roles:
+    - PD-WRL-003
+    - PD-WRL-002
+    - IN-WRL-001
+  linux-5-6-brute-force-detection:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0783
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0612
+    - S0688
+    - S0863
+    source: derived_from_competency_and_category
+    tasks:
+    - T1192
+    - T1489
+    - T0164
+    work_roles:
+    - PD-WRL-003
+    - PD-WRL-002
+    - IN-WRL-001
+  linux-5-7-black-box-ctf:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0809
+    - K0854
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0688
+    - S0875
+    - S0475
+    source: derived_from_competency_and_category
+    tasks:
+    - T1192
+    - T0168
+    - T1322
+    work_roles:
+    - PD-WRL-003
+    - PD-WRL-002
+    - IN-WRL-001
+  linux-9-1-meridian-data-breach-assessment:
+    confidence: medium
+    knowledge:
+    - K0701
+    - K0717
+    - K0809
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0474
+    - S0475
+    - S0603
+    source: derived_from_competency_and_category
+    tasks:
+    - T0168
+    - T1090
+    - T1191
+    work_roles:
+    - PD-WRL-003
+    - PD-WRL-002
+    - IN-WRL-001
+  linux-9-2-cryptovault-recovery-operation:
+    confidence: medium
+    knowledge:
+    - K0701
+    - K0709
+    - K0717
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0474
+    - S0475
+    - S0575
+    source: derived_from_competency_and_category
+    tasks:
+    - T1121
+    - T1407
+    - T1489
+    work_roles:
+    - PD-WRL-003
+    - PD-WRL-002
+    - IN-WRL-001
+  linux-final-1-branch-office-practice:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0854
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0077
+    - S0470
+    - S0475
+    source: derived_from_competency_and_category
+    tasks:
+    - T1260
+    - T1322
+    - T1487
+    work_roles:
+    - PD-WRL-003
+    - PD-WRL-002
+    - IN-WRL-001
+  linux-final-2-clinic-final:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0854
+    - K0689
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0077
+    - S0470
+    - S0475
+    source: derived_from_competency_and_category
+    tasks:
+    - T0510
+    - T1084
+    - T1085
+    work_roles:
+    - PD-WRL-003
+    - PD-WRL-002
+    - IN-WRL-001
+  linux-final-3-architecture-mock:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0744
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0077
+    - S0470
+    - S0474
+    source: derived_from_competency_and_category
+    tasks:
+    - T0510
+    - T1084
+    - T1085
+    work_roles:
+    - PD-WRL-003
+    - PD-WRL-002
+    - IN-WRL-001
+  linux-midterm-2-full-penetration-test:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0689
+    - K0716
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0575
+    - S0576
+    - S0615
+    source: derived_from_competency_and_category
+    tasks:
+    - T1192
+    - T0168
+    - T0262
+    work_roles:
+    - PD-WRL-003
+    - PD-WRL-002
+    - IN-WRL-001
+  linux-midterm-3-blind-penetration-test:
+    confidence: medium
+    knowledge:
+    - K0689
+    - K0717
+    - K0854
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0575
+    - S0576
+    - S0615
+    source: derived_from_competency_and_category
+    tasks:
+    - T0168
+    - T0262
+    - T0510
+    work_roles:
+    - PD-WRL-003
+    - PD-WRL-002
+    - IN-WRL-001
+  malware-1-1-eicar-triage:
+    confidence: medium
+    knowledge:
+    - K0724
+    - K0725
+    - K1181
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0475
+    - S0589
+    - S0603
+    source: derived_from_competency_and_category
+    tasks:
+    - T1428
+    - T0167
+    - T0182
+    work_roles:
+    - PD-WRL-006
+    - PD-WRL-002
+    - PD-WRL-001
+  malware-1-2-strings-static-analysis:
+    confidence: medium
+    knowledge:
+    - K0701
+    - K0724
+    - K0725
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0599
+    - S0475
+    - S0505
+    source: derived_from_competency_and_category
+    tasks:
+    - T0167
+    - T0182
+    - T1054
+    work_roles:
+    - PD-WRL-006
+    - PD-WRL-002
+    - PD-WRL-001
+  malware-1-3-ghidra-static-reversing:
+    confidence: medium
+    knowledge:
+    - K0857
+    - K0914
+    - K0916
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0612
+    - S0621
+    - S0651
+    source: derived_from_competency_and_category
+    tasks:
+    - T0167
+    - T0182
+    - T0164
+    work_roles:
+    - PD-WRL-006
+    - PD-WRL-002
+    - PD-WRL-001
+  malware-1-4-c2-pcap-wireshark:
+    confidence: medium
+    knowledge:
+    - K0724
+    - K0725
+    - K1181
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0875
+    - S0156
+    - S0475
+    source: derived_from_competency_and_category
+    tasks:
+    - T1322
+    - T0182
+    - T0751
+    work_roles:
+    - PD-WRL-006
+    - PD-WRL-002
+    - PD-WRL-001
+  malware-1-5-inetsim-c2-detection:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0724
+    - K0725
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0572
+    - S0874
+    - S0875
+    source: derived_from_competency_and_category
+    tasks:
+    - T1322
+    - T1053
+    - T1260
+    work_roles:
+    - PD-WRL-006
+    - PD-WRL-002
+    - PD-WRL-001
+  malware-1-6-email-attachment-analysis:
+    confidence: medium
+    knowledge:
+    - K0480
+    - K0686
+    - K0724
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0475
+    - S0603
+    - S0604
+    source: derived_from_competency_and_category
+    tasks:
+    - T0167
+    - T0182
+    - T1021
+    work_roles:
+    - PD-WRL-006
+    - PD-WRL-002
+    - PD-WRL-001
+  malware-1-7-embedded-js-worddoc-inetsim:
+    confidence: medium
+    knowledge:
+    - K0724
+    - K0725
+    - K1181
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0475
+    - S0490
+    - S0540
+    source: derived_from_competency_and_category
+    tasks:
+    - T1322
+    - T1323
+    - T0182
+    work_roles:
+    - PD-WRL-006
+    - PD-WRL-002
+    - PD-WRL-001
+  malware-2-1-pe-header-analysis:
+    confidence: medium
+    knowledge:
+    - K0809
+    - K0915
+    - K0480
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0475
+    - S0603
+    - S0604
+    source: derived_from_competency_and_category
+    tasks:
+    - T1191
+    - T1489
+    - T0167
+    work_roles:
+    - PD-WRL-006
+    - PD-WRL-002
+    - PD-WRL-001
+  malware-2-2-yara-fundamentals:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0854
+    - K0689
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0572
+    - S0615
+    - S0077
+    source: derived_from_competency_and_category
+    tasks:
+    - T0168
+    - T0510
+    - T1084
+    work_roles:
+    - PD-WRL-003
+    - PD-WRL-002
+    - IN-WRL-001
+  malware-2-3-yara-incident-triage:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0854
+    - K0924
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0612
+    - S0688
+    - S0856
+    source: derived_from_competency_and_category
+    tasks:
+    - T0167
+    - T1192
+    - T1199
+    work_roles:
+    - PD-WRL-003
+    - PD-WRL-002
+    - IN-WRL-001
+  metasploit-1-1-workspace-and-modules:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0707
+    - K0716
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0077
+    - S0421
+    source: derived_from_competency_and_category
+    tasks:
+    - T0081
+    - T0129
+    - T1100
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  metasploit-1-2-service-discovery:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0707
+    - K0716
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0077
+    - S0421
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1390
+    - T0081
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  metasploit-1-3-validate-before-exploit:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0742
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0077
+    - S0421
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1112
+    - T1390
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  metasploit-1-4-first-shell:
+    confidence: medium
+    knowledge:
+    - K0716
+    - K0717
+    - K0742
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0572
+    - S0809
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1100
+    - T1351
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  metasploit-2-1-meterpreter-session:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0742
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0077
+    - S0421
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T0299
+    - T1100
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  metasploit-2-2-database-credentials:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0707
+    - K0716
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0688
+    - S0872
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1313
+    - T1314
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  metasploit-2-3-pivot-to-local-service:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0742
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0077
+    - S0421
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1100
+    - T1390
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  metasploit-2-4-persistence-and-reporting:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0742
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0077
+    - S0421
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T0299
+    - T1100
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  network-0-1-ping-basics:
+    confidence: medium
+    knowledge:
+    - K0716
+    - K0717
+    - K0781
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0572
+    - S0875
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1390
+    - T0081
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  network-0-2-dns-basics:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0781
+    - K0848
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0077
+    - S0156
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1390
+    - T0081
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  network-0-3-name-or-network:
+    confidence: medium
+    knowledge:
+    - K0716
+    - K0717
+    - K0781
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0572
+    - S0815
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1390
+    - T0081
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  network-1-1-packet-capture-analysis:
+    confidence: medium
+    knowledge:
+    - K0805
+    - K0849
+    - K0924
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0875
+    - S0424
+    - S0688
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1084
+    - T1290
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  network-1-1-port-scan-detection:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0781
+    - K0848
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0874
+    - S0875
+    - S0425
+    source: derived_from_competency_and_category
+    tasks:
+    - T1351
+    - T0129
+    - T1084
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  network-1-2-http-traffic-analysis:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0781
+    - K0848
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0875
+    - S0688
+    - S0872
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1386
+    - T1390
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  network-1-2-log-correlation:
+    confidence: medium
+    knowledge:
+    - K0716
+    - K0717
+    - K0781
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0688
+    - S0872
+    - S0874
+    source: derived_from_competency_and_category
+    tasks:
+    - T1489
+    - T0129
+    - T1254
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  network-1-3-dns-anomaly-detection:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K1032
+    - K0689
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0688
+    - S0872
+    - S0874
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1214
+    - T1215
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  network-1-4-failed-login-analysis:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0781
+    - K0783
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0688
+    - S0863
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1085
+    - T1390
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  network-12-1-firewall-fundamentals:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0781
+    - K0848
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0618
+    - S0872
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1386
+    - T1390
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  network-12-2-device-topology-engine:
+    confidence: medium
+    knowledge:
+    - K0716
+    - K0717
+    - K0781
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0572
+    - S0077
+    source: derived_from_competency_and_category
+    tasks:
+    - T1390
+    - T0129
+    - T1214
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  network-12-2-firewall-policy-hardening:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0781
+    - K0791
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0615
+    - S0874
+    source: derived_from_competency_and_category
+    tasks:
+    - T0081
+    - T0129
+    - T1386
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  network-12-3-two-router-transit:
+    confidence: medium
+    knowledge:
+    - K0716
+    - K0717
+    - K0781
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0572
+    - S0077
+    source: derived_from_competency_and_category
+    tasks:
+    - T0126
+    - T0129
+    - T1100
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  network-12-4-firewall-service-path:
+    confidence: low
+    knowledge:
+    - K0717
+    - K0781
+    - K0848
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0077
+    - S0421
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1390
+    - T0081
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  network-12-5-multi-service-router:
+    confidence: medium
+    knowledge:
+    - K0848
+    - K0849
+    - K0716
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0572
+    - S0077
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1390
+    - T0081
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  network-12-6-appliance-segment:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0781
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0077
+    - S0421
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1390
+    - T0081
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  network-2-1-ftp-credential-extraction:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0731
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0875
+    - S0874
+    - S0156
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1050
+    - T1386
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  network-2-2-smtp-email-analysis:
+    confidence: medium
+    knowledge:
+    - K0917
+    - K0919
+    - K0717
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0875
+    - S0688
+    - S0872
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1050
+    - T1351
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  network-2-3-http-session-hijacking:
+    confidence: medium
+    knowledge:
+    - K0848
+    - K0717
+    - K0731
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0583
+    - S0874
+    - S0875
+    source: derived_from_competency_and_category
+    tasks:
+    - T1050
+    - T0129
+    - T1386
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  network-2-4-dns-exfiltration:
+    confidence: medium
+    knowledge:
+    - K1077
+    - K0717
+    - K0731
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0688
+    - S0872
+    - S0874
+    source: derived_from_competency_and_category
+    tasks:
+    - T1386
+    - T0129
+    - T1050
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  network-2-5-attack-chain-analysis:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0831
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0688
+    - S0872
+    - S0874
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T0164
+    - T1347
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  network-2-6-wstunnel-c2-tunneling:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0781
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0874
+    - S0875
+    - S0425
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1386
+    - T1390
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  osint-1-1-public-footprint:
+    confidence: medium
+    knowledge:
+    - K1312
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0695
+    - S0512
+    - S0712
+    source: derived_from_competency_and_category
+    tasks:
+    - T0751
+    - T1645
+    - T1646
+    work_roles:
+    - PD-WRL-006
+    - IN-WRL-001
+    - PD-WRL-003
+  osint-1-2-image-intelligence:
+    confidence: medium
+    knowledge:
+    - K0655
+    - K0989
+    - K1005
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0695
+    - S0436
+    - S0512
+    source: derived_from_competency_and_category
+    tasks:
+    - T0698
+    - T0718
+    - T1198
+    work_roles:
+    - PD-WRL-006
+    - IN-WRL-001
+    - PD-WRL-003
+  osint-1-3-exif-metadata:
+    confidence: medium
+    knowledge:
+    - K0678
+    - K0679
+    - K0681
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0512
+    - S0589
+    - S0607
+    source: derived_from_competency_and_category
+    tasks:
+    - T1325
+    - T1187
+    - T1199
+    work_roles:
+    - PD-WRL-006
+    - IN-WRL-001
+    - PD-WRL-003
+  osint-2-1-source-code-intelligence:
+    confidence: medium
+    knowledge:
+    - K0759
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0512
+    - S0695
+    - S0724
+    source: derived_from_competency_and_category
+    tasks:
+    - T0164
+    - T0173
+    work_roles:
+    - PD-WRL-006
+    - IN-WRL-001
+    - PD-WRL-003
+  osint-2-2-public-homepage:
+    confidence: medium
+    knowledge:
+    - K1028
+    - K1035
+    - K1067
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0695
+    - S0436
+    - S0512
+    source: derived_from_competency_and_category
+    tasks:
+    - T0751
+    - T1053
+    - T1260
+    work_roles:
+    - PD-WRL-006
+    - IN-WRL-001
+    - PD-WRL-003
+  osint-2-3-responsive-leak:
+    confidence: medium
+    knowledge:
+    - K0701
+    - K0759
+    - K0766
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0695
+    - S0434
+    - S0435
+    source: derived_from_competency_and_category
+    tasks:
+    - T0751
+    - T1054
+    - T1196
+    work_roles:
+    - PD-WRL-006
+    - IN-WRL-001
+    - PD-WRL-003
+  osint-2-4-public-profile:
+    confidence: medium
+    knowledge:
+    - K0701
+    - K0766
+    - K0804
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0695
+    - S0712
+    - S0751
+    source: derived_from_competency_and_category
+    tasks:
+    - T0751
+    - T1054
+    - T1198
+    work_roles:
+    - PD-WRL-006
+    - IN-WRL-001
+    - PD-WRL-003
+  osint-2-5-public-banner:
+    confidence: medium
+    knowledge:
+    - K0701
+    - K0759
+    - K0766
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0434
+    - S0435
+    - S0505
+    source: derived_from_competency_and_category
+    tasks:
+    - T1053
+    - T1054
+    - T1198
+    work_roles:
+    - PD-WRL-006
+    - IN-WRL-001
+    - PD-WRL-003
+  ot-1-1-modbus-register-analysis:
+    confidence: medium
+    knowledge:
+    - K0742
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0809
+    source: derived_from_competency_and_category
+    tasks:
+    - T1021
+    - T1390
+    - T1428
+    work_roles:
+    - DD-WRL-009
+    - PD-WRL-004
+    - PD-WRL-001
+  ot-1-2-modbus-setpoint-tampering:
+    confidence: medium
+    knowledge:
+    - K0730
+    - K0749
+    - K1287
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0627
+    source: derived_from_competency_and_category
+    tasks:
+    - T1020
+    - T1124
+    - T2029
+    work_roles:
+    - DD-WRL-009
+    - PD-WRL-004
+    - PD-WRL-001
+  ot-1-3-modbus-gateway-bypass:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K1300
+    - K0685
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0941
+    - S0077
+    - S0490
+    source: derived_from_competency_and_category
+    tasks:
+    - T1515
+    - T2032
+    - T0292
+    work_roles:
+    - DD-WRL-009
+    - PD-WRL-004
+    - PD-WRL-001
+  ot-2-1-s7comm-register-access:
+    confidence: medium
+    knowledge:
+    - K0686
+    - K0701
+    - K0723
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0600
+    - S0688
+    - S0712
+    source: derived_from_competency_and_category
+    tasks:
+    - T1021
+    - T1428
+    - T1503
+    work_roles:
+    - DD-WRL-009
+    - PD-WRL-004
+    - PD-WRL-001
+  software-security-1-1-hidden-export-route:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0685
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0466
+    - S0417
+    - S0465
+    source: derived_from_competency_and_category
+    tasks:
+    - T1135
+    - T1202
+    - T1302
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  software-security-2-1-diagnostics-command-injection:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0744
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0466
+    - S0417
+    - S0465
+    source: derived_from_competency_and_category
+    tasks:
+    - T1135
+    - T1202
+    - T1302
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  web-1-1-basic-directory-enumeration:
+    confidence: medium
+    knowledge:
+    - K0688
+    - K0759
+    - K0760
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0829
+    source: derived_from_competency_and_category
+    tasks:
+    - T1319
+    - T1089
+    - T1091
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  web-1-2-technology-identification:
+    confidence: medium
+    knowledge:
+    - K0778
+    - K0735
+    - K0748
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0172
+    - S0175
+    source: derived_from_competency_and_category
+    tasks:
+    - T1222
+    - T1319
+    - T1223
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  web-1-3-http-methods-enumeration:
+    confidence: low
+    knowledge:
+    - K0683
+    - K0688
+    - K0748
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0483
+    - S0543
+    - S0544
+    source: derived_from_competency_and_category
+    tasks:
+    - T1118
+    - T1261
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  web-1-4-header-analysis:
+    confidence: medium
+    knowledge:
+    - K0917
+    - K0919
+    - K0748
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0175
+    - S0382
+    - S0466
+    source: derived_from_competency_and_category
+    tasks:
+    - T1202
+    - T1222
+    - T1302
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  web-1-5-subdomain-discovery:
+    confidence: medium
+    knowledge:
+    - K0716
+    - K0748
+    - K0783
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0572
+    source: derived_from_competency_and_category
+    tasks:
+    - T1319
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  web-1-6-comprehensive-web-reconnaissance:
+    confidence: medium
+    knowledge:
+    - K0969
+    - K1215
+    - K0639
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0172
+    - S0466
+    - S0569
+    source: derived_from_competency_and_category
+    tasks:
+    - T1319
+    - T1052
+    - T1083
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  web-1-7-directory-traversal:
+    confidence: medium
+    knowledge:
+    - K0748
+    - K0688
+    - K0711
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0565
+    - S0175
+    - S0574
+    source: derived_from_competency_and_category
+    tasks:
+    - T1528
+    - T0311
+    - T1041
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  web-1-8-traversal-scavenger-hunt:
+    confidence: medium
+    knowledge:
+    - K0688
+    - K0683
+    - K0752
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0656
+    - S0175
+    - S0483
+    source: derived_from_competency_and_category
+    tasks:
+    - T1099
+    - T1118
+    - T1202
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  web-11-1-api-inventory:
+    confidence: medium
+    knowledge:
+    - K0917
+    - K0918
+    - K0919
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0466
+    - S0569
+    - S0574
+    source: derived_from_competency_and_category
+    tasks:
+    - T1319
+    - T1052
+    - T1074
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  web-11-10-modern-appsec-capstone:
+    confidence: medium
+    knowledge:
+    - K0803
+    - K0820
+    - K1079
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0172
+    - S0466
+    - S0569
+    source: derived_from_competency_and_category
+    tasks:
+    - T1318
+    - T1052
+    - T1079
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  web-11-2-api-bola-bfla:
+    confidence: medium
+    knowledge:
+    - K0685
+    - K0686
+    - K0716
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0466
+    - S0569
+    - S0574
+    source: derived_from_competency_and_category
+    tasks:
+    - T1620
+    - T1052
+    - T1067
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  web-11-3-graphql-security:
+    confidence: medium
+    knowledge:
+    - K0686
+    - K0738
+    - K0748
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0569
+    - S0574
+    - S0466
+    source: derived_from_competency_and_category
+    tasks:
+    - T1620
+    - T1083
+    - T1052
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  web-11-4-jwt-security:
+    confidence: medium
+    knowledge:
+    - K0711
+    - K0748
+    - K0759
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0466
+    - S0565
+    - S0569
+    source: derived_from_competency_and_category
+    tasks:
+    - T1620
+    - T1052
+    - T1067
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  web-11-5-oauth-abuse:
+    confidence: medium
+    knowledge:
+    - K0639
+    - K0686
+    - K0711
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0569
+    - S0574
+    - S0382
+    source: derived_from_competency_and_category
+    tasks:
+    - T1620
+    - T1083
+    - T0077
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  web-11-6-devsecops-pipeline:
+    confidence: medium
+    knowledge:
+    - K0748
+    - K0826
+    - K0917
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0466
+    - S0543
+    - S0569
+    source: derived_from_competency_and_category
+    tasks:
+    - T1119
+    - T1620
+    - T1052
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  web-11-7-container-security:
+    confidence: medium
+    knowledge:
+    - K0748
+    - K0826
+    - K0917
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0175
+    - S0466
+    - S0569
+    source: derived_from_competency_and_category
+    tasks:
+    - T1620
+    - T1052
+    - T1067
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  web-11-8-kubernetes-security:
+    confidence: medium
+    knowledge:
+    - K1014
+    - K0717
+    - K0742
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0569
+    - S0574
+    - S0466
+    source: derived_from_competency_and_category
+    tasks:
+    - T1620
+    - T1083
+    - T1318
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  web-11-9-supply-chain-integrity:
+    confidence: medium
+    knowledge:
+    - K0803
+    - K0820
+    - K0728
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0172
+    - S0175
+    source: derived_from_competency_and_category
+    tasks:
+    - T1067
+    - T1119
+    - T1620
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  web-2-1-basic-sql-injection-get:
+    confidence: medium
+    knowledge:
+    - K0752
+    - K0683
+    - K0685
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0483
+    - S0543
+    - S0544
+    source: derived_from_competency_and_category
+    tasks:
+    - T0311
+    - T1098
+    - T1118
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  web-2-2-insecure-api-endpoints:
+    confidence: medium
+    knowledge:
+    - K0685
+    - K0686
+    - K0716
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0483
+    - S0543
+    - S0544
+    source: derived_from_competency_and_category
+    tasks:
+    - T1074
+    - T1083
+    - T1089
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  web-2-3-command-injection:
+    confidence: medium
+    knowledge:
+    - K0744
+    - K0760
+    - K0688
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0565
+    - S0572
+    - S0574
+    source: derived_from_competency_and_category
+    tasks:
+    - T0311
+    - T1084
+    - T1091
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  web-2-4-api-enumeration-gauntlet:
+    confidence: medium
+    knowledge:
+    - K0685
+    - K0686
+    - K0713
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0569
+    - S0574
+    source: derived_from_competency_and_category
+    tasks:
+    - T1074
+    - T1083
+    - T1089
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  web-2-5-filtered-injection:
+    confidence: medium
+    knowledge:
+    - K0688
+    - K0744
+    - K0751
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0565
+    - S0574
+    - S0656
+    source: derived_from_competency_and_category
+    tasks:
+    - T0311
+    - T1098
+    - T1099
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  web-3-1-hidden-login-discovery:
+    confidence: medium
+    knowledge:
+    - K0688
+    - K0778
+    - K0877
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0656
+    - S0825
+    source: derived_from_competency_and_category
+    tasks:
+    - T1099
+    - T1108
+    - T1222
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  web-3-2-sql-injection-to-shell:
+    confidence: medium
+    knowledge:
+    - K0686
+    - K0688
+    - K0748
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0572
+    - S0656
+    source: derived_from_competency_and_category
+    tasks:
+    - T1099
+    - T1318
+    - T1513
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  web-3-3-full-web-to-root:
+    confidence: medium
+    knowledge:
+    - K0919
+    - K0686
+    - K0688
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0175
+    - S0465
+    - S0466
+    source: derived_from_competency_and_category
+    tasks:
+    - T1019
+    - T1099
+    - T1119
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  windows-1-1-basic-port-scan:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0781
+    - K0783
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0077
+    - S0421
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1091
+    - T1390
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  windows-1-2-multiple-port-discovery:
+    confidence: medium
+    knowledge:
+    - K0716
+    - K0717
+    - K0781
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0572
+    - S0077
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1390
+    - T0081
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  windows-1-3-windows-service-version-detection:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0781
+    - K0848
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0483
+    - S0809
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1248
+    - T1351
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  windows-1-4-windows-os-detection:
+    confidence: medium
+    knowledge:
+    - K0744
+    - K0717
+    - K0781
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0421
+    - S0839
+    source: derived_from_competency_and_category
+    tasks:
+    - T0299
+    - T1214
+    - T1215
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  windows-1-5-comprehensive-windows-enumeration:
+    confidence: medium
+    knowledge:
+    - K0849
+    - K0692
+    - K0717
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0077
+    - S0421
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1390
+    - T0081
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  windows-10-1-network-enumeration-assessment:
+    confidence: medium
+    knowledge:
+    - K0716
+    - K0717
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0572
+    - S0141
+    - S0448
+    source: derived_from_competency_and_category
+    tasks:
+    - T1351
+    - T1390
+    - T1571
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-10-2-midterm-assessment:
+    confidence: medium
+    knowledge:
+    - K0849
+    - K0716
+    - K0717
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0141
+    - S0448
+    - S0449
+    source: derived_from_competency_and_category
+    tasks:
+    - T1287
+    - T1130
+    - T1141
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-11-1-ad-domain-enumeration:
+    confidence: medium
+    knowledge:
+    - K0742
+    - K0685
+    - K0716
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0844
+    - S0587
+    - S0809
+    source: derived_from_competency_and_category
+    tasks:
+    - T1130
+    - T0299
+    - T1021
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-11-2-kerberoasting:
+    confidence: medium
+    knowledge:
+    - K0742
+    - K0685
+    - K0716
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0844
+    - S0484
+    - S0485
+    source: derived_from_competency_and_category
+    tasks:
+    - T0292
+    - T0309
+    - T1021
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-11-3-asrep-spray:
+    confidence: medium
+    knowledge:
+    - K0742
+    - K0746
+    - K0747
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0844
+    - S0484
+    - S0485
+    source: derived_from_competency_and_category
+    tasks:
+    - T1266
+    - T1603
+    - T0292
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-11-4-acl-dacl-abuse:
+    confidence: medium
+    knowledge:
+    - K0742
+    - K0685
+    - K0716
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0844
+    - S0587
+    source: derived_from_competency_and_category
+    tasks:
+    - T1130
+    - T0292
+    - T1021
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-11-5-delegation-abuse:
+    confidence: medium
+    knowledge:
+    - K0742
+    - K0746
+    - K0685
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0572
+    - S0587
+    - S0613
+    source: derived_from_competency_and_category
+    tasks:
+    - T0292
+    - T0309
+    - T1077
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-11-6-adcs-abuse:
+    confidence: medium
+    knowledge:
+    - K0742
+    - K0746
+    - K0685
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0572
+    - S0587
+    - S0613
+    source: derived_from_competency_and_category
+    tasks:
+    - T0292
+    - T0309
+    - T1021
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-11-7-dcsync-tickets:
+    confidence: medium
+    knowledge:
+    - K0742
+    - K0746
+    - K0747
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0844
+    - S0484
+    - S0485
+    source: derived_from_competency_and_category
+    tasks:
+    - T1548
+    - T0292
+    - T0309
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-11-8-gpo-laps-defence:
+    confidence: medium
+    knowledge:
+    - K0742
+    - K0685
+    - K0686
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0451
+    - S0587
+    - S0844
+    source: derived_from_competency_and_category
+    tasks:
+    - T0292
+    - T1021
+    - T1119
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-11-9-ad-capstone:
+    confidence: medium
+    knowledge:
+    - K0692
+    - K0742
+    - K0747
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0484
+    - S0485
+    - S0587
+    source: derived_from_competency_and_category
+    tasks:
+    - T1119
+    - T1130
+    - T1176
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-2-1-smb-connection-test:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0742
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0809
+    - S0141
+    - S0448
+    source: derived_from_competency_and_category
+    tasks:
+    - T1351
+    - T1390
+    - T1571
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-2-10-ad-to-smb-scenario:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0716
+    - K0781
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0615
+    - S0077
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1112
+    - T1351
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  windows-2-2-smb-share-listing:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0849
+    - K0692
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0141
+    - S0448
+    - S0449
+    source: derived_from_competency_and_category
+    tasks:
+    - T1085
+    - T1390
+    - T1571
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-2-3-smb-anonymous-share-access:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0849
+    - K0716
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0141
+    - S0448
+    - S0449
+    source: derived_from_competency_and_category
+    tasks:
+    - T1351
+    - T1390
+    - T1560
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-2-4-smb-file-retrieval:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0849
+    - K0716
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0141
+    - S0448
+    - S0449
+    source: derived_from_competency_and_category
+    tasks:
+    - T1351
+    - T1390
+    - T1571
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-2-5-smb-null-session-connection:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0849
+    - K0716
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0141
+    - S0448
+    - S0449
+    source: derived_from_competency_and_category
+    tasks:
+    - T1390
+    - T1571
+    - T0299
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-2-6-smb-null-session-share-enumeration:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0141
+    - S0448
+    - S0449
+    source: derived_from_competency_and_category
+    tasks:
+    - T1085
+    - T1255
+    - T1390
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-2-7-smb-user-enumeration-via-null-session:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0484
+    - S0485
+    - S0141
+    source: derived_from_competency_and_category
+    tasks:
+    - T1569
+    - T1085
+    - T1255
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-2-8-smb-comprehensive-null-session-enumeration:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0688
+    - S0872
+    - S0874
+    source: derived_from_competency_and_category
+    tasks:
+    - T1255
+    - T1390
+    - T1571
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-2-9-ad-fundamentals-basics:
+    confidence: low
+    knowledge:
+    - K0717
+    - K0781
+    - K0848
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0425
+    - S0077
+    - S0421
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1390
+    - T0081
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
+  windows-3-1-smb-manual-credential-test:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0484
+    - S0485
+    - S0141
+    source: derived_from_competency_and_category
+    tasks:
+    - T1255
+    - T1390
+    - T1571
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-3-2-smb-multiple-credential-testing:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0484
+    - S0485
+    - S0141
+    source: derived_from_competency_and_category
+    tasks:
+    - T1255
+    - T1390
+    - T1571
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-3-3-smb-single-user-brute-force:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0484
+    - S0485
+    - S0141
+    source: derived_from_competency_and_category
+    tasks:
+    - T1255
+    - T1390
+    - T1569
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-3-4-smb-username-enumeration-and-brute-force:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0141
+    - S0448
+    - S0449
+    source: derived_from_competency_and_category
+    tasks:
+    - T1172
+    - T1255
+    - T1287
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-3-5-smb-full-credential-attack:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0484
+    - S0485
+    - S0141
+    source: derived_from_competency_and_category
+    tasks:
+    - T1255
+    - T1390
+    - T1571
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-4-1-rdp-service-detection:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0141
+    - S0448
+    - S0449
+    source: derived_from_competency_and_category
+    tasks:
+    - T1172
+    - T1255
+    - T1287
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-4-2-rdp-version-enumeration:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0141
+    - S0448
+    - S0449
+    source: derived_from_competency_and_category
+    tasks:
+    - T0309
+    - T1172
+    - T1255
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-4-3-rdp-manual-connection-test:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0484
+    - S0485
+    - S0141
+    source: derived_from_competency_and_category
+    tasks:
+    - T0309
+    - T1255
+    - T1347
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-4-4-rdp-credential-guessing:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0484
+    - S0485
+    - S0141
+    source: derived_from_competency_and_category
+    tasks:
+    - T1255
+    - T1347
+    - T1390
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-4-5-rdp-brute-force-attack:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0484
+    - S0485
+    - S0141
+    source: derived_from_competency_and_category
+    tasks:
+    - T1255
+    - T1347
+    - T1390
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-4-6-rdp-session-access-and-flag-retrieval:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0141
+    - S0448
+    - S0449
+    source: derived_from_competency_and_category
+    tasks:
+    - T1172
+    - T1255
+    - T1287
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-5-1-winrm-service-detection:
+    confidence: medium
+    knowledge:
+    - K0849
+    - K0717
+    - K0742
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0141
+    - S0448
+    - S0449
+    source: derived_from_competency_and_category
+    tasks:
+    - T0309
+    - T1172
+    - T1255
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-5-2-winrm-version-and-configuration-enumeration:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0141
+    - S0448
+    - S0449
+    source: derived_from_competency_and_category
+    tasks:
+    - T0309
+    - T1172
+    - T1255
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-5-3-winrm-manual-authentication:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0484
+    - S0485
+    - S0141
+    source: derived_from_competency_and_category
+    tasks:
+    - T0309
+    - T1255
+    - T1390
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-5-4-winrm-credential-brute-force:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0484
+    - S0485
+    - S0141
+    source: derived_from_competency_and_category
+    tasks:
+    - T1255
+    - T1390
+    - T1571
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-5-5-winrm-command-execution:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0141
+    - S0448
+    - S0449
+    source: derived_from_competency_and_category
+    tasks:
+    - T1172
+    - T1255
+    - T1287
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-5-6-winrm-file-retrieval:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0809
+    - S0141
+    - S0448
+    source: derived_from_competency_and_category
+    tasks:
+    - T1255
+    - T1351
+    - T1390
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-6-1-mssql-service-detection:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0141
+    - S0448
+    - S0449
+    source: derived_from_competency_and_category
+    tasks:
+    - T1085
+    - T1172
+    - T1177
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-6-2-mssql-version-and-instance-enumeration:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0141
+    - S0448
+    - S0449
+    source: derived_from_competency_and_category
+    tasks:
+    - T0309
+    - T1172
+    - T1255
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-6-3-mssql-manual-authentication:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0484
+    - S0485
+    - S0045
+    source: derived_from_competency_and_category
+    tasks:
+    - T0309
+    - T1255
+    - T1390
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-6-4-mssql-credential-brute-force:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0484
+    - S0485
+    - S0141
+    source: derived_from_competency_and_category
+    tasks:
+    - T1255
+    - T1390
+    - T1571
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-6-5-mssql-basic-query-execution:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0045
+    - S0141
+    - S0448
+    source: derived_from_competency_and_category
+    tasks:
+    - T1255
+    - T1390
+    - T1571
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-6-6-mssql-xp-cmdshell-activation:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0045
+    - S0141
+    - S0448
+    source: derived_from_competency_and_category
+    tasks:
+    - T1255
+    - T1390
+    - T1571
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-6-7-mssql-file-system-access-via-xp-cmdshell:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0045
+    - S0141
+    - S0448
+    source: derived_from_competency_and_category
+    tasks:
+    - T0299
+    - T1255
+    - T1390
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-7-1-ldap-service-detection:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0141
+    - S0448
+    - S0449
+    source: derived_from_competency_and_category
+    tasks:
+    - T1021
+    - T1255
+    - T1390
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-7-2-ldap-anonymous-bind-test:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0141
+    - S0448
+    - S0449
+    source: derived_from_competency_and_category
+    tasks:
+    - T1255
+    - T1351
+    - T1390
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-7-3-ldap-base-dn-enumeration:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0141
+    - S0448
+    - S0449
+    source: derived_from_competency_and_category
+    tasks:
+    - T1255
+    - T1390
+    - T1571
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-7-4-ldap-user-enumeration:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0484
+    - S0485
+    - S0141
+    source: derived_from_competency_and_category
+    tasks:
+    - T1569
+    - T1085
+    - T1255
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-7-5-ldap-group-enumeration:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0141
+    - S0448
+    - S0449
+    source: derived_from_competency_and_category
+    tasks:
+    - T1130
+    - T1255
+    - T1390
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-7-6-ldap-comprehensive-enumeration:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0688
+    - S0872
+    - S0874
+    source: derived_from_competency_and_category
+    tasks:
+    - T1255
+    - T1390
+    - T1571
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-8-1-single-service-credential-discovery:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0484
+    - S0485
+    - S0141
+    source: derived_from_competency_and_category
+    tasks:
+    - T1255
+    - T1390
+    - T1560
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-8-2-cross-service-credential-reuse:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0484
+    - S0485
+    - S0141
+    source: derived_from_competency_and_category
+    tasks:
+    - T1255
+    - T1390
+    - T1571
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-8-3-multi-service-credential-reuse:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0484
+    - S0485
+    - S0141
+    source: derived_from_competency_and_category
+    tasks:
+    - T1255
+    - T1390
+    - T1560
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-8-4-credential-discovery-and-reuse-chain:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0484
+    - S0485
+    - S0141
+    source: derived_from_competency_and_category
+    tasks:
+    - T1255
+    - T1390
+    - T1571
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-8-5-cme-credential-reuse-automation:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0484
+    - S0485
+    - S0045
+    source: derived_from_competency_and_category
+    tasks:
+    - T1571
+    - T1255
+    - T1390
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-9-1-windows-network-assessment:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0688
+    - S0872
+    - S0141
+    source: derived_from_competency_and_category
+    tasks:
+    - T1255
+    - T1390
+    - T1571
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-9-2-multi-service-exploitation:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0141
+    - S0448
+    - S0449
+    source: derived_from_competency_and_category
+    tasks:
+    - T1255
+    - T1390
+    - T1571
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  windows-9-3-complete-windows-penetration-test:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0772
+    - K0849
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0688
+    - S0872
+    - S0141
+    source: derived_from_competency_and_category
+    tasks:
+    - T1255
+    - T1390
+    - T1571
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+policy_version: 1
+version: 2.2.0

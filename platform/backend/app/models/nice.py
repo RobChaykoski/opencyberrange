@@ -115,3 +115,28 @@ class LabNiceComponent(Base):
     __table_args__ = (
         UniqueConstraint("lab_id", "component_id", name="uq_lab_nice_component"),
     )
+
+
+class LabNiceMetadata(Base):
+    """Review status and provenance for one lab's NICE mapping."""
+
+    __tablename__ = "lab_nice_metadata"
+
+    lab_id = Column(
+        Integer,
+        ForeignKey("labs.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    review_status = Column(String(24), nullable=False, default="provisional")
+    source = Column(String(40), nullable=False)
+    confidence = Column(String(16), nullable=True)
+    policy_version = Column(Integer, nullable=True)
+    reviewed_at = Column(DateTime, nullable=True)
+    reviewed_by_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    updated_at = Column(
+        DateTime, server_default=func.now(), onupdate=func.now(), nullable=False
+    )

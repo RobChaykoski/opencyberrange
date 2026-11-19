@@ -112,3 +112,78 @@ def test_ingest_and_map_lab(db_session, test_lab):
     )
     assert tasks["total"] == 1
     assert tasks["items"][0]["code"] == "T0001"
+
+
+def test_seed_lab_mappings_and_coverage(db_session):
+    from app.models import Lab, LabNiceMetadata
+
+    # Restore the full snapshot; the preceding single-sample test marks other
+    # components inactive by design.
+    nice_framework.ingest_payload(
+        db_session, nice_framework._load_snapshot(), source="test"
+    )
+    slug = "windows-11-2-kerberoasting"
+    lab = Lab(
+        name="Kerberoasting",
+        slug=slug,
+        description="Seed coverage test",
+        compose_file="services: {}\n",
+        is_active=True,
+        visibility="public",
+        duration_minutes=60,
+        difficulty="intermediate",
+    )
+    db_session.add(lab)
+    db_session.commit()
+    db_session.refresh(lab)
+    try:
+        first = nice_framework.seed_lab_mappings(db_session)
+        assert first["seeded"] >= 1
+        assert first["components"] >= 1
+        meta = db_session.query(LabNiceMetadata).filter(
+            LabNiceMetadata.lab_id == lab.id
+        ).first()
+        assert meta is not None
+        assert meta.review_status == "provisional"
+        assert meta.source.startswith("derived")
+
+        second = nice_framework.seed_lab_mappings(db_session)
+        assert second["seeded"] == 0
+        assert second["skipped"] >= 1
+
+        report = nice_framework.coverage(db_session)
+        assert report["total_labs"] >= 1
+        assert report["mapped_labs"] >= 1
+        assert report["provisional"] >= 1
+        assert any(row["lab_id"] == lab.id for row in report["review_queue"])
+
+        # A manual save moves the lab out of the provisional queue.
+        item = nice_framework.load_lab_mappings()["mappings"][slug]
+        nice_framework.set_lab_mappings(
+            db_session,
+            lab_id=lab.id,
+            selections={
+                "work_role": item["work_roles"][:1],
+                "task": item["tasks"][:1],
+                "knowledge": item["knowledge"][:1],
+                "skill": item["skills"][:1],
+            },
+            created_by_id=None,
+        )
+        meta = db_session.query(LabNiceMetadata).filter(
+            LabNiceMetadata.lab_id == lab.id
+        ).first()
+        assert meta.review_status == "reviewed"
+        report = nice_framework.coverage(db_session)
+        assert report["reviewed"] >= 1
+    finally:
+        from app.models import LabNiceComponent
+
+        db_session.query(LabNiceComponent).filter(
+            LabNiceComponent.lab_id == lab.id
+        ).delete()
+        db_session.query(LabNiceMetadata).filter(
+            LabNiceMetadata.lab_id == lab.id
+        ).delete()
+        db_session.delete(lab)
+        db_session.commit()

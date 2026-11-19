@@ -21,12 +21,15 @@ from pathlib import Path
 from typing import Iterable, Optional
 
 import requests
-from sqlalchemy import or_
+import yaml
+from sqlalchemy import func, or_
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from app.models import Lab
 from app.models.nice import (
     LabNiceComponent,
+    LabNiceMetadata,
     NiceComponent,
     NiceFrameworkMeta,
     NiceLink,
@@ -41,6 +44,9 @@ OFFICIAL_URL = (
 )
 SNAPSHOT_PATH = (
     Path(__file__).resolve().parents[1] / "data" / "nice" / "nice-v2.2.0.json.gz"
+)
+LAB_MAPPINGS_PATH = (
+    Path(__file__).resolve().parents[1] / "data" / "nice" / "lab-mappings.yaml"
 )
 MAX_DOWNLOAD_BYTES = 20 * 1024 * 1024
 COMPONENT_TYPES = ("work_role", "task", "knowledge", "skill")
@@ -256,6 +262,164 @@ def refresh(db: Session, *, source: str = "official") -> dict:
     )
 
 
+def load_lab_mappings() -> dict:
+    if not LAB_MAPPINGS_PATH.is_file():
+        return {}
+    try:
+        return yaml.safe_load(LAB_MAPPINGS_PATH.read_text(encoding="utf-8")) or {}
+    except Exception as exc:  # noqa: BLE001 - a bad seed must not break startup
+        logger.warning("Could not load NICE lab mappings: %s", exc)
+        return {}
+
+
+def _component_ids(db: Session, item: dict) -> list[int]:
+    wanted = []
+    for component_type, key in (
+        ("work_role", "work_roles"),
+        ("task", "tasks"),
+        ("knowledge", "knowledge"),
+        ("skill", "skills"),
+    ):
+        for code in item.get(key) or []:
+            wanted.append((component_type, str(code)))
+    if not wanted:
+        return []
+    rows = (
+        db.query(NiceComponent)
+        .filter(
+            NiceComponent.is_active.is_(True),
+            NiceComponent.component_type.in_([kind for kind, _ in wanted]),
+            NiceComponent.code.in_([code for _, code in wanted]),
+        )
+        .all()
+    )
+    by_key = {(row.component_type, row.code): row.id for row in rows}
+    return [
+        by_key[key]
+        for key in wanted
+        if key in by_key
+    ]
+
+
+def seed_lab_mappings(db: Session, *, overwrite: bool = False) -> dict:
+    """Load provisional repository mappings into labs that have none.
+
+    Reviewed mappings are never replaced unless ``overwrite`` is set and the
+    current status is still provisional.
+    """
+    payload = load_lab_mappings()
+    mappings = payload.get("mappings") or {}
+    labs = {lab.slug: lab for lab in db.query(Lab).all()}
+    seeded = skipped = missing = components = 0
+    for slug, item in mappings.items():
+        lab = labs.get(slug)
+        if lab is None:
+            missing += 1
+            continue
+        meta = (
+            db.query(LabNiceMetadata)
+            .filter(LabNiceMetadata.lab_id == lab.id)
+            .first()
+        )
+        existing = (
+            db.query(func.count(LabNiceComponent.id))
+            .filter(LabNiceComponent.lab_id == lab.id)
+            .scalar()
+            or 0
+        )
+        if existing and not overwrite:
+            skipped += 1
+            continue
+        if existing and meta and meta.review_status == "reviewed":
+            skipped += 1
+            continue
+        if existing and overwrite:
+            db.query(LabNiceComponent).filter(
+                LabNiceComponent.lab_id == lab.id
+            ).delete(synchronize_session=False)
+            db.flush()
+        ids = _component_ids(db, item)
+        if not ids:
+            missing += 1
+            continue
+        for component_id in ids:
+            db.add(
+                LabNiceComponent(
+                    lab_id=lab.id,
+                    component_id=component_id,
+                    created_by_id=None,
+                )
+            )
+            components += 1
+        if meta is None:
+            meta = LabNiceMetadata(lab_id=lab.id, source=item.get("source") or "derived")
+            db.add(meta)
+        meta.review_status = item.get("review_status") or "provisional"
+        meta.source = item.get("source") or "derived"
+        meta.confidence = item.get("confidence")
+        meta.policy_version = int(payload.get("policy_version") or 1)
+        meta.reviewed_at = None
+        meta.reviewed_by_id = None
+        seeded += 1
+    db.commit()
+    return {
+        "seeded": seeded,
+        "skipped": skipped,
+        "missing": missing,
+        "components": components,
+        "total_mappings": len(mappings),
+    }
+
+
+def coverage(db: Session, *, limit: int = 50) -> dict:
+    total = int(db.query(func.count(Lab.id)).scalar() or 0)
+    mapped = int(
+        db.query(func.count(func.distinct(LabNiceComponent.lab_id))).scalar() or 0
+    )
+    status_rows = (
+        db.query(LabNiceMetadata.review_status, func.count(LabNiceMetadata.lab_id))
+        .group_by(LabNiceMetadata.review_status)
+        .all()
+    )
+    status_counts = {status: int(count) for status, count in status_rows}
+    queue_rows = (
+        db.query(Lab, LabNiceMetadata)
+        .outerjoin(LabNiceMetadata, LabNiceMetadata.lab_id == Lab.id)
+        .filter(
+            or_(
+                LabNiceMetadata.lab_id.is_(None),
+                LabNiceMetadata.review_status == "provisional",
+            )
+        )
+        .order_by(Lab.name)
+        .limit(max(1, min(limit, 200)))
+        .all()
+    )
+    return {
+        "framework": "NICE",
+        "version": status(db).get("version"),
+        "total_labs": total,
+        "mapped_labs": mapped,
+        "unmapped_labs": max(0, total - mapped),
+        "coverage_percent": round((mapped / total) * 100, 1) if total else 0.0,
+        "provisional": status_counts.get("provisional", 0),
+        "reviewed": status_counts.get("reviewed", 0),
+        "status_counts": status_counts,
+        "review_queue": [
+            {
+                "lab_id": lab.id,
+                "slug": lab.slug,
+                "name": lab.name,
+                "category": lab.category,
+                "review_status": meta.review_status if meta else "unmapped",
+                "source": meta.source if meta else None,
+                "confidence": meta.confidence if meta else None,
+            }
+            for lab, meta in queue_rows
+        ],
+    }
+
+
 def status(db: Session) -> dict:
     meta = db.query(NiceFrameworkMeta).filter(NiceFrameworkMeta.id == 1).first()
     counts = {}
@@ -446,5 +610,19 @@ def set_lab_mappings(
                     created_by_id=created_by_id,
                 )
             )
+    meta = (
+        db.query(LabNiceMetadata)
+        .filter(LabNiceMetadata.lab_id == lab_id)
+        .first()
+    )
+    if meta is None:
+        meta = LabNiceMetadata(lab_id=lab_id, source="manual")
+        db.add(meta)
+    meta.review_status = "reviewed"
+    meta.source = "manual"
+    meta.confidence = "reviewed"
+    meta.policy_version = 1
+    meta.reviewed_at = datetime.now(timezone.utc).replace(tzinfo=None)
+    meta.reviewed_by_id = created_by_id
     db.commit()
     return lab_mappings(db, lab_id)

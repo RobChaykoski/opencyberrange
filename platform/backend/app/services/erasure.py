@@ -108,6 +108,7 @@ _OPTIONAL_USER_REFERENCES: tuple[tuple[str, str, str], ...] = (
     ("readiness_student_notes", "created_by_id", "null"),
     ("readiness_lab_reviews", "owner_id", "null"),
     ("lab_nice_components", "created_by_id", "null"),
+    ("lab_nice_metadata", "reviewed_by_id", "null"),
     ("course_staff", "created_by_id", "null"),
 )
 

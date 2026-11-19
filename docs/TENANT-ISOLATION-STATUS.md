@@ -68,7 +68,7 @@ break authentication or remove a global security control.
 | Consent subsystem | `consent_states`, `consent_events`, `consent_audits`, `consent_jobs`, `consent_revocations`, `consent_suppressions`, `survey_consent_events` | Learner-owned, but the consent gate runs during onboarding and sign-in while the tenant is being established. Already protected by the revocation orchestrator, suppression ledger, and erasure path. Candidate for the next RLS wave after the consent read path is tenant-stamped. |
 | Course-owned content | `course_cohorts`, `course_lab_assignments`, `course_requirements`, `survey_attachments`, `exercise_sets`, `report_exports` | Institution-owned rather than learner-personal; scoped by the course in services. A later migration can derive `institution_id` from `course_id`. |
 | Shared definitions | `labs`, `competitions`, `exercise_templates`, `surveys` | Platform-wide catalogue or shared content; not personal data. Competition participation is learner-owned and already covered through `competition_participants` scoping at the service layer. |
-| Framework reference data | `nice_components`, `nice_links`, `nice_framework_meta`, `lab_nice_components` | Public NIST reference data and lab-to-component selections. No learner or institution identity. Mappings are validated against the shared catalogue. |
+| Framework reference data | `nice_components`, `nice_links`, `nice_framework_meta`, `lab_nice_components`, `lab_nice_metadata` | Public NIST reference data and lab-to-component selections. No learner or institution identity. Mappings are validated against the shared catalogue. |
 
 ## Required next migration
 

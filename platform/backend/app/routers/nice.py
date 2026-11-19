@@ -58,6 +58,16 @@ def nice_components(
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
+@router.get("/coverage")
+def nice_coverage(
+    limit: int = 50,
+    db: Session = Depends(get_db),
+    _user: User = Depends(get_current_instructor_user),
+):
+    """Return lab mapping coverage and the provisional review queue."""
+    return nice_framework.coverage(db, limit=limit)
+
+
 @router.get("/labs/{lab_id}")
 def get_lab_nice_mappings(
     lab_id: int,
@@ -94,6 +104,15 @@ def set_lab_nice_mappings(
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return {"lab_id": lab_id, **mappings}
+
+
+@router.post("/labs/seed")
+def seed_nice_lab_mappings(
+    db: Session = Depends(get_db),
+    _admin: User = Depends(get_current_admin_user),
+):
+    """Fill labs that have no NICE mapping from the provisional seed file."""
+    return nice_framework.seed_lab_mappings(db)
 
 
 @router.post("/refresh")

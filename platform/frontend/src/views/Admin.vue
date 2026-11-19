@@ -8261,6 +8261,7 @@ const onAdminVisibilityChange = () => {
 onMounted(async () => {
   await fetchAll()
   fetchCurriculum()
+  loadNiceCoverage()
   fetchDashboardHealth()
   fetchReleaseCheck()
   fetchRangeboxCapacity()
@@ -9465,6 +9466,9 @@ const staffCandidates = ref([])
 const staffForm = ref({ user_id: '', staff_role: 'mentor' })
 const staffBusy = ref(false)
 const staffError = ref('')
+const niceCoverage = ref(null)
+const niceCoverageBusy = ref(false)
+const niceCoverageError = ref('')
 
 const instructorUsers = computed(() => {
   return users.value.filter(u => u.role === 'instructor' || u.role === 'admin')
@@ -9697,6 +9701,29 @@ const removeCourseStaff = async (staffId) => {
     staffError.value = e.response?.data?.detail || 'Could not remove course staff.'
   } finally {
     staffBusy.value = false
+  }
+}
+
+const loadNiceCoverage = async () => {
+  try {
+    const { data } = await axios.get('/nice/coverage')
+    niceCoverage.value = data
+    niceCoverageError.value = ''
+  } catch (e) {
+    niceCoverageError.value = e.response?.data?.detail || 'Could not load NICE coverage.'
+  }
+}
+
+const seedNiceMappings = async () => {
+  niceCoverageBusy.value = true
+  niceCoverageError.value = ''
+  try {
+    await axios.post('/nice/labs/seed')
+    await loadNiceCoverage()
+  } catch (e) {
+    niceCoverageError.value = e.response?.data?.detail || 'Could not seed NICE mappings.'
+  } finally {
+    niceCoverageBusy.value = false
   }
 }
 

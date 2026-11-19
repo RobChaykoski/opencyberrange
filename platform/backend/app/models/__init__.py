@@ -108,6 +108,7 @@ from app.models.security import (
 from app.models.readiness import ReadinessStudentNote, ReadinessLabReview
 from app.models.nice import (
     LabNiceComponent,
+    LabNiceMetadata,
     NiceComponent,
     NiceFrameworkMeta,
     NiceLink,
@@ -124,6 +125,7 @@ from app.consent.models import (
 __all__ = [
     "Base",
     "LabNiceComponent",
+    "LabNiceMetadata",
     "NiceComponent",
     "NiceFrameworkMeta",
     "NiceLink",

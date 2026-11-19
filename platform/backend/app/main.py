@@ -763,6 +763,8 @@ async def lifespan(app: FastAPI):
         _nice_db = SessionLocal()
         try:
             _seed_nice(_nice_db)
+            from app.services.nice_framework import seed_lab_mappings as _seed_nice_labs
+            _seed_nice_labs(_nice_db)
         finally:
             _nice_db.close()
     except Exception as _exc:

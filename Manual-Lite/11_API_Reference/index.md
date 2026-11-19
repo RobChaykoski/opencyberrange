@@ -514,6 +514,8 @@ owner-only unless an explicit share or break-glass grant exists.
 | `POST` | `/api/lti/login` | Lti Login | Public |
 | `GET` | `/api/modules/` | Get Modules Status | OAuth2PasswordBearer |
 | `GET` | `/api/nice/components` | Nice Components | OAuth2PasswordBearer |
+| `GET` | `/api/nice/coverage` | Nice Coverage | OAuth2PasswordBearer |
+| `POST` | `/api/nice/labs/seed` | Seed Nice Lab Mappings | OAuth2PasswordBearer |
 | `GET` | `/api/nice/labs/{lab_id}` | Get Lab Nice Mappings | OAuth2PasswordBearer |
 | `PUT` | `/api/nice/labs/{lab_id}` | Set Lab Nice Mappings | OAuth2PasswordBearer |
 | `POST` | `/api/nice/refresh` | Refresh Nice Framework | OAuth2PasswordBearer |
@@ -7409,6 +7411,37 @@ Search NICE components for the authoring dropdown.
 
 - `200`: Successful Response
 - `422`: Validation Error — `HTTPValidationError`
+
+### `GET /api/nice/coverage`
+
+**Nice Coverage**
+
+Return lab mapping coverage and the provisional review queue.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `limit` | query | integer | no |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `POST /api/nice/labs/seed`
+
+**Seed Nice Lab Mappings**
+
+Fill labs that have no NICE mapping from the provisional seed file.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Responses**
+
+- `200`: Successful Response
 
 ### `GET /api/nice/labs/{lab_id}`
 
