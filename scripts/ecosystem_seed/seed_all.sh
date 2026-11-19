@@ -62,9 +62,7 @@ fi
 echo "== Authentik =="
 if docker compose --profile sso ps --services --filter status=running | grep -qx authentik-server; then
   # security-delta: allow exec (seeds the local Authentik training file)
-  docker compose exec -T authentik-server ak shell \
-    -c "exec(open('/seed/seed_authentik.py').read())" < /dev/null 2>&1 \
-    | grep -E 'Seeded|Groups:|Users:|Error|Traceback' || true
+  docker compose exec -T -e TRAINING_PASSWORD="${TRAINING_PASSWORD:-TrainLab!2026#Student}" authentik-server ak shell -c "exec(open('/seed/seed_authentik.py').read())" < /dev/null 2>&1 | grep -E 'Seeded|Groups:|Users:|Error|Traceback' || true
   echo "Authentik training groups and users seeded."
 else
   echo "SKIP: Authentik is not running"

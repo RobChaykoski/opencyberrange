@@ -11,8 +11,10 @@ Everything here is fake training data. It is idempotent.
 
 from authentik.core.models import Group, User
 
+import os
+
 # security-delta: allow credential-like assignment (synthetic lab password)
-PASSWORD = "TrainLab!2026#Cohort"
+PASSWORD = os.environ.get("TRAINING_PASSWORD", "TrainLab!2026#Student")
 
 GROUPS = {
     "ocr-learners": "OpenCyberRange learners (synthetic)",
