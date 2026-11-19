@@ -10,10 +10,10 @@ another document disagrees, this page and the signed tag win.
 | Item | Value |
 |---|---|
 | Edition | **Community / Academic** (`lite` entitlement, single-host) |
-| Release | **5.21.0** |
-| Signed tag | **`v5.21.0`** |
-| Runtime code commit | `5500f30d` (signed tag `v5.21.0`) |
-| Previous release | `5.20.0` (signed tag `v5.20.0` at `0db34282`) |
+| Release | **5.22.0** |
+| Signed tag | **`v5.22.0`** |
+| Runtime code commit | `a172789f` (signed tag `v5.22.0`) |
+| Previous release | `5.21.0` (signed tag `v5.21.0` at `5500f30d`) |
 | Alembic revision | **`0044_readiness_case_owner`** |
 | Development host | `172.16.16.44` |
 | Production host | `172.16.16.41` / `https://ctfd.swocts.com` |
@@ -28,7 +28,8 @@ another document disagrees, this page and the signed tag win.
 | 5.19.0 backup | `~/backups/ocr-backup-20261119-034307.dump` |
 | 5.20.0 backup | `~/backups/ocr-backup-20261119-042354.dump` |
 | 5.21.0 backup | `~/backups/ocr-backup-20261119-045654.dump` |
-| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 19 November deploy, 5.19.0, 5.20.0, and 5.21.0) |
+| 5.22.0 backup | `~/backups/ocr-backup-20261119-051707.dump` |
+| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 19 November deploy, 5.19.0, 5.20.0, 5.21.0, and 5.22.0) |
 
 ## Production cutover: COMPLETE
 

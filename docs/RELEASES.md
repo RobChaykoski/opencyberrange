@@ -7,7 +7,8 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.21.0` | SWOCTS Cyber Range Release 5.21.0 | Current feature release (signed annotated tag): readiness case ownership, priority, follow-up view, and a fix for admin snapshots under forced row-level security |
+| `v5.22.0` | SWOCTS Cyber Range Release 5.22.0 | Current feature release (signed annotated tag): instructor calibration reviews of the provisional readiness band, review coverage, agreement by band, and band-changed signals |
+| `v5.21.0` | SWOCTS Cyber Range Release 5.21.0 | Previous feature release (signed annotated tag): readiness case ownership, priority, follow-up view, and a fix for admin snapshots under forced row-level security |
 | `v5.20.0` | SWOCTS Cyber Range Release 5.20.0 | Previous feature release (signed annotated tag): pilot instructor readiness calibration workflow with context flags, support actions and outcomes, flag acknowledge/snooze/dismiss, lab-health review history, and a calibration view |
 | `v5.19.0` | SWOCTS Cyber Range Release 5.19.0 | Previous feature release (signed annotated tag): pilot instructor readiness dashboard with a provisional CWRS support queue, on-demand capability detail, and lab health |
 | `v5.18.0` | SWOCTS Cyber Range Release 5.18.0 | Previous feature release (signed annotated tag): account email notifications and templates, career-direction check, expanded question bank and collection achievements, simulated-cloud reference stack, manual/export and RangeBox fixes |
@@ -64,6 +65,18 @@ represent. It exists because the history contains several naming eras.
 `v5.14.0` and later releases are signed with the current release key
 `68A817762C831475F00DB54E775050A4C4921814`. The public key is
 `docs/release-signing-key.asc`.
+
+## Release 5.22.0 tag record
+
+| Item | Value |
+|---|---|
+| Tag | `v5.22.0` (signed annotated tag) |
+| Commit | `a172789f` |
+| Signature | **Good**, key `68A817762C831475F00DB54E775050A4C4921814` |
+| Released | 19 November 2026 |
+| GitHub release | https://github.com/RobChaykoski/opencyberrange/releases/tag/v5.22.0 |
+| CI | CI, Quality checks, CodeQL, Trivy, and OpenSSF Scorecard passed |
+| Deployed | Dev and production both on `5.22.0`, Alembic `0044_readiness_case_owner` |
 
 ## Release 5.21.0 tag record
 
@@ -147,7 +160,7 @@ recorded in `versions.yaml` and returned by `/api/version`.
 
 Tags `v3.0.0` through `v3.1.2` belong to the experimental Enterprise/HA branch
 and are historical. They are **not** the supported single-host platform
-release. The current platform releases are the `v5.x` tags on `main`; `v5.21.0`
+release. The current platform releases are the `v5.x` tags on `main`; `v5.22.0`
 is the newest.
 Release 4 added OIDC, SAML, and LDAP SSO. Multi-tenancy, LMS/LTI,
 the per-student accommodation engine, and weekly Jeopardy-style challenge quizzes
@@ -155,7 +168,7 @@ that feed Cyber DNA are Release 5.
 
 ## Choosing a version
 
-1. Use `main` or the latest `v5.x` tag (currently `v5.21.0`) for new installs.
+1. Use `main` or the latest `v5.x` tag (currently `v5.22.0`) for new installs.
 2. Keep `1.1.x` only for an existing Community / Academic maintenance install.
 3. Do not deploy a `v2.2.x`, `v2.3.x`, or `v3.x` tag as the current platform.
 4. Check `docs/SUPPORTED-VERSIONS.md` before changing a dependency or host OS.
