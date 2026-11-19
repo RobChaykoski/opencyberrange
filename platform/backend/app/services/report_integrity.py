@@ -61,6 +61,7 @@ def record_report(
     filename: str,
     data: bytes,
     generated_by: int | None,
+    expires_at: datetime | None = None,
 ) -> ReportExport:
     generated_at = datetime.now(timezone.utc).replace(tzinfo=None, microsecond=0)
     digest = checksum(data)
@@ -81,6 +82,7 @@ def record_report(
         ),
         generated_by=generated_by,
         generated_at=generated_at,
+        expires_at=expires_at.replace(tzinfo=None) if expires_at else None,
     )
     db.add(row)
     db.commit()

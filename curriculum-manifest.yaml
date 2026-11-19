@@ -917,3 +917,80 @@ tracks:
         estimated_minutes: 360
         recommended_next: SOC01
         status: planned
+
+  - id: neteng
+    pathway_order: 15
+    display_name: "Network Engineering and Infrastructure"
+    audience: "Learners moving from packet-level analysis into network source of truth, monitoring, configuration control, segmentation, and network access control."
+    difficulty: "intermediate"
+    prerequisites: ["NET00"]
+    required_environment: "RangeBox with NetBox, LibreNMS, Oxidized, OPNsense or pfSense, PacketFence, and a small segmented network"
+    recommended_next: "platform"
+    role_alignment: ["Network Engineer", "Network Operations Specialist", "Infrastructure Engineer", "NOC Analyst"]
+    framework_alignment:
+      nice_work_roles: ["IO-WRL-004", "IO-WRL-005", "PD-WRL-004", "PD-WRL-001", "DD-WRL-001"]
+    status: "planned"
+    chapters:
+      - id: NENG01
+        directory: CH_NENG01_NetBox_Source_Of_Truth
+        display_name: "Network Source of Truth with NetBox"
+        difficulty: "beginner"
+        prerequisites: [NET00]
+        exercises: 4
+        estimated_minutes: 480
+        recommended_next: NENG02
+        status: planned
+      - id: NENG02
+        directory: CH_NENG02_LibreNMS_Monitoring
+        display_name: "Monitoring with LibreNMS"
+        difficulty: "intermediate"
+        prerequisites: [NENG01]
+        exercises: 4
+        estimated_minutes: 480
+        recommended_next: NENG03
+        status: planned
+      - id: NENG03
+        directory: CH_NENG03_Oxidized_Config_Backup
+        display_name: "Configuration Backup with Oxidized"
+        difficulty: "intermediate"
+        prerequisites: [NENG01]
+        exercises: 3
+        estimated_minutes: 360
+        recommended_next: NENG04
+        status: planned
+      - id: NENG04
+        directory: CH_NENG04_OPNsense_Segmentation
+        display_name: "Firewall and Segmentation with OPNsense/pfSense"
+        difficulty: "intermediate"
+        prerequisites: [NET00]
+        exercises: 5
+        estimated_minutes: 600
+        recommended_next: NENG05
+        status: planned
+      - id: NENG05
+        directory: CH_NENG05_PacketFence_NAC
+        display_name: "NAC and Zero Trust with PacketFence"
+        difficulty: "advanced"
+        prerequisites: [NENG04]
+        exercises: 5
+        estimated_minutes: 600
+        recommended_next: NENG06
+        status: planned
+      - id: NENG06
+        directory: CH_NENG06_OpenIAM_Network_Integration
+        display_name: "Identity Integration with OpenIAM"
+        difficulty: "advanced"
+        prerequisites: [NENG05, IAM08]
+        exercises: 3
+        estimated_minutes: 360
+        recommended_next: NENG07
+        status: planned
+      - id: NENG07
+        directory: CH_NENG07_Network_Engineering_Capstone
+        display_name: "Network Engineering Capstone"
+        difficulty: "advanced"
+        prerequisites: [NENG02, NENG03, NENG06]
+        exercises: 2
+        estimated_minutes: 360
+        recommended_next: SOC01
+        status: planned

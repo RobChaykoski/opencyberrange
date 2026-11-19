@@ -3,6 +3,12 @@
 Administrators can add a data-classification label to anything the platform
 exports. The controls live in **Admin → Settings → Data labels**.
 
+There is no single universal data-classification standard. The platform uses an
+institution-defined sensitivity taxonomy and can record framework references for
+each level, so the same label can be aligned with a university standard,
+ISO/IEC 27001, NIST, GDPR, HIPAA, PCI DSS, or a sector scheme without pretending
+those schemes are identical.
+
 ## Settings
 
 | Setting | Purpose |
@@ -27,6 +33,7 @@ responses and adds:
 X-Data-Classification: Confidential
 X-Data-Classification-Key: confidential
 X-Data-Organisation: Example Institute
+X-Data-Framework-Refs: U of T Level 3, ISO/IEC 27001 A.5.12
 X-Data-Region: EU
 X-Data-Handling: Confidential. Share only with authorised recipients.
 X-Data-Source: OpenCyberRange
@@ -112,18 +119,23 @@ decision and the actor are written to the security event store as
 ### Organisational schemes
 
 `data_label_custom_levels` accepts a JSON list. Each level needs a unique
-`key`, a `label`, and an integer `rank`; `handling` and `exportable` are
-optional. Invalid JSON falls back to the built-in four-level scheme with a
-warning on `GET /api/admin/data-labels/policy`.
+`key`, a `label`, and an integer `rank`; `handling`, `exportable`, and
+`framework_refs` are optional. `framework_refs` is a free list of strings the
+institution uses to document its own alignment. Invalid JSON falls back to the
+built-in four-level scheme with a warning on `GET /api/admin/data-labels/policy`.
 
 ```json
 [
-  {"key": "public", "label": "Public", "rank": 0},
-  {"key": "official", "label": "Official", "rank": 1},
-  {"key": "protected", "label": "Protected", "rank": 2},
-  {"key": "sealed", "label": "Sealed", "rank": 3, "exportable": false}
+  {"key": "public", "label": "Level 1 - Public", "rank": 0, "framework_refs": ["U of T Level 1"]},
+  {"key": "internal", "label": "Level 2 - Internal", "rank": 1, "framework_refs": ["U of T Level 2"]},
+  {"key": "confidential", "label": "Level 3 - Confidential", "rank": 2, "framework_refs": ["U of T Level 3", "ISO/IEC 27001 A.5.12"]},
+  {"key": "restricted", "label": "Level 4 - Restricted", "rank": 3, "exportable": false, "framework_refs": ["U of T Level 4", "GDPR Art. 9", "HIPAA", "PCI DSS"]}
 ]
 ```
+
+The built-in labels (Public, Internal, Confidential, Restricted) are a starting
+point, not a claim about any regulator's scheme. Use the institution's approved
+labels and put the crosswalk in `framework_refs`.
 
 Use `data_label_region` plus `data_label_region_rules` to apply a regional
 ceiling, for example:

@@ -48,6 +48,7 @@ from app.services.learning_metadata import (
 from app.services import exercise_quiz, settings_service, accommodations
 from app.export_reason import require_export_reason
 from app.services.audit import log_admin_action, AuditActions
+from app.services import report_access
 from app.services.report_integrity import record_report
 from app.services.activity import log_activity, EventTypes
 from app.services.course_wiki import rebuild_course_wiki
@@ -2017,11 +2018,13 @@ async def class_report(
     request: Request,
     reason: str = Depends(require_export_reason),
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_instructor_user),
+    current_user: User = Depends(get_current_active_user),
 ):
     """Generate PDF report for entire class."""
     course = _get_course_or_404(db, course_id)
-    _require_instructor(course, current_user)
+    policy = report_access.require_report_access(
+        db, request, current_user, course, "student-record-pack", export=True
+    )
 
     from app.services.pdf_report import generate_class_report
 
@@ -2046,6 +2049,18 @@ async def class_report(
         filename=filename,
         data=bytes(pdf_bytes),
         generated_by=current_user.id,
+        expires_at=report_access.expiration(policy),
+    )
+    report_access.audit_access(
+        db,
+        request,
+        current_user,
+        course,
+        policy,
+        AuditActions.REPORT_VIEWED,
+        reason=reason,
+        format="pdf",
+        report_id=report_id,
     )
     log_admin_action(
         action=AuditActions.REPORT_EXPORTED,
@@ -2073,8 +2088,11 @@ async def class_report(
             "X-Report-Sha256": manifest.sha256,
             "X-Report-Filename": filename,
             "Access-Control-Expose-Headers": (
-                "Content-Disposition, X-Report-Id, X-Report-Sha256, X-Report-Filename"
+                "Content-Disposition, X-Report-Id, X-Report-Sha256, "
+                "X-Report-Filename, X-Report-Purpose, X-Report-Owner, "
+                "X-Report-Audience, X-Report-Retention-Days, X-Report-Expires-At"
             ),
+            **report_access.export_headers(policy),
         },
     )
 

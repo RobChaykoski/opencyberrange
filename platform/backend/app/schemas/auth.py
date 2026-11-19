@@ -144,6 +144,18 @@ class FlagSubmitRequest(BaseModel):
     flag: str = Field(..., min_length=1, max_length=100)
 
 
+ASSIGNABLE_ROLES = (
+    "student",
+    "instructor",
+    "teaching_assistant",
+    "mentor",
+    "auditor",
+    "privacy_officer",
+    "institution_admin",
+    "admin",
+)
+
+
 class CreateUserRequest(SafeTextModel):
     username: str = Field(..., min_length=3, max_length=50)
     email: EmailStr
@@ -176,8 +188,8 @@ class CreateUserRequest(SafeTextModel):
     @field_validator('role')
     @classmethod
     def role_valid(cls, v: Optional[str]) -> Optional[str]:
-        if v is not None and v not in ('student', 'instructor', 'admin'):
-            raise ValueError('Role must be student, instructor, or admin')
+        if v is not None and v not in ASSIGNABLE_ROLES:
+            raise ValueError("Role must be one of: " + ", ".join(ASSIGNABLE_ROLES))
         return v
 
 
@@ -204,8 +216,8 @@ class UpdateUserRequest(SafeTextModel):
     @field_validator('role')
     @classmethod
     def role_valid(cls, v: Optional[str]) -> Optional[str]:
-        if v is not None and v not in ('student', 'instructor', 'admin'):
-            raise ValueError('Role must be student, instructor, or admin')
+        if v is not None and v not in ASSIGNABLE_ROLES:
+            raise ValueError("Role must be one of: " + ", ".join(ASSIGNABLE_ROLES))
         return v
 
     @field_validator('username')

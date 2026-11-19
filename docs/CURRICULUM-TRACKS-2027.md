@@ -107,6 +107,27 @@ GitHub Actions labs use a local workflow fixture and a fake registry; they do
 not require a live GitHub organisation. Kubernetes labs use a single-node
 cluster with a strict resource budget.
 
+## Network Engineering and Infrastructure (`neteng`)
+
+- `NENG01` Network Source of Truth with NetBox
+- `NENG02` Monitoring with LibreNMS
+- `NENG03` Configuration Backup with Oxidized
+- `NENG04` Firewall and Segmentation with OPNsense/pfSense
+- `NENG05` NAC and Zero Trust with PacketFence
+- `NENG06` Identity Integration with OpenIAM
+- `NENG07` Network Engineering Capstone
+
+NICE v2.2.0 alignment: `IO-WRL-004`, `IO-WRL-005`, `PD-WRL-004`,
+`PD-WRL-001`, `DD-WRL-001`.
+
+NetBox is the source of truth: sites, racks, devices, interfaces, prefixes, IP
+addresses, VLANs, and API automation. LibreNMS covers SNMP polling and alerting.
+Oxidized covers configuration backup, diffs, and drift evidence. OPNsense and
+pfSense cover firewall policy, NAT, VPN, and segmentation. PacketFence covers
+NAC, onboarding, device registration, and zero-trust access decisions. The
+OpenIAM chapter connects identity lifecycle and access review to network and
+application access.
+
 ## NICE mapping rule
 
 Every new lab must select, at authoring time:

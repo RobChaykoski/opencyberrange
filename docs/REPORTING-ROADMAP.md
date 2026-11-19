@@ -76,6 +76,29 @@ OpenCyberRange. Store counts, classifications, and evidence references.
 | Teaching assistant | Assigned course | Assigned course | No | No |
 | Administrator | Platform evidence | Aggregate | Integration status | Integration status |
 
+## Implemented foundation
+
+Release 5.25.0 adds the report access policy layer:
+
+- `app/services/report_access.py` is the single report-to-role map.
+- Course reports now return `403` for roles outside the policy.
+- Report catalog entries are filtered by role.
+- Report views and exports write `REPORT_VIEWED`, `REPORT_EXPORTED`, and
+  `REPORT_ACCESS_DENIED` audit events with purpose, owner, audience, and
+  retention.
+- Aggregate exercise rows below the configured minimum cell size are blanked and
+  marked `suppressed`.
+- Report manifests now carry an expiry date based on the policy retention.
+- Exports carry `X-Report-Purpose`, `X-Report-Owner`, `X-Report-Audience`,
+  `X-Report-Retention-Days`, and `X-Report-Expires-At`.
+- CSV exports include purpose, owner, audience, and retention comment rows.
+- Classification labels use the institution's configured taxonomy and optional
+  framework references, not a hardcoded universal scheme.
+
+Known limitation: mentor and teaching-assistant course assignments are not yet a
+separate table. They are limited to courses they own until a course-staff
+assignment model is added. That is deliberately conservative.
+
 ## Delivery order
 
 1. **Report access policy and audit** — one policy layer for every report, with

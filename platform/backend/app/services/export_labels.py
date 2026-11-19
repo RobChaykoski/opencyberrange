@@ -42,6 +42,7 @@ BUILTIN_LEVELS: dict[str, dict[str, Any]] = {
         "rank": 0,
         "handling": DEFAULT_HANDLING["public"],
         "exportable": True,
+        "framework_refs": [],
     },
     "internal": {
         "key": "internal",
@@ -49,6 +50,7 @@ BUILTIN_LEVELS: dict[str, dict[str, Any]] = {
         "rank": 1,
         "handling": DEFAULT_HANDLING["internal"],
         "exportable": True,
+        "framework_refs": [],
     },
     "confidential": {
         "key": "confidential",
@@ -56,6 +58,7 @@ BUILTIN_LEVELS: dict[str, dict[str, Any]] = {
         "rank": 2,
         "handling": DEFAULT_HANDLING["confidential"],
         "exportable": True,
+        "framework_refs": [],
     },
     "restricted": {
         "key": "restricted",
@@ -63,6 +66,7 @@ BUILTIN_LEVELS: dict[str, dict[str, Any]] = {
         "rank": 3,
         "handling": DEFAULT_HANDLING["restricted"],
         "exportable": True,
+        "framework_refs": [],
     },
 }
 
@@ -151,6 +155,11 @@ def _custom_levels(raw: str) -> tuple[dict[str, dict[str, Any]] | None, list[str
             "handling": str(item.get("handling") or "").strip()
             or "Handle under the institution's data policy.",
             "exportable": bool(item.get("exportable", True)),
+            "framework_refs": [
+                str(ref).strip()
+                for ref in (item.get("framework_refs") or [])
+                if str(ref).strip()
+            ],
         }
     return levels, warnings
 
@@ -210,6 +219,7 @@ def export_labels(classification: str | None = None) -> dict[str, Any] | None:
             "classification": level["label"],
             "classification_key": level["key"],
             "classification_rank": level["rank"],
+            "framework_refs": list(level.get("framework_refs") or []),
             "organisation": organisation,
             "handling": handling,
             "source": "OpenCyberRange",
@@ -260,6 +270,8 @@ def apply_pdf_metadata(pdf, title: str, subject: str) -> None:
     ]
     if labels.get("handling"):
         keyword_parts.append(labels["handling"])
+    if labels.get("framework_refs"):
+        keyword_parts.append(", ".join(labels["framework_refs"]))
     if labels.get("generated_at"):
         keyword_parts.append(labels["generated_at"])
     pdf.set_title(_pdf_text(title))
@@ -283,6 +295,8 @@ def export_response_headers(path: str | None = None) -> dict[str, str]:
     }
     if labels.get("region"):
         headers["X-Data-Region"] = labels["region"]
+    if labels.get("framework_refs"):
+        headers["X-Data-Framework-Refs"] = ", ".join(labels["framework_refs"])
     if labels.get("generated_at"):
         headers["X-Export-Generated-At"] = labels["generated_at"]
     return headers
@@ -297,6 +311,10 @@ def export_metadata() -> dict[str, Any]:
 def _label_lines(labels: dict[str, Any]) -> list[str]:
     lines = [f"Data classification: {labels['classification']}"]
     lines.append(f"Organisation: {labels['organisation']}")
+    if labels.get("framework_refs"):
+        lines.append(
+            "Framework alignment: " + ", ".join(labels["framework_refs"])
+        )
     if labels.get("handling"):
         lines.append(f"Handling: {labels['handling']}")
     if labels.get("generated_at"):

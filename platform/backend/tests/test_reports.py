@@ -281,6 +281,69 @@ def test_report_catalog_requires_course_instructor(client, report_data):
     ).status_code == 403
 
 
+def test_report_catalog_enforces_role_policy(client, report_data, db_session):
+    course = report_data["course"]
+    suffix = uuid.uuid4().hex[:8]
+    created = []
+
+    def make_user(role):
+        user = User(
+            username=f"report_{role}_{suffix}",
+            email=f"report_{role}_{suffix}@university.edu",
+            hashed_password=get_password_hash(TEST_PASSWORD),
+            is_active=True,
+            is_approved=True,
+            role=role,
+            institution_id=course.institution_id,
+        )
+        db_session.add(user)
+        db_session.commit()
+        db_session.refresh(user)
+        created.append(user)
+        return _login(client, user)
+
+    try:
+        privacy = make_user("privacy_officer")
+        auditor = make_user("auditor")
+        mentor = make_user("mentor")
+
+        for headers in (privacy, auditor):
+            resp = client.get(
+                f"/api/courses/{course.id}/reports", headers=headers
+            )
+            assert resp.status_code == 200, resp.text
+            ids = {report["id"] for report in resp.json()["reports"]}
+            assert {"course-health", "exercise-diagnostics"} <= ids
+            assert "coaching-queue" not in ids
+            assert "student-record-pack" not in ids
+
+        health = client.get(
+            f"/api/courses/{course.id}/reports/course-health.pdf",
+            params={"reason": "privacy and audit review"},
+            headers=privacy,
+        )
+        assert health.status_code == 200, health.text
+        assert health.headers["x-report-purpose"]
+        assert health.headers["x-report-owner"]
+        assert health.headers["x-report-retention-days"] == "365"
+
+        denied = client.get(
+            f"/api/courses/{course.id}/reports/coaching-queue.csv",
+            params={"reason": "should not be permitted"},
+            headers=privacy,
+        )
+        assert denied.status_code == 403
+
+        mentor_catalog = client.get(
+            f"/api/courses/{course.id}/reports", headers=mentor
+        )
+        assert mentor_catalog.status_code == 403
+    finally:
+        for user in created:
+            db_session.delete(user)
+        db_session.commit()
+
+
 def test_instructor_can_generate_and_download_reports(client, report_data, db_session):
     instructor = _login(client, report_data["instructor"])
     course_id = report_data["course"].id
@@ -308,6 +371,9 @@ def test_instructor_can_generate_and_download_reports(client, report_data, db_se
     assert manifest.format == "pdf"
     assert manifest.sha256 == digest
     assert manifest.signature
+    assert manifest.expires_at is not None
+    assert health.headers["x-report-purpose"]
+    assert health.headers["x-report-retention-days"] == "365"
 
     diagnostics = client.get(
         f"/api/courses/{course_id}/reports/exercise-diagnostics.csv",
@@ -318,6 +384,9 @@ def test_instructor_can_generate_and_download_reports(client, report_data, db_se
     assert diagnostics.content.startswith(b"\xef\xbb\xbf")
     lines = diagnostics.content.decode("utf-8-sig").splitlines()
     assert lines[0].startswith("# Data classification:")
+    assert any(line.startswith("# Report purpose:") for line in lines)
+    assert any(line.startswith("# Data owner:") for line in lines)
+    assert any(line.startswith("# Retention:") for line in lines)
     header_index = next(index for index, line in enumerate(lines) if line.startswith("report_id,"))
     assert lines[header_index + 1].startswith(diagnostics.headers["x-report-id"])
 

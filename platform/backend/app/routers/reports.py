@@ -15,18 +15,19 @@ from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import Response
 from sqlalchemy.orm import Session
 
-from app.auth import get_current_reporting_user
+from app.auth import get_current_active_user
 from app.database import get_db
 from app.export_reason import require_export_reason
 from app.models import Course, CourseFeedback, ExerciseQuizAttempt, User
 from app.ratelimit import create_limiter
 from app.routers.analytics import (
     _course_context,
-    _course_or_403,
+    _minimum_cohort_size,
     course_exercises,
     course_overview,
 )
-from app.services.audit import AuditActions, log_admin_action
+from app.services import report_access
+from app.services.audit import AuditActions
 from app.services.export_labels import csv_with_labels
 from app.services.report_integrity import record_report, verify_report
 from app.services.report_pdf import (
@@ -46,9 +47,9 @@ def _safe_name(value: str) -> str:
     return re.sub(r"[^A-Za-z0-9_.-]", "_", value)[:80] or "course"
 
 
-def _report_catalog(course: Course) -> list[dict]:
+def _report_catalog(course: Course, user: User) -> list[dict]:
     base = f"/courses/{course.id}/reports"
-    return [
+    reports = [
         {
             "id": "course-health",
             "group": "Understand the class",
@@ -100,30 +101,60 @@ def _report_catalog(course: Course) -> list[dict]:
             ],
         },
     ]
+    visible = []
+    for item in reports:
+        if not report_access.can_view(course, user, item["id"]):
+            continue
+        policy = report_access.policy_for(item["id"])
+        visible.append(
+            {
+                **item,
+                "purpose": policy.purpose,
+                "owner": policy.owner,
+                "audience": policy.audience,
+                "retention_days": policy.retention_days,
+            }
+        )
+    return visible
 
 
-def _audit_export(
+def _analytics_actor(db: Session, course: Course, current_user: User) -> User:
+    """Use an aggregate-safe actor for auditor and privacy report views.
+
+    The report policy already authorised the caller. The analytics helpers have
+    their own course-owner check, so an auditor or privacy officer borrows the
+    course instructor's aggregate context rather than gaining learner-level
+    analytics access elsewhere.
+    """
+    if current_user.role in {"auditor", "privacy_officer"}:
+        instructor = (
+            db.query(User).filter(User.id == course.instructor_id).first()
+        )
+        return instructor or current_user
+    return current_user
+
+
+def _report_course_or_403(
+    db: Session,
     request: Request,
+    course_id: int,
     current_user: User,
-    course: Course,
-    report_type: str,
-    file_format: str,
-    reason: str,
-) -> None:
-    log_admin_action(
-        action=AuditActions.REPORT_EXPORTED,
-        admin_user_id=current_user.id,
-        admin_username=current_user.username,
-        target_type="course_report",
-        target_id=course.id,
-        target_identifier=course.code,
-        details={
-            "report": report_type,
-            "format": file_format,
-            "reason": reason,
-        },
-        ip_address=request.client.host if request.client else None,
+    report_id: str,
+    *,
+    export: bool,
+) -> Course:
+    course = db.query(Course).filter(Course.id == course_id).first()
+    if course is None:
+        raise HTTPException(status_code=404, detail="Course not found")
+    report_access.require_report_access(
+        db,
+        request,
+        current_user,
+        course,
+        report_id,
+        export=export,
     )
+    return course
 
 
 def _serve(
@@ -138,6 +169,7 @@ def _serve(
     data: bytes,
     reason: str,
 ) -> Response:
+    policy = report_access.policy_for(report_type)
     extension = "pdf" if file_format == "pdf" else "csv"
     filename = f"report_{_safe_name(course.code)}_{report_type}_{report_id}.{extension}"
     row = record_report(
@@ -149,36 +181,71 @@ def _serve(
         filename=filename,
         data=data,
         generated_by=current_user.id,
+        expires_at=report_access.expiration(policy),
     )
-    _audit_export(request, current_user, course, report_type, file_format, reason)
+    report_access.audit_access(
+        db,
+        request,
+        current_user,
+        course,
+        policy,
+        AuditActions.REPORT_VIEWED,
+        reason=reason,
+        format=file_format,
+        report_id=report_id,
+    )
+    report_access.audit_access(
+        db,
+        request,
+        current_user,
+        course,
+        policy,
+        AuditActions.REPORT_EXPORTED,
+        reason=reason,
+        format=file_format,
+        report_id=report_id,
+        sha256=row.sha256,
+    )
     media = (
         "application/pdf"
         if file_format == "pdf"
         else "text/csv; charset=utf-8"
     )
+    headers = {
+        "Content-Disposition": f'attachment; filename="{filename}"',
+        "Cache-Control": "no-store",
+        "X-Report-Id": report_id,
+        "X-Report-Sha256": row.sha256,
+        "X-Report-Filename": filename,
+        "Access-Control-Expose-Headers": (
+            "Content-Disposition, X-Report-Id, X-Report-Sha256, "
+            "X-Report-Filename, X-Report-Purpose, X-Report-Owner, "
+            "X-Report-Audience, X-Report-Retention-Days, X-Report-Expires-At"
+        ),
+    }
+    headers.update(report_access.export_headers(policy))
     return Response(
         content=data,
         media_type=media,
-        headers={
-            "Content-Disposition": f'attachment; filename="{filename}"',
-            "Cache-Control": "no-store",
-            "X-Report-Id": report_id,
-            "X-Report-Sha256": row.sha256,
-            "X-Report-Filename": filename,
-            "Access-Control-Expose-Headers": (
-                "Content-Disposition, X-Report-Id, X-Report-Sha256, X-Report-Filename"
-            ),
-        },
+        headers=headers,
     )
 
 
-def _csv_bytes(headers: list[str], rows: list[list]) -> bytes:
+def _csv_bytes(
+    headers: list[str],
+    rows: list[list],
+    labels: list[str] | None = None,
+) -> bytes:
     buffer = io.StringIO()
     writer = csv.writer(buffer)
     writer.writerow(headers)
     for row in rows:
         writer.writerow(neutralize_row(row))
-    return csv_with_labels(buffer.getvalue().encode("utf-8-sig"))
+    data = buffer.getvalue().encode("utf-8-sig")
+    if labels:
+        prefix = "".join(f"# {line}\n" for line in labels)
+        data = ("\ufeff" + prefix + data.decode("utf-8-sig")).encode("utf-8")
+    return csv_with_labels(data)
 
 
 def _aware(value: datetime | None) -> datetime | None:
@@ -441,12 +508,25 @@ def _coaching_rows(db: Session, course: Course) -> list[dict]:
 @router.get("/courses/{course_id}/reports")
 async def list_reports(
     course_id: int,
+    request: Request,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_reporting_user),
+    current_user: User = Depends(get_current_active_user),
 ):
     """Return the report library for a course the caller can manage."""
-    course = _course_or_403(db, course_id, current_user)
-    return {"course_id": course.id, "reports": _report_catalog(course)}
+    course = db.query(Course).filter(Course.id == course_id).first()
+    if course is None:
+        raise HTTPException(status_code=404, detail="Course not found")
+    reports = _report_catalog(course, current_user)
+    if not reports:
+        report_access.audit_library(db, request, current_user, course, [])
+        raise HTTPException(
+            status_code=403,
+            detail="Your role is not permitted to view reports for this course.",
+        )
+    report_access.audit_library(
+        db, request, current_user, course, [item["id"] for item in reports]
+    )
+    return {"course_id": course.id, "reports": reports}
 
 
 @router.get("/courses/{course_id}/reports/course-health.pdf")
@@ -455,11 +535,17 @@ async def course_health_report(
     request: Request,
     reason: str = Depends(require_export_reason),
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_reporting_user),
+    current_user: User = Depends(get_current_active_user),
 ):
-    course = _course_or_403(db, course_id, current_user)
-    overview = await course_overview(course_id, db, current_user)
-    exercises = await course_exercises(course_id, db, current_user)
+    course = _report_course_or_403(
+        db, request, course_id, current_user, "course-health", export=True
+    )
+    overview = await course_overview(
+        course_id, db, _analytics_actor(db, course, current_user)
+    )
+    exercises = await course_exercises(
+        course_id, db, _analytics_actor(db, course, current_user)
+    )
     report_id = str(uuid.uuid4())
     data = await run_in_threadpool(
         generate_course_health_pdf,
@@ -487,12 +573,20 @@ async def exercise_diagnostics_report(
     request: Request,
     reason: str = Depends(require_export_reason),
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_reporting_user),
+    current_user: User = Depends(get_current_active_user),
 ):
-    course = _course_or_403(db, course_id, current_user)
+    course = _report_course_or_403(
+        db, request, course_id, current_user, "exercise-diagnostics", export=True
+    )
     _labs, _user_ids, completions, _sessions = _course_context(db, course)
-    payload = await course_exercises(course_id, db, current_user)
+    payload = await course_exercises(
+        course_id, db, _analytics_actor(db, course, current_user)
+    )
     payload = _with_exercise_baselines(payload, completions)
+    payload["exercises"] = report_access.suppress_small_cells(
+        payload.get("exercises") or [],
+        _minimum_cohort_size(db),
+    )
     report_id = str(uuid.uuid4())
     data = await run_in_threadpool(
         generate_exercise_diagnostics_pdf,
@@ -519,12 +613,20 @@ async def exercise_diagnostics_csv(
     request: Request,
     reason: str = Depends(require_export_reason),
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_reporting_user),
+    current_user: User = Depends(get_current_active_user),
 ):
-    course = _course_or_403(db, course_id, current_user)
+    course = _report_course_or_403(
+        db, request, course_id, current_user, "exercise-diagnostics", export=True
+    )
     _labs, _user_ids, completions, _sessions = _course_context(db, course)
-    payload = await course_exercises(course_id, db, current_user)
+    payload = await course_exercises(
+        course_id, db, _analytics_actor(db, course, current_user)
+    )
     payload = _with_exercise_baselines(payload, completions)
+    payload["exercises"] = report_access.suppress_small_cells(
+        payload.get("exercises") or [],
+        _minimum_cohort_size(db),
+    )
     exercises = payload.get("exercises") or []
     report_id = str(uuid.uuid4())
     headers = [
@@ -534,6 +636,7 @@ async def exercise_diagnostics_csv(
         "level",
         "difficulty",
         "sample_size",
+        "suppressed",
         "started_learners",
         "completed_learners",
         "completion_rate",
@@ -562,6 +665,7 @@ async def exercise_diagnostics_csv(
             row.get("level_name"),
             row.get("difficulty"),
             row.get("sample_size"),
+            row.get("suppressed"),
             row.get("started_learners"),
             row.get("completed_learners"),
             row.get("completion_rate"),
@@ -584,7 +688,13 @@ async def exercise_diagnostics_csv(
         ]
         for row in exercises
     ]
-    data = _csv_bytes(headers, rows)
+    data = _csv_bytes(
+        headers,
+        rows,
+        labels=report_access.csv_label_lines(
+            report_access.policy_for("exercise-diagnostics")
+        ),
+    )
     return _serve(
         db,
         request=request,
@@ -604,9 +714,11 @@ async def coaching_queue_csv(
     request: Request,
     reason: str = Depends(require_export_reason),
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_reporting_user),
+    current_user: User = Depends(get_current_active_user),
 ):
-    course = _course_or_403(db, course_id, current_user)
+    course = _report_course_or_403(
+        db, request, course_id, current_user, "coaching-queue", export=True
+    )
     rows = _coaching_rows(db, course)
     report_id = str(uuid.uuid4())
     headers = [
@@ -630,6 +742,9 @@ async def coaching_queue_csv(
     data = _csv_bytes(
         headers,
         [[report_id] + [row.get(header) for header in headers[1:]] for row in rows],
+        labels=report_access.csv_label_lines(
+            report_access.policy_for("coaching-queue")
+        ),
     )
     return _serve(
         db,
@@ -650,9 +765,11 @@ async def coaching_queue_pdf(
     request: Request,
     reason: str = Depends(require_export_reason),
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_reporting_user),
+    current_user: User = Depends(get_current_active_user),
 ):
-    course = _course_or_403(db, course_id, current_user)
+    course = _report_course_or_403(
+        db, request, course_id, current_user, "coaching-queue", export=True
+    )
     rows = _coaching_rows(db, course)
     report_id = str(uuid.uuid4())
     data = await run_in_threadpool(

@@ -697,7 +697,15 @@ def get_current_reporting_user(
     Course ownership or the matching ``institution_id`` is still enforced by
     the route's course-scope check.
     """
-    if current_user.role not in ("instructor", "admin", "institution_admin"):
+    if current_user.role not in (
+        "instructor",
+        "admin",
+        "institution_admin",
+        "auditor",
+        "privacy_officer",
+        "mentor",
+        "teaching_assistant",
+    ):
         raise HTTPException(status_code=403, detail="Instructor access required")
     return current_user
 
