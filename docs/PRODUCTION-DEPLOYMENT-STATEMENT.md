@@ -1,6 +1,6 @@
 # Production deployment statement
 
-**Statement date:** 17 November 2026
+**Statement date:** 19 November 2026
 
 This is the authoritative statement for the current production deployment. If
 another document disagrees, this page and the signed tag win.
@@ -13,6 +13,7 @@ another document disagrees, this page and the signed tag win.
 | Release | **5.17.7** |
 | Signed tag | **`v5.17.7`** |
 | Runtime code commit | `a7a9509a` (signed tag `v5.17.7`) |
+| Post-release runtime commit | `4fd1d356` (email notifications and templates, career-direction check, manual/export and RangeBox fixes, workforce readiness design, simulated-cloud scaffold; no schema change) |
 | Post-release content update | `e9b2c602` (XSS/CSRF study page, Web track knowledge-check items, IoT reference map; no schema or runtime code change) |
 | Alembic revision | **`0041_tenant_rls_legacy`** |
 | Development host | `172.16.16.44` |
@@ -24,7 +25,8 @@ another document disagrees, this page and the signed tag win.
 | Final backup (post-cleanup) | `~/backups/ocr-backup-20261117-012455.dump` |
 | 5.17.6 backup | `~/backups/ocr-backup-20261117-025053.dump` |
 | 5.17.7 backup | `~/backups/ocr-backup-20261117-035821.dump` |
-| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, and 5.17.7) |
+| 19 November deploy backup | `~/backups/ocr-backup-20261119-024418.dump` |
+| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, and 19 November deploy) |
 
 ## Production cutover: COMPLETE
 
