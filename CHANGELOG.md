@@ -2,6 +2,14 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [Unreleased]
+
+### Training lab content and operations
+
+- Added synthetic scenario packs to the single-student and cohort Moodle courses.
+- Added `docs/TRAINING-INSTRUCTOR-GUIDE.md` and `scripts/ecosystem_seed/reset_training_lab.sh`.
+- Recorded the Fleet 4.95.0 enroll-secret panic as a known dev-only limitation.
+
 ## [5.27.1] - 2026-11-19
 
 ### NICE review and training tooling

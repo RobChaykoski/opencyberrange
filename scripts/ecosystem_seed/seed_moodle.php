@@ -278,9 +278,53 @@ training environment instructions. Never reuse a lab credential anywhere real.</
 systems, real patient or learner records, or a real identity provider.</p>
 HTML;
 
+$singleScenario = <<<'HTML'
+<h3>Synthetic alert</h3>
+<p>At 02:14, the fake identity service records six failed sign-ins for
+<code>student03</code>, followed by a success from <code>10.20.4.17</code>.</p>
+<h3>Fake context</h3>
+<ul>
+  <li>Asset: <code>hv-01</code> in NetBox, Training Data Centre.</li>
+  <li>Group: <code>ocr-learners</code> in Authentik.</li>
+  <li>Service: the fake web app at <code>192.0.2.50</code>.</li>
+</ul>
+<h3>Your task</h3>
+<ul>
+  <li>Build a timeline from the failed sign-ins to the successful one.</li>
+  <li>Name the asset owner and the group that grants access.</li>
+  <li>Choose one containment action and one hardening action.</li>
+  <li>Explain what you can prove and what you cannot.</li>
+</ul>
+<p>All indicators are synthetic. Do not scan or connect to real hosts.</p>
+HTML;
+
+$cohortScenario = <<<'HTML'
+<h3>Synthetic alert</h3>
+<p>At 02:14, the fake identity service records six failed sign-ins for
+<code>student03</code>, followed by a success from <code>10.20.4.17</code>. At
+02:31, NetBox shows <code>hv-01</code> moved from the lab rack to the core rack,
+and Authentik shows a new member added to <code>ocr-learners</code>.</p>
+<h3>Fake context</h3>
+<ul>
+  <li>Assets: <code>hv-01</code>, <code>core-sw-01</code>, <code>edge-rtr-01</code>.</li>
+  <li>Identity: <code>ocr-learners</code>, <code>ocr-instructors</code>.</li>
+  <li>Network: <code>10.10.0.0/16</code> core and <code>10.20.0.0/16</code> lab.</li>
+</ul>
+<h3>Team task</h3>
+<ul>
+  <li><strong>Cohort A:</strong> authentication timeline and endpoint evidence.</li>
+  <li><strong>Cohort B:</strong> asset movement, ownership, and group change.</li>
+  <li>Join both into one timeline with owners and timestamps.</li>
+  <li>Record three findings with evidence and one control reference each.</li>
+</ul>
+<p>All indicators are synthetic. Do not scan or connect to real hosts.</p>
+HTML;
+
 training_ensure_page($courseids['OCR-CAP-SINGLE'], 'Capstone brief', $singleBrief);
 training_ensure_page($courseids['OCR-CAP-COHORT'], 'Cohort capstone brief', $cohortBrief);
 training_ensure_page($courseids['OCR-FOUND'], 'Training lab guide', $foundGuide);
+training_ensure_page($courseids['OCR-CAP-SINGLE'], 'Scenario pack: suspicious login', $singleScenario);
+training_ensure_page($courseids['OCR-CAP-COHORT'], 'Scenario pack: suspicious login and asset drift', $cohortScenario);
 
 echo "Seeded Moodle training data.\n";
 echo "Admin: admin / (see .env MOODLE_ADMIN_PASSWORD)\n";

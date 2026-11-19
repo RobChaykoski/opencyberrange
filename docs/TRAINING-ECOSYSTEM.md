@@ -156,7 +156,8 @@ environment.
 ## Capstone shapes
 
 See `docs/TRAINING-CAPSTONES.md` for the single-student and cohort runbooks and
-acceptance checks.
+acceptance checks. See `docs/TRAINING-INSTRUCTOR-GUIDE.md` for the full
+instructor workflow, scenario packs, and reset steps.
 
 - **Single student:** one Moodle course, one OCR lab, one evidence submission.
   Report scope is the learner and the assigned mentor.
