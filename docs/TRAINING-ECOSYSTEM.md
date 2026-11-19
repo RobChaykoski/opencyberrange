@@ -37,6 +37,27 @@ keep it on the dev host:
 bash scripts/fetch-openiam-test-stack.sh
 ```
 
+## Current dev deployment
+
+The stack is deployed on the development host (`172.16.16.44`) with lab-only
+credentials and synthetic data. Ports bind to the dev host IP so the dev range
+and learner machines can reach them:
+
+| Service | URL |
+|---|---|
+| Moodle | `http://172.16.16.44:8091/` |
+| Authentik | `http://172.16.16.44:9000/` |
+| NetBox | `http://172.16.16.44:8083/` |
+| Ralph | `http://172.16.16.44:8084/` |
+| Fleet | `http://172.16.16.44:8082/` |
+
+Validated on 19 November 2026 with Moodle 5.0.1, Authentik 2026.8.5,
+NetBox, Ralph, and Fleet. The validator reported all checks passing on both the
+workstation and the development host.
+
+Do not treat these URLs as production. They are lab endpoints on the dev network
+and must stay off the production host.
+
 ## Start
 
 ```bash

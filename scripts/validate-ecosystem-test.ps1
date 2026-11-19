@@ -38,6 +38,11 @@ $authentikPort = Port 'AUTHENTIK_PORT' 9000
 $netboxPort = Port 'NETBOX_PORT' 8083
 $ralphPort = Port 'RALPH_PORT' 8084
 $fleetPort = Port 'FLEET_PORT' 8082
+$moodleHost = if ($config['MOODLE_BIND']) { $config['MOODLE_BIND'] } else { '127.0.0.1' }
+$authentikHost = if ($config['AUTHENTIK_BIND']) { $config['AUTHENTIK_BIND'] } else { '127.0.0.1' }
+$netboxHost = if ($config['NETBOX_BIND']) { $config['NETBOX_BIND'] } else { '127.0.0.1' }
+$ralphHost = if ($config['RALPH_BIND']) { $config['RALPH_BIND'] } else { '127.0.0.1' }
+$fleetHost = if ($config['FLEET_BIND']) { $config['FLEET_BIND'] } else { '127.0.0.1' }
 
 $script:failures = 0
 $script:skips = 0
@@ -67,30 +72,30 @@ try {
     & docker compose ps
 
     Write-Host '== Moodle =='
-    Expect 'Moodle login page' "http://127.0.0.1:$moodlePort/login/index.php" @('200')
+    Expect 'Moodle login page' "http://${moodleHost}:$moodlePort/login/index.php" @('200')
     $dbCheck = & docker compose exec -T moodle-db /opt/bitnami/mariadb/bin/mariadb-admin -h 127.0.0.1 -uroot "-p$($config['MOODLE_DB_ROOT_PASSWORD'])" ping 2>&1
     if ($LASTEXITCODE -eq 0) { Pass 'Moodle database' } else { Fail 'Moodle database' }
 
     Write-Host '== Authentik (sso profile) =='
     if (IsRunning 'authentik-server' 'sso') {
-        Expect 'Authentik liveness' "http://127.0.0.1:$authentikPort/-/health/live/" @('204', '200')
-        Expect 'Authentik readiness' "http://127.0.0.1:$authentikPort/-/health/ready/" @('204', '200')
+        Expect 'Authentik liveness' "http://${authentikHost}:$authentikPort/-/health/live/" @('204', '200')
+        Expect 'Authentik readiness' "http://${authentikHost}:$authentikPort/-/health/ready/" @('204', '200')
     } else { Skip 'Authentik profile is not running' }
 
     Write-Host '== NetBox (assets profile) =='
     if (IsRunning 'netbox' 'assets') {
-        Expect 'NetBox login' "http://127.0.0.1:$netboxPort/login/" @('200')
-        Expect 'NetBox API reachable' "http://127.0.0.1:$netboxPort/api/status/" @('200', '403')
+        Expect 'NetBox login' "http://${netboxHost}:$netboxPort/login/" @('200')
+        Expect 'NetBox API reachable' "http://${netboxHost}:$netboxPort/api/status/" @('200', '403')
     } else { Skip 'NetBox is not running' }
 
     Write-Host '== Ralph (assets profile) =='
     if (IsRunning 'ralph' 'assets') {
-        Expect 'Ralph responds' "http://127.0.0.1:$ralphPort/" @('200', '302')
+        Expect 'Ralph responds' "http://${ralphHost}:$ralphPort/" @('200', '302')
     } else { Skip 'Ralph is not running' }
 
     Write-Host '== Fleet (endpoint profile) =='
     if (IsRunning 'fleet' 'endpoint') {
-        Expect 'Fleet responds' "http://127.0.0.1:$fleetPort/" @('200', '302', '307')
+        Expect 'Fleet responds' "http://${fleetHost}:$fleetPort/" @('200', '302', '307')
     } else { Skip 'Fleet is not running' }
 
     Write-Host '== Results =='

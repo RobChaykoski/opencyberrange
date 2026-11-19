@@ -36,8 +36,9 @@ try {
         $ErrorActionPreference = $previousPreference
         $token = ($tokenOutput | Select-String -Pattern '^TOKEN=(.+)$' | ForEach-Object { $_.Matches[0].Groups[1].Value } | Select-Object -Last 1)
         $netboxPort = if ($config['NETBOX_PORT']) { $config['NETBOX_PORT'] } else { '8083' }
+        $netboxHost = if ($config['NETBOX_BIND']) { $config['NETBOX_BIND'] } else { '127.0.0.1' }
         if ($token) {
-            $env:NETBOX_URL = "http://127.0.0.1:$netboxPort"
+            $env:NETBOX_URL = "http://${netboxHost}:$netboxPort"
             $env:NETBOX_TOKEN = $token
             $python = if ($env:PYTHON) { $env:PYTHON } else { 'python' }
             & $python (Join-Path $Root 'scripts/ecosystem_seed/seed_netbox.py')

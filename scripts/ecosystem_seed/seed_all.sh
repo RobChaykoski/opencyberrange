@@ -36,7 +36,7 @@ if docker compose --profile assets ps --services --filter status=running | grep 
     echo "could not create a NetBox API token; create one in the NetBox UI and re-run"
     echo "  NETBOX_TOKEN=<token> $PYTHON scripts/ecosystem_seed/seed_netbox.py"
   else
-    NETBOX_URL="http://127.0.0.1:${NETBOX_PORT:-8083}" NETBOX_TOKEN="$netbox_api_value" \
+    NETBOX_URL="${NETBOX_URL:-http://${NETBOX_BIND:-127.0.0.1}:${NETBOX_PORT:-8083}}" NETBOX_TOKEN="$netbox_api_value" \
       "$PYTHON" "$ROOT/scripts/ecosystem_seed/seed_netbox.py"
   fi
 else

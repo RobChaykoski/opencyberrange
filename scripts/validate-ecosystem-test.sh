@@ -32,6 +32,11 @@ AUTHENTIK_PORT="${AUTHENTIK_PORT:-9000}"
 NETBOX_PORT="${NETBOX_PORT:-8083}"
 RALPH_PORT="${RALPH_PORT:-8084}"
 FLEET_PORT="${FLEET_PORT:-8082}"
+MOODLE_HOST="${MOODLE_BIND:-127.0.0.1}"
+AUTHENTIK_HOST="${AUTHENTIK_BIND:-127.0.0.1}"
+NETBOX_HOST="${NETBOX_BIND:-127.0.0.1}"
+RALPH_HOST="${RALPH_BIND:-127.0.0.1}"
+FLEET_HOST="${FLEET_BIND:-127.0.0.1}"
 
 failures=0
 skips=0
@@ -65,7 +70,7 @@ docker compose ps
 echo "== Moodle =="
 moodle_ok=0
 for _ in $(seq 1 30); do
-  if [ "$(http_code "http://127.0.0.1:${MOODLE_PORT}/login/index.php")" = "200" ]; then
+  if [ "$(http_code "http://${MOODLE_HOST}:${MOODLE_PORT}/login/index.php")" = "200" ]; then
     moodle_ok=1
     break
   fi
@@ -85,12 +90,12 @@ fi
 
 echo "== Authentik (sso profile) =="
 if running --profile sso | grep -qx authentik-server; then
-  live_code="$(http_code "http://127.0.0.1:${AUTHENTIK_PORT}/-/health/live/")"
+  live_code="$(http_code "http://${AUTHENTIK_HOST}:${AUTHENTIK_PORT}/-/health/live/")"
   case "$live_code" in
     200|204) pass "Authentik liveness ($live_code)" ;;
     *) fail "Authentik liveness (got $live_code)" ;;
   esac
-  ready_code="$(http_code "http://127.0.0.1:${AUTHENTIK_PORT}/-/health/ready/")"
+  ready_code="$(http_code "http://${AUTHENTIK_HOST}:${AUTHENTIK_PORT}/-/health/ready/")"
   case "$ready_code" in
     200|204) pass "Authentik readiness ($ready_code)" ;;
     *) fail "Authentik readiness (got $ready_code)" ;;
@@ -101,8 +106,8 @@ fi
 
 echo "== NetBox (assets profile) =="
 if running --profile assets | grep -qx netbox; then
-  expect_http "NetBox login" "http://127.0.0.1:${NETBOX_PORT}/login/" "200"
-  api_code="$(http_code "http://127.0.0.1:${NETBOX_PORT}/api/status/")"
+  expect_http "NetBox login" "http://${NETBOX_HOST}:${NETBOX_PORT}/login/" "200"
+  api_code="$(http_code "http://${NETBOX_HOST}:${NETBOX_PORT}/api/status/")"
   if [ "$api_code" = "200" ] || [ "$api_code" = "403" ]; then
     pass "NetBox API reachable ($api_code)"
   else
@@ -114,7 +119,7 @@ fi
 
 echo "== Ralph (assets profile) =="
 if running --profile assets | grep -qx ralph; then
-  code="$(http_code "http://127.0.0.1:${RALPH_PORT}/")"
+  code="$(http_code "http://${RALPH_HOST}:${RALPH_PORT}/")"
   if [ "$code" = "200" ] || [ "$code" = "302" ]; then
     pass "Ralph responds ($code)"
   else
@@ -126,13 +131,13 @@ fi
 
 echo "== Fleet (endpoint profile) =="
 if running --profile endpoint | grep -qx fleet; then
-  code="$(http_code "http://127.0.0.1:${FLEET_PORT}/")"
+  code="$(http_code "http://${FLEET_HOST}:${FLEET_PORT}/")"
   if [ "$code" = "200" ] || [ "$code" = "302" ] || [ "$code" = "307" ]; then
     pass "Fleet responds ($code)"
   else
     fail "Fleet responds (got $code)"
   fi
-  if curl -fsS --max-time 10 "http://127.0.0.1:${FLEET_PORT}/api/v1/fleet/version" >/dev/null 2>&1; then
+  if curl -fsS --max-time 10 "http://${FLEET_HOST}:${FLEET_PORT}/api/v1/fleet/version" >/dev/null 2>&1; then
     pass "Fleet version API"
   else
     skip "Fleet version API needs an API token"
