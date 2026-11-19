@@ -92,6 +92,11 @@ Fleet, the OCR dev courses, and LTI. It does not touch production.
   be enrolled until a fixed image is pinned. Fleet itself is healthy.
 - OpenIAM is fetched but not started; it needs a dedicated Docker Swarm lab host.
   See `docs/OPENIAM-TEST-STACK.md`.
+- Run Moodle CLI commands as the `daemon` user, not root. A root cache purge
+  creates root-owned lock files and Moodle then returns 500 or
+  `Unable to acquire a lock for caching`. Fix ownership with
+  `chown -R daemon:root /bitnami/moodledata /bitnami/moodle`, then purge caches
+  as `daemon`.
 
 ## Safety
 
