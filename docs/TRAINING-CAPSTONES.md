@@ -63,6 +63,22 @@ separate observation from inference.
 **Pass condition:** the joint brief has one timeline, named owners, three
 evidence-backed findings, and one coherent defence.
 
+## Verified access matrix (dev)
+
+Checked against the seeded `OCR-CAP-COHORT` course on 19 November 2026:
+
+| Account | Course reports | Privacy dashboard | Audit dashboard |
+|---|---:|---:|---:|
+| `student01` | 403 | 403 | 403 |
+| `mentor01` | 200 | — | — |
+| `ta01` | 200 | — | — |
+| `instructor01` | 200 | — | — |
+| `privacy01` | — | 200 | 403 |
+| `auditor01` | — | 403 | 200 |
+
+This confirms the role boundaries without exposing real data. Re-run the same
+checks after a seed or policy change.
+
 ## Acceptance checks
 
 - Moodle login page responds and shows the three training courses.

@@ -63,6 +63,8 @@ def main() -> None:
             ensure_user(session, f"student{i:02d}", "student", "Student", f"Number{i}")
             for i in range(1, 9)
         ]
+        ensure_user(session, "privacy01", "privacy_officer", "Pat", "Privacy")
+        ensure_user(session, "auditor01", "auditor", "Avery", "Auditor")
 
         course = session.query(Course).filter(Course.code == COURSE_CODE).first()
         if course is None:
