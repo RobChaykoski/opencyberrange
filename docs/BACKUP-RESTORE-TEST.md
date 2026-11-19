@@ -12,7 +12,10 @@ Backup creation is not evidence of recoverability. This page records both.
 | Final backup (post-cleanup) | `~/backups/ocr-backup-20261117-012455.dump` |
 | 5.17.6 backup | `~/backups/ocr-backup-20261117-025053.dump` |
 | 5.17.7 backup | `~/backups/ocr-backup-20261117-035821.dump` |
-| Restore drills | **PASSED** pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, and 5.17.7 |
+| 5.19.0 backup | `~/backups/ocr-backup-20261119-034307.dump` |
+| 5.20.0 backup | `~/backups/ocr-backup-20261119-042354.dump` |
+| 5.21.0 backup | `~/backups/ocr-backup-20261119-045654.dump` |
+| Restore drills | **PASSED** pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 5.19.0, 5.20.0, and 5.21.0 |
 | Final restored state | 87 users (47 human + 40 stress-test), 2 courses, 210 labs, 41 enrollments, 124 completions, 463 achievements |
 | Restored tables compared | users, labs, courses, course_enrollments, lab_completions, achievements, review_requests, activity_events |
 | Backup retention | 14 days by default (`RETENTION_DAYS`) |
@@ -33,6 +36,15 @@ bash scripts/restore-drill.sh
 A drill must run immediately after a backup. Comparing a backup to a live
 database that has taken new writes will show expected drift (for example, a new
 user) and is not a restore failure.
+
+## Snapshot identity
+
+The admin **Create snapshot** action must dump with a role that can bypass
+tenant RLS. Release 5.21.0 prefers `BACKUP_DATABASE_URL`, then
+`MIGRATOR_DATABASE_URL`, then `DATABASE_URL`. The host backup script uses the
+database superuser. Never point the snapshot path at the runtime role on a
+database with forced RLS: `pg_dump` fails on tables such as
+`accommodation_events`.
 
 ## What the drill proves
 
