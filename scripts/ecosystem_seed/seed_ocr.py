@@ -33,6 +33,10 @@ INVITE_CODE = "OCRTRAIN26"
 def ensure_user(session, username: str, role: str, first: str, last: str) -> User:
     user = session.query(User).filter(User.username == username).first()
     if user is not None:
+        if not user.is_approved:
+            user.is_approved = True
+        if user.role != role:
+            user.role = role
         return user
     user = User(
         username=username,
@@ -42,6 +46,7 @@ def ensure_user(session, username: str, role: str, first: str, last: str) -> Use
         role=role,
         hashed_password=get_password_hash(PASSWORD),
         institution_id="default",
+        is_approved=True,
     )
     session.add(user)
     session.flush()
@@ -52,8 +57,8 @@ def main() -> None:
     session = SessionLocal()
     try:
         instructor = ensure_user(session, "instructor01", "instructor", "Morgan", "Instructor")
-        mentor = ensure_user(session, "mentor01", "instructor", "Alex", "Mentor")
-        assistant = ensure_user(session, "ta01", "instructor", "Jamie", "Assistant")
+        mentor = ensure_user(session, "mentor01", "mentor", "Alex", "Mentor")
+        assistant = ensure_user(session, "ta01", "teaching_assistant", "Jamie", "Assistant")
         students = [
             ensure_user(session, f"student{i:02d}", "student", "Student", f"Number{i}")
             for i in range(1, 9)
