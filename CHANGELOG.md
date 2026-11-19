@@ -10,6 +10,7 @@ All notable changes to OpenCyberRange are recorded here.
 - Added a Follow-ups view with overdue, due-soon, unassigned, and closed counts.
 - Added case summaries to the calibration view.
 - Preserved support records when an instructor account is erased; author and owner links are nulled instead.
+- Fixed admin database snapshots to dump with a `BYPASSRLS` identity instead of the RLS-constrained runtime role. `BACKUP_DATABASE_URL` is preferred, then `MIGRATOR_DATABASE_URL`, then `DATABASE_URL`.
 - Added migration `0044_readiness_case_owner`.
 
 ## [5.20.0] - 2026-11-19

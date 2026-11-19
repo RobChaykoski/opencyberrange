@@ -11,6 +11,9 @@ class Settings(BaseSettings):
     # Schema owner / migration identity. Production requires a role that is
     # different from the runtime role, so runtime traffic is subject to RLS.
     MIGRATOR_DATABASE_URL: str = ""
+    # Optional least-privilege dump identity. Falls back to the migrator role,
+    # then the runtime role. Use a read-only role with BYPASSRLS in production.
+    BACKUP_DATABASE_URL: str = ""
     
     # JWT - MUST be set via environment variable (generate with: python3 -c "import secrets; print(secrets.token_urlsafe(64))")
     JWT_SECRET: str = ""

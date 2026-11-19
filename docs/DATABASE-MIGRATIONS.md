@@ -43,6 +43,12 @@ bypass tenant RLS and so schema work is auditable:
 identical to the runtime URL, and it refuses to serve when the runtime role is a
 superuser or has `BYPASSRLS`.
 
+`BACKUP_DATABASE_URL` is optional and should use `ocr_backup` in production.
+When it is unset, the admin **Create snapshot** action falls back to
+`MIGRATOR_DATABASE_URL`, then to `DATABASE_URL`. It must not use the runtime
+role when forced RLS is enabled: `pg_dump` fails on tables such as
+`accommodation_events` because the runtime role cannot read every tenant row.
+
 Create or refresh the roles after the first deployment of this release:
 
 ```bash

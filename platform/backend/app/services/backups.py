@@ -110,13 +110,28 @@ def prune_old_backups(now: Optional[datetime] = None) -> list[str]:
     return removed
 
 
+def _backup_database_url() -> str:
+    """Return a dump identity that can read every tenant row.
+
+    The runtime role is subject to forced RLS, so ``pg_dump`` fails on tables
+    such as ``accommodation_events``. Prefer an explicit backup role, then the
+    schema owner, and only fall back to the runtime URL for single-role
+    development installations.
+    """
+    return (
+        (settings.BACKUP_DATABASE_URL or "").strip()
+        or (settings.MIGRATOR_DATABASE_URL or "").strip()
+        or settings.DATABASE_URL
+    )
+
+
 def create_database_backup(timestamp: Optional[str] = None) -> dict:
     """Run pg_dump into the shared snapshot directory.
 
     Raises RuntimeError with the pg_dump stderr on failure so callers can put a
     useful message in front of an administrator.
     """
-    db_url = settings.DATABASE_URL
+    db_url = _backup_database_url()
     parsed = urlparse(db_url)
     directory = backup_directory()
     os.makedirs(directory, exist_ok=True)

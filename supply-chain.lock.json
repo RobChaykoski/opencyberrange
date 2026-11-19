@@ -202,7 +202,7 @@
       "sha256": "8586b85b03aa61d3578d4820330759c25f37720bdff17ca1c28a4561b47795d2"
     },
     "platform/docker-compose.prod.yml": {
-      "sha256": "64e0de4ea8ec68d9eb49af6dc0a48f8de2716e1ab22c9876837e20710985d40a"
+      "sha256": "5b73b95e7ce95aeb4869444b94ba332226bde8fd16dbfadfb91861cbc56794ae"
     },
     "platform/frontend/Dockerfile": {
       "sha256": "a1f4aa425bd21d751a302d8e9dc3c03ab1464bca9919a907b495ece173793690"
