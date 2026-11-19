@@ -54,6 +54,7 @@ TENANT_TABLES: dict[str, dict[str, str | None]] = {
     "course_feedback": {"owner": "author_id", "course": "course_id"},
     "course_completion_resets": {"owner": "user_id", "course": "course_id"},
     "course_cohort_members": {"owner": "user_id", "course": None},
+    "course_staff": {"owner": "user_id", "course": "course_id"},
     "quiz_attempts": {"owner": "user_id", "course": None},
     "open_badge_credentials": {"owner": "user_id", "course": None},
     "lti_scores": {"owner": "user_id", "course": None},

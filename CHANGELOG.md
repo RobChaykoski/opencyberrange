@@ -2,6 +2,19 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.26.0] - 2026-11-19
+
+### Course staff and governance dashboards
+
+- Added `course_staff` for mentor, teaching-assistant, and co-instructor course assignments, with tenant RLS and erasure cleanup.
+- Report scope now reads course-staff assignments instead of requiring course ownership for mentor and teaching-assistant roles.
+- Added privacy-office dashboard endpoints and page: aggregate learners, minors, consent, retention, erasure, report access, data inventory, and classification evidence.
+- Added auditor dashboard endpoints and page: report manifests, report access, integrity ledger, security events, retention, erasure, certificates, and review evidence.
+- Governance views are role-restricted and audited with `GOVERNANCE_VIEWED`.
+- Added a `/governance` route and sidebar entry for privacy officers, auditors, institution administrators, and administrators.
+- Added course-staff management to Admin > Courses > Manage.
+- Extended the planned network and platform tracks with NAPALM automation, Oxidized configuration backup, Open vSwitch and Mininet virtual networks, Cilium eBPF networking, security, and Hubble observability, Calico network policy and eBPF comparison, and Istio service mesh.
+
 ## [5.25.0] - 2026-11-19
 
 ### Report access policy and privacy labels

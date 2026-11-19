@@ -230,6 +230,18 @@
       </template>
 
 
+      <!-- GOVERNANCE (privacy, audit, institution admin) -->
+      <div v-if="showGovernance" class="nav-section">
+        <span v-show="!collapsed" class="nav-section__label">Governance</span>
+        <router-link to="/governance" aria-label="Privacy and audit evidence" title="Privacy and audit evidence" class="nav-item" :class="{ 'nav-item--active': isActive('/governance') }">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="M9 12l2 2 4-4"/>
+          </svg>
+          <span v-show="!collapsed" class="nav-item__label">Privacy &amp; audit</span>
+        </router-link>
+      </div>
+
       <!-- ADMIN (admin only) -->
       <div v-if="showAdmin" class="nav-section">
         <span v-show="!collapsed" class="nav-section__label">Administration</span>
@@ -389,9 +401,17 @@ const replayTour = () => { if (startTour) startTour() }
 const showUserNav = computed(() => props.userRole !== 'admin')
 const showInstructorTools = computed(() => props.userRole === 'instructor')
 const showAdmin = computed(() => props.userRole === 'admin')
+const showGovernance = computed(() => (
+  ['admin', 'institution_admin', 'privacy_officer', 'auditor'].includes(props.userRole)
+))
 const showPrivileged = computed(() => ['instructor', 'admin'].includes(props.userRole))
 const roleLabel = computed(() => ({
   admin: 'Administrator',
+  institution_admin: 'Institution admin',
+  privacy_officer: 'Privacy officer',
+  auditor: 'Auditor',
+  mentor: 'Mentor',
+  teaching_assistant: 'Teaching assistant',
   instructor: 'Instructor',
   student: 'Student',
 }[props.userRole] || 'User'))

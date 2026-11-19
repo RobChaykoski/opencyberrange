@@ -41,18 +41,18 @@ def test_individual_reports_are_narrower():
 
 def test_course_scope_for_institution_roles():
     course = _course()
-    assert report_access.can_view(course, _user("admin"), "course-health")
+    assert report_access.can_view(None, course, _user("admin"), "course-health")
     assert report_access.can_view(
-        course, _user("auditor", "inst-a"), "course-health"
+        None, course, _user("auditor", "inst-a"), "course-health"
     )
     assert not report_access.can_view(
-        course, _user("auditor", "inst-b"), "course-health"
+        None, course, _user("auditor", "inst-b"), "course-health"
     )
     assert report_access.can_view(
-        course, _user("instructor", "inst-a", 1), "course-health"
+        None, course, _user("instructor", "inst-a", 1), "course-health"
     )
     assert not report_access.can_view(
-        course, _user("instructor", "inst-a", 2), "course-health"
+        None, course, _user("instructor", "inst-a", 2), "course-health"
     )
 
 

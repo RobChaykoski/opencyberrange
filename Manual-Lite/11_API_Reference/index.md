@@ -399,6 +399,10 @@ owner-only unless an explicit share or break-glass grant exists.
 | `PATCH` | `/api/courses/{course_id}/requirements/{requirement_id}` | Update Requirement | OAuth2PasswordBearer |
 | `GET` | `/api/courses/{course_id}/reviews` | List Course Reviews | OAuth2PasswordBearer |
 | `GET` | `/api/courses/{course_id}/scoreboard` | Get Scoreboard | OAuth2PasswordBearer |
+| `GET` | `/api/courses/{course_id}/staff` | List Course Staff | OAuth2PasswordBearer |
+| `POST` | `/api/courses/{course_id}/staff` | Add Course Staff | OAuth2PasswordBearer |
+| `GET` | `/api/courses/{course_id}/staff/candidates` | List Course Staff Candidates | OAuth2PasswordBearer |
+| `DELETE` | `/api/courses/{course_id}/staff/{staff_id}` | Remove Course Staff | OAuth2PasswordBearer |
 | `GET` | `/api/courses/{course_id}/students` | List Students | OAuth2PasswordBearer |
 | `DELETE` | `/api/courses/{course_id}/students/{student_id}/accommodation` | Clear Student Accommodation | OAuth2PasswordBearer |
 | `GET` | `/api/courses/{course_id}/students/{student_id}/accommodation` | Get Student Accommodation | OAuth2PasswordBearer |
@@ -444,6 +448,8 @@ owner-only unless an explicit share or break-glass grant exists.
 | `POST` | `/api/exercises/tracks/{track_slug}/levels/{level_id}/quiz/submit` | Submit Level Quiz | OAuth2PasswordBearer |
 | `GET` | `/api/exercises/verify/certificate/{certificate_id}` | Verify Certificate | Public |
 | `GET` | `/api/exercises/workbooks` | List Workbooks | OAuth2PasswordBearer |
+| `GET` | `/api/governance/audit/dashboard` | Audit Dashboard | OAuth2PasswordBearer |
+| `GET` | `/api/governance/privacy/dashboard` | Privacy Dashboard | OAuth2PasswordBearer |
 | `GET` | `/api/identity/providers` | List Identity Providers | OAuth2PasswordBearer |
 | `POST` | `/api/identity/providers` | Create Identity Provider | OAuth2PasswordBearer |
 | `GET` | `/api/identity/providers/export` | Export Identity Providers | OAuth2PasswordBearer |
@@ -4970,6 +4976,92 @@ Get course scoreboard. Must be enrolled or instructor.
 - `200`: Successful Response
 - `422`: Validation Error — `HTTPValidationError`
 
+### `GET /api/courses/{course_id}/staff`
+
+**List Course Staff**
+
+List mentors, teaching assistants, and co-instructors for a course.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `course_id` | path | integer | yes |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `POST /api/courses/{course_id}/staff`
+
+**Add Course Staff**
+
+Assign a mentor, teaching assistant, or co-instructor to a course.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `course_id` | path | integer | yes |  |
+
+**Request body** (`application/json`)
+
+**Schema:** `CourseStaffCreate`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `user_id` | integer | yes |  |
+| `staff_role` | `co_instructor` | `mentor` | `teaching_assistant` | yes |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `GET /api/courses/{course_id}/staff/candidates`
+
+**List Course Staff Candidates**
+
+List users who can be assigned to the course.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `course_id` | path | integer | yes |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `DELETE /api/courses/{course_id}/staff/{staff_id}`
+
+**Remove Course Staff**
+
+Remove a course staff assignment.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `course_id` | path | integer | yes |  |
+| `staff_id` | path | integer | yes |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
 ### `GET /api/courses/{course_id}/students`
 
 **List Students**
@@ -6217,6 +6309,32 @@ Public build identity for the web interface and support reports.  Kept independe
 Health probe with a real database check.  Sync def on purpose: FastAPI runs it in the threadpool, so the blocking SELECT never stalls the event loop. Returns 200/healthy when the DB answers, 503/degraded when it does not, so load balancers and container healthchecks see actual readiness instead of a static string.
 
 **Authentication:** Public
+
+**Responses**
+
+- `200`: Successful Response
+
+## Governance
+
+### `GET /api/governance/audit/dashboard`
+
+**Audit Dashboard**
+
+Aggregate audit evidence for an auditor.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Responses**
+
+- `200`: Successful Response
+
+### `GET /api/governance/privacy/dashboard`
+
+**Privacy Dashboard**
+
+Aggregate privacy evidence for the privacy office.
+
+**Authentication:** OAuth2PasswordBearer
 
 **Responses**
 

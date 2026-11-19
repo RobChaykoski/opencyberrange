@@ -154,6 +154,37 @@ class CourseCohortMember(Base):
     )
 
 
+class CourseStaff(Base):
+    """A mentor, teaching assistant, or co-instructor assigned to a course."""
+
+    __tablename__ = "course_staff"
+
+    id = Column(Integer, primary_key=True, index=True)
+    course_id = Column(
+        Integer,
+        ForeignKey("courses.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    staff_role = Column(String(24), nullable=False)  # co_instructor | mentor | teaching_assistant
+    created_by_id = Column(
+        Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    created_at = Column(DateTime, server_default=func.now())
+
+    __table_args__ = (
+        UniqueConstraint(
+            "course_id", "user_id", "staff_role", name="uq_course_staff_role"
+        ),
+    )
+
+
 class ExerciseSet(Base):
     __tablename__ = "exercise_sets"
 

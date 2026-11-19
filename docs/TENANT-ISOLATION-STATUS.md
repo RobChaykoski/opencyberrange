@@ -41,6 +41,7 @@ Enterprise operation remains deferred past Release 5.
 - `course_feedback`
 - `course_completion_resets`
 - `course_cohort_members`
+- `course_staff`
 - `quiz_attempts`
 - `open_badge_credentials`
 - `lti_scores`
@@ -48,7 +49,7 @@ Enterprise operation remains deferred past Release 5.
 - `readiness_student_notes`
 - `readiness_lab_reviews`
 
-That is **27 tables**. The tenant is derived from the owning user or course by a
+That is **28 tables**. The tenant is derived from the owning user or course by a
 trigger; a client cannot choose `institution_id`. Background jobs run as the
 system principal, an unauthenticated request sees only the default institution,
 and administrators run in system mode. A regression test asserts the column,

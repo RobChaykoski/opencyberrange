@@ -98,14 +98,21 @@ so a small host can still run the earlier chapters.
 - `PLAT03` CI/CD with GitHub Actions
 - `PLAT04` Terraform and Infrastructure as Code
 - `PLAT05` Ansible and Configuration Management
-- `PLAT06` Platform Engineering Capstone
+- `PLAT06` Cilium eBPF Networking, Security, and Hubble
+- `PLAT07` Calico Network Policy and eBPF
+- `PLAT08` Istio Service Mesh
+- `PLAT09` Platform Engineering Capstone
 
 NICE v2.2.0 alignment: `DD-WRL-003`, `DD-WRL-004`, `DD-WRL-005`,
 `IO-WRL-005`, `DD-WRL-001`.
 
 GitHub Actions labs use a local workflow fixture and a fake registry; they do
 not require a live GitHub organisation. Kubernetes labs use a single-node
-cluster with a strict resource budget.
+cluster with a strict resource budget. Cilium is used for eBPF network policy,
+service identity, flow observability, and the Hubble UI. Calico is used for
+network policy, IPAM, and the eBPF dataplane comparison, not as a second CNI at
+the same time. Istio is used for service-to-service mTLS, authorization policy,
+traffic shifting, and mesh observability.
 
 ## Network Engineering and Infrastructure (`neteng`)
 
@@ -115,18 +122,24 @@ cluster with a strict resource budget.
 - `NENG04` Firewall and Segmentation with OPNsense/pfSense
 - `NENG05` NAC and Zero Trust with PacketFence
 - `NENG06` Identity Integration with OpenIAM
-- `NENG07` Network Engineering Capstone
+- `NENG07` Network Automation with NAPALM
+- `NENG08` Open vSwitch and Mininet Virtual Networks
+- `NENG09` Network Engineering Capstone
 
 NICE v2.2.0 alignment: `IO-WRL-004`, `IO-WRL-005`, `PD-WRL-004`,
 `PD-WRL-001`, `DD-WRL-001`.
 
 NetBox is the source of truth: sites, racks, devices, interfaces, prefixes, IP
 addresses, VLANs, and API automation. LibreNMS covers SNMP polling and alerting.
-Oxidized covers configuration backup, diffs, and drift evidence. OPNsense and
-pfSense cover firewall policy, NAT, VPN, and segmentation. PacketFence covers
-NAC, onboarding, device registration, and zero-trust access decisions. The
-OpenIAM chapter connects identity lifecycle and access review to network and
-application access.
+Oxidized covers configuration backup, diffs, and drift evidence. NAPALM covers
+multi-vendor configuration retrieval, state validation, and controlled change.
+Open vSwitch covers virtual switching, VLANs, tunnels, and flow inspection.
+Mininet covers reproducible virtual topologies, links, controllers, and SDN
+experiments. OPNsense and pfSense cover firewall policy, NAT, VPN, and
+segmentation.
+PacketFence covers NAC, onboarding, device registration, and zero-trust access
+decisions. The OpenIAM chapter connects identity lifecycle and access review to
+network and application access.
 
 ## NICE mapping rule
 

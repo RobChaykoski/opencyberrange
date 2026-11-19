@@ -47,7 +47,7 @@ def _safe_name(value: str) -> str:
     return re.sub(r"[^A-Za-z0-9_.-]", "_", value)[:80] or "course"
 
 
-def _report_catalog(course: Course, user: User) -> list[dict]:
+def _report_catalog(db: Session, course: Course, user: User) -> list[dict]:
     base = f"/courses/{course.id}/reports"
     reports = [
         {
@@ -103,7 +103,7 @@ def _report_catalog(course: Course, user: User) -> list[dict]:
     ]
     visible = []
     for item in reports:
-        if not report_access.can_view(course, user, item["id"]):
+        if not report_access.can_view(db, course, user, item["id"]):
             continue
         policy = report_access.policy_for(item["id"])
         visible.append(
@@ -516,7 +516,7 @@ async def list_reports(
     course = db.query(Course).filter(Course.id == course_id).first()
     if course is None:
         raise HTTPException(status_code=404, detail="Course not found")
-    reports = _report_catalog(course, current_user)
+    reports = _report_catalog(db, course, current_user)
     if not reports:
         report_access.audit_library(db, request, current_user, course, [])
         raise HTTPException(

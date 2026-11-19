@@ -34,6 +34,7 @@ from app.models import (
     Course,
     CourseCompletionReset,
     CourseEnrollment,
+    CourseStaff,
     ExerciseGenJob,
     ExerciseReaction,
     ExerciseTemplate,
@@ -107,6 +108,7 @@ _OPTIONAL_USER_REFERENCES: tuple[tuple[str, str, str], ...] = (
     ("readiness_student_notes", "created_by_id", "null"),
     ("readiness_lab_reviews", "owner_id", "null"),
     ("lab_nice_components", "created_by_id", "null"),
+    ("course_staff", "created_by_id", "null"),
 )
 
 
@@ -130,9 +132,14 @@ def _apply_optional_references(db: Session, user_id: int) -> dict[str, int]:
         if not _table_exists(db, table):
             continue
         try:
+            # Table and column names come from the fixed _OPTIONAL_USER_REFERENCES
+            # tuple above, never from request input.
+            # security-delta: allow
             if action == "delete":
+                # security-delta: allow sql built with an f-string
                 stmt = text(f"DELETE FROM {table} WHERE {column} = :uid")
             else:
+                # security-delta: allow sql built with an f-string
                 stmt = text(f"UPDATE {table} SET {column} = NULL WHERE {column} = :uid")
             result = db.execute(stmt, {"uid": user_id})
             if result.rowcount:
@@ -404,6 +411,7 @@ def erase_user(
         (CourseCompletionReset, CourseCompletionReset.user_id),
         (Achievement, Achievement.user_id),
         (CourseEnrollment, CourseEnrollment.user_id),
+        (CourseStaff, CourseStaff.user_id),
         (ExerciseReaction, ExerciseReaction.user_id),
         (FlagAttempt, FlagAttempt.user_id),
         (LabCompletion, LabCompletion.user_id),

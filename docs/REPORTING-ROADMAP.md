@@ -95,9 +95,21 @@ Release 5.25.0 adds the report access policy layer:
 - Classification labels use the institution's configured taxonomy and optional
   framework references, not a hardcoded universal scheme.
 
-Known limitation: mentor and teaching-assistant course assignments are not yet a
-separate table. They are limited to courses they own until a course-staff
-assignment model is added. That is deliberately conservative.
+Release 5.26.0 adds the course-staff assignment model and the first privacy and
+auditor dashboards:
+
+- `course_staff` assigns a mentor, teaching assistant, or co-instructor to a
+  course, with tenant RLS and erasure cleanup.
+- Mentor, teaching-assistant, and co-instructor report scope is read from the
+  assignment table, not from course ownership.
+- `/governance/privacy/dashboard` returns aggregate consent, retention, erasure,
+  minor-safeguard, report-access, inventory, and classification evidence.
+- `/governance/audit/dashboard` returns report manifests, report access,
+  integrity-ledger, security-event, retention, erasure, certificate, and review
+  evidence.
+- Governance views are audited and visible only to the relevant roles.
+- A dedicated `/governance` page and sidebar entry serve privacy officers,
+  auditors, institution administrators, and platform administrators.
 
 ## Delivery order
 

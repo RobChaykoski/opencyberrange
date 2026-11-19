@@ -11,10 +11,11 @@ import secrets
 import logging
 import uuid
 from datetime import datetime, timedelta, timezone
-from typing import Optional
+from typing import Literal, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import StreamingResponse
+from pydantic import BaseModel
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
@@ -26,7 +27,7 @@ from app.models import (
     Assignment, AssignmentLab, FlagAttempt, CustomAchievement,
     CourseFeedback, ExercisePulseSurvey, ExerciseReaction,
     Survey, SurveyAttachment, SurveyResponse, Level, Track,
-    UserAccommodation,
+    UserAccommodation, CourseStaff,
 )
 from app.auth import get_current_active_user, get_current_instructor_user, get_current_admin_user
 from app import entitlement
@@ -56,6 +57,11 @@ from app.services.course_planning import cohort_lab_ids, strict_cohort_lab_ids, 
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
+
+
+class CourseStaffCreate(BaseModel):
+    user_id: int
+    staff_role: Literal["co_instructor", "mentor", "teaching_assistant"]
 
 
 # ==================== Helpers ====================
@@ -2008,6 +2014,180 @@ async def reset_student_lab(
 
     logger.info(f"Reset lab {lab_id} for user {user_id} in course {course_id} by {current_user.username}")
     return {"detail": "Lab completion reset for this course"}
+
+
+# ==================== Course Staff ====================
+
+@router.get("/{course_id}/staff")
+async def list_course_staff(
+    course_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_instructor_user),
+):
+    """List mentors, teaching assistants, and co-instructors for a course."""
+    course = _get_course_or_404(db, course_id)
+    _require_instructor(course, current_user)
+    rows = (
+        db.query(CourseStaff)
+        .filter(CourseStaff.course_id == course_id)
+        .order_by(CourseStaff.staff_role, CourseStaff.id)
+        .all()
+    )
+    users = {
+        user.id: user
+        for user in db.query(User).filter(
+            User.id.in_([row.user_id for row in rows])
+        ).all()
+    } if rows else {}
+    return {
+        "course_id": course_id,
+        "staff": [
+            {
+                "id": row.id,
+                "user_id": row.user_id,
+                "username": users[row.user_id].username if row.user_id in users else None,
+                "display_name": (
+                    users[row.user_id].display_name if row.user_id in users else None
+                ),
+                "staff_role": row.staff_role,
+                "created_at": row.created_at.isoformat() if row.created_at else None,
+            }
+            for row in rows
+        ],
+    }
+
+
+@router.get("/{course_id}/staff/candidates")
+async def list_course_staff_candidates(
+    course_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_instructor_user),
+):
+    """List users who can be assigned to the course."""
+    course = _get_course_or_404(db, course_id)
+    _require_instructor(course, current_user)
+    rows = (
+        db.query(User)
+        .filter(
+            User.is_active.is_(True),
+            User.role.in_(("instructor", "mentor", "teaching_assistant")),
+            User.institution_id == course.institution_id,
+            User.id != course.instructor_id,
+        )
+        .order_by(User.role, User.username)
+        .limit(200)
+        .all()
+    )
+    return {
+        "course_id": course_id,
+        "candidates": [
+            {
+                "id": row.id,
+                "username": row.username,
+                "display_name": row.display_name,
+                "role": row.role,
+            }
+            for row in rows
+        ],
+    }
+
+
+@router.post("/{course_id}/staff")
+async def add_course_staff(
+    course_id: int,
+    payload: CourseStaffCreate,
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_instructor_user),
+):
+    """Assign a mentor, teaching assistant, or co-instructor to a course."""
+    course = _get_course_or_404(db, course_id)
+    _require_instructor(course, current_user)
+    user = db.query(User).filter(User.id == payload.user_id).first()
+    if user is None or not user.is_active:
+        raise HTTPException(status_code=404, detail="User not found")
+    if user.institution_id != course.institution_id:
+        raise HTTPException(
+            status_code=400, detail="User belongs to another institution"
+        )
+    expected_role = {
+        "co_instructor": "instructor",
+        "mentor": "mentor",
+        "teaching_assistant": "teaching_assistant",
+    }[payload.staff_role]
+    if user.role != expected_role:
+        raise HTTPException(
+            status_code=400,
+            detail=f"{payload.staff_role} requires a user with role {expected_role}",
+        )
+    existing = (
+        db.query(CourseStaff)
+        .filter(
+            CourseStaff.course_id == course_id,
+            CourseStaff.user_id == user.id,
+            CourseStaff.staff_role == payload.staff_role,
+        )
+        .first()
+    )
+    if existing:
+        raise HTTPException(status_code=400, detail="That staff role is already assigned")
+    row = CourseStaff(
+        course_id=course_id,
+        user_id=user.id,
+        staff_role=payload.staff_role,
+        created_by_id=current_user.id,
+    )
+    db.add(row)
+    db.commit()
+    db.refresh(row)
+    log_admin_action(
+        action=AuditActions.COURSE_STAFF_ASSIGNED,
+        admin_user_id=current_user.id,
+        admin_username=current_user.username,
+        target_type="course_staff",
+        target_id=row.id,
+        target_identifier=course.code,
+        details={
+            "course_id": course_id,
+            "user_id": user.id,
+            "staff_role": payload.staff_role,
+        },
+        ip_address=request.client.host if request.client else None,
+    )
+    return {"id": row.id, "course_id": course_id, "user_id": user.id, "staff_role": row.staff_role}
+
+
+@router.delete("/{course_id}/staff/{staff_id}")
+async def remove_course_staff(
+    course_id: int,
+    staff_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_instructor_user),
+):
+    """Remove a course staff assignment."""
+    course = _get_course_or_404(db, course_id)
+    _require_instructor(course, current_user)
+    row = (
+        db.query(CourseStaff)
+        .filter(CourseStaff.id == staff_id, CourseStaff.course_id == course_id)
+        .first()
+    )
+    if row is None:
+        raise HTTPException(status_code=404, detail="Staff assignment not found")
+    db.delete(row)
+    db.commit()
+    log_admin_action(
+        action=AuditActions.COURSE_STAFF_REMOVED,
+        admin_user_id=current_user.id,
+        admin_username=current_user.username,
+        target_type="course_staff",
+        target_id=staff_id,
+        target_identifier=course.code,
+        details={"course_id": course_id, "user_id": row.user_id, "staff_role": row.staff_role},
+        ip_address=request.client.host if request.client else None,
+    )
+    return {"detail": "Staff assignment removed"}
 
 
 # ==================== PDF Reports ====================

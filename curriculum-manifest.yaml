@@ -909,10 +909,37 @@ tracks:
         recommended_next: PLAT06
         status: planned
       - id: PLAT06
-        directory: CH_PLAT06_Platform_Capstone
+        directory: CH_PLAT06_Cilium_eBPF
+        display_name: "Cilium eBPF Networking, Security, and Hubble"
+        difficulty: "advanced"
+        prerequisites: [PLAT02]
+        exercises: 4
+        estimated_minutes: 480
+        recommended_next: PLAT07
+        status: planned
+      - id: PLAT07
+        directory: CH_PLAT07_Calico_Policy
+        display_name: "Calico Network Policy and eBPF"
+        difficulty: "advanced"
+        prerequisites: [PLAT02]
+        exercises: 4
+        estimated_minutes: 480
+        recommended_next: PLAT08
+        status: planned
+      - id: PLAT08
+        directory: CH_PLAT08_Istio_Service_Mesh
+        display_name: "Istio Service Mesh"
+        difficulty: "advanced"
+        prerequisites: [PLAT02]
+        exercises: 4
+        estimated_minutes: 480
+        recommended_next: PLAT09
+        status: planned
+      - id: PLAT09
+        directory: CH_PLAT09_Platform_Capstone
         display_name: "Platform Engineering Capstone"
         difficulty: "advanced"
-        prerequisites: [PLAT03, PLAT04, PLAT05]
+        prerequisites: [PLAT03, PLAT04, PLAT05, PLAT06, PLAT07, PLAT08]
         exercises: 2
         estimated_minutes: 360
         recommended_next: SOC01
@@ -924,7 +951,7 @@ tracks:
     audience: "Learners moving from packet-level analysis into network source of truth, monitoring, configuration control, segmentation, and network access control."
     difficulty: "intermediate"
     prerequisites: ["NET00"]
-    required_environment: "RangeBox with NetBox, LibreNMS, Oxidized, OPNsense or pfSense, PacketFence, and a small segmented network"
+    required_environment: "RangeBox with NetBox, LibreNMS, Oxidized, OPNsense or pfSense, PacketFence, Open vSwitch, Mininet, and a small segmented network"
     recommended_next: "platform"
     role_alignment: ["Network Engineer", "Network Operations Specialist", "Infrastructure Engineer", "NOC Analyst"]
     framework_alignment:
@@ -986,10 +1013,28 @@ tracks:
         recommended_next: NENG07
         status: planned
       - id: NENG07
-        directory: CH_NENG07_Network_Engineering_Capstone
+        directory: CH_NENG07_NAPALM_Automation
+        display_name: "Network Automation with NAPALM"
+        difficulty: "advanced"
+        prerequisites: [NENG01, NENG03]
+        exercises: 4
+        estimated_minutes: 480
+        recommended_next: NENG08
+        status: planned
+      - id: NENG08
+        directory: CH_NENG08_Open_vSwitch_Mininet
+        display_name: "Open vSwitch and Mininet Virtual Networks"
+        difficulty: "advanced"
+        prerequisites: [NENG04]
+        exercises: 5
+        estimated_minutes: 600
+        recommended_next: NENG09
+        status: planned
+      - id: NENG09
+        directory: CH_NENG09_Network_Engineering_Capstone
         display_name: "Network Engineering Capstone"
         difficulty: "advanced"
-        prerequisites: [NENG02, NENG03, NENG06]
+        prerequisites: [NENG02, NENG03, NENG06, NENG07, NENG08]
         exercises: 2
         estimated_minutes: 360
         recommended_next: SOC01

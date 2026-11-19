@@ -13,6 +13,15 @@ function userHasRole(required) {
   }
 }
 
+function userHasGovernanceRole() {
+  try {
+    const user = JSON.parse(localStorage.getItem('user') || '{}')
+    return ['admin', 'institution_admin', 'privacy_officer', 'auditor'].includes(user.role)
+  } catch {
+    return false
+  }
+}
+
 const routes = [
   {
     path: '/',
@@ -196,6 +205,12 @@ const routes = [
     meta: { requiresAuth: true, requiresAdmin: true }
   },
   {
+    path: '/governance',
+    name: 'Governance',
+    component: () => import('../views/Governance.vue'),
+    meta: { requiresAuth: true, requiresGovernance: true }
+  },
+  {
     path: '/change-password',
     name: 'ChangePassword',
     component: () => import('../views/ChangePassword.vue'),
@@ -286,6 +301,8 @@ router.beforeEach(async (to, from, next) => {
     // dashboard is not part of their interface.
     next('/admin')
   } else if (to.meta.requiresAdmin && !userHasRole('admin')) {
+    next('/dashboard')
+  } else if (to.meta.requiresGovernance && !userHasGovernanceRole()) {
     next('/dashboard')
   } else if (to.meta.requiresInstructor && !userHasRole('instructor')) {
     next('/dashboard')

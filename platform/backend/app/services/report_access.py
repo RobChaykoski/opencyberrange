@@ -18,7 +18,8 @@ from typing import Iterable, Optional
 
 from fastapi import HTTPException, Request
 
-from app.models import Course, User
+from app.models import Course, CourseStaff, User
+from app.services import security_events
 from app.services.audit import AuditActions, log_admin_action
 
 
@@ -91,6 +92,13 @@ REPORT_POLICIES: dict[str, ReportPolicy] = {
 
 REPORT_LIBRARY = tuple(REPORT_POLICIES)
 
+_EVENT_TYPES = {
+    AuditActions.REPORT_VIEWED: "report.viewed",
+    AuditActions.REPORT_EXPORTED: "report.exported",
+    AuditActions.REPORT_ACCESS_DENIED: "report.access_denied",
+    AuditActions.REPORT_LIBRARY_VIEWED: "report.library_viewed",
+}
+
 
 def policy_for(report_id: str) -> ReportPolicy:
     policy = REPORT_POLICIES.get(report_id)
@@ -103,13 +111,8 @@ def role_can_view(report_id: str, role: str) -> bool:
     return str(role or "").strip().lower() in policy_for(report_id).roles
 
 
-def course_scope_allowed(course: Course, user: User) -> bool:
-    """Return whether the user's course scope permits report access.
-
-    Mentor and teaching-assistant course assignments are not yet a separate
-    table, so they are limited to the course they own. That is deliberately
-    conservative: broadening a role must be an explicit later change.
-    """
+def course_scope_allowed(db, course: Course, user: User) -> bool:
+    """Return whether the user's course scope permits report access."""
     role = (getattr(user, "role", "") or "").strip().lower()
     if role == "admin":
         return True
@@ -119,13 +122,28 @@ def course_scope_allowed(course: Course, user: User) -> bool:
             and course.institution_id == getattr(user, "institution_id", None)
         )
     if role in {"instructor", "mentor", "teaching_assistant"}:
-        return course.instructor_id == user.id
+        if course.instructor_id == user.id:
+            return True
+        if db is None:
+            return False
+        staff_roles = {
+            row.staff_role
+            for row in db.query(CourseStaff)
+            .filter(
+                CourseStaff.course_id == course.id,
+                CourseStaff.user_id == user.id,
+            )
+            .all()
+        }
+        if role == "instructor":
+            return "co_instructor" in staff_roles
+        return role in staff_roles
     return False
 
 
-def can_view(course: Course, user: User, report_id: str) -> bool:
+def can_view(db, course: Course, user: User, report_id: str) -> bool:
     return role_can_view(report_id, getattr(user, "role", "")) and course_scope_allowed(
-        course, user
+        db, course, user
     )
 
 
@@ -162,6 +180,17 @@ def audit_access(
         details=_details(policy, reason=reason, **extra),
         ip_address=request.client.host if request.client else None,
     )
+    security_events.record(
+        _EVENT_TYPES.get(action, "report.viewed"),
+        actor=user,
+        target_type="course_report",
+        target_id=course.id,
+        target_label=course.code,
+        action=action,
+        path=str(request.url.path),
+        ip_address=request.client.host if request.client else None,
+        detail=_details(policy, reason=reason, **extra),
+    )
 
 
 def audit_library(
@@ -181,6 +210,17 @@ def audit_library(
         details={"reports": list(report_ids)},
         ip_address=request.client.host if request.client else None,
     )
+    security_events.record(
+        "report.library_viewed",
+        actor=user,
+        target_type="course_report",
+        target_id=course.id,
+        target_label=course.code,
+        action=AuditActions.REPORT_LIBRARY_VIEWED,
+        path=str(request.url.path),
+        ip_address=request.client.host if request.client else None,
+        detail={"reports": list(report_ids)},
+    )
 
 
 def require_report_access(
@@ -193,7 +233,7 @@ def require_report_access(
     export: bool = False,
 ) -> ReportPolicy:
     policy = policy_for(report_id)
-    if not can_view(course, user, report_id):
+    if not can_view(db, course, user, report_id):
         audit_access(
             db,
             request,

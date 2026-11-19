@@ -11,6 +11,7 @@ from app.models import (
     Course,
     CourseEnrollment,
     CourseLabAssignment,
+    CourseStaff,
     Lab,
     LabCompletion,
     LabSession,
@@ -279,6 +280,119 @@ def test_report_catalog_requires_course_instructor(client, report_data):
     assert client.get(
         f"/api/courses/{course_id}/reports", headers=student
     ).status_code == 403
+
+
+def test_course_staff_assignment_expands_report_scope(client, report_data, db_session):
+    instructor = _login(client, report_data["instructor"])
+    course = report_data["course"]
+    suffix = uuid.uuid4().hex[:8]
+    mentor = User(
+        username=f"report_mentor_{suffix}",
+        email=f"report_mentor_{suffix}@university.edu",
+        hashed_password=get_password_hash(TEST_PASSWORD),
+        is_active=True,
+        is_approved=True,
+        role="mentor",
+        institution_id=course.institution_id,
+    )
+    assistant = User(
+        username=f"report_ta_{suffix}",
+        email=f"report_ta_{suffix}@university.edu",
+        hashed_password=get_password_hash(TEST_PASSWORD),
+        is_active=True,
+        is_approved=True,
+        role="teaching_assistant",
+        institution_id=course.institution_id,
+    )
+    db_session.add_all([mentor, assistant])
+    db_session.commit()
+    db_session.refresh(mentor)
+    db_session.refresh(assistant)
+    try:
+        mentor_staff = client.post(
+            f"/api/courses/{course.id}/staff",
+            headers=instructor,
+            json={"user_id": mentor.id, "staff_role": "mentor"},
+        )
+        assert mentor_staff.status_code == 200, mentor_staff.text
+        assistant_staff = client.post(
+            f"/api/courses/{course.id}/staff",
+            headers=instructor,
+            json={"user_id": assistant.id, "staff_role": "teaching_assistant"},
+        )
+        assert assistant_staff.status_code == 200, assistant_staff.text
+
+        mentor_headers = _login(client, mentor)
+        mentor_catalog = client.get(
+            f"/api/courses/{course.id}/reports", headers=mentor_headers
+        )
+        assert mentor_catalog.status_code == 200, mentor_catalog.text
+        mentor_ids = {row["id"] for row in mentor_catalog.json()["reports"]}
+        assert "coaching-queue" in mentor_ids
+        assert "course-health" not in mentor_ids
+
+        mentor_health = client.get(
+            f"/api/courses/{course.id}/reports/course-health.pdf",
+            params={"reason": "mentor should not see aggregate health"},
+            headers=mentor_headers,
+        )
+        assert mentor_health.status_code == 403
+
+        assistant_headers = _login(client, assistant)
+        assistant_catalog = client.get(
+            f"/api/courses/{course.id}/reports", headers=assistant_headers
+        )
+        assert assistant_catalog.status_code == 200, assistant_catalog.text
+        assistant_ids = {row["id"] for row in assistant_catalog.json()["reports"]}
+        assert {"course-health", "exercise-diagnostics", "coaching-queue"} <= assistant_ids
+    finally:
+        for member in (mentor, assistant):
+            db_session.query(CourseStaff).filter(
+                CourseStaff.user_id == member.id
+            ).delete()
+        for member in (mentor, assistant):
+            db_session.delete(member)
+        db_session.commit()
+
+
+def test_course_staff_assignment_is_removed(client, report_data, db_session):
+    instructor = _login(client, report_data["instructor"])
+    course = report_data["course"]
+    suffix = uuid.uuid4().hex[:8]
+    mentor = User(
+        username=f"report_remove_mentor_{suffix}",
+        email=f"report_remove_mentor_{suffix}@university.edu",
+        hashed_password=get_password_hash(TEST_PASSWORD),
+        is_active=True,
+        is_approved=True,
+        role="mentor",
+        institution_id=course.institution_id,
+    )
+    db_session.add(mentor)
+    db_session.commit()
+    db_session.refresh(mentor)
+    try:
+        created = client.post(
+            f"/api/courses/{course.id}/staff",
+            headers=instructor,
+            json={"user_id": mentor.id, "staff_role": "mentor"},
+        )
+        assert created.status_code == 200, created.text
+        staff_id = created.json()["id"]
+        removed = client.delete(
+            f"/api/courses/{course.id}/staff/{staff_id}", headers=instructor
+        )
+        assert removed.status_code == 200, removed.text
+        remaining = client.get(
+            f"/api/courses/{course.id}/staff", headers=instructor
+        )
+        assert all(row["id"] != staff_id for row in remaining.json()["staff"])
+    finally:
+        db_session.query(CourseStaff).filter(
+            CourseStaff.user_id == mentor.id
+        ).delete()
+        db_session.delete(mentor)
+        db_session.commit()
 
 
 def test_report_catalog_enforces_role_policy(client, report_data, db_session):

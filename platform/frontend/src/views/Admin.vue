@@ -1813,6 +1813,42 @@
                 </li>
               </ul>
             </div>
+            <div class="course-staff-panel">
+              <h4 class="retention-panel__title">Course staff</h4>
+              <p class="retention-panel__lead">
+                Assign mentors, teaching assistants, or co-instructors. Staff can
+                use the course report library within their role policy.
+              </p>
+              <div class="course-staff-panel__row">
+                <select v-model="staffForm.staff_role" class="form-input" aria-label="Staff role">
+                  <option value="mentor">Mentor</option>
+                  <option value="teaching_assistant">Teaching assistant</option>
+                  <option value="co_instructor">Co-instructor</option>
+                </select>
+                <select v-model="staffForm.user_id" class="form-input" aria-label="Staff member">
+                  <option value="">Select a person</option>
+                  <option v-for="candidate in staffCandidateOptions" :key="candidate.id" :value="candidate.id">
+                    {{ candidate.display_name || candidate.username }} ({{ candidate.role }})
+                  </option>
+                </select>
+                <button class="btn btn--primary btn--sm" :disabled="staffBusy || !staffForm.user_id" @click="assignCourseStaff">
+                  {{ staffBusy ? 'Saving...' : 'Assign' }}
+                </button>
+              </div>
+              <p v-if="staffError" class="retention-panel__message" role="alert">{{ staffError }}</p>
+              <p v-if="!staffCandidates.length" class="retention-panel__lead">
+                No mentor or teaching-assistant accounts are available in this institution yet.
+              </p>
+              <ul v-if="courseStaff.length" class="retention-panel__runs">
+                <li v-for="member in courseStaff" :key="member.id">
+                  <strong>{{ member.display_name || member.username }}</strong>
+                  · {{ member.staff_role.replaceAll('_', ' ') }}
+                  <button class="btn btn--secondary btn--sm" :disabled="staffBusy" @click="removeCourseStaff(member.id)">
+                    Remove
+                  </button>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
 
@@ -9424,9 +9460,23 @@ const retentionPreview = ref(null)
 const retentionRuns = ref([])
 const retentionBusy = ref(false)
 const retentionMessage = ref('')
+const courseStaff = ref([])
+const staffCandidates = ref([])
+const staffForm = ref({ user_id: '', staff_role: 'mentor' })
+const staffBusy = ref(false)
+const staffError = ref('')
 
 const instructorUsers = computed(() => {
   return users.value.filter(u => u.role === 'instructor' || u.role === 'admin')
+})
+
+const staffCandidateOptions = computed(() => {
+  const expected = {
+    co_instructor: 'instructor',
+    mentor: 'mentor',
+    teaching_assistant: 'teaching_assistant',
+  }[staffForm.value.staff_role]
+  return staffCandidates.value.filter((candidate) => candidate.role === expected)
 })
 
 const enrollableUsers = computed(() => {
@@ -9604,6 +9654,52 @@ const updateCourseInstructor = async (newId) => {
   }
 }
 
+const loadCourseStaff = async (courseId) => {
+  staffError.value = ''
+  try {
+    const [staff, candidates] = await Promise.all([
+      axios.get(`/courses/${courseId}/staff`),
+      axios.get(`/courses/${courseId}/staff/candidates`),
+    ])
+    courseStaff.value = staff.data.staff || []
+    staffCandidates.value = candidates.data.candidates || []
+  } catch (e) {
+    staffError.value = e.response?.data?.detail || 'Could not load course staff.'
+  }
+}
+
+const assignCourseStaff = async () => {
+  if (!managingCourse.value || !staffForm.value.user_id) return
+  staffBusy.value = true
+  staffError.value = ''
+  try {
+    await axios.post(`/courses/${managingCourse.value.id}/staff`, {
+      user_id: Number(staffForm.value.user_id),
+      staff_role: staffForm.value.staff_role,
+    })
+    staffForm.value.user_id = ''
+    await loadCourseStaff(managingCourse.value.id)
+  } catch (e) {
+    staffError.value = e.response?.data?.detail || 'Could not assign course staff.'
+  } finally {
+    staffBusy.value = false
+  }
+}
+
+const removeCourseStaff = async (staffId) => {
+  if (!managingCourse.value) return
+  staffBusy.value = true
+  staffError.value = ''
+  try {
+    await axios.delete(`/courses/${managingCourse.value.id}/staff/${staffId}`)
+    await loadCourseStaff(managingCourse.value.id)
+  } catch (e) {
+    staffError.value = e.response?.data?.detail || 'Could not remove course staff.'
+  } finally {
+    staffBusy.value = false
+  }
+}
+
 const loadRetention = async (courseId) => {
   retentionPreview.value = null
   retentionMessage.value = ''
@@ -9688,6 +9784,7 @@ const openCourseManager = (course) => {
   } else {
     managingCourse.value = course
     loadRetention(course.id)
+    loadCourseStaff(course.id)
   }
 }
 
@@ -12283,6 +12380,25 @@ watch(activeTab, (tab) => {
   margin-top: 1rem;
   padding-top: 1rem;
   border-top: 1px solid var(--border-color);
+}
+
+.course-staff-panel {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.course-staff-panel__row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+.course-staff-panel__row .form-input {
+  min-width: 10rem;
+  flex: 1 1 12rem;
 }
 
 .retention-panel__title {

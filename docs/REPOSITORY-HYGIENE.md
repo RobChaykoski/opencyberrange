@@ -80,7 +80,7 @@ The remaining 9 labs have no workbook by design.
 ## Migrations and CI
 
 - The Alembic revision graph is linear and ends at
-  `0045_nice_framework`; there is no abandoned migration head.
+  `0046_course_staff`; there is no abandoned migration head.
 - All workflows in `.github/workflows/` have an active trigger. `lab-harness`
   and `ui-smoke` are on-demand/verification jobs, not dead files.
 - The supply-chain lock and the runtime integrity manifest are regenerated for
