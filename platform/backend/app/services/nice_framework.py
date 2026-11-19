@@ -626,3 +626,34 @@ def set_lab_mappings(
     meta.reviewed_by_id = created_by_id
     db.commit()
     return lab_mappings(db, lab_id)
+
+
+def mark_lab_reviewed(
+    db: Session,
+    *,
+    lab_id: int,
+    reviewed_by_id: Optional[int] = None,
+) -> dict:
+    """Mark an existing provisional mapping as reviewed without changing it."""
+    mapped = (
+        db.query(LabNiceComponent)
+        .filter(LabNiceComponent.lab_id == lab_id)
+        .first()
+    )
+    if mapped is None:
+        raise ValueError("Lab has no NICE mapping to review")
+    meta = (
+        db.query(LabNiceMetadata)
+        .filter(LabNiceMetadata.lab_id == lab_id)
+        .first()
+    )
+    if meta is None:
+        meta = LabNiceMetadata(lab_id=lab_id, source="provisional")
+        db.add(meta)
+    meta.review_status = "reviewed"
+    meta.confidence = "reviewed"
+    meta.policy_version = meta.policy_version or 1
+    meta.reviewed_at = datetime.now(timezone.utc).replace(tzinfo=None)
+    meta.reviewed_by_id = reviewed_by_id
+    db.commit()
+    return lab_mappings(db, lab_id)

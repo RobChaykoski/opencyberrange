@@ -663,6 +663,54 @@
             </div>
           </div>
 
+          <div v-if="niceCoverage" class="nice-coverage">
+            <div class="nice-coverage__head">
+              <div>
+                <strong>NICE coverage</strong>
+                <span class="nice-coverage__meta">
+                  {{ niceCoverage.mapped_labs }}/{{ niceCoverage.total_labs }} mapped ·
+                  {{ niceCoverage.provisional }} provisional ·
+                  {{ niceCoverage.reviewed }} reviewed
+                </span>
+              </div>
+              <button
+                class="btn btn--secondary btn--sm"
+                :disabled="niceCoverageBusy"
+                @click="seedNiceMappings"
+              >
+                {{ niceCoverageBusy ? 'Seeding...' : 'Seed provisional mappings' }}
+              </button>
+            </div>
+            <p v-if="niceCoverageError" class="nice-coverage__error">{{ niceCoverageError }}</p>
+            <div v-if="niceCoverage.review_queue?.length" class="nice-coverage__queue">
+              <div class="nice-coverage__queue-title">Provisional review queue</div>
+              <div
+                v-for="item in niceCoverage.review_queue.slice(0, 8)"
+                :key="item.lab_id"
+                class="nice-coverage__row"
+              >
+                <div class="nice-coverage__lab">
+                  <span>{{ item.name }}</span>
+                  <small>
+                    {{ item.category || 'Uncategorised' }} ·
+                    {{ item.source || 'unmapped' }}<span v-if="item.confidence"> · {{ item.confidence }}</span>
+                  </small>
+                </div>
+                <button
+                  class="btn btn--secondary btn--sm"
+                  :disabled="niceReviewBusy === item.lab_id"
+                  @click="markNiceReviewed(item)"
+                >
+                  {{ niceReviewBusy === item.lab_id ? 'Saving...' : 'Mark reviewed' }}
+                </button>
+              </div>
+              <div v-if="niceCoverage.review_queue.length > 8" class="nice-coverage__more">
+                +{{ niceCoverage.review_queue.length - 8 }} more provisional labs
+              </div>
+            </div>
+            <div v-else class="nice-coverage__empty">No provisional labs in the review queue.</div>
+          </div>
+
           <!-- Scan Warnings -->
           <div v-if="scanWarnings.length" class="scan-warnings">
             <div class="scan-warnings__header" @click="scanWarnings = []">
@@ -9468,6 +9516,7 @@ const staffBusy = ref(false)
 const staffError = ref('')
 const niceCoverage = ref(null)
 const niceCoverageBusy = ref(false)
+const niceReviewBusy = ref(null)
 const niceCoverageError = ref('')
 
 const instructorUsers = computed(() => {
@@ -9724,6 +9773,20 @@ const seedNiceMappings = async () => {
     niceCoverageError.value = e.response?.data?.detail || 'Could not seed NICE mappings.'
   } finally {
     niceCoverageBusy.value = false
+  }
+}
+
+const markNiceReviewed = async (item) => {
+  if (!item?.lab_id) return
+  niceReviewBusy.value = item.lab_id
+  niceCoverageError.value = ''
+  try {
+    await axios.post(`/nice/labs/${item.lab_id}/review`)
+    await loadNiceCoverage()
+  } catch (e) {
+    niceCoverageError.value = e.response?.data?.detail || 'Could not mark the lab reviewed.'
+  } finally {
+    niceReviewBusy.value = null
   }
 }
 
@@ -11550,6 +11613,80 @@ watch(activeTab, (tab) => {
   border-color: rgba(239, 68, 68, 0.35);
   color: var(--danger);
   background: rgba(239, 68, 68, 0.1);
+}
+
+.nice-coverage {
+  margin: 0 0 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.6rem;
+  background: var(--surface-1, rgba(255, 255, 255, 0.03));
+}
+
+.nice-coverage__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.nice-coverage__meta {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+
+.nice-coverage__error {
+  margin: 0.5rem 0 0;
+  color: var(--danger);
+  font-size: 0.8125rem;
+}
+
+.nice-coverage__queue {
+  margin-top: 0.75rem;
+  border-top: 1px solid var(--border);
+  padding-top: 0.65rem;
+}
+
+.nice-coverage__queue-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin-bottom: 0.45rem;
+}
+
+.nice-coverage__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid var(--border-faint, rgba(255, 255, 255, 0.06));
+}
+
+.nice-coverage__row:last-of-type {
+  border-bottom: none;
+}
+
+.nice-coverage__lab {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.nice-coverage__lab small {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.nice-coverage__more,
+.nice-coverage__empty {
+  margin-top: 0.45rem;
+  color: var(--text-muted);
+  font-size: 0.75rem;
 }
 
 .exercise-action-btn {

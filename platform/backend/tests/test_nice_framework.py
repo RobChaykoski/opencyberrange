@@ -187,3 +187,51 @@ def test_seed_lab_mappings_and_coverage(db_session):
         ).delete()
         db_session.delete(lab)
         db_session.commit()
+
+
+def test_mark_lab_reviewed_without_editing(db_session):
+    from app.models import Lab, LabNiceComponent, LabNiceMetadata
+
+    nice_framework.ingest_payload(
+        db_session, nice_framework._load_snapshot(), source="test"
+    )
+    lab = Lab(
+        name="Failed login analysis",
+        slug="network-1-4-failed-login-analysis",
+        description="Review queue test",
+        compose_file="services: {}\n",
+        is_active=True,
+        visibility="public",
+        duration_minutes=60,
+        difficulty="intermediate",
+    )
+    db_session.add(lab)
+    db_session.commit()
+    db_session.refresh(lab)
+    try:
+        nice_framework.seed_lab_mappings(db_session)
+        before = nice_framework.coverage(db_session)
+        assert any(row["lab_id"] == lab.id for row in before["review_queue"])
+
+        mappings = nice_framework.mark_lab_reviewed(db_session, lab_id=lab.id)
+        assert mappings["work_role"] or mappings["task"]
+
+        meta = db_session.query(LabNiceMetadata).filter(
+            LabNiceMetadata.lab_id == lab.id
+        ).first()
+        assert meta is not None
+        assert meta.review_status == "reviewed"
+        assert meta.reviewed_at is not None
+
+        after = nice_framework.coverage(db_session)
+        assert after["reviewed"] >= 1
+        assert not any(row["lab_id"] == lab.id for row in after["review_queue"])
+    finally:
+        db_session.query(LabNiceComponent).filter(
+            LabNiceComponent.lab_id == lab.id
+        ).delete()
+        db_session.query(LabNiceMetadata).filter(
+            LabNiceMetadata.lab_id == lab.id
+        ).delete()
+        db_session.delete(lab)
+        db_session.commit()

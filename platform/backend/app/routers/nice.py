@@ -106,6 +106,24 @@ def set_lab_nice_mappings(
     return {"lab_id": lab_id, **mappings}
 
 
+@router.post("/labs/{lab_id}/review")
+def review_lab_nice_mappings(
+    lab_id: int,
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user),
+):
+    """Mark an existing provisional mapping as reviewed without editing it."""
+    if db.query(Lab.id).filter(Lab.id == lab_id).first() is None:
+        raise HTTPException(status_code=404, detail="Lab not found")
+    try:
+        mappings = nice_framework.mark_lab_reviewed(
+            db, lab_id=lab_id, reviewed_by_id=admin.id
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return {"lab_id": lab_id, **mappings}
+
+
 @router.post("/labs/seed")
 def seed_nice_lab_mappings(
     db: Session = Depends(get_db),
