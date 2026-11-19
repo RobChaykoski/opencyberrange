@@ -117,6 +117,8 @@ capstones and analytics, scale, federation, then the AI mentor.
 - [Community events calendar](COMMUNITY-EVENTS-CALENDAR.md)
 - [2027 curriculum tracks](CURRICULUM-TRACKS-2027.md)
 - [NICE Framework ingestion](NICE-FRAMEWORK-INGESTION.md)
+- [Role capability and reporting model](ROLE-CAPABILITY-MODEL.md)
+- [Reporting roadmap](REPORTING-ROADMAP.md)
 - [Procurement requirements](PROCUREMENT-REQUIREMENTS.md) and [compliance](COMPLIANCE.md)
 - [HECVAT](HECVAT.md)
 - [Manual screenshots](MANUAL-SCREENSHOTS.md)
