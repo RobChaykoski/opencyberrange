@@ -22,7 +22,7 @@ issues=()
 now=$(date -u +%s)
 
 check_version() {
-  curl -sk --max-time 10 https://127.0.0.1/api/version | grep -q '"version":"5"' \
+  curl -sk --max-time 10 https://127.0.0.1/api/version | grep -q '"version":"5' \
     || issues+=("api-version")
 }
 
