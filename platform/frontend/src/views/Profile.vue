@@ -1322,6 +1322,7 @@ import { useModules } from '../composables/useModules'
 import { useGpsAnswers } from '../composables/useGpsAnswers'
 import ConsentPanel from '../components/ConsentPanel.vue'
 import PrivacyDataPanel from '../components/PrivacyDataPanel.vue'
+import { downloadBlob } from '../utils/download'
 import SurveyConsentPanel from '../components/SurveyConsentPanel.vue'
 import SkillDnaProfile from '../components/SkillDnaProfile.vue'
 import MomentumPanel from '../components/MomentumPanel.vue'
@@ -1451,15 +1452,10 @@ async function downloadCareerProfile(format) {
       responseType: 'blob',
     })
     const type = format === 'html' ? 'text/html;charset=utf-8' : 'text/markdown;charset=utf-8'
-    const blob = new Blob([response.data], { type })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `career-profile-${user.value?.username || 'learner'}.${format}`
-    document.body.appendChild(link)
-    link.click()
-    link.remove()
-    URL.revokeObjectURL(url)
+    downloadBlob(
+      new Blob([response.data], { type }),
+      `career-profile-${user.value?.username || 'learner'}.${format}`
+    )
     careerExportMessage.value = 'Career profile downloaded.'
   } catch (error) {
     careerExportError.value = true

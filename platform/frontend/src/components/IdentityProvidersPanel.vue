@@ -362,6 +362,7 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
 import axios from '../api/axios'
+import { downloadBlob } from '../utils/download'
 
 const providers = ref([])
 const loading = ref(true)
@@ -469,14 +470,10 @@ const exportProviders = async () => {
   try {
     const { data } = await axios.get('/identity/providers/export')
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `identity-providers-${new Date().toISOString().slice(0, 10)}.json`
-    document.body.appendChild(link)
-    link.click()
-    link.remove()
-    URL.revokeObjectURL(url)
+    downloadBlob(
+      blob,
+      `identity-providers-${new Date().toISOString().slice(0, 10)}.json`
+    )
     transferMessage.value = `Exported ${data.providers?.length || 0} provider(s). Secret values are not included.`
   } catch (e) {
     transferMessage.value = e.response?.data?.detail || 'Could not export identity providers.'

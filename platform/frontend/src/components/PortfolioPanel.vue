@@ -340,6 +340,7 @@
 import { computed, onMounted, ref } from 'vue'
 import axios from '../api/axios'
 import { useClipboard } from '../composables/useClipboard'
+import { downloadBlob } from '../utils/download'
 
 const loading = ref(true)
 const error = ref('')
@@ -464,15 +465,10 @@ async function download(format) {
       responseType: 'blob',
     })
     const type = format === 'html' ? 'text/html;charset=utf-8' : 'text/markdown;charset=utf-8'
-    const blob = new Blob([response.data], { type })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `professional-portfolio-${data.value?.identity?.username || 'learner'}.${format}`
-    document.body.appendChild(link)
-    link.click()
-    link.remove()
-    URL.revokeObjectURL(url)
+    downloadBlob(
+      new Blob([response.data], { type }),
+      `professional-portfolio-${data.value?.identity?.username || 'learner'}.${format}`
+    )
     downloadMessage.value = 'Portfolio downloaded.'
   } catch (e) {
     downloadError.value = true

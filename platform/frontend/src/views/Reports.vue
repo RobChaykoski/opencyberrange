@@ -343,6 +343,7 @@ import { computed, onMounted, ref } from 'vue'
 import axios from '../api/axios'
 import CurriculumDemand from '../components/CurriculumDemand.vue'
 import { csvRow } from '../utils/csv'
+import { downloadBlob, filenameFromDisposition } from '../utils/download'
 
 const data = ref(null)
 const loading = ref(true)
@@ -527,14 +528,7 @@ const exportCsv = async () => {
     .map((line) => csvRow(line))
     .join('\n')
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' })
-  const url = URL.createObjectURL(blob)
-  const link = document.createElement('a')
-  link.href = url
-  link.download = `learning-reports-${new Date().toISOString().slice(0, 10)}.csv`
-  document.body.appendChild(link)
-  link.click()
-  link.remove()
-  URL.revokeObjectURL(url)
+  downloadBlob(blob, `learning-reports-${new Date().toISOString().slice(0, 10)}.csv`)
   exportReason.value = ''
 }
 
@@ -552,14 +546,11 @@ const exportPdf = async () => {
       responseType: 'blob',
     })
     const blob = new Blob([response.data], { type: 'application/pdf' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `learning-reports-${new Date().toISOString().slice(0, 10)}.pdf`
-    document.body.appendChild(link)
-    link.click()
-    link.remove()
-    URL.revokeObjectURL(url)
+    const filename = filenameFromDisposition(
+      response.headers?.['content-disposition'],
+      `learning-reports-${new Date().toISOString().slice(0, 10)}.pdf`
+    )
+    downloadBlob(blob, filename)
     exportReason.value = ''
   } catch {
     error.value = 'Could not prepare the PDF report. Please try again.'

@@ -410,6 +410,7 @@ import { useVpnStatus } from '../composables/useVpnStatus'
 import { usePoll } from '../composables/usePoll'
 import { useClipboard } from '../composables/useClipboard'
 import Toast, { showToast } from '../components/Toast.vue'
+import { downloadBlob } from '../utils/download'
 
 // The composable's getters are connected-aware: "Connected" needs a live
 // WireGuard handshake (vpn_connected), while "Registered (tunnel down)"
@@ -534,14 +535,7 @@ const downloadVpnConfig = async () => {
     })
     
     // Create download link
-    const url = window.URL.createObjectURL(new Blob([response.data]))
-    const link = document.createElement('a')
-    link.href = url
-    link.setAttribute('download', 'ocr-vpn.conf')
-    document.body.appendChild(link)
-    link.click()
-    link.remove()
-    window.URL.revokeObjectURL(url)
+    downloadBlob(new Blob([response.data]), 'ocr-vpn.conf')
     
     // Refresh status
     await fetchVpnStatus()

@@ -1546,6 +1546,7 @@ import { useImpersonation } from '../composables/useImpersonation'
 import { useModules } from '../composables/useModules'
 import { getUserTimeZone } from '../utils/timezone'
 import { requireExportReason } from '../utils/exportReason'
+import { downloadBlob, filenameFromDisposition } from '../utils/download'
 
 const { startImpersonation } = useImpersonation()
 const { exerciseAuthoring, exerciseTester, fetchModules } = useModules()
@@ -2627,12 +2628,10 @@ async function downloadStudentReport(student) {
       params: { reason },
       responseType: 'blob',
     })
-    const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }))
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `report_${managingCourse.value.code}_${student.username}.pdf`
-    a.click()
-    window.URL.revokeObjectURL(url)
+    downloadBlob(
+      new Blob([res.data], { type: 'application/pdf' }),
+      `report_${managingCourse.value.code}_${student.username}.pdf`
+    )
   } catch (e) {
     showAlert('Failed to download report', 'error')
   } finally {
@@ -2691,12 +2690,7 @@ async function downloadReport(report, format) {
       filename,
     }
     const mime = format.id === 'pdf' ? 'application/pdf' : 'text/csv'
-    const url = window.URL.createObjectURL(new Blob([response.data], { type: mime }))
-    const anchor = document.createElement('a')
-    anchor.href = url
-    anchor.download = filename
-    anchor.click()
-    window.URL.revokeObjectURL(url)
+    downloadBlob(new Blob([response.data], { type: mime }), filename)
   } catch (e) {
     showAlert(e.response?.data?.detail || 'Failed to generate the report', 'error')
   } finally {
@@ -2918,12 +2912,10 @@ async function downloadAssignmentReport(asn) {
       `/courses/${managingCourse.value.id}/assignments/${asn.id}/report`,
       { params: { reason }, responseType: 'blob' }
     )
-    const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }))
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `report_${managingCourse.value.code}_${asn.name.replace(/\s+/g, '_')}.pdf`
-    a.click()
-    window.URL.revokeObjectURL(url)
+    downloadBlob(
+      new Blob([res.data], { type: 'application/pdf' }),
+      `report_${managingCourse.value.code}_${asn.name.replace(/\s+/g, '_')}.pdf`
+    )
   } catch (e) {
     showAlert('Failed to generate report', 'error')
   }
@@ -3157,17 +3149,11 @@ async function exportExercise(lab) {
     const response = await axios.get(`/instructor/labs/${lab.id}/export`, {
       responseType: 'blob',
     })
-    const disposition = response.headers['content-disposition'] || ''
-    const match = /filename="?([^";]+)"?/i.exec(disposition)
-    const filename = match?.[1] || `${lab.slug || 'exercise'}-export.zip`
-    const url = URL.createObjectURL(response.data)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = filename
-    document.body.appendChild(link)
-    link.click()
-    link.remove()
-    URL.revokeObjectURL(url)
+    const filename = filenameFromDisposition(
+      response.headers?.['content-disposition'],
+      `${lab.slug || 'exercise'}-export.zip`
+    )
+    downloadBlob(response.data, filename)
     showAlert('Exercise export downloaded. The flag was replaced with a placeholder.')
   } catch (e) {
     showAlert(e.response?.data?.detail || 'Failed to export exercise', 'error')

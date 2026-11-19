@@ -177,6 +177,7 @@ import axios from '../api/axios'
 import PrivacyText from '../components/PrivacyText.vue'
 import { getUserTimeZone } from '../utils/timezone'
 import { requireExportReason } from '../utils/exportReason'
+import { downloadBlob } from '../utils/download'
 import CourseAnalytics from '../components/CourseAnalytics.vue'
 import CourseFeedbackPanel from '../components/CourseFeedbackPanel.vue'
 import CourseHealthOverview from '../components/CourseHealthOverview.vue'
@@ -597,12 +598,10 @@ async function downloadStudentReport(student) {
       params: { reason },
       responseType: 'blob',
     })
-    const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }))
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `report_${course.value?.code || 'course'}_${student.username}.pdf`
-    a.click()
-    window.URL.revokeObjectURL(url)
+    downloadBlob(
+      new Blob([res.data], { type: 'application/pdf' }),
+      `report_${course.value?.code || 'course'}_${student.username}.pdf`
+    )
   } catch (e) {
     console.error('Failed to download report', e)
   } finally {
@@ -741,12 +740,10 @@ async function downloadClassReport() {
       params: { reason },
       responseType: 'blob',
     })
-    const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }))
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `report_${course.value.code}_class.pdf`
-    a.click()
-    window.URL.revokeObjectURL(url)
+    downloadBlob(
+      new Blob([res.data], { type: 'application/pdf' }),
+      `report_${course.value.code}_class.pdf`
+    )
   } catch (e) {
     console.error('Failed to download report', e)
   } finally {

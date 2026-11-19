@@ -4721,6 +4721,7 @@ import SecurityCenter from '../components/SecurityCenter.vue'
 import NiceMappingPicker from '../components/NiceMappingPicker.vue'
 import { getUserTimeZone } from '../utils/timezone'
 import { requireExportReason } from '../utils/exportReason'
+import { downloadBlob, filenameFromDisposition } from '../utils/download'
 import { ref, reactive, onMounted, onUnmounted, computed, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from '../api/axios'
@@ -6684,14 +6685,7 @@ const exportActivity = async (format) => {
       responseType: 'blob',
     })
     const blob = new Blob([data], { type: format === 'csv' ? 'text/csv' : 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `activity-log-${new Date().toISOString().slice(0, 10)}.${format}`
-    document.body.appendChild(link)
-    link.click()
-    link.remove()
-    URL.revokeObjectURL(url)
+    downloadBlob(blob, `activity-log-${new Date().toISOString().slice(0, 10)}.${format}`)
     activityExportReason.value = ''
     activityMessage.value = `Activity log exported as ${format.toUpperCase()}.`
   } catch (e) {
@@ -7297,13 +7291,8 @@ const generateTestReport = async (slug) => {
       params: { reason },
       responseType: 'blob'
     })
-    const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }))
-    const a = document.createElement('a')
-    a.href = url
     const safeName = result.labName.replace(/[^a-zA-Z0-9_-]/g, '_').toLowerCase()
-    a.download = `exercise_test_${safeName}.pdf`
-    a.click()
-    window.URL.revokeObjectURL(url)
+    downloadBlob(new Blob([res.data], { type: 'application/pdf' }), `exercise_test_${safeName}.pdf`)
   } catch (e) {
     console.error('Failed to download exercise test report', e)
     showAlert('Failed to generate report PDF', 'error')
@@ -7453,15 +7442,10 @@ const downloadStressReport = async () => {
       params: { reason },
       responseType: 'blob'
     })
-    const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }))
-    const a = document.createElement('a')
-    a.href = url
     const now = new Date()
     const ts = String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0') + now.getFullYear() + '_' + String(now.getHours()).padStart(2,'0') + String(now.getMinutes()).padStart(2,'0')
     const lvl = stressLevel.value || stressResults.value?.level || 1
-    a.download = `${ts}_Type${lvl}_StressTest.pdf`
-    a.click()
-    window.URL.revokeObjectURL(url)
+    downloadBlob(new Blob([res.data], { type: 'application/pdf' }), `${ts}_Type${lvl}_StressTest.pdf`)
   } catch (e) {
     console.error('Failed to download stress test report', e)
     showAlert('Failed to generate report PDF', 'error')
@@ -7612,15 +7596,7 @@ const downloadBackup = async (filename) => {
       params: { reason },
       responseType: 'blob'
     })
-    const blob = new Blob([response.data], { type: 'application/sql' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = filename
-    document.body.appendChild(link)
-    link.click()
-    link.remove()
-    URL.revokeObjectURL(url)
+    downloadBlob(new Blob([response.data], { type: 'application/sql' }), filename)
   } catch (e) {
     showAlert(parseApiError(e, 'Failed to download backup'), 'error')
   }
@@ -8383,16 +8359,11 @@ const exportUsers = async () => {
       },
       responseType: 'blob'
     })
-    const disposition = response.headers?.['content-disposition'] || ''
-    const match = disposition.match(/filename="?([^";]+)"?/)
-    const filename = match ? match[1] : 'swocts-cyber-range-users.json'
-    const blob = new Blob([response.data], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = filename
-    link.click()
-    URL.revokeObjectURL(url)
+    const filename = filenameFromDisposition(
+      response.headers?.['content-disposition'],
+      'swocts-cyber-range-users.json'
+    )
+    downloadBlob(new Blob([response.data], { type: 'application/json' }), filename)
     userExportReason.value = ''
     showAlert('User export downloaded. Treat the file as sensitive.')
   } catch (e) {
@@ -8942,17 +8913,11 @@ const exportExercise = async (lab) => {
     const response = await axios.get(`/admin/labs/${lab.id}/export`, {
       responseType: 'blob',
     })
-    const disposition = response.headers['content-disposition'] || ''
-    const match = /filename="?([^";]+)"?/i.exec(disposition)
-    const filename = match?.[1] || `${lab.slug || 'exercise'}-export.zip`
-    const url = URL.createObjectURL(response.data)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = filename
-    document.body.appendChild(link)
-    link.click()
-    link.remove()
-    URL.revokeObjectURL(url)
+    const filename = filenameFromDisposition(
+      response.headers?.['content-disposition'],
+      `${lab.slug || 'exercise'}-export.zip`
+    )
+    downloadBlob(response.data, filename)
     showAlert(`Exported ${lab.name}. The flag is replaced with a placeholder.`)
   } catch (e) {
     showAlert(
@@ -10065,12 +10030,10 @@ const downloadStudentReport = async (student) => {
       params: { reason },
       responseType: 'blob'
     })
-    const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }))
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `report_${managingCourse.value.code}_${student.username}.pdf`
-    a.click()
-    window.URL.revokeObjectURL(url)
+    downloadBlob(
+      new Blob([res.data], { type: 'application/pdf' }),
+      `report_${managingCourse.value.code}_${student.username}.pdf`
+    )
   } catch (e) {
     showAlert('Failed to download report', 'error')
   }
@@ -10085,12 +10048,10 @@ const downloadClassReportAdmin = async () => {
       params: { reason },
       responseType: 'blob'
     })
-    const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }))
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `report_${managingCourse.value.code}_class.pdf`
-    a.click()
-    window.URL.revokeObjectURL(url)
+    downloadBlob(
+      new Blob([res.data], { type: 'application/pdf' }),
+      `report_${managingCourse.value.code}_class.pdf`
+    )
   } catch (e) {
     showAlert('Failed to download report', 'error')
   } finally {

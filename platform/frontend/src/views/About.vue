@@ -370,6 +370,7 @@
 <script setup>
 import { computed, nextTick, onMounted, ref } from 'vue'
 import api from '../api/axios'
+import { downloadBlob } from '../utils/download'
 
 const about = ref(null)
 const loading = ref(true)
@@ -543,12 +544,7 @@ const downloadSbom = async (file) => {
   sbomLoading.value = file.name
   try {
     const blob = await fetchBlob('sbom', file.name, 'blob')
-    const url = URL.createObjectURL(blob)
-    const anchor = document.createElement('a')
-    anchor.href = url
-    anchor.download = file.name
-    anchor.click()
-    URL.revokeObjectURL(url)
+    downloadBlob(blob, file.name)
   } catch {
     error.value = 'Could not download that SBOM.'
   } finally {

@@ -244,13 +244,21 @@
         />
       </div>
       <div class="filter-bar__export">
+        <input
+          v-model="exportReason"
+          class="filter-select filter-select--compact"
+          type="text"
+          maxlength="500"
+          placeholder="Reason (required)"
+          aria-label="Reason for export"
+        />
         <select v-model="exportFormat" class="filter-select filter-select--compact" title="Report format">
           <option value="pdf">PDF</option>
           <option value="csv">CSV</option>
         </select>
         <button
           class="export-btn"
-          :disabled="exportLoading"
+          :disabled="exportLoading || exportReason.trim().length < 5"
           @click="downloadReport"
           :title="`Download filtered view as ${exportFormat.toUpperCase()}`"
         >
@@ -443,7 +451,7 @@ import InstructorReadinessPanel from '../components/InstructorReadinessPanel.vue
 import PrivacyText from '../components/PrivacyText.vue'
 import { usePoll } from '../composables/usePoll'
 import { isAdmin } from '../utils/roles'
-import { requireExportReason } from '../utils/exportReason'
+import { downloadBlob, filenameFromDisposition } from '../utils/download'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Filler, Tooltip, Legend)
 
@@ -555,6 +563,7 @@ const filterCourses = ref([])
 const filterStudents = ref([])
 
 const exportFormat = ref('pdf')
+const exportReason = ref('')
 const exportLoading = ref(false)
 
 const filterRange = computed(() => {
@@ -878,8 +887,8 @@ const rangeLabelText = () => {
 
 const downloadReport = async () => {
   if (exportLoading.value) return
-  const reason = requireExportReason('Why are you exporting this operations report?')
-  if (!reason) return
+  const reason = exportReason.value.trim()
+  if (reason.length < 5) return
   exportLoading.value = true
   try {
     const range = filterRange.value
@@ -899,23 +908,12 @@ const downloadReport = async () => {
 
     const mime = exportFormat.value === 'pdf' ? 'application/pdf' : 'text/csv'
     const blob = new Blob([res.data], { type: mime })
-    const url = window.URL.createObjectURL(blob)
-
-    // Try to read filename from Content-Disposition
-    let filename = `ops_report.${exportFormat.value}`
-    const disp = res.headers['content-disposition'] || res.headers['Content-Disposition']
-    if (disp) {
-      const m = /filename="?([^"]+)"?/.exec(disp)
-      if (m) filename = m[1]
-    }
-
-    const a = document.createElement('a')
-    a.href = url
-    a.download = filename
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    window.URL.revokeObjectURL(url)
+    const filename = filenameFromDisposition(
+      res.headers?.['content-disposition'],
+      `ops_report.${exportFormat.value}`
+    )
+    downloadBlob(blob, filename)
+    exportReason.value = ''
   } catch (e) {
     console.error('Failed to download report:', e)
     alert('Failed to generate report. Please try again.')

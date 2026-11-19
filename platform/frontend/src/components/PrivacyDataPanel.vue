@@ -221,6 +221,7 @@ import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from '../api/axios'
 import { clearWikiAuthCookie } from '../utils/wikiAuth'
+import { downloadBlob } from '../utils/download'
 
 defineProps({
   mfaEnabled: { type: Boolean, default: false },
@@ -369,14 +370,10 @@ const downloadData = async () => {
     const blob = new Blob([JSON.stringify(data, null, 2)], {
       type: 'application/json',
     })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `swocts-cyber-range-data-${new Date().toISOString().slice(0, 10)}.json`
-    document.body.appendChild(link)
-    link.click()
-    link.remove()
-    URL.revokeObjectURL(url)
+    downloadBlob(
+      blob,
+      `swocts-cyber-range-data-${new Date().toISOString().slice(0, 10)}.json`
+    )
     lastExportedAt.value = data.generated_at || new Date().toISOString()
     exportSuccess.value = 'Your data export has been downloaded.'
   } catch (e) {
