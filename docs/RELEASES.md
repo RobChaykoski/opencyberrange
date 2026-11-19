@@ -62,6 +62,17 @@ represent. It exists because the history contains several naming eras.
 `68A817762C831475F00DB54E775050A4C4921814`. The public key is
 `docs/release-signing-key.asc`.
 
+## Release 5.18.0 tag record
+
+| Item | Value |
+|---|---|
+| Tag | `v5.18.0` (signed annotated tag) |
+| Commit | `8b8aae72` |
+| Signature | **Good**, key `68A817762C831475F00DB54E775050A4C4921814` |
+| Released | 19 November 2026 |
+| GitHub release | https://github.com/RobChaykoski/opencyberrange/releases/tag/v5.18.0 |
+| CI | CI, Quality checks, CodeQL, Trivy, and OpenSSF Scorecard passed |
+
 Key custody: the current release key has no passphrase. The private key exists
 only on the offline signing workstation, and that host's disk must stay
 encrypted and the machine powered off when not signing. Do not copy the private
