@@ -22,7 +22,7 @@ from app.services.event_burst import login_rate_limit, registration_rate_limit
 from app.services.input_safety import normalize_text
 from app.database import get_db
 from app.models import (
-    User, WireGuardConfig, Lab, CourseLabAssignment, CourseEnrollment,
+    User, Lab, CourseLabAssignment, CourseEnrollment,
     Course, ExerciseReaction, InviteCode, Assignment, AssignmentLab,
     Competition, CompetitionParticipant, SurveyConsentEvent,
     ImpersonationSession, LabCompletion,
@@ -1670,23 +1670,10 @@ async def get_current_user_info(
             },
         }
 
-    # Sync VPN registration status with Peer Manager (same logic as /labs/vpn-status)
-    if not imp:
-        wg_config = db.query(WireGuardConfig).filter(
-            WireGuardConfig.user_id == current_user.id
-        ).first()
-
-        if wg_config and wg_config.public_key:
-            try:
-                actually_registered = wireguard_manager.peer_exists(wg_config.public_key)
-
-                # Sync database flag if it's out of sync
-                if actually_registered != current_user.vpn_registered:
-                    current_user.vpn_registered = actually_registered
-                    db.commit()
-                    logger.info(f"Synced VPN registration status for user {current_user.username}: {actually_registered}")
-            except Exception as e:
-                logger.warning(f"Could not verify peer status with Peer Manager: {e}")
+    # VPN registration reconciliation is handled by /labs/vpn-status and the
+    # admin sync path. Do not call Peer Manager here: nginx uses /api/auth/me
+    # as the auth_request target for every page and asset, so a synchronous
+    # peer lookup would block the event loop and dominate page latency.
 
     # Build response
     resp = {

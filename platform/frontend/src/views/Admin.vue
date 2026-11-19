@@ -8290,8 +8290,6 @@ const onAdminVisibilityChange = () => {
 
 onMounted(async () => {
   await fetchAll()
-  fetchCurriculum()
-  loadNiceCoverage()
   fetchDashboardHealth()
   fetchReleaseCheck()
   fetchRangeboxCapacity()
@@ -10084,6 +10082,7 @@ watch(activeTab, (tab) => {
   }
   if (tab === 'exercises') {
     if (curriculumTracks.value.length === 0) fetchCurriculum()
+    if (!niceCoverage.value) loadNiceCoverage()
     if (!testerRunning.value) checkActiveTestRun()
     if (Object.keys(testerResults.value).length === 0) fetchTesterResults()
   }

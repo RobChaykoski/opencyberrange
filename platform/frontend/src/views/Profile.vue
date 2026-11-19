@@ -2672,16 +2672,8 @@ onUnmounted(() => {
   if (gpsRotationTimer) clearInterval(gpsRotationTimer)
 })
 
-// Watch for route changes (when navigating to profile page)
-watch(() => route.path, (newPath) => {
-  if (newPath === '/profile') {
-    // Refresh VPN status when navigating to profile page
-    // Add small delay to ensure any pending VPN registrations complete
-    setTimeout(() => {
-      fetchVpnStatus()
-    }, 500)
-  }
-}, { immediate: true })
+// VPN status is refreshed by fetchUserInfo, the 10 s poll, and window focus.
+// Do not duplicate it on every route watcher entry.
 </script>
 
 <style scoped>

@@ -105,7 +105,17 @@ def _iso(value: Optional[datetime]) -> Optional[str]:
 def _build_profile_summary(db: Session, current_user: User) -> dict:
     """Collect certificates, completion details, and course achievements."""
     tracks = db.query(Track).options(
-        joinedload(Track.levels).joinedload(Level.labs)
+        joinedload(Track.levels).joinedload(Level.labs).load_only(
+            Lab.id,
+            Lab.name,
+            Lab.slug,
+            Lab.sort_order,
+            Lab.visibility,
+            Lab.is_active,
+            Lab.created_by,
+            Lab.category,
+            Lab.level_id,
+        )
     ).filter(Track.is_active == True).order_by(Track.sort_order, Track.id).all()
 
     completed_ids = get_user_completions(db, current_user.id)

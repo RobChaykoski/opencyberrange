@@ -942,7 +942,7 @@ usePoll(() => {
   fetchStats()
   fetchPulse()
   fetchFeed('refresh', { silent: true })
-}, 15000)
+}, 30000)
 
 onMounted(() => {
   if (showHealthCard) fetchDashboardHealth()

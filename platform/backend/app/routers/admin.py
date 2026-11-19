@@ -132,7 +132,7 @@ def _visible_user_or_404(db: Session, actor: User, user_id: int) -> User:
 
 
 @router.get("/users", response_model=Union[List[UserAdminResponse], UserPage])
-async def list_users(
+def list_users(
     page: int | None = Query(None, ge=1),
     per_page: int | None = Query(None, ge=1, le=200),
     db: Session = Depends(get_db),
@@ -381,7 +381,7 @@ async def reset_user_mfa(
 
 
 @router.get("/users/{user_id}/details", response_model=UserDetailResponse)
-async def get_user_details(
+def get_user_details(
     user_id: int,
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_institution_admin_user),
@@ -1724,7 +1724,7 @@ async def clear_session_history(
 
 
 @router.get("/sessions/health")
-async def get_sessions_health(
+def get_sessions_health(
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user)
 ):
@@ -2243,7 +2243,7 @@ def _format_bytes(value) -> str:
 
 
 @router.get("/vpn/peers")
-async def list_vpn_peers(
+def list_vpn_peers(
     page: int | None = Query(None, ge=1),
     per_page: int | None = Query(None, ge=1, le=200),
     db: Session = Depends(get_db),
@@ -2270,7 +2270,11 @@ async def list_vpn_peers(
 
         # Build lookups so we can detect peers that occupy a slot the DB
         # believes belongs to a different key (stale duplicate)
-        all_configs = db.query(WireGuardConfig).all()
+        all_configs = (
+            db.query(WireGuardConfig)
+            .options(joinedload(WireGuardConfig.user))
+            .all()
+        )
         ip_to_db = {f"{c.client_ip}/32": (c.public_key, c.user_id) for c in all_configs}
         pubkey_to_db = {c.public_key: c for c in all_configs}
 
@@ -2907,7 +2911,7 @@ async def import_exercise(
 # ==================== Statistics ====================
 
 @router.get("/stats")
-async def get_stats(
+def get_stats(
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_institution_admin_user),
 ):
@@ -3482,7 +3486,7 @@ async def sample_system_metrics(
 
 
 @router.get("/activity")
-async def get_activity_log(
+def get_activity_log(
     page: int = 1,
     per_page: int = 50,
     event_type: str = None,
@@ -3521,16 +3525,22 @@ async def get_activity_log(
     total = query.count()
     events = query.offset((page - 1) * per_page).limit(per_page).all()
 
+    actor_ids = {e.actor_id for e in events if e.actor_id}
+    actors = {}
+    if actor_ids:
+        actors = {
+            row.id: (row.username, row.role)
+            for row in db.query(User).filter(User.id.in_(actor_ids)).all()
+        }
+
     result = []
     for e in events:
-        # Look up actor username and role
+        actor = actors.get(e.actor_id)
         actor_name = None
         actor_role = None
         if e.actor_id:
-            actor = db.query(User.username, User.role).filter(User.id == e.actor_id).first()
             if actor:
-                actor_name = actor[0]
-                actor_role = actor[1]
+                actor_name, actor_role = actor
             else:
                 actor_name = f"user#{e.actor_id}"
 

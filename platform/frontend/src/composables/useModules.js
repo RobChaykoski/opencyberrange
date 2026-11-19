@@ -11,6 +11,7 @@ const loaded = ref(false)
 let loading = false
 
 async function fetchModules() {
+  if (loaded.value) return
   if (loading) return
   loading = true
   try {

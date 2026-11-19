@@ -197,7 +197,15 @@ async def get_labs(
         get_accessible_exclusive_lab_ids,
     )
 
-    labs = db.query(Lab).filter(Lab.is_active == True).all()
+    labs = db.query(
+        Lab.id,
+        Lab.name,
+        Lab.slug,
+        Lab.visibility,
+        Lab.is_active,
+        Lab.created_by,
+        Lab.category,
+    ).filter(Lab.is_active == True).all()
     accessible = get_accessible_exclusive_lab_ids(db, current_user.id)
     visible = [
         lab

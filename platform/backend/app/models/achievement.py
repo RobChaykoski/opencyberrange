@@ -47,6 +47,7 @@ class Achievement(Base):
 
     __table_args__ = (
         Index('ix_achievement_unique', 'user_id', 'course_id', 'achievement_type', 'lab_id', unique=True),
+        Index('ix_achievements_awarded_at', 'awarded_at'),
     )
 
 

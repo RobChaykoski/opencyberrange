@@ -1149,7 +1149,17 @@ def _load_level_certificate(
 ) -> dict:
     """Resolve the track/level and return the certificate payload or raise."""
     track = db.query(Track).options(
-        joinedload(Track.levels).joinedload(Level.labs)
+        joinedload(Track.levels).joinedload(Level.labs).load_only(
+            Lab.id,
+            Lab.name,
+            Lab.slug,
+            Lab.sort_order,
+            Lab.visibility,
+            Lab.is_active,
+            Lab.created_by,
+            Lab.category,
+            Lab.level_id,
+        )
     ).filter(
         Track.slug == track_slug,
         Track.is_active == True,
@@ -1561,7 +1571,17 @@ async def get_progress(
 ):
     """Get user's overall progress across all tracks"""
     tracks = db.query(Track).options(
-        joinedload(Track.levels).joinedload(Level.labs)
+        joinedload(Track.levels).joinedload(Level.labs).load_only(
+            Lab.id,
+            Lab.name,
+            Lab.slug,
+            Lab.sort_order,
+            Lab.visibility,
+            Lab.is_active,
+            Lab.created_by,
+            Lab.category,
+            Lab.level_id,
+        )
     ).filter(Track.is_active == True).all()
     
     completed_ids = get_user_completions(db, current_user.id)

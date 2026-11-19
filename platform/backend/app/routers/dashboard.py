@@ -1302,7 +1302,17 @@ async def student_dashboard(
 
     # --- Progress ---
     tracks = db.query(Track).options(
-        joinedload(Track.levels).joinedload(Level.labs)
+        joinedload(Track.levels).joinedload(Level.labs).load_only(
+            Lab.id,
+            Lab.name,
+            Lab.slug,
+            Lab.sort_order,
+            Lab.visibility,
+            Lab.is_active,
+            Lab.created_by,
+            Lab.category,
+            Lab.level_id,
+        )
     ).filter(Track.is_active == True).all()
 
     # Use the same visibility and completion helpers as the profile and

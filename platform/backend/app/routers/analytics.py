@@ -1869,6 +1869,14 @@ async def course_exercises(
     for row in _pulse_rows(db, {lab.id for lab in labs}, course_id=course.id):
         by_lab_pulse.setdefault(row.lab_id, []).append(row)
     learning_pairs = learning_minutes_by_pair(completions, sessions)
+    learning_by_lab = {}
+    learning_values_by_lab = {}
+    for (_user_id, lab_id), value in learning_pairs.items():
+        learning_by_lab[lab_id] = learning_by_lab.get(lab_id, 0) + value
+        learning_values_by_lab.setdefault(lab_id, []).append(value)
+    first_attempts_by_lab = {}
+    for (user_id, lab_id), attempted_at in first_attempt_map.items():
+        first_attempts_by_lab.setdefault(lab_id, []).append((user_id, attempted_at))
     by_lab_reactions = {}
     for row in _reaction_rows(db, {lab.id for lab in labs}, course.id):
         by_lab_reactions.setdefault(row.lab_id, []).append(row)
@@ -1877,10 +1885,7 @@ async def course_exercises(
     for lab in labs:
         lab_completions = by_lab_completions.get(lab.id, [])
         lab_pulse = by_lab_pulse.get(lab.id, [])
-        lab_learning_minutes = sum(
-            value for (_user_id, lab_id), value in learning_pairs.items()
-            if lab_id == lab.id
-        )
+        lab_learning_minutes = learning_by_lab.get(lab.id, 0)
         lab_reaction_summary = _reaction_fields(
             by_lab_reactions.get(lab.id, [])
         )
@@ -1919,10 +1924,7 @@ async def course_exercises(
             if lab_session_rows else None
         )
         time_values = [row.time_spent_minutes for row in lab_completions]
-        learning_values = [
-            value for (_uid, lab_id), value in learning_pairs.items()
-            if lab_id == lab.id
-        ]
+        learning_values = learning_values_by_lab.get(lab.id, [])
         time_q1, time_q3 = _quartiles(time_values)
         learning_q1, learning_q3 = _quartiles(learning_values)
         reset_count = int(reset_map.get(lab.id, 0) or 0)
@@ -1940,10 +1942,10 @@ async def course_exercises(
             hint_pressure_rate=hint_pressure,
         )
         first_attempt_gaps = []
-        for (uid, lid), attempted_at in first_attempt_map.items():
-            if lid != lab.id or attempted_at is None:
+        for uid, attempted_at in first_attempts_by_lab.get(lab.id, []):
+            if attempted_at is None:
                 continue
-            started = session_start_map.get((uid, lid))
+            started = session_start_map.get((uid, lab.id))
             if started is not None and attempted_at >= started:
                 first_attempt_gaps.append(
                     (attempted_at - started).total_seconds() / 60

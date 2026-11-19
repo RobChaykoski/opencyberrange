@@ -347,6 +347,10 @@ class Assignment(Base):
     course = relationship("Course", back_populates="assignments")
     assignment_labs = relationship("AssignmentLab", back_populates="assignment", cascade="all, delete-orphan", order_by="AssignmentLab.sort_order")
 
+    __table_args__ = (
+        Index('ix_assignments_course_id', 'course_id'),
+    )
+
 
 class AssignmentLab(Base):
     """Links labs to assignments (labs must also be assigned to the course)"""
@@ -362,4 +366,5 @@ class AssignmentLab(Base):
 
     __table_args__ = (
         Index('ix_assignment_lab', 'assignment_id', 'lab_id', unique=True),
+        Index('ix_assignment_labs_lab_id', 'lab_id'),
     )

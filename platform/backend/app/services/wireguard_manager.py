@@ -6,6 +6,7 @@ Generates client configs and manages peers via the local Peer Manager API
 import subprocess
 import logging
 import base64
+import time
 import requests
 from typing import Optional, List, Dict
 
@@ -13,9 +14,19 @@ logger = logging.getLogger(__name__)
 
 
 class WireGuardManager:
+    # A short cache keeps the admin user list from blocking on Peer Manager for
+    # up to three seconds on every page load. Mutations invalidate it.
+    PEER_CACHE_TTL_SECONDS = 10.0
+
     def __init__(self, api_url: str = None, api_key: str = None):
         self.api_url = api_url
         self.api_key = api_key
+        self._peers_cache = None
+        self._peers_cached_at = 0.0
+
+    def _invalidate_peer_cache(self) -> None:
+        self._peers_cache = None
+        self._peers_cached_at = 0.0
     
     def generate_keypair(self) -> tuple:
         """Generate WireGuard private/public keypair"""
@@ -222,13 +233,25 @@ PersistentKeepalive = 25
     def list_peers(self) -> Optional[List[Dict]]:
         """Get all peers from Peer Manager.
 
-        Returns list of peers on success, None on API failure.
-        Callers that want graceful degradation should use: list_peers() or []
+        Results are cached for a few seconds so an admin page load does not
+        block the worker on a slow or unavailable Peer Manager. Mutations
+        invalidate the cache.
+
+        Returns list of peers on success, the last known list on a transient
+        failure, or None when there is no cached value.
         """
+        now = time.monotonic()
+        if (
+            self._peers_cache is not None
+            and now - self._peers_cached_at < self.PEER_CACHE_TTL_SECONDS
+        ):
+            return self._peers_cache
         result = self._api_request("GET", "/peers")
         if result and "peers" in result:
-            return result["peers"]
-        return None
+            self._peers_cache = result["peers"]
+            self._peers_cached_at = now
+            return self._peers_cache
+        return self._peers_cache
     
     def get_peer_info(self, public_key: str) -> Optional[Dict]:
         """Get detailed information about a specific peer, including connection status"""
@@ -294,6 +317,7 @@ PersistentKeepalive = 25
         }
         result = self._api_request("POST", "/peers", data)
         if result and result.get("status") == "ok":
+            self._invalidate_peer_cache()
             logger.info(f"Added peer {public_key[:20]}... with IP {client_ip}")
             return True
         return False
@@ -305,6 +329,7 @@ PersistentKeepalive = 25
         encoded_key = urllib.parse.quote(public_key, safe='')
         result = self._api_request("DELETE", f"/peers/{encoded_key}")
         if result and result.get("status") == "ok":
+            self._invalidate_peer_cache()
             logger.info(f"Removed peer {public_key[:20]}...")
             return True
         return False

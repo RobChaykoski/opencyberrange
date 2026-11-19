@@ -2,6 +2,21 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.27.3] - 2026-11-19
+
+### Performance before HA
+
+- Removed the blocking Peer Manager lookup from `/api/auth/me`, which nginx uses as the auth request target for every page and asset.
+- Added a short TTL cache for Peer Manager peer lists and invalidated it on peer changes.
+- Moved blocking admin session-health, user, stats, VPN, and activity routes to FastAPI's threadpool.
+- Batched activity-log actor lookups and joined VPN config users instead of one query per row.
+- Grouped analytics per-lab learning and first-attempt data in one pass instead of scanning all pairs per lab.
+- Loaded only the lab columns needed by progress and catalogue views.
+- Added indexes for achievements, lab sessions, assignments, assignment labs, and lab-completion trends.
+- Served content-hashed Vite assets as immutable year-long cache entries and added SVG to gzip types.
+- Deferred NICE coverage and curriculum loads to the Exercises tab and stopped repeating the modules request.
+- Reduced the instructor dashboard poll from 15 s to 30 s and removed a duplicate profile VPN refresh.
+
 ## [5.27.2] - 2026-11-19
 
 ### Export downloads

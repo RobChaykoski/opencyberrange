@@ -7,7 +7,8 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.27.2` | SWOCTS Cyber Range Release 5.27.2 | Current patch release (signed annotated tag): export/download button fix and an inline export reason |
+| `v5.27.3` | SWOCTS Cyber Range Release 5.27.3 | Current performance patch (signed annotated tag): blocking-call removal, query batching, indexes, and immutable asset caching |
+| `v5.27.2` | SWOCTS Cyber Range Release 5.27.2 | Previous patch release (signed annotated tag): export/download button fix and an inline export reason |
 | `v5.27.1` | SWOCTS Cyber Range Release 5.27.1 | Previous patch release (signed annotated tag): NICE provisional-mapping review action in Admin > Exercises, plus dev-only training-lab tooling and evidence |
 | `v5.27.0` | SWOCTS Cyber Range Release 5.27.0 | Previous feature release (signed annotated tag): provisional NICE coverage for all 210 labs, manual navigation fix, and a dev-only training ecosystem with Moodle, Authentik, NetBox, Ralph, and Fleet |
 | `v5.26.0` | SWOCTS Cyber Range Release 5.26.0 | Previous feature release (signed annotated tag): course staff assignments, privacy and audit governance dashboards, and network/platform curriculum additions |
