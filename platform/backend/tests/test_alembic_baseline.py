@@ -19,7 +19,7 @@ def _script() -> ScriptDirectory:
 def test_alembic_head_is_the_metadata_revision():
     script = _script()
     heads = script.get_heads()
-    assert heads == ["0041_tenant_rls_legacy"]
+    assert heads == ["0043_readiness_tenant_fix"]
 
 
 def test_revision_graph_is_linear():

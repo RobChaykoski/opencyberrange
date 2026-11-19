@@ -59,7 +59,7 @@ TENANT_TABLES: dict[str, dict[str, str | None]] = {
     "lti_scores": {"owner": "user_id", "course": None},
     "activity_events": {"owner": "actor_id", "course": None},
     "readiness_student_notes": {"owner": "learner_id", "course": "course_id"},
-    "readiness_lab_reviews": {"owner": "created_by_id", "course": "course_id"},
+    "readiness_lab_reviews": {"owner": "owner_id", "course": "course_id"},
 }
 
 _RLS_USING = (
