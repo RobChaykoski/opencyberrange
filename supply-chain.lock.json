@@ -172,7 +172,7 @@
       "sha256": "a67628fe072235c02aeecb19b468f5c71fd4e5d66163f6a3a2c4c3c19caa3fc4"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "8846d2fb195a53ef86409f520b1c7196017ffda2a9952b89779ea7d12f76da98"
+      "sha256": "ed2898c50b071d89d51bab18fb4f9e4e31ce9d6f8a81dcaf884ec49cb969108d"
     },
     "platform/backend/app/security/permissions.yaml": {
       "sha256": "8df4a537d137d826dbad3e333c09a02ac87a8ec281cf40c1dc3767b418ca0404"
