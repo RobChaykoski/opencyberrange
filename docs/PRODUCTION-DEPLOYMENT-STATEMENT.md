@@ -10,11 +10,11 @@ another document disagrees, this page and the signed tag win.
 | Item | Value |
 |---|---|
 | Edition | **Community / Academic** (`lite` entitlement, single-host) |
-| Release | **5.26.0** |
-| Signed tag | **`v5.26.0`** |
-| Runtime code commit | `3e8eadff` (signed tag `v5.26.0`) |
-| Previous release | `5.25.0` (signed tag `v5.25.0` at `3f20f5b7`) |
-| Alembic revision | **`0046_course_staff`** |
+| Release | **5.27.0** |
+| Signed tag | **`v5.27.0`** |
+| Runtime code commit | `ac18f7bd` (signed tag `v5.27.0`) |
+| Previous release | `5.26.0` (signed tag `v5.26.0` at `3e8eadff`) |
+| Alembic revision | **`0047_lab_nice_metadata`** |
 | Development host | `172.16.16.44` |
 | Production host | `172.16.16.41` / `https://ctfd.swocts.com` |
 | Repository | `RobChaykoski/opencyberrange` (`main`) |
@@ -32,7 +32,24 @@ another document disagrees, this page and the signed tag win.
 | 5.24.2 backup | `~/backups/ocr-backup-20261119-062853.dump` |
 | 5.25.0 backup | `~/backups/ocr-backup-20261119-065728.dump` |
 | 5.26.0 backup | `~/backups/ocr-backup-20261119-072711.dump` |
+| 5.27.0 backup | `~/backups/ocr-backup-20261119-083401.dump` |
 | Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 19 November deploy, 5.19.0, 5.20.0, 5.21.0, and 5.22.0) |
+
+## 5.27.0 deployment verification
+
+Deployed on 19 November 2026 to development and production.
+
+| Check | Development | Production |
+|---|---|---|
+| `/api/version` | `5.27.0` | `5.27.0` |
+| Alembic | `0047_lab_nice_metadata` (head) | `0047_lab_nice_metadata` (head) |
+| NICE lab metadata rows | 210 | 210 |
+| NICE lab mappings | 2,484 | 2,484 |
+| Manual stylesheet | 18,073 bytes | 18,073 bytes |
+| Build asset | `index-DLCEIH0n.js` | `index-DLCEIH0n.js` |
+
+The pre-deploy production backup is
+`~/backups/ocr-backup-20261119-083401.dump` (2.3 MB, 1,694 objects).
 
 ## Production cutover: COMPLETE
 

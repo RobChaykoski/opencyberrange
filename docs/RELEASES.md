@@ -7,7 +7,8 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.26.0` | SWOCTS Cyber Range Release 5.26.0 | Current feature release (signed annotated tag): course staff assignments, privacy and audit governance dashboards, and network/platform curriculum additions |
+| `v5.27.0` | SWOCTS Cyber Range Release 5.27.0 | Current feature release (signed annotated tag): provisional NICE coverage for all 210 labs, manual navigation fix, and a dev-only training ecosystem with Moodle, Authentik, NetBox, Ralph, and Fleet |
+| `v5.26.0` | SWOCTS Cyber Range Release 5.26.0 | Previous feature release (signed annotated tag): course staff assignments, privacy and audit governance dashboards, and network/platform curriculum additions |
 | `v5.25.0` | SWOCTS Cyber Range Release 5.25.0 | Previous feature release (signed annotated tag): report access policy, privacy labels, small-cell suppression, and network engineering curriculum scaffold |
 | `v5.24.2` | SWOCTS Cyber Range Release 5.24.2 | Previous patch release (signed annotated tag): idempotent `0044` readiness migration for the production `0043 -> 0045` jump |
 | `v5.24.1` | SWOCTS Cyber Range Release 5.24.1 | Previous patch release (signed annotated tag): idempotent `0045` NICE migration for startup-created tables |

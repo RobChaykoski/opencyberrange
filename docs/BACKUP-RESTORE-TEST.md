@@ -19,8 +19,9 @@ Backup creation is not evidence of recoverability. This page records both.
 | 5.24.2 backup | `~/backups/ocr-backup-20261119-062853.dump` |
 | 5.25.0 backup | `~/backups/ocr-backup-20261119-065728.dump` |
 | 5.26.0 backup | `~/backups/ocr-backup-20261119-072711.dump` |
-| Restore drills | **PASSED** pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 5.19.0, 5.20.0, 5.21.0, and 5.22.0 |
-| Final restored state | 87 users (47 human + 40 stress-test), 2 courses, 210 labs, 41 enrollments, 124 completions, 463 achievements |
+| 5.27.0 backup | `~/backups/ocr-backup-20261119-083401.dump` |
+| Restore drills | **PASSED** pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 5.19.0, 5.20.0, 5.21.0, 5.22.0, and 5.27.0 |
+| Final restored state | 68 users, 2 courses, 210 labs, 47 enrollments, 124 completions, 465 achievements |
 | Restored tables compared | users, labs, courses, course_enrollments, lab_completions, achievements, review_requests, activity_events |
 | Backup retention | 14 days by default (`RETENTION_DAYS`) |
 
