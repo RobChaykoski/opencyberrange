@@ -502,6 +502,8 @@ owner-only unless an explicit share or break-glass grant exists.
 | `GET` | `/api/lti/login` | Lti Login | Public |
 | `POST` | `/api/lti/login` | Lti Login | Public |
 | `GET` | `/api/modules/` | Get Modules Status | OAuth2PasswordBearer |
+| `GET` | `/api/profile/career-assessment` | Short career-direction questions | OAuth2PasswordBearer |
+| `POST` | `/api/profile/career-assessment` | Score a short career-direction check | OAuth2PasswordBearer |
 | `GET` | `/api/profile/career-dossier` | Career-profile dossier (JSON) | OAuth2PasswordBearer |
 | `GET` | `/api/profile/career-dossier.html` | Career-profile dossier (HTML) | OAuth2PasswordBearer |
 | `GET` | `/api/profile/career-dossier.md` | Career-profile dossier (Markdown) | OAuth2PasswordBearer |
@@ -1332,13 +1334,21 @@ Run a Level 4 RangeBox ceiling test.  The test spawns the host's computed maximu
 
 **List Active Sessions**
 
-List all active lab sessions
+List active lab sessions.  Without ``page``/``per_page`` this keeps the original array response; supplying either returns a page envelope with totals.
 
 **Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `page` | query | integer or null | no |  |
+| `per_page` | query | integer or null | no |  |
 
 **Responses**
 
 - `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
 
 ### `GET /api/admin/sessions/health`
 
@@ -1835,13 +1845,21 @@ Minimal, plain-language status for non-technical admins. Every item is derived f
 
 **List Users**
 
-List users — bulk-syncs vpn_registered flags from Peer Manager.  A platform admin sees every institution; an institution admin sees only its own tenant.
+List users — bulk-syncs vpn_registered flags from Peer Manager.  A platform admin sees every institution; an institution admin sees only its own tenant. Without ``page``/``per_page`` this keeps the original array response; supplying either returns a page envelope with totals.
 
 **Authentication:** OAuth2PasswordBearer
 
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `page` | query | integer or null | no |  |
+| `per_page` | query | integer or null | no |  |
+
 **Responses**
 
-- `200`: Successful Response — array[`UserAdminResponse`]
+- `200`: Successful Response — array[`UserAdminResponse`] or `UserPage`
+- `422`: Validation Error — `HTTPValidationError`
 
 ### `POST /api/admin/users/approve`
 
@@ -2211,9 +2229,17 @@ List all VPN peers from Peer Manager - returns empty list if API unavailable.  E
 
 **Authentication:** OAuth2PasswordBearer
 
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `page` | query | integer or null | no |  |
+| `per_page` | query | integer or null | no |  |
+
 **Responses**
 
 - `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
 
 ### `POST /api/admin/vpn/peers/{user_id}/repair`
 
@@ -2276,13 +2302,21 @@ Manually register a user's VPN peer with Peer Manager
 
 **Vpn Sync Status**
 
-Get VPN sync status - compare DB to Peer Manager
+Get VPN sync status - compare DB to Peer Manager.
 
 **Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `page` | query | integer or null | no |  |
+| `per_page` | query | integer or null | no |  |
 
 **Responses**
 
 - `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
 
 ### `POST /api/admin/vpn/sync`
 
@@ -7430,6 +7464,39 @@ Return enabled/disabled status of the optional modules this build ships.
 - `422`: Validation Error — `HTTPValidationError`
 
 ## Profile
+
+### `GET /api/profile/career-assessment`
+
+**Short career-direction questions**
+
+Return eight reflection questions. No answers are stored.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Responses**
+
+- `200`: Successful Response
+
+### `POST /api/profile/career-assessment`
+
+**Score a short career-direction check**
+
+Score optional answers for this response only.  The result is a reflection aid, not a personality test or a career decision. Nothing is persisted, logged, or shared with the cohort.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Request body** (`application/json`)
+
+**Schema:** `CareerAssessmentRequest`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `answers` | map[string, integer] | no |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
 
 ### `GET /api/profile/career-dossier`
 
