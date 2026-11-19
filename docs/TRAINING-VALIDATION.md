@@ -19,7 +19,7 @@ LTI launch path. Production was not involved.
 | NetBox inventory | **PASS** | Synthetic tenant, site, 5 devices, 3 prefixes |
 | Ralph admin | **PASS** | Migrations applied; admin seeded from `RALPH_ADMIN_*` |
 | Fleet admin | **PASS** | Setup endpoint completed; login and API token verified |
-| Fleet fake host | **PENDING** | Use the Fleet UI **Add hosts** flow; the API secret write path crashed Fleet 5 on this build |
+| Fleet fake host | **BLOCKED** | Fleet 4.95.0 panics with a nil pointer in `ApplyEnrollSecretSpec` when writing an enroll secret; the UI uses the same API path |
 | LTI 1.3 launch | **PASS** | Moodle activity -> OCR `/api/lti/login` -> Moodle `/mod/lti/auth.php` -> signed `id_token` -> OCR `/api/lti/launch` -> `302 /lti/callback?ticket=...` |
 | Course report scope | **PASS** | `student01` 403; `mentor01`, `ta01`, `instructor01` 200 on the assigned cohort course |
 | Privacy/audit scope | **PASS** | `privacy01` privacy 200 / audit 403; `auditor01` privacy 403 / audit 200; `student01` both 403 |
@@ -36,4 +36,7 @@ LTI launch path. Production was not involved.
   `scripts/ecosystem_seed/seed_lti.sh`.
 - The certificate trust used for LTI is runtime-only. Re-run `seed_lti.sh` after
   recreating the Moodle or OCR containers.
+- Fleet 4.95.0 has an upstream nil-pointer panic in `ApplyEnrollSecretSpec`.
+  Until a fixed image is pinned, host enrollment is blocked; keep Fleet as a
+  running UI and do not treat the missing host as a configuration error.
 - All accounts, courses, devices, and alerts in this environment are synthetic.

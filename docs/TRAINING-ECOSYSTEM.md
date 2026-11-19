@@ -87,7 +87,9 @@ First-run notes:
   `docker compose --profile endpoint run --rm -T --entrypoint /bin/sh fleet -c 'fleet prepare db' < /dev/null`.
   If that command is interrupted, remove the Fleet database volume and run it
   again; a half-migrated lab database will not serve. The seeder then creates
-  the lab admin from `FLEET_ADMIN_*`.
+  the lab admin from `FLEET_ADMIN_*`. Fleet 4.95.0 currently panics when
+  writing enroll secrets, so host enrollment is blocked until a fixed image is
+  pinned; the UI and API share the same path.
 - Ralph needs a one-time migration:
   `docker compose exec -T -w /opt/ralph/ralph-core ralph /opt/ralph/ralph-core/bin/ralph migrate --noinput`.
   The seeder then creates the lab admin from `RALPH_ADMIN_*`.
