@@ -2,6 +2,15 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.27.2] - 2026-11-19
+
+### Export downloads
+
+- Fixed export/download buttons that revoked the object URL before the browser could start the download.
+- Moved the instructor operations-report reason into an inline field instead of a blocking browser prompt.
+- Applied the shared download helper to reports, admin activity/users/exercises/reports/backups, student and class reports, career profile, privacy data, portfolio, identity providers, VPN config, SBOM, and course reports.
+- Added frontend tests for the shared download helper.
+
 ## [Unreleased]
 
 ### Training lab content and operations
