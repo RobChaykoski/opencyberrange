@@ -81,6 +81,19 @@ try {
             ralph /opt/ralph/ralph-core/bin/python /seed/seed_ralph.py
     }
 
+    $endpointRunning = (& docker compose --profile endpoint ps --services --filter status=running 2>$null)
+    if ($endpointRunning -contains 'fleet') {
+        Write-Host '== Fleet admin =='
+        $fleetPort = if ($config['FLEET_PORT']) { $config['FLEET_PORT'] } else { '8082' }
+        $fleetHost = if ($config['FLEET_BIND']) { $config['FLEET_BIND'] } else { '127.0.0.1' }
+        $env:FLEET_URL = "http://${fleetHost}:$fleetPort"
+        $env:FLEET_ADMIN_EMAIL = if ($config['FLEET_ADMIN_EMAIL']) { $config['FLEET_ADMIN_EMAIL'] } else { 'admin@example.invalid' }
+        $env:FLEET_ADMIN_NAME = if ($config['FLEET_ADMIN_NAME']) { $config['FLEET_ADMIN_NAME'] } else { 'Training Admin' }
+        $env:FLEET_ADMIN_PASSWORD = $trainingPassword
+        $python = if ($env:PYTHON) { $env:PYTHON } else { 'python' }
+        & $python (Join-Path $Root 'scripts/ecosystem_seed/seed_fleet.py')
+    }
+
     Write-Host 'Seeding complete.'
 } finally {
     Pop-Location

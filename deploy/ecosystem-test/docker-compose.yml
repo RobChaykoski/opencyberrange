@@ -49,12 +49,27 @@ services:
       MOODLE_EMAIL: ${MOODLE_ADMIN_EMAIL}
       MOODLE_SITE_URL: ${MOODLE_SITE_URL}
       MOODLE_SKIP_BOOTSTRAP: "no"
+      MOODLE_REVERSEPROXY: "yes"
+      MOODLE_SSLPROXY: "yes"
     ports:
       - "${MOODLE_BIND:-127.0.0.1}:${MOODLE_PORT:-8091}:8080"
     volumes:
       - moodle_data:/bitnami/moodle
       - moodledata_data:/bitnami/moodledata
       - ../../scripts/ecosystem_seed:/seed:ro
+
+  moodle-proxy:
+    image: caddy:2-alpine
+    profiles: ["tls"]
+    restart: unless-stopped
+    depends_on:
+      - moodle
+    ports:
+      - "${MOODLE_TLS_BIND:-127.0.0.1}:${MOODLE_TLS_PORT:-8443}:8443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
 
   authentik-postgresql:
     image: postgres:16-alpine
@@ -250,6 +265,8 @@ volumes:
   moodle_db_data:
   moodle_data:
   moodledata_data:
+  caddy_data:
+  caddy_config:
   authentik_db_data:
   netbox_db_data:
   ralph_db_data:

@@ -59,7 +59,11 @@ fi
 
 echo "== Fleet =="
 if docker compose --profile endpoint ps --services --filter status=running | grep -qx fleet; then
-  echo "Fleet is running. Complete first-run setup and enrol fake hosts only."
+  FLEET_URL="http://${FLEET_BIND:-127.0.0.1}:${FLEET_PORT:-8082}" \
+  FLEET_ADMIN_EMAIL="${FLEET_ADMIN_EMAIL:-admin@example.invalid}" \
+  FLEET_ADMIN_NAME="${FLEET_ADMIN_NAME:-Training Admin}" \
+  FLEET_ADMIN_PASSWORD="${FLEET_ADMIN_PASSWORD:-TrainLab!2026#Student}" \
+    "$PYTHON" "$ROOT/scripts/ecosystem_seed/seed_fleet.py"
   echo "  http://${FLEET_BIND:-127.0.0.1}:${FLEET_PORT:-8082}/"
 else
   echo "SKIP: Fleet is not running"

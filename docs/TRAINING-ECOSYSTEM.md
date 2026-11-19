@@ -25,6 +25,7 @@ It is not a production integration. It is not a data pipeline. It is a lab.
 | default | Moodle | 8091 | Courses, cohorts, capstone briefs, submissions |
 | default | MariaDB | internal | Disposable Moodle database |
 | `sso` | Authentik | 9000 | OIDC/SAML login, groups, MFA, application access |
+| `tls` | Caddy | 8443 | Dev-only HTTPS front for Moodle (LTI 1.3 testing) |
 | `assets` | NetBox | 8083 | Sites, devices, prefixes, asset ownership |
 | `assets` | Ralph | 8084 | Asset lifecycle and ownership records |
 | `endpoint` | Fleet | 8082 | Device posture and endpoint compliance |
@@ -46,6 +47,7 @@ and learner machines can reach them:
 | Service | URL |
 |---|---|
 | Moodle | `http://172.16.16.44:8091/` |
+| Moodle (dev TLS) | `https://172.16.16.44:8443/` |
 | Authentik | `http://172.16.16.44:9000/` |
 | NetBox | `http://172.16.16.44:8083/` |
 | Ralph | `http://172.16.16.44:8084/` |
@@ -70,6 +72,7 @@ docker compose up -d
 docker compose --profile sso up -d
 docker compose --profile assets up -d
 docker compose --profile endpoint up -d
+docker compose --profile tls up -d
 ```
 
 First-run notes:
@@ -78,11 +81,23 @@ First-run notes:
 - Fleet needs a one-time database initialisation:
   `docker compose --profile endpoint run --rm -T --entrypoint /bin/sh fleet -c 'fleet prepare db' < /dev/null`.
   If that command is interrupted, remove the Fleet database volume and run it
-  again; a half-migrated lab database will not serve.
+  again; a half-migrated lab database will not serve. The seeder then creates
+  the lab admin from `FLEET_ADMIN_*`.
 - Ralph needs a one-time migration:
   `docker compose exec -T -w /opt/ralph/ralph-core ralph /opt/ralph/ralph-core/bin/ralph migrate --noinput`.
   The seeder then creates the lab admin from `RALPH_ADMIN_*`.
 - Authentik needs its initial `akadmin` password set from the container logs.
+
+## Dev-only TLS for Moodle
+
+The `tls` profile adds Caddy on 8443 in front of Moodle. It uses Caddy's
+internal CA, so browsers and services must trust that CA; the certificate is not
+publicly trusted. Set `MOODLE_TLS_HOST` to the host learners and the dev range
+use (for example `172.16.16.44`) and keep the port on the dev network.
+
+Moodle is configured with `MOODLE_REVERSEPROXY=yes` and `MOODLE_SSLPROXY=yes`, so
+its generated URLs use `https` when Caddy forwards `X-Forwarded-Proto: https`.
+Use this endpoint for LTI 1.3 testing.
 
 ## Seed fake data
 

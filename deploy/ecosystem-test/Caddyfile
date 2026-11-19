@@ -1,0 +1,14 @@
+# Dev-only TLS front for Moodle, used to test LTI 1.3.
+# Caddy uses its internal CA; the certificate is not publicly trusted.
+https://{$MOODLE_TLS_HOST:localhost}:8443 {
+    tls internal
+
+    reverse_proxy moodle:8080 {
+        header_up X-Forwarded-Proto https
+        header_up X-Forwarded-Host {host}
+    }
+
+    header {
+        Strict-Transport-Security "max-age=86400"
+    }
+}
