@@ -2,6 +2,17 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [Unreleased]
+
+### Training ecosystem and NICE review
+
+- Added a **Mark reviewed** action to the NICE coverage card in Admin > Exercises and `POST /api/nice/labs/{lab_id}/review` for provisional mappings that do not need edits.
+- Added a dev-only Caddy TLS front for Moodle and verified an LTI 1.3 launch into the development range.
+- Added Fleet administrator setup, Ralph migration and administrator setup, and a second OCR course for cross-course scope checks.
+- Added Authentik training groups/users, Moodle capstone briefs, and privacy/auditor accounts.
+- Recorded the verified role and cross-course access matrix in `docs/TRAINING-CAPSTONES.md`.
+- Documented the OpenIAM fetch and its Swarm-based setup, which is intentionally not auto-started.
+
 ## [5.27.0] - 2026-11-19
 
 ### NICE lab coverage and manual navigation
