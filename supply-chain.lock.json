@@ -187,7 +187,7 @@
       "sha256": "18f211d07b779cb88dbb4e5c71c6ae4d62f4f6e38c71104b901ede93df31f6bd"
     },
     "platform/backend/app/version.py": {
-      "sha256": "f3f3053a12362bcc4ba512bd3cce5397d9711968ef3c17c94c45510e83248e24"
+      "sha256": "3865cc321f726b13ae02d237eb3c09d79c6890aaf669d0fb7d277179b4963116"
     },
     "platform/backend/lab_metadata.schema.json": {
       "sha256": "00f133f45f20d1ad4fd2911cfa6e6384f5102d6f7d4502a18885d3f83333353d"
@@ -367,7 +367,7 @@
       "sha256": "f08f563a56860357a3c246993e4fd3da16cf1df35cce49f9890c0b09eb1ab769"
     },
     "versions.yaml": {
-      "sha256": "569099f9a4396dd08e97b212e8b7387e1f839e478b203d66a2e407e1a0220ccc"
+      "sha256": "17c03440cb99cafaebefb7840d762a49999b5f0585a68630c23bfb8474ca2115"
     }
   },
   "generator": "scripts/supply_chain.py",
@@ -1647,6 +1647,6 @@
       ]
     }
   },
-  "release": "5.27.0",
+  "release": "5.27.1",
   "schema": 1
 }
