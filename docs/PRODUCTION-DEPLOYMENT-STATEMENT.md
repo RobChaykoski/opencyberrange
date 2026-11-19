@@ -10,10 +10,10 @@ another document disagrees, this page and the signed tag win.
 | Item | Value |
 |---|---|
 | Edition | **Community / Academic** (`lite` entitlement, single-host) |
-| Release | **5.18.0** |
-| Signed tag | **`v5.18.0`** |
-| Runtime code commit | `8b8aae72` (signed tag `v5.18.0`) |
-| Previous release | `5.17.7` (signed tag `v5.17.7` at `a7a9509a`) |
+| Release | **5.19.0** |
+| Signed tag | **`v5.19.0`** |
+| Runtime code commit | tag `v5.19.0` |
+| Previous release | `5.18.0` (signed tag `v5.18.0` at `8b8aae72`) |
 | Post-release content update | `e9b2c602` (XSS/CSRF study page, Web track knowledge-check items, IoT reference map; no schema or runtime code change) |
 | Alembic revision | **`0041_tenant_rls_legacy`** |
 | Development host | `172.16.16.44` |
