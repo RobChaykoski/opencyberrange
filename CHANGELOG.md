@@ -2,6 +2,14 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.24.2] - 2026-11-19
+
+### Readiness migration fix for the production jump
+
+- Made `0044_readiness_case_owner` idempotent when startup `create_all` has already added `owner_id`, `priority`, the owner foreign key, or the index.
+- Validated the full `0043 -> 0044 -> 0045` upgrade on a database with the current ORM schema already created.
+- This allows production to move directly from `0043` to the current head without a duplicate-column or duplicate-constraint rollback.
+
 ## [5.24.1] - 2026-11-19
 
 ### Schema migration fix
