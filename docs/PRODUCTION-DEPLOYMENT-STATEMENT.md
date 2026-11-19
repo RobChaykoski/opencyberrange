@@ -10,9 +10,9 @@ another document disagrees, this page and the signed tag win.
 | Item | Value |
 |---|---|
 | Edition | **Community / Academic** (`lite` entitlement, single-host) |
-| Release | **5.27.1** |
-| Signed tag | **`v5.27.1`** |
-| Runtime code commit | `b341f454` (signed tag `v5.27.1`) |
+| Release | **5.27.2** |
+| Signed tag | **`v5.27.2`** |
+| Runtime code commit | `57d654b0` (signed tag `v5.27.2`) |
 | Previous release | `5.27.0` (signed tag `v5.27.0` at `ac18f7bd`) |
 | Alembic revision | **`0047_lab_nice_metadata`** |
 | Development host | `172.16.16.44` |
@@ -34,7 +34,24 @@ another document disagrees, this page and the signed tag win.
 | 5.26.0 backup | `~/backups/ocr-backup-20261119-072711.dump` |
 | 5.27.0 backup | `~/backups/ocr-backup-20261119-083401.dump` |
 | 5.27.1 backup | `~/backups/ocr-backup-20261119-194808.dump` |
-| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 19 November deploy, 5.19.0, 5.20.0, 5.21.0, 5.22.0, 5.27.0, and 5.27.1) |
+| 5.27.2 backup | `~/backups/ocr-backup-20261119-201613.dump` |
+| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 19 November deploy, 5.19.0, 5.20.0, 5.21.0, 5.22.0, 5.27.0, 5.27.1, and 5.27.2) |
+
+## 5.27.2 deployment verification
+
+Deployed on 19 November 2026 to development and production.
+
+| Check | Development | Production |
+|---|---|---|
+| `/api/version` | `5.27.2` | `5.27.2` |
+| Alembic | `0047_lab_nice_metadata` (head) | `0047_lab_nice_metadata` (head) |
+| Build asset | `index-ddrlmI9g.js` | `index-ddrlmI9g.js` |
+| Export fix | shared download helper present | shared download helper present |
+
+The pre-deploy production backup is
+`~/backups/ocr-backup-20261119-201613.dump` (2.4 MB, 1,700 objects). The restore
+drill passed with 68 users, 210 labs, 47 enrolments, 124 completions, 465
+achievements, and 1,383 activity events.
 
 ## 5.27.1 deployment verification
 
