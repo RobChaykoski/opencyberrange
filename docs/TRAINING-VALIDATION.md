@@ -24,7 +24,8 @@ LTI launch path. Production was not involved.
 | Course report scope | **PASS** | `student01` 403; `mentor01`, `ta01`, `instructor01` 200 on the assigned cohort course |
 | Privacy/audit scope | **PASS** | `privacy01` privacy 200 / audit 403; `auditor01` privacy 403 / audit 200; `student01` both 403 |
 | Cross-course scope | **PASS** | Mentor and TA 403 on `OCR-CAP-SINGLE`; the instructor 200 |
-| NICE review | **PASS** | 5 DB-backed tests passed; `POST /api/nice/labs/{lab_id}/review` present on dev |
+| NICE review | **PASS** | 6 DB-backed NICE tests; `POST /api/nice/labs/{lab_id}/review` present on dev |
+| Full backend suite | **PASS** | 967 passed against a scratch PostgreSQL |
 | Frontend build | **PASS** | `npm test` and `npm run build` |
 | OpenIAM | **NOT STARTED** | Official Swarm-based multi-stack fetched; starting it requires `docker swarm init` and a dedicated lab host |
 | Production impact | **NONE** | No training host, credential, SSO client, or LTI platform exists in production |
