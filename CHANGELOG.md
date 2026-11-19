@@ -2,7 +2,7 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
-## [Unreleased]
+## [5.20.0] - 2026-11-19
 
 ### Readiness calibration workflow
 
