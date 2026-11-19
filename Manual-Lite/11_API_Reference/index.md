@@ -518,6 +518,7 @@ owner-only unless an explicit share or break-glass grant exists.
 | `POST` | `/api/nice/labs/seed` | Seed Nice Lab Mappings | OAuth2PasswordBearer |
 | `GET` | `/api/nice/labs/{lab_id}` | Get Lab Nice Mappings | OAuth2PasswordBearer |
 | `PUT` | `/api/nice/labs/{lab_id}` | Set Lab Nice Mappings | OAuth2PasswordBearer |
+| `POST` | `/api/nice/labs/{lab_id}/review` | Review Lab Nice Mappings | OAuth2PasswordBearer |
 | `POST` | `/api/nice/refresh` | Refresh Nice Framework | OAuth2PasswordBearer |
 | `GET` | `/api/nice/status` | Nice Status | OAuth2PasswordBearer |
 | `GET` | `/api/profile/career-assessment` | Short career-direction questions | OAuth2PasswordBearer |
@@ -7486,6 +7487,25 @@ Replace the NICE components selected for one lab.
 | `task` | array[string] | no |  |
 | `knowledge` | array[string] | no |  |
 | `skill` | array[string] | no |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `POST /api/nice/labs/{lab_id}/review`
+
+**Review Lab Nice Mappings**
+
+Mark an existing provisional mapping as reviewed without editing it.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `lab_id` | path | integer | yes |  |
 
 **Responses**
 
