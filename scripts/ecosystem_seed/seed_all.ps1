@@ -70,6 +70,16 @@ try {
         & docker compose exec -T -e "TRAINING_PASSWORD=$trainingPassword" authentik-server ak shell -c "exec(open('/seed/seed_authentik.py').read())"
     }
 
+    $assetsRunning = (& docker compose --profile assets ps --services --filter status=running 2>$null)
+    if ($assetsRunning -contains 'ralph') {
+        Write-Host '== Ralph admin =='
+        & docker compose exec -T -w /opt/ralph/ralph-core `
+            -e "RALPH_ADMIN_USER=$($config['RALPH_ADMIN_USER'])" `
+            -e "RALPH_ADMIN_EMAIL=$($config['RALPH_ADMIN_EMAIL'])" `
+            -e "RALPH_ADMIN_PASSWORD=$trainingPassword" `
+            ralph /opt/ralph/ralph-core/bin/python /seed/seed_ralph.py
+    }
+
     Write-Host 'Seeding complete.'
 } finally {
     Pop-Location

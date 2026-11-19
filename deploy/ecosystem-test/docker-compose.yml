@@ -198,6 +198,8 @@ services:
       DATABASE_PASSWORD: ${RALPH_DB_PASSWORD}
       SECRET_KEY: ${RALPH_SECRET_KEY}
       ALLOWED_HOSTS: "*"
+    volumes:
+      - ../../scripts/ecosystem_seed:/seed:ro
     ports:
       - "${RALPH_BIND:-127.0.0.1}:${RALPH_PORT:-8084}:8000"
 

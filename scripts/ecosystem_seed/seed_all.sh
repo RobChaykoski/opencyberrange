@@ -45,7 +45,12 @@ fi
 
 echo "== Ralph =="
 if docker compose --profile assets ps --services --filter status=running | grep -qx ralph; then
-  echo "Ralph is running. Create the first admin in the web UI, then load fake assets."
+  docker compose exec -T -w /opt/ralph/ralph-core \
+    -e RALPH_ADMIN_USER="${RALPH_ADMIN_USER:-admin}" \
+    -e RALPH_ADMIN_EMAIL="${RALPH_ADMIN_EMAIL:-admin@example.invalid}" \
+    -e RALPH_ADMIN_PASSWORD="${RALPH_ADMIN_PASSWORD:-TrainLab!2026#Student}" \
+    ralph /opt/ralph/ralph-core/bin/python /seed/seed_ralph.py < /dev/null
+  echo "Ralph admin seeded. Use fake assets only."
   echo "  http://${RALPH_BIND:-127.0.0.1}:${RALPH_PORT:-8084}/"
 else
   echo "SKIP: Ralph is not running"
