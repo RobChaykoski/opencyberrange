@@ -31,3 +31,13 @@ export const COMMUNITY_EVENTS = [
       'Monthly cybersecurity meetup with power talks, hands-on workshops, student presentations, and free pizza.',
   },
 ]
+
+export const mergeCommunityEvents = (primary, fallback) => {
+  const seen = new Set()
+  return [...(primary || []), ...(fallback || [])].filter((event) => {
+    const key = `${String(event.title || '').trim().toLowerCase()}|${String(event.start || '').slice(0, 10)}`
+    if (seen.has(key)) return false
+    seen.add(key)
+    return true
+  })
+}

@@ -1,9 +1,9 @@
 {
-  "generated_for_release": "5.22.0",
+  "generated_for_release": "5.23.0",
   "release_date": "2026-11-19",
   "platform": {
     "name": "SWOCTS Cyber Range",
-    "version": "5.22.0",
+    "version": "5.23.0",
     "status": "release",
     "edition": "Community / Academic",
     "python": "3.13",
@@ -116,6 +116,12 @@
         "name": "requests",
         "version": "2.34.2",
         "licence": "Apache-2.0",
+        "scope": "backend runtime"
+      },
+      {
+        "name": "python-dateutil",
+        "version": "4.0.0",
+        "licence": "See THIRD_PARTY_NOTICES.md",
         "scope": "backend runtime"
       },
       {

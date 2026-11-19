@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
 from app.database import get_db
+from app.services.community_events import get_community_events
 from app.services.settings_service import get_setting_fresh
 
 router = APIRouter()
@@ -27,4 +28,14 @@ def public_config(db: Session = Depends(get_db)):
             "require_approval": require_approval,
         },
         headers={"Cache-Control": "no-store"},
+    )
+
+
+@router.get("/public/community-events")
+def community_events():
+    """Return the public SWOCTS Hub calendar, cached by the backend."""
+    payload = get_community_events()
+    return JSONResponse(
+        payload,
+        headers={"Cache-Control": "public, max-age=300"},
     )

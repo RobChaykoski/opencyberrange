@@ -2,6 +2,16 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.23.0] - 2026-11-19
+
+### Live community events calendar
+
+- The events page now fetches the public SWOCTS Hub calendar instead of relying only on a saved event list.
+- The backend parses the public iCalendar feed, expands recurrences, handles all-day events and folded lines, strips HTML from descriptions, and caches the result for 15 minutes.
+- The endpoint falls back to the last cached copy when the feed is unavailable, and the frontend keeps saved events as a final fallback.
+- Added `GET /api/public/community-events` and `OCR_SWOCTS_CALENDAR_ID`.
+- Added parser, endpoint, component, and merge tests, plus the community calendar operations note.
+
 ## [5.22.0] - 2026-11-19
 
 ### Readiness calibration outcomes

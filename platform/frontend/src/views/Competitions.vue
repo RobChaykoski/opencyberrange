@@ -410,8 +410,9 @@
 
     <CommunityEventsCalendar
       :internal-events="calendarInternalEvents"
-      :community-events="COMMUNITY_EVENTS"
+      :community-events="communityEvents"
       :sources="COMMUNITY_EVENT_SOURCES"
+      :status="communityEventsStatus"
     />
   </div>
 </template>
@@ -423,10 +424,12 @@ import TrophyIcon from '../components/icons/TrophyIcon.vue'
 import ClockIcon from '../components/icons/ClockIcon.vue'
 import SponsorShowcase from '../components/SponsorShowcase.vue'
 import CommunityEventsCalendar from '../components/CommunityEventsCalendar.vue'
-import { COMMUNITY_EVENTS, COMMUNITY_EVENT_SOURCES } from '../data/communityEvents'
+import { COMMUNITY_EVENTS, COMMUNITY_EVENT_SOURCES, mergeCommunityEvents } from '../data/communityEvents'
 import { resizeImageFile } from '../utils/imageResize'
 
 const competitions = ref([])
+const communityEvents = ref([...COMMUNITY_EVENTS])
+const communityEventsStatus = ref('')
 const selected = ref(null)
 const selectedId = ref(null)
 const loading = ref(true)
@@ -812,10 +815,31 @@ const createCompetition = async () => {
   }
 }
 
+const loadCommunityEvents = async () => {
+  communityEventsStatus.value = 'Refreshing the SWOCTS Hub calendar...'
+  try {
+    const { data } = await axios.get('/public/community-events')
+    const fetched = Array.isArray(data.events) ? data.events : []
+    if (fetched.length) {
+      communityEvents.value = mergeCommunityEvents(fetched, COMMUNITY_EVENTS)
+      communityEventsStatus.value = data.stale
+        ? 'Showing a cached copy of the SWOCTS Hub calendar.'
+        : 'Live from the SWOCTS Hub calendar.'
+      return
+    }
+    communityEventsStatus.value = data.available === false
+      ? 'The SWOCTS Hub calendar is temporarily unavailable; showing saved community events.'
+      : 'No SWOCTS Hub events in the current window; showing saved community events.'
+  } catch {
+    communityEventsStatus.value =
+      'The SWOCTS Hub calendar is temporarily unavailable; showing saved community events.'
+  }
+}
+
 onMounted(async () => {
   resetNewCompetition()
   if (isInstructor.value) await loadAvailableLabs()
-  await loadCompetitions()
+  await Promise.all([loadCompetitions(), loadCommunityEvents()])
 })
 </script>
 

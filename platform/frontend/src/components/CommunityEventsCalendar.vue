@@ -9,6 +9,7 @@
           Community events are hosted outside the range and are not part of your
           Cyber DNA, course credit, or platform scoring.
         </p>
+        <p v-if="status" class="community-events__status">{{ status }}</p>
       </div>
       <div class="calendar-nav" aria-label="Calendar month controls">
         <button type="button" class="btn btn--outline btn--sm" aria-label="Previous month" @click="changeMonth(-1)">
@@ -124,13 +125,14 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { safeHttpUrl } from '../utils/url'
 
 const props = defineProps({
   internalEvents: { type: Array, default: () => [] },
   communityEvents: { type: Array, default: () => [] },
   sources: { type: Array, default: () => [] },
+  status: { type: String, default: '' },
 })
 
 const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -168,6 +170,18 @@ const nextEvent = computed(() =>
   normalizedEvents.value.find((event) => event.start >= startOfDay(today)),
 )
 const viewMonth = ref(startOfMonth(nextEvent.value?.start || today))
+let positionedFromSource = false
+
+watch(
+  () => props.communityEvents,
+  () => {
+    if (positionedFromSource) return
+    const next = normalizedEvents.value.find((event) => event.start >= startOfDay(today))
+    if (!next) return
+    viewMonth.value = startOfMonth(next.start)
+    positionedFromSource = true
+  },
+)
 
 const monthLabel = computed(() =>
   viewMonth.value.toLocaleDateString(undefined, { month: 'long', year: 'numeric' }),
@@ -266,6 +280,12 @@ const formatEventDate = (event) =>
   color: var(--text-secondary);
   font-size: 0.84rem;
   line-height: 1.55;
+}
+
+.community-events__status {
+  margin: 0.35rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.7rem;
 }
 
 .calendar-nav {

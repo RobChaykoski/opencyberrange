@@ -530,6 +530,7 @@ owner-only unless an explicit share or break-glass grant exists.
 | `GET` | `/api/profile/summary` | Profile snapshot with certificates and completions | OAuth2PasswordBearer |
 | `PUT` | `/api/profile/title` | Equip an unlocked achievement title | OAuth2PasswordBearer |
 | `GET` | `/api/profile/transcript.pdf` | Download a printable completion transcript | OAuth2PasswordBearer |
+| `GET` | `/api/public/community-events` | Community Events | Public |
 | `GET` | `/api/public/portfolio/{token}` | Read a shared portfolio | OAuth2PasswordBearer |
 | `GET` | `/api/rangebox/capacity` | Rangebox Capacity | OAuth2PasswordBearer |
 | `DELETE` | `/api/rangebox/standalone/destroy` | Standalone Rangebox Destroy | OAuth2PasswordBearer |
@@ -7903,6 +7904,18 @@ Render the profile summary as a PDF transcript.
 **Public Config**
 
 Return runtime values needed by the SPA before authentication.
+
+**Authentication:** Public
+
+**Responses**
+
+- `200`: Successful Response
+
+### `GET /api/public/community-events`
+
+**Community Events**
+
+Return the public SWOCTS Hub calendar, cached by the backend.
 
 **Authentication:** Public
 

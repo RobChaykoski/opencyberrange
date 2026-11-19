@@ -113,6 +113,7 @@ capstones and analytics, scale, federation, then the AI mentor.
 - [MinIO object storage design note](MINIO-OBJECT-STORAGE.md)
 - [Simulated cloud range](SIMULATED-CLOUD.md)
 - [Deployment status](status-dashboard.md)
+- [Community events calendar](COMMUNITY-EVENTS-CALENDAR.md)
 - [Procurement requirements](PROCUREMENT-REQUIREMENTS.md) and [compliance](COMPLIANCE.md)
 - [HECVAT](HECVAT.md)
 - [Manual screenshots](MANUAL-SCREENSHOTS.md)
