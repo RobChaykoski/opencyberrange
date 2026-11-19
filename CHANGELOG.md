@@ -2,6 +2,14 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.24.1] - 2026-11-19
+
+### Schema migration fix
+
+- Made `0045_nice_framework` idempotent when `create_all` has already created the NICE tables during startup.
+- The migration now inspects each table before creating it, so existing installs stamp the correct Alembic head without a `DuplicateTable` rollback.
+- Added a migration regression check against a database that already contains the NICE tables at `0044`.
+
 ## [5.24.0] - 2026-11-19
 
 ### NICE Framework ingestion and curriculum scaffold
