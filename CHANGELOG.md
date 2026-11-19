@@ -2,6 +2,60 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.18.0] - 2026-11-19
+
+### Account email and notifications
+
+- Added **Admin → Settings → Notifications** with platform-wide controls for
+  registration, approval, rejection, and username-reminder email.
+- Added **Admin → Settings → Email templates** for editable subjects and bodies,
+  placeholder help, and built-in defaults.
+- Pending accounts now receive an email when an administrator approves or
+  rejects them.
+- Registration and reminder email respect the notification preferences.
+- Email rendering uses escaped text and lazy PDF assets where relevant.
+
+### Career direction and learner evidence
+
+- Added an eight-question **Career direction check** to the learner profile,
+  scored across discovery, construction, operations, and people clusters.
+- Expanded the certification question bank from **81 to 128** questions across
+  nine pathways.
+- Added collection achievements for AI, identity, OT, malware, Metasploit,
+  Grade 9 foundations, all digital-forensics labs, and OSINT.
+- Hardened collection awards so a missing lab cannot silently shorten a badge.
+
+### Simulated cloud range
+
+- Added a local **simulated cloud** reference stack: Keycloak, OpenLDAP, MinIO,
+  Vault, OpenSearch, Dashboards, n8n, optional LocalStack, Azurite, and Wazuh.
+- Added OpenTofu examples validated with OpenTofu 1.9.0, Kubernetes RBAC and
+  network-policy labs, Sigma rules, a posture scanner, and four incident labs.
+- Added the workforce readiness, job matching, transcript, CWRS, LDV,
+  competency matrix, lab health, multi-student, AI governance, supply-chain,
+  and progressive-disclosure design notes.
+
+### Manuals, workbooks, and RangeBox
+
+- Redesigned the user-manual navigation rail and footer.
+- Replaced the manual/workbook PDF button with an export menu: PDF, print,
+  Word, HTML, and copy link.
+- Lazy-loaded the PDF library so it downloads only when PDF export is chosen.
+- Fixed the workspace divider so it stops at the workbook boundary.
+- Hardened native fullscreen with a focus-mode fallback and explicit
+  `Permissions-Policy`.
+- Fixed the deployment monitor's semantic-version check.
+- Fixed a multi-worker startup race when seeding new platform settings.
+
+### Validation
+
+- Backend targeted suites pass; frontend lint and production build pass.
+- MkDocs manual and workbook builds pass.
+- OpenTofu `fmt`, `init`, and `validate` pass.
+- Simulated-cloud Compose configuration validates.
+- Manual export menu tested in Edge at desktop and mobile widths with no
+  console errors or mobile overflow.
+
 ## [5.17.7] - 2026-11-17
 
 ### Course management

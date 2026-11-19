@@ -7,7 +7,8 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.17.7` | SWOCTS Cyber Range Release 5.17.7 | Current patch release (signed annotated tag): routes admin course management to the working enrollment workspace and adds a Review column for competency-contract status in Admin > Exercises |
+| `v5.18.0` | SWOCTS Cyber Range Release 5.18.0 | Current feature release (signed annotated tag): account email notifications and templates, career-direction check, expanded question bank and collection achievements, simulated-cloud reference stack, manual/export and RangeBox fixes |
+| `v5.17.7` | SWOCTS Cyber Range Release 5.17.7 | Previous patch release (signed annotated tag): routes admin course management to the working enrollment workspace and adds a Review column for competency-contract status in Admin > Exercises |
 | `v5.17.6` | SWOCTS Cyber Range Release 5.17.6 | Current patch release (signed annotated tag): production settings-ticket UX for the ceiling test, workbook Analysis Questions for all 19 pathway labs, `ad_pathfinder` and `appsec_architect` completion badges, and privacy-safe manual screenshots |
 | `v5.17.5` | SWOCTS Cyber Range Release 5.17.5 | Previous documentation and verification release (signed annotated tag): documentation skill, archive and category hubs, GitHub policy files, reconciled counts, password-prompt regression suite, and bounded login input |
 | `v5.17.4` | SWOCTS Cyber Range Release 5.17.4 | Previous patch release (signed annotated tag): lab discovery creates missing levels so the level-11 AD and modern-appsec labs register on an existing install; UTF-8 lab reads |
@@ -97,7 +98,7 @@ recorded in `versions.yaml` and returned by `/api/version`.
 
 Tags `v3.0.0` through `v3.1.2` belong to the experimental Enterprise/HA branch
 and are historical. They are **not** the supported single-host platform
-release. The current platform releases are the `v5.x` tags on `main`; `v5.17.7`
+release. The current platform releases are the `v5.x` tags on `main`; `v5.18.0`
 is the newest.
 Release 4 added OIDC, SAML, and LDAP SSO. Multi-tenancy, LMS/LTI,
 the per-student accommodation engine, and weekly Jeopardy-style challenge quizzes
@@ -105,7 +106,7 @@ that feed Cyber DNA are Release 5.
 
 ## Choosing a version
 
-1. Use `main` or the latest `v5.x` tag (currently `v5.17.7`) for new installs.
+1. Use `main` or the latest `v5.x` tag (currently `v5.18.0`) for new installs.
 2. Keep `1.1.x` only for an existing Community / Academic maintenance install.
 3. Do not deploy a `v2.2.x`, `v2.3.x`, or `v3.x` tag as the current platform.
 4. Check `docs/SUPPORTED-VERSIONS.md` before changing a dependency or host OS.
