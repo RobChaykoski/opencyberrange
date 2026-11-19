@@ -247,10 +247,13 @@ owner-only unless an explicit share or break-glass grant exists.
 | `POST` | `/api/admin/workbook/upload` | Upload Chapter | OAuth2PasswordBearer |
 | `GET` | `/api/analytics/courses/{course_id}/competency` | Course Competency | OAuth2PasswordBearer |
 | `GET` | `/api/analytics/courses/{course_id}/exercises` | Course Exercises | OAuth2PasswordBearer |
+| `POST` | `/api/analytics/courses/{course_id}/labs/{lab_id}/reviews` | Add Lab Health Review | OAuth2PasswordBearer |
 | `GET` | `/api/analytics/courses/{course_id}/overview` | Course Overview | OAuth2PasswordBearer |
 | `GET` | `/api/analytics/courses/{course_id}/pulse-comments` | Course Pulse Comments | OAuth2PasswordBearer |
 | `GET` | `/api/analytics/courses/{course_id}/readiness` | Course Readiness | OAuth2PasswordBearer |
+| `GET` | `/api/analytics/courses/{course_id}/readiness/calibration` | Readiness Calibration | OAuth2PasswordBearer |
 | `GET` | `/api/analytics/courses/{course_id}/students/{user_id}/capabilities` | Student Capabilities | OAuth2PasswordBearer |
+| `POST` | `/api/analytics/courses/{course_id}/students/{user_id}/notes` | Add Readiness Note | OAuth2PasswordBearer |
 | `POST` | `/api/analytics/events/workbook-open` | Workbook Opened | OAuth2PasswordBearer |
 | `GET` | `/api/analytics/metrics` | Metric Dictionary | OAuth2PasswordBearer |
 | `GET` | `/api/analytics/pulse/{lab_id}` | Get Pulse | OAuth2PasswordBearer |
@@ -2370,6 +2373,37 @@ Cohort competency radar with median, IQR, target, and drill-down.
 - `200`: Successful Response
 - `422`: Validation Error — `HTTPValidationError`
 
+### `POST /api/analytics/courses/{course_id}/labs/{lab_id}/reviews`
+
+**Add Lab Health Review**
+
+Record a lab-health review and its outcome.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `course_id` | path | integer | yes |  |
+| `lab_id` | path | integer | yes |  |
+
+**Request body** (`application/json`)
+
+**Schema:** `ReadinessLabReviewRequest`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `status` | `healthy` | `warning` | `degraded` | `no_data` | yes |  |
+| `finding` | string or null | no |  |
+| `action` | string or null | no |  |
+| `outcome` | string or null | no |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
 ### `GET /api/analytics/courses/{course_id}/overview`
 
 **Course Overview**
@@ -2423,6 +2457,25 @@ Pilot instructor support queue and lab health for one course.  The response is d
 - `200`: Successful Response
 - `422`: Validation Error — `HTTPValidationError`
 
+### `GET /api/analytics/courses/{course_id}/readiness/calibration`
+
+**Readiness Calibration**
+
+Aggregate the pilot's bands, flags, actions, outcomes, and lab reviews.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `course_id` | path | integer | yes |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
 ### `GET /api/analytics/courses/{course_id}/students/{user_id}/capabilities`
 
 **Student Capabilities**
@@ -2437,6 +2490,41 @@ Capability detail for one enrolled learner in the actor's course.
 |---|---|---|---|---|
 | `course_id` | path | integer | yes |  |
 | `user_id` | path | integer | yes |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `POST /api/analytics/courses/{course_id}/students/{user_id}/notes`
+
+**Add Readiness Note**
+
+Record context, a support action, or a flag state for one learner.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `course_id` | path | integer | yes |  |
+| `user_id` | path | integer | yes |  |
+
+**Request body** (`application/json`)
+
+**Schema:** `ReadinessNoteRequest`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `kind` | `context` | `flag_state` | `action` | yes |  |
+| `key` | string | yes |  |
+| `state` | `dismissed` | `snoozed` | `acknowledged` or null | no |  |
+| `note` | string or null | no |  |
+| `outcome` | string or null | no |  |
+| `start_at` | string or null | no |  |
+| `end_at` | string or null | no |  |
+| `follow_up_at` | string or null | no |  |
 
 **Responses**
 

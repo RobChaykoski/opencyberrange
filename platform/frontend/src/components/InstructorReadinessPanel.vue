@@ -79,6 +79,18 @@
           Lab health
           <span>{{ data.lab_health.counts.degraded || 0 }} degraded</span>
         </button>
+        <button
+          id="readiness-tab-calibration"
+          type="button"
+          role="tab"
+          class="readiness-panel__tab"
+          :class="{ 'readiness-panel__tab--active': activeView === 'calibration' }"
+          :aria-selected="activeView === 'calibration'"
+          aria-controls="readiness-panel-calibration"
+          @click="openCalibration"
+        >
+          Calibration
+        </button>
       </div>
 
       <div
@@ -171,6 +183,63 @@
                 <span v-if="student.provisional" class="readiness-panel__provisional">Provisional evidence</span>
               </div>
 
+              <div class="readiness-workflow">
+                <div class="readiness-workflow__head">
+                  <h3>Support record</h3>
+                  <span>Append-only, instructor-visible</span>
+                </div>
+                <div class="readiness-workflow__row">
+                  <select v-model="workflow.kind" class="form-input form-input--sm" @change="onWorkflowKind">
+                    <option value="context">Context flag</option>
+                    <option value="action">Support action</option>
+                    <option value="flag_state">Flag state</option>
+                  </select>
+                  <select v-model="workflow.key" class="form-input form-input--sm">
+                    <option v-for="option in workflowOptions" :key="option.value" :value="option.value">
+                      {{ option.label }}
+                    </option>
+                  </select>
+                  <select
+                    v-if="workflow.kind === 'flag_state'"
+                    v-model="workflow.state"
+                    class="form-input form-input--sm"
+                  >
+                    <option value="acknowledged">Acknowledged</option>
+                    <option value="snoozed">Snoozed 7 days</option>
+                    <option value="dismissed">Dismissed</option>
+                  </select>
+                  <input
+                    v-model="workflow.note"
+                    class="form-input form-input--sm readiness-workflow__note"
+                    type="text"
+                    placeholder="Note (optional)"
+                    maxlength="2000"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn--secondary btn--sm"
+                    :disabled="workflowSaving || !workflow.key"
+                    @click="saveWorkflow(student)"
+                  >
+                    {{ workflowSaving ? 'Saving...' : 'Save' }}
+                  </button>
+                </div>
+                <p v-if="workflowError" class="readiness-panel__provisional" role="alert">{{ workflowError }}</p>
+                <div v-if="student.context_flags?.length" class="readiness-workflow__existing">
+                  <strong>Context:</strong>
+                  <span v-for="flag in student.context_flags" :key="flag.id">
+                    {{ contextLabel(flag.key) }}<template v-if="flag.end_at"> until {{ formatDate(flag.end_at) }}</template>
+                  </span>
+                </div>
+                <div v-if="student.last_action" class="readiness-workflow__existing">
+                  <strong>Last action:</strong>
+                  <span>
+                    {{ actionLabel(student.last_action.key) }}
+                    <template v-if="student.last_action.outcome"> · {{ student.last_action.outcome }}</template>
+                  </span>
+                </div>
+              </div>
+
               <div class="readiness-card__capabilities">
                 <div class="readiness-card__capabilities-head">
                   <h3>Capability detail</h3>
@@ -219,7 +288,7 @@
       </div>
 
       <div
-        v-else
+        v-else-if="activeView === 'labs'"
         id="readiness-panel-labs"
         role="tabpanel"
         aria-labelledby="readiness-tab-labs"
@@ -261,6 +330,7 @@
                 <th scope="col">Abandon</th>
                 <th scope="col">Hints</th>
                 <th scope="col">Median time</th>
+                <th scope="col">Review</th>
               </tr>
             </thead>
             <tbody>
@@ -279,9 +349,48 @@
                 <td>{{ lab.abandonment_rate == null ? '—' : `${lab.abandonment_rate}%` }}</td>
                 <td>{{ lab.median_hints ?? '—' }}</td>
                 <td>{{ lab.median_minutes == null ? '—' : `${lab.median_minutes}m` }}</td>
+                <td>
+                  <button type="button" class="btn btn--secondary btn--xs" @click="openLabReview(lab)">
+                    {{ lab.review ? 'Update' : 'Review' }}
+                  </button>
+                </td>
               </tr>
             </tbody>
           </table>
+        </div>
+
+        <div v-if="reviewLab" class="lab-review">
+          <div class="readiness-workflow__head">
+            <h3>Review {{ reviewLab.name }}</h3>
+            <button type="button" class="btn btn--secondary btn--xs" @click="reviewLab = null">
+              Close
+            </button>
+          </div>
+          <div class="lab-review__row">
+            <select v-model="labReview.status" class="form-input form-input--sm">
+              <option value="healthy">Healthy challenge</option>
+              <option value="warning">Warning</option>
+              <option value="degraded">Degraded</option>
+              <option value="no_data">No data</option>
+            </select>
+            <input v-model="labReview.finding" class="form-input form-input--sm" placeholder="Finding" maxlength="2000" />
+            <input v-model="labReview.action" class="form-input form-input--sm" placeholder="Action or owner" maxlength="2000" />
+            <input v-model="labReview.outcome" class="form-input form-input--sm" placeholder="Outcome" maxlength="500" />
+            <button
+              type="button"
+              class="btn btn--primary btn--sm"
+              :disabled="labReviewSaving"
+              @click="saveLabReview"
+            >
+              {{ labReviewSaving ? 'Saving...' : 'Save review' }}
+            </button>
+          </div>
+          <p v-if="labReviewError" class="readiness-panel__provisional" role="alert">{{ labReviewError }}</p>
+          <p v-if="reviewLab.review" class="readiness-panel__meta">
+            Last review: {{ reviewLab.review.outcome || reviewLab.review.status }} ·
+            {{ formatDate(reviewLab.review.reviewed_at) }}
+            <template v-if="reviewLab.review.finding"> · {{ reviewLab.review.finding }}</template>
+          </p>
         </div>
 
         <button
@@ -292,6 +401,71 @@
         >
           {{ showHealthy ? 'Hide healthy labs' : 'Show healthy labs' }}
         </button>
+      </div>
+
+      <div
+        v-else
+        id="readiness-panel-calibration"
+        role="tabpanel"
+        aria-labelledby="readiness-tab-calibration"
+        class="readiness-panel__view"
+      >
+        <div v-if="calibrationLoading" class="readiness-panel__empty" role="status">
+          Loading calibration evidence...
+        </div>
+        <div v-else-if="calibrationError" class="readiness-panel__empty readiness-panel__empty--error" role="alert">
+          {{ calibrationError }}
+        </div>
+        <template v-else-if="calibration">
+          <p class="readiness-panel__meta">
+            Calibration compares the pilot bands with the flags, support actions,
+            outcomes, and lab reviews instructors actually record. It is not a
+            model-accuracy claim.
+          </p>
+          <div class="calibration-grid">
+            <section class="calibration-card">
+              <h3>Band distribution</h3>
+              <p v-for="(count, key) in calibration.band_counts" :key="key">
+                <span>{{ bandLabel(key) }}</span><strong>{{ count }}</strong>
+              </p>
+            </section>
+            <section class="calibration-card">
+              <h3>Flags</h3>
+              <p v-for="(count, key) in calibration.flag_counts" :key="key">
+                <span>{{ flagLabel(key) }}</span><strong>{{ count }}</strong>
+              </p>
+              <p v-if="!Object.keys(calibration.flag_counts).length" class="muted">No flags recorded.</p>
+            </section>
+            <section class="calibration-card">
+              <h3>Support actions</h3>
+              <p v-for="(count, key) in calibration.action_counts" :key="key">
+                <span>{{ actionLabel(key) }}</span><strong>{{ count }}</strong>
+              </p>
+              <p v-if="!Object.keys(calibration.action_counts).length" class="muted">No actions logged.</p>
+            </section>
+            <section class="calibration-card">
+              <h3>Outcomes</h3>
+              <p v-for="(count, key) in calibration.outcome_counts" :key="key">
+                <span>{{ key }}</span><strong>{{ count }}</strong>
+              </p>
+              <p v-if="!Object.keys(calibration.outcome_counts).length" class="muted">No outcomes recorded.</p>
+            </section>
+            <section class="calibration-card">
+              <h3>Flag states</h3>
+              <p v-for="(count, key) in calibration.flag_state_counts" :key="key">
+                <span>{{ key }}</span><strong>{{ count }}</strong>
+              </p>
+              <p v-if="!Object.keys(calibration.flag_state_counts).length" class="muted">No dismissals or snoozes.</p>
+            </section>
+            <section class="calibration-card">
+              <h3>Lab reviews</h3>
+              <p v-for="(count, key) in calibration.lab_review_counts" :key="key">
+                <span>{{ key }}</span><strong>{{ count }}</strong>
+              </p>
+              <p v-if="!Object.keys(calibration.lab_review_counts).length" class="muted">No lab reviews yet.</p>
+            </section>
+          </div>
+        </template>
       </div>
     </template>
   </section>
@@ -319,6 +493,49 @@ const capabilitiesFor = ref(null)
 const capabilitiesLoading = ref(null)
 const capabilitiesError = ref('')
 const defaultVisible = 5
+const calibration = ref(null)
+const calibrationLoading = ref(false)
+const calibrationError = ref('')
+const workflow = ref({ kind: 'context', key: 'absence', state: 'acknowledged', note: '' })
+const workflowSaving = ref(false)
+const workflowError = ref('')
+const reviewLab = ref(null)
+const labReview = ref({ status: 'warning', finding: '', action: '', outcome: '' })
+const labReviewSaving = ref(false)
+const labReviewError = ref('')
+
+const expandedStudentData = computed(
+  () => data.value?.students?.find((student) => student.user_id === expandedStudent.value) || null,
+)
+
+const CONTEXT_OPTIONS = [
+  { value: 'absence', label: 'Planned absence' },
+  { value: 'illness', label: 'Illness or recovery' },
+  { value: 'bereavement', label: 'Bereavement' },
+  { value: 'placement', label: 'Placement or work commitment' },
+  { value: 'accommodation', label: 'Accommodation' },
+  { value: 'other', label: 'Other context' },
+]
+
+const ACTION_OPTIONS = [
+  { value: 'contacted', label: 'Contacted learner' },
+  { value: 'guided_retry', label: 'Guided retry' },
+  { value: 'extension', label: 'Extension' },
+  { value: 'study_plan', label: 'Study plan' },
+  { value: 'lab_reset', label: 'Lab reset or environment check' },
+  { value: 'referral', label: 'Referral to support service' },
+]
+
+const workflowOptions = computed(() => {
+  if (workflow.value.kind === 'action') return ACTION_OPTIONS
+  if (workflow.value.kind === 'flag_state') {
+    return (expandedStudentData.value?.flags || []).map((flag) => ({
+      value: flag,
+      label: flagLabel(flag),
+    }))
+  }
+  return CONTEXT_OPTIONS
+})
 
 const bandSummary = computed(() => {
   const counts = data.value?.cohort?.band_counts || {}
@@ -364,6 +581,38 @@ const flagLabel = (flag) => ({
   inactive: 'Inactive',
   no_completions: 'No completions',
 }[flag] || flag)
+
+const contextLabel = (key) => ({
+  absence: 'Planned absence',
+  illness: 'Illness or recovery',
+  bereavement: 'Bereavement',
+  placement: 'Placement or work commitment',
+  accommodation: 'Accommodation',
+  other: 'Other context',
+}[key] || key)
+
+const actionLabel = (key) => ({
+  contacted: 'Contacted learner',
+  guided_retry: 'Guided retry',
+  extension: 'Extension',
+  study_plan: 'Study plan',
+  lab_reset: 'Lab reset',
+  referral: 'Referral',
+}[key] || key)
+
+const bandLabel = (key) => ({
+  critical_intervention: 'Critical intervention',
+  high_risk: 'High risk',
+  elevated: 'Elevated',
+  monitor: 'Monitor',
+  healthy: 'Healthy',
+}[key] || key)
+
+const formatDate = (value) => {
+  if (!value) return '—'
+  const date = new Date(value)
+  return Number.isNaN(date.getTime()) ? value : date.toLocaleDateString()
+}
 
 const labStatusLabel = (status) => ({
   degraded: 'Degraded',
@@ -421,6 +670,87 @@ async function loadCapabilities(userId) {
   }
 }
 
+function onWorkflowKind() {
+  const options = workflowOptions.value
+  workflow.value.key = options[0]?.value || ''
+  workflow.value.state = 'acknowledged'
+  workflowError.value = ''
+}
+
+async function saveWorkflow(student) {
+  if (!props.courseId || !workflow.value.key) return
+  workflowSaving.value = true
+  workflowError.value = ''
+  try {
+    const body = {
+      kind: workflow.value.kind,
+      key: workflow.value.key,
+      note: workflow.value.note || null,
+    }
+    if (workflow.value.kind === 'flag_state') {
+      body.state = workflow.value.state
+      if (workflow.value.state === 'snoozed') {
+        body.end_at = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+      }
+    }
+    await axios.post(`/analytics/courses/${props.courseId}/students/${student.user_id}/notes`, body)
+    workflow.value.note = ''
+    calibration.value = null
+    await fetchReadiness()
+  } catch (e) {
+    workflowError.value = e.response?.data?.detail || 'Could not save the support record.'
+  } finally {
+    workflowSaving.value = false
+  }
+}
+
+async function openCalibration() {
+  activeView.value = 'calibration'
+  if (calibration.value || !props.courseId) return
+  calibrationLoading.value = true
+  calibrationError.value = ''
+  try {
+    const { data: payload } = await axios.get(
+      `/analytics/courses/${props.courseId}/readiness/calibration`,
+    )
+    calibration.value = payload
+  } catch (e) {
+    calibrationError.value = e.response?.data?.detail || 'Could not load calibration evidence.'
+  } finally {
+    calibrationLoading.value = false
+  }
+}
+
+function openLabReview(lab) {
+  reviewLab.value = lab
+  labReviewError.value = ''
+  labReview.value = {
+    status: lab.review?.status || lab.status || 'warning',
+    finding: lab.review?.finding || '',
+    action: lab.review?.action || '',
+    outcome: lab.review?.outcome || '',
+  }
+}
+
+async function saveLabReview() {
+  if (!props.courseId || !reviewLab.value) return
+  labReviewSaving.value = true
+  labReviewError.value = ''
+  try {
+    await axios.post(
+      `/analytics/courses/${props.courseId}/labs/${reviewLab.value.lab_id}/reviews`,
+      labReview.value,
+    )
+    reviewLab.value = null
+    calibration.value = null
+    await fetchReadiness()
+  } catch (e) {
+    labReviewError.value = e.response?.data?.detail || 'Could not save the lab review.'
+  } finally {
+    labReviewSaving.value = false
+  }
+}
+
 watch(
   () => props.courseId,
   () => {
@@ -429,6 +759,9 @@ watch(
     expandedStudent.value = null
     capabilities.value = null
     capabilitiesFor.value = null
+    calibration.value = null
+    calibrationError.value = ''
+    activeView.value = 'queue'
     fetchReadiness()
   },
   { immediate: true },
@@ -820,6 +1153,97 @@ watch(
 
 .readiness-panel__more {
   justify-self: start;
+}
+
+.readiness-workflow,
+.lab-review {
+  padding: 0.7rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+}
+
+.readiness-workflow__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+.readiness-workflow__head h3 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 0.82rem;
+}
+
+.readiness-workflow__head span {
+  color: var(--text-muted);
+  font-size: 0.68rem;
+}
+
+.readiness-workflow__row,
+.lab-review__row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.readiness-workflow__note {
+  flex: 1 1 12rem;
+  min-width: 8rem;
+}
+
+.readiness-workflow__existing {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.6rem;
+  margin-top: 0.4rem;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+
+.readiness-workflow__existing strong {
+  color: var(--text-secondary);
+}
+
+.calibration-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0.6rem;
+}
+
+.calibration-card {
+  padding: 0.7rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-primary);
+}
+
+.calibration-card h3 {
+  margin: 0 0 0.45rem;
+  color: var(--text-primary);
+  font-size: 0.8rem;
+}
+
+.calibration-card p {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin: 0.2rem 0;
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+}
+
+.calibration-card p strong {
+  color: var(--text-primary);
+}
+
+.calibration-card p.muted {
+  color: var(--text-muted);
+  justify-content: flex-start;
 }
 
 .sr-only {

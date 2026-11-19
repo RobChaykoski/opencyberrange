@@ -841,3 +841,36 @@ def test_course_readiness_capabilities_are_scoped(client, analytics_data):
     assert body["axes"]
     assert "disclaimer" in body
 
+
+
+def test_readiness_notes_calibration_and_lab_review(client, analytics_data):
+    headers = _login(client, analytics_data["instructor"])
+    course_id = analytics_data["course"].id
+    student_id = analytics_data["student_one"].id
+    lab_id = analytics_data["labs"][0].id
+
+    note = client.post(
+        f"/api/analytics/courses/{course_id}/students/{student_id}/notes",
+        headers=headers,
+        json={"kind": "action", "key": "contacted", "note": "Checked in", "outcome": "resolved"},
+    )
+    assert note.status_code == 200, note.text
+    assert note.json()["kind"] == "action"
+
+    calibration = client.get(
+        f"/api/analytics/courses/{course_id}/readiness/calibration",
+        headers=headers,
+    )
+    assert calibration.status_code == 200, calibration.text
+    body = calibration.json()
+    assert body["action_counts"]["contacted"] == 1
+    assert body["outcome_counts"]["resolved"] == 1
+
+    review = client.post(
+        f"/api/analytics/courses/{course_id}/labs/{lab_id}/reviews",
+        headers=headers,
+        json={"status": "warning", "finding": "Hints high", "action": "Review workbook", "outcome": "open"},
+    )
+    assert review.status_code == 200, review.text
+    assert review.json()["finding"] == "Hints high"
+

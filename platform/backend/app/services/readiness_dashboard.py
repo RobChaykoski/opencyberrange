@@ -15,7 +15,14 @@ from typing import Optional
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from app.models import ExerciseQuizAttempt, LabCompletion, LabSession, User
+from app.models import (
+    ExerciseQuizAttempt,
+    LabCompletion,
+    LabSession,
+    ReadinessLabReview,
+    ReadinessStudentNote,
+    User,
+)
 from app.services.competency_radar import build_individual_radar
 
 CWRS_FORMULA_VERSION = "cwrs-pilot-2026.1"
@@ -147,15 +154,52 @@ def _caption(components: dict[str, Optional[float]]) -> dict[str, Optional[float
     return {key: (round(value, 1) if value is not None else None) for key, value in components.items()}
 
 
+def _note_payload(note: ReadinessStudentNote) -> dict:
+    return {
+        "id": note.id,
+        "kind": note.kind,
+        "key": note.key,
+        "state": note.state,
+        "note": note.note,
+        "outcome": note.outcome,
+        "start_at": _as_aware(note.start_at).isoformat() if note.start_at else None,
+        "end_at": _as_aware(note.end_at).isoformat() if note.end_at else None,
+        "follow_up_at": _as_aware(note.follow_up_at).isoformat() if note.follow_up_at else None,
+        "created_by_id": note.created_by_id,
+        "created_at": _as_aware(note.created_at).isoformat() if note.created_at else None,
+    }
+
+
 def build_course_readiness(
     db: Session,
     *,
+    course_id: int,
     labs: list,
     user_ids: set[int],
     completions: list[LabCompletion],
     sessions: list[LabSession],
 ) -> dict:
     now = datetime.now(timezone.utc)
+    notes = (
+        db.query(ReadinessStudentNote)
+        .filter(ReadinessStudentNote.course_id == course_id)
+        .order_by(ReadinessStudentNote.created_at.desc())
+        .all()
+    )
+    notes_by_user: dict[int, list[ReadinessStudentNote]] = defaultdict(list)
+    for note in notes:
+        notes_by_user[note.learner_id].append(note)
+
+    reviews = (
+        db.query(ReadinessLabReview)
+        .filter(ReadinessLabReview.course_id == course_id)
+        .order_by(ReadinessLabReview.reviewed_at.desc())
+        .all()
+    )
+    reviews_by_lab: dict[int, ReadinessLabReview] = {}
+    for review in reviews:
+        reviews_by_lab.setdefault(review.lab_id, review)
+
     users = {
         row.id: row
         for row in db.query(User).filter(User.id.in_(user_ids)).all()
@@ -300,6 +344,28 @@ def build_course_readiness(
         if completed == 0 and started > 0:
             flags.append("no_completions")
 
+        student_notes = notes_by_user.get(user_id, [])
+        context_flags = []
+        flag_states = {}
+        actions = []
+        for note in student_notes:
+            if note.kind == "context":
+                starts = _as_aware(note.start_at)
+                ends = _as_aware(note.end_at)
+                if (starts is None or starts <= now) and (ends is None or ends >= now):
+                    context_flags.append(_note_payload(note))
+            elif note.kind == "flag_state" and note.key not in flag_states:
+                ends = _as_aware(note.end_at)
+                if note.state == "snoozed" and ends is not None and ends < now:
+                    continue
+                flag_states[note.key] = {
+                    "state": note.state,
+                    "end_at": ends.isoformat() if ends else None,
+                    "note": note.note,
+                }
+            elif note.kind == "action" and len(actions) < 3:
+                actions.append(_note_payload(note))
+
         students.append(
             {
                 "user_id": user_id,
@@ -317,12 +383,16 @@ def build_course_readiness(
                 "last_activity": last_activity.isoformat() if last_activity else None,
                 "days_since_activity": days_since,
                 "provisional": bool(performance_provisional or quiz_average is None),
+                "context_flags": context_flags,
+                "flag_states": flag_states,
+                "actions": actions,
+                "last_action": actions[0] if actions else None,
             }
         )
 
     students.sort(key=lambda row: (-row["cwrs"], row["display_name"]))
 
-    lab_health = _build_lab_health(labs, completions, sessions)
+    lab_health = _build_lab_health(labs, completions, sessions, reviews_by_lab)
     band_counts = {key: 0 for _minimum, key, _label in BANDS}
     for row in students:
         band_counts[row["band"]] += 1
@@ -346,7 +416,13 @@ def build_course_readiness(
     }
 
 
-def _build_lab_health(labs: list, completions: list[LabCompletion], sessions: list[LabSession]) -> dict:
+def _build_lab_health(
+    labs: list,
+    completions: list[LabCompletion],
+    sessions: list[LabSession],
+    reviews_by_lab: dict[int, ReadinessLabReview] | None = None,
+) -> dict:
+    reviews_by_lab = reviews_by_lab or {}
     completions_by_lab: dict[int, list[LabCompletion]] = defaultdict(list)
     for row in completions:
         completions_by_lab[row.lab_id].append(row)
@@ -397,6 +473,7 @@ def _build_lab_health(labs: list, completions: list[LabCompletion], sessions: li
                 "median_minutes": _median([row.time_spent_minutes for row in lab_completions]),
                 "sample_size": sample,
                 "status": status,
+                "review": _lab_review_payload(reviews_by_lab.get(lab.id)),
             }
         )
     order = {"degraded": 0, "warning": 1, "no_data": 2, "healthy": 3}
@@ -405,6 +482,70 @@ def _build_lab_health(labs: list, completions: list[LabCompletion], sessions: li
     for row in rows:
         counts[row["status"]] += 1
     return {"counts": counts, "labs": rows}
+
+
+def _lab_review_payload(review: ReadinessLabReview | None) -> dict | None:
+    if review is None:
+        return None
+    return {
+        "id": review.id,
+        "status": review.status,
+        "finding": review.finding,
+        "action": review.action,
+        "outcome": review.outcome,
+        "owner_id": review.owner_id,
+        "reviewed_at": _as_aware(review.reviewed_at).isoformat() if review.reviewed_at else None,
+    }
+
+
+def build_calibration_summary(db: Session, *, course_id: int, students: list[dict], lab_health: dict) -> dict:
+    notes = (
+        db.query(ReadinessStudentNote)
+        .filter(ReadinessStudentNote.course_id == course_id)
+        .all()
+    )
+    reviews = (
+        db.query(ReadinessLabReview)
+        .filter(ReadinessLabReview.course_id == course_id)
+        .all()
+    )
+    flag_counts: dict[str, int] = defaultdict(int)
+    for student in students:
+        for flag in student.get("flags", []):
+            flag_counts[flag] += 1
+    action_counts: dict[str, int] = defaultdict(int)
+    outcome_counts: dict[str, int] = defaultdict(int)
+    context_counts: dict[str, int] = defaultdict(int)
+    flag_state_counts: dict[str, int] = defaultdict(int)
+    for note in notes:
+        if note.kind == "action":
+            action_counts[note.key] += 1
+            if note.outcome:
+                outcome_counts[note.outcome] += 1
+        elif note.kind == "context":
+            context_counts[note.key] += 1
+        elif note.kind == "flag_state":
+            flag_state_counts[note.state or "unknown"] += 1
+    review_counts: dict[str, int] = defaultdict(int)
+    for review in reviews:
+        review_counts[review.outcome or "open"] += 1
+    return {
+        "course_id": course_id,
+        "students": len(students),
+        "band_counts": {
+            key: sum(1 for student in students if student["band"] == key)
+            for key in {student["band"] for student in students}
+        },
+        "flag_counts": dict(sorted(flag_counts.items())),
+        "context_counts": dict(sorted(context_counts.items())),
+        "flag_state_counts": dict(sorted(flag_state_counts.items())),
+        "action_counts": dict(sorted(action_counts.items())),
+        "outcome_counts": dict(sorted(outcome_counts.items())),
+        "lab_review_counts": dict(sorted(review_counts.items())),
+        "lab_health_counts": lab_health.get("counts", {}),
+        "notes": len(notes),
+        "reviews": len(reviews),
+    }
 
 
 def build_student_capabilities(db: Session, user_id: int) -> dict:

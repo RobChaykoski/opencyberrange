@@ -47,6 +47,8 @@ from app.models import (
     LabSession,
     LearnerSnapshot,
     QuizAttempt,
+    ReadinessLabReview,
+    ReadinessStudentNote,
     RevokedToken,
     SsoLoginTicket,
     SsoSession,
@@ -375,6 +377,8 @@ def erase_user(
         (Lab, Lab.created_by),
         (ExerciseTemplate, ExerciseTemplate.created_by),
         (Competition, Competition.created_by),
+        (ReadinessStudentNote, ReadinessStudentNote.created_by_id),
+        (ReadinessLabReview, ReadinessLabReview.owner_id),
     ):
         count = _null_where(db, model, column, user_id)
         if count:
@@ -403,6 +407,7 @@ def erase_user(
         (FlagAttempt, FlagAttempt.user_id),
         (LabCompletion, LabCompletion.user_id),
         (LearnerSnapshot, LearnerSnapshot.user_id),
+        (ReadinessStudentNote, ReadinessStudentNote.learner_id),
         (QuizAttempt, QuizAttempt.user_id),
         (LabSession, LabSession.user_id),
         # SSO rows hold an external subject, email, and an encrypted ID token.

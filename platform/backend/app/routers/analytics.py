@@ -9,7 +9,7 @@ from __future__ import annotations
 from collections import Counter
 from datetime import datetime, timezone
 from statistics import median, quantiles
-from typing import Optional
+from typing import Literal, Optional
 import io
 import json
 
@@ -35,6 +35,7 @@ from app.services.learning_time import (
     learning_minutes_by_user,
 )
 from app.services.readiness_dashboard import (
+    build_calibration_summary,
     build_course_readiness,
     build_student_capabilities,
 )
@@ -55,6 +56,8 @@ from app.models import (
     LabCompletion,
     LabSession,
     Level,
+    ReadinessLabReview,
+    ReadinessStudentNote,
     Survey,
     SurveyAttachment,
     SurveyResponse,
@@ -1276,6 +1279,28 @@ async def course_overview(
     }
 
 
+class ReadinessNoteRequest(BaseModel):
+    """A context flag, support action, or flag acknowledgement."""
+
+    kind: Literal["context", "flag_state", "action"]
+    key: str = Field(..., min_length=1, max_length=64)
+    state: Optional[Literal["dismissed", "snoozed", "acknowledged"]] = None
+    note: Optional[str] = Field(None, max_length=2000)
+    outcome: Optional[str] = Field(None, max_length=500)
+    start_at: Optional[datetime] = None
+    end_at: Optional[datetime] = None
+    follow_up_at: Optional[datetime] = None
+
+
+class ReadinessLabReviewRequest(BaseModel):
+    """A lab-health review decision."""
+
+    status: Literal["healthy", "warning", "degraded", "no_data"]
+    finding: Optional[str] = Field(None, max_length=2000)
+    action: Optional[str] = Field(None, max_length=2000)
+    outcome: Optional[str] = Field(None, max_length=500)
+
+
 @router.get("/courses/{course_id}/readiness")
 async def course_readiness(
     course_id: int,
@@ -1305,6 +1330,7 @@ async def course_readiness(
         }
     return build_course_readiness(
         db,
+        course_id=course.id,
         labs=labs,
         user_ids=user_ids,
         completions=completions,
@@ -1325,6 +1351,118 @@ async def student_capabilities(
     if user_id not in user_ids:
         raise HTTPException(status_code=404, detail="Learner not found in this course")
     return build_student_capabilities(db, user_id)
+
+
+def _readiness_note_payload(note: ReadinessStudentNote) -> dict:
+    return {
+        "id": note.id,
+        "kind": note.kind,
+        "key": note.key,
+        "state": note.state,
+        "note": note.note,
+        "outcome": note.outcome,
+        "start_at": note.start_at.isoformat() if note.start_at else None,
+        "end_at": note.end_at.isoformat() if note.end_at else None,
+        "follow_up_at": note.follow_up_at.isoformat() if note.follow_up_at else None,
+        "created_by_id": note.created_by_id,
+        "created_at": note.created_at.isoformat() if note.created_at else None,
+    }
+
+
+@router.post("/courses/{course_id}/students/{user_id}/notes")
+async def add_readiness_note(
+    course_id: int,
+    user_id: int,
+    payload: ReadinessNoteRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_instructor_user),
+):
+    """Record context, a support action, or a flag state for one learner."""
+    course = _course_or_403(db, course_id, current_user)
+    _labs, user_ids, _completions, _sessions = _course_context(db, course)
+    if user_id not in user_ids:
+        raise HTTPException(status_code=404, detail="Learner not found in this course")
+    if payload.kind == "flag_state" and not payload.state:
+        raise HTTPException(status_code=400, detail="A flag state requires dismissed, snoozed, or acknowledged.")
+    note = ReadinessStudentNote(
+        institution_id=course.institution_id,
+        course_id=course.id,
+        learner_id=user_id,
+        kind=payload.kind,
+        key=payload.key.strip(),
+        state=payload.state,
+        note=(payload.note or "").strip() or None,
+        outcome=(payload.outcome or "").strip() or None,
+        start_at=payload.start_at,
+        end_at=payload.end_at,
+        follow_up_at=payload.follow_up_at,
+        created_by_id=current_user.id,
+    )
+    db.add(note)
+    db.commit()
+    db.refresh(note)
+    return _readiness_note_payload(note)
+
+
+@router.get("/courses/{course_id}/readiness/calibration")
+async def readiness_calibration(
+    course_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_instructor_user),
+):
+    """Aggregate the pilot's bands, flags, actions, outcomes, and lab reviews."""
+    course = _course_or_403(db, course_id, current_user)
+    labs, user_ids, completions, sessions = _course_context(db, course)
+    readiness = build_course_readiness(
+        db,
+        course_id=course.id,
+        labs=labs,
+        user_ids=user_ids,
+        completions=completions,
+        sessions=sessions,
+    )
+    return build_calibration_summary(
+        db,
+        course_id=course.id,
+        students=readiness["students"],
+        lab_health=readiness["lab_health"],
+    )
+
+
+@router.post("/courses/{course_id}/labs/{lab_id}/reviews")
+async def add_lab_health_review(
+    course_id: int,
+    lab_id: int,
+    payload: ReadinessLabReviewRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_instructor_user),
+):
+    """Record a lab-health review and its outcome."""
+    course = _course_or_403(db, course_id, current_user)
+    labs, _user_ids, _completions, _sessions = _course_context(db, course)
+    if lab_id not in {lab.id for lab in labs}:
+        raise HTTPException(status_code=404, detail="Lab not found in this course")
+    review = ReadinessLabReview(
+        institution_id=course.institution_id,
+        course_id=course.id,
+        lab_id=lab_id,
+        status=payload.status,
+        finding=(payload.finding or "").strip() or None,
+        action=(payload.action or "").strip() or None,
+        outcome=(payload.outcome or "").strip() or None,
+        owner_id=current_user.id,
+    )
+    db.add(review)
+    db.commit()
+    db.refresh(review)
+    return {
+        "id": review.id,
+        "status": review.status,
+        "finding": review.finding,
+        "action": review.action,
+        "outcome": review.outcome,
+        "reviewed_at": review.reviewed_at.isoformat() if review.reviewed_at else None,
+    }
 
 
 def _total_skill_tree(rows: list[dict]) -> dict:

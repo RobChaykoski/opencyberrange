@@ -104,6 +104,7 @@ from app.models.security import (
     SecurityEvent,
     ServiceCredential,
 )
+from app.models.readiness import ReadinessStudentNote, ReadinessLabReview
 from app.consent.models import (
     ConsentAudit,
     ConsentEvent,
@@ -190,6 +191,8 @@ __all__ = [
     "RevokedToken",
     "SecurityEvent",
     "ServiceCredential",
+    "ReadinessStudentNote",
+    "ReadinessLabReview",
     "SsoLoginState",
     "SsoLoginTicket",
     "SsoSession",

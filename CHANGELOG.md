@@ -2,6 +2,16 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [Unreleased]
+
+### Readiness calibration workflow
+
+- Added context flags, support actions, flag acknowledgements, snoozes, and dismissals to the instructor readiness queue.
+- Added calibration evidence: band distribution, flags, actions, outcomes, flag states, and lab reviews.
+- Added lab-health review records with finding, action, and outcome.
+- Added append-only readiness tables with tenant RLS and learner erasure cleanup.
+- Updated the data dictionary and tenant-isolation inventory.
+
 ## [5.19.0] - 2026-11-19
 
 ### Instructor readiness dashboard
