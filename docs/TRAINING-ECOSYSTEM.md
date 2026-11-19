@@ -38,13 +38,10 @@ keep it on the dev host:
 bash scripts/fetch-openiam-test-stack.sh
 ```
 
-OpenIAM's official deployment is a Swarm-based multi-stack setup: infrastructure,
-services, UI, reverse proxy, OpenSearch, RabbitMQ, Vault, Consul, and generated
-certificates. It is intentionally not started by the training seed because it
-requires `docker swarm init` on the host and a large resource footprint. Start it
-from `deploy/ecosystem-test/openiam` with its own `setup.sh` and `startup.sh` when
-a dedicated dev lab host is available, and load fake identities and
-access-review campaigns only.
+OpenIAM's official deployment is a Swarm-based multi-stack setup. See
+`docs/OPENIAM-TEST-STACK.md` and run `scripts/run-openiam-test-stack.sh` on a
+dedicated dev lab host only. Swarm is deliberately not initialised on the shared
+dev host, so the training seed fetches OpenIAM but does not start it.
 
 ## Current dev deployment
 

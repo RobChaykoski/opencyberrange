@@ -12,6 +12,8 @@ All notable changes to OpenCyberRange are recorded here.
 - Added Authentik training groups/users, Moodle capstone briefs, and privacy/auditor accounts.
 - Recorded the verified role and cross-course access matrix in `docs/TRAINING-CAPSTONES.md`.
 - Documented the OpenIAM fetch and its Swarm-based setup, which is intentionally not auto-started.
+- Added `scripts/run-openiam-test-stack.sh` and `docs/OPENIAM-TEST-STACK.md` for a dedicated identity lab host.
+- Added Moodle TLS validation to the training validator and recorded the results in `docs/TRAINING-VALIDATION.md`.
 
 ## [5.27.0] - 2026-11-19
 
