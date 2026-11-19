@@ -10,11 +10,11 @@ another document disagrees, this page and the signed tag win.
 | Item | Value |
 |---|---|
 | Edition | **Community / Academic** (`lite` entitlement, single-host) |
-| Release | **5.25.0** |
-| Signed tag | **`v5.25.0`** |
-| Runtime code commit | `3f20f5b7` (signed tag `v5.25.0`) |
-| Previous release | `5.24.2` (signed tag `v5.24.2` at `2825ef54`) |
-| Alembic revision | **`0045_nice_framework`** |
+| Release | **5.26.0** |
+| Signed tag | **`v5.26.0`** |
+| Runtime code commit | `3e8eadff` (signed tag `v5.26.0`) |
+| Previous release | `5.25.0` (signed tag `v5.25.0` at `3f20f5b7`) |
+| Alembic revision | **`0046_course_staff`** |
 | Development host | `172.16.16.44` |
 | Production host | `172.16.16.41` / `https://ctfd.swocts.com` |
 | Repository | `RobChaykoski/opencyberrange` (`main`) |
@@ -31,6 +31,7 @@ another document disagrees, this page and the signed tag win.
 | 5.22.0 backup | `~/backups/ocr-backup-20261119-051707.dump` |
 | 5.24.2 backup | `~/backups/ocr-backup-20261119-062853.dump` |
 | 5.25.0 backup | `~/backups/ocr-backup-20261119-065728.dump` |
+| 5.26.0 backup | `~/backups/ocr-backup-20261119-072711.dump` |
 | Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 19 November deploy, 5.19.0, 5.20.0, 5.21.0, and 5.22.0) |
 
 ## Production cutover: COMPLETE
