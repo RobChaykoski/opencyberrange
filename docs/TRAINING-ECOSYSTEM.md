@@ -244,9 +244,11 @@ bash scripts/validate-ecosystem-test.sh
 pwsh scripts/validate-ecosystem-test.ps1
 ```
 
-The validator checks Moodle, its database, and each enabled profile: Authentik
-health, NetBox login and API, Ralph response, and Fleet response. It refuses to
-run when `OCR_ENV` is `production` or `prod`.
+The validator checks Moodle, its database, the TLS front, and each enabled
+profile: Authentik health, NetBox login and API, Ralph response, and Fleet
+response. It refuses to run when `OCR_ENV` is `production` or `prod`.
+
+See `docs/TRAINING-VALIDATION.md` for the recorded results.
 
 ## Reset
 

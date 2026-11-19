@@ -56,6 +56,12 @@ function Code([string]$url) {
     return [string]$result
 }
 
+function HttpsCode([string]$url) {
+    $result = & curl.exe -sk -o NUL -w '%{http_code}' --max-time 10 $url 2>$null
+    if ($LASTEXITCODE -ne 0 -or -not $result) { return '000' }
+    return [string]$result
+}
+
 function Expect([string]$label, [string]$url, [string[]]$expected) {
     $code = Code $url
     if ($expected -contains $code) { Pass "$label ($code)" } else { Fail "$label (expected $($expected -join '/'), got $code)" }
@@ -75,6 +81,14 @@ try {
     Expect 'Moodle login page' "http://${moodleHost}:$moodlePort/login/index.php" @('200')
     $dbCheck = & docker compose exec -T moodle-db /opt/bitnami/mariadb/bin/mariadb-admin -h 127.0.0.1 -uroot "-p$($config['MOODLE_DB_ROOT_PASSWORD'])" ping 2>&1
     if ($LASTEXITCODE -eq 0) { Pass 'Moodle database' } else { Fail 'Moodle database' }
+
+    Write-Host '== Moodle TLS (tls profile) =='
+    if (IsRunning 'moodle-proxy' 'tls') {
+        $tlsPort = Port 'MOODLE_TLS_PORT' 9443
+        $tlsHost = if ($config['MOODLE_TLS_HOST']) { $config['MOODLE_TLS_HOST'] } else { 'localhost' }
+        $tlsCode = HttpsCode "https://${tlsHost}:$tlsPort/login/index.php"
+        if ($tlsCode -eq '200') { Pass "Moodle TLS login page ($tlsCode)" } else { Fail "Moodle TLS login page (got $tlsCode)" }
+    } else { Skip 'Moodle TLS proxy is not running' }
 
     Write-Host '== Authentik (sso profile) =='
     if (IsRunning 'authentik-server' 'sso') {

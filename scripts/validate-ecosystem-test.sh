@@ -52,6 +52,13 @@ http_code() {
   printf '%s' "$code"
 }
 
+https_code() {
+  local code
+  code="$(curl -sk -o /dev/null -w "%{http_code}" --max-time 10 "$1" 2>/dev/null)" || true
+  [ -n "$code" ] || code="000"
+  printf '%s' "$code"
+}
+
 expect_http() {
   local label="$1" url="$2" expected="$3"
   local code
@@ -89,6 +96,17 @@ if docker compose exec -T moodle-db /opt/bitnami/mariadb/bin/mariadb-admin -h 12
   pass "Moodle database"
 else
   fail "Moodle database"
+fi
+
+echo "== Moodle TLS (tls profile) =="
+if running --profile tls | grep -qx moodle-proxy; then
+  tls_code="$(https_code "https://${MOODLE_TLS_HOST:-localhost}:${MOODLE_TLS_PORT:-9443}/login/index.php")"
+  case "$tls_code" in
+    200) pass "Moodle TLS login page ($tls_code)" ;;
+    *) fail "Moodle TLS login page (got $tls_code)" ;;
+  esac
+else
+  skip "Moodle TLS proxy is not running"
 fi
 
 echo "== Authentik (sso profile) =="
