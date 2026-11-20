@@ -1,4 +1,8 @@
 services:
+  backend:
+    environment:
+      # This host's wg0 address. Two HA hosts must not share 10.0.0.1.
+      WG_SERVER_ADDRESS: ${WG_SERVER_ADDRESS:-10.0.0.1}
   db:
     entrypoint: ["docker-entrypoint.sh"]
     command: ["postgres"]
