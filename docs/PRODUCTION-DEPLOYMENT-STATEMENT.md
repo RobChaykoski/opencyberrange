@@ -1,6 +1,6 @@
 # Production deployment statement
 
-**Statement date:** 19 November 2026
+**Statement date:** 20 November 2026
 
 This is the authoritative statement for the current production deployment. If
 another document disagrees, this page and the signed tag win.
@@ -10,11 +10,11 @@ another document disagrees, this page and the signed tag win.
 | Item | Value |
 |---|---|
 | Edition | **Community / Academic** (`lite` entitlement, single-host) |
-| Release | **5.27.3** |
-| Signed tag | **`v5.27.3`** |
-| Runtime code commit | `82b5417a` (signed tag `v5.27.3`) |
-| Previous release | `5.27.0` (signed tag `v5.27.0` at `ac18f7bd`) |
-| Alembic revision | **`0047_lab_nice_metadata`** |
+| Release | **5.27.4** |
+| Signed tag | **`v5.27.4`** |
+| Runtime code commit | `b07b8084` (signed tag `v5.27.4`) |
+| Previous release | `5.27.3` (signed tag `v5.27.3` at `82b5417a`) |
+| Alembic revision | **`0048_performance_indexes`** |
 | Development host | `172.16.16.44` |
 | Production host | `172.16.16.41` / `https://ctfd.swocts.com` |
 | Repository | `RobChaykoski/opencyberrange` (`main`) |
@@ -36,7 +36,25 @@ another document disagrees, this page and the signed tag win.
 | 5.27.1 backup | `~/backups/ocr-backup-20261119-194808.dump` |
 | 5.27.2 backup | `~/backups/ocr-backup-20261119-201613.dump` |
 | 5.27.3 backup | `~/backups/ocr-backup-20261119-205049.dump` |
-| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 19 November deploy, 5.19.0, 5.20.0, 5.21.0, 5.22.0, 5.27.0, 5.27.1, 5.27.2, and 5.27.3) |
+| 5.27.4 backup | `~/backups/ocr-backup-20261120-003040.dump` |
+| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 19 November deploy, 5.19.0, 5.20.0, 5.21.0, 5.22.0, 5.27.0, 5.27.1, 5.27.2, 5.27.3, and 5.27.4) |
+
+## 5.27.4 deployment verification
+
+Deployed on 20 November 2026 to development and production.
+
+| Check | Development | Production |
+|---|---|---|
+| `/api/version` | `5.27.4` | `5.27.4` |
+| Alembic | `0048_performance_indexes` (head) | `0048_performance_indexes` (head) |
+| `next_quiz` in dashboard payload | present | present |
+| Built bundle contains **Take a quiz** | yes | yes |
+| Public entry `https://ctfd.swocts.com` | — | `200` |
+| Redis rate-limit store | replica of production | `NOAUTH` without password |
+
+No schema change. The backup was taken immediately after the deploy and the
+restore drill passed with 67 users, 210 labs, 2 courses, 46 enrolments, 124
+completions, 465 achievements, and 1,386 activity events.
 
 ## 5.27.3 deployment verification
 
