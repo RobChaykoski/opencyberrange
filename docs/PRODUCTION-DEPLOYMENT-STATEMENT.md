@@ -10,10 +10,10 @@ another document disagrees, this page and the signed tag win.
 | Item | Value |
 |---|---|
 | Edition | **Community / Academic** (`lite` entitlement, single-host) |
-| Release | **5.28.5** |
-| Signed tag | **`v5.28.5`** |
-| Runtime code commit | `160cfe56` (signed tag `v5.28.5`) |
-| Previous release | `5.28.4` (signed tag `v5.28.4` at `18072c60`) |
+| Release | **5.28.6** |
+| Signed tag | **`v5.28.6`** |
+| Runtime code commit | `dabc9c0d` (signed tag `v5.28.6`) |
+| Previous release | `5.28.5` (signed tag `v5.28.5` at `160cfe56`) |
 | Alembic revision | **`0048_performance_indexes`** |
 | Development host | `172.16.16.44` |
 | Production host | `172.16.16.41` / `https://ctfd.swocts.com` |
@@ -46,7 +46,25 @@ another document disagrees, this page and the signed tag win.
 | 5.28.3 backup | `~/backups/ocr-backup-20261120-015521.dump` |
 | 5.28.4 backup | `~/backups/ocr-backup-20261120-020748.dump` |
 | 5.28.5 backup | `~/backups/ocr-backup-20261120-025933.dump` |
-| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 19 November deploy, 5.19.0, 5.20.0, 5.21.0, 5.22.0, 5.27.0, 5.27.1, 5.27.2, 5.27.3, 5.27.4, 5.27.5, 5.27.6, 5.27.7, 5.28.0, 5.28.1, 5.28.2, 5.28.3, 5.28.4, and 5.28.5) |
+| 5.28.6 backup | `~/backups/ocr-backup-20261120-033403.dump` |
+| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 19 November deploy, 5.19.0, 5.20.0, 5.21.0, 5.22.0, 5.27.0, 5.27.1, 5.27.2, 5.27.3, 5.27.4, 5.27.5, 5.27.6, 5.27.7, 5.28.0, 5.28.1, 5.28.2, 5.28.3, 5.28.4, 5.28.5, and 5.28.6) |
+
+## 5.28.6 deployment verification
+
+Admin signifier and dialog fixes, deployed on 20 November 2026.
+
+| Check | Result |
+|---|---|
+| `/api/version` | `5.28.6` on prod and dev |
+| Frontend unit tests | 10 files, 20 tests **passed** |
+| ESLint on changed files | 0 errors |
+| Production build | **succeeded** |
+| Deployed bundle | `ocr-dialog-title` present in the served `index` chunk on both hosts |
+| `verify-lab-builds.sh` | **0 errors** on prod and dev |
+| Security delta review | **PASS** |
+
+No schema change. Backup `~/backups/ocr-backup-20261120-033403.dump`; restore
+drill passed.
 
 ## 5.28.5 deployment verification
 
