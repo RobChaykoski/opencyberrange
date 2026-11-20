@@ -26,6 +26,16 @@ All notable changes to OpenCyberRange are recorded here.
 - Applied the shared download helper to reports, admin activity/users/exercises/reports/backups, student and class reports, career profile, privacy data, portfolio, identity providers, VPN config, SBOM, and course reports.
 - Added frontend tests for the shared download helper.
 
+## [5.28.1] - 2026-11-20
+
+### Admin follow-ups
+
+- `GET /admin/users` no longer calls Peer Manager or writes `vpn_registered`; the dedicated `/vpn/sync` endpoint and scheduler own that refresh.
+- Retention counts use one database round trip, and due courses are filtered in SQL instead of loading every course with a retention date.
+- Restore and bulk-toggle endpoints take Pydantic request models with field limits.
+- Remaining optional query parameters use `str | None`.
+- Remaining admin error responses return generic messages and log the detail server-side.
+
 ## [5.28.0] - 2026-11-20
 
 ### New lab: ICS/OT PCAP forensics

@@ -142,32 +142,16 @@ def list_users(
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_institution_admin_user),
 ):
-    """List users — bulk-syncs vpn_registered flags from Peer Manager.
+    """List users without side effects.
 
     A platform admin sees every institution; an institution admin sees only its
     own tenant. Without ``page``/``per_page`` this keeps the original array
     response; supplying either returns a page envelope with totals.
-    """
-    # Sync vpn_registered flags against the live Peer Manager peer list.
-    # Only update when the API responds (peers is not None) so we don't
-    # accidentally reset everyone to False on a transient API failure.
-    peers = wireguard_manager.list_peers()
-    if peers is not None:
-        peer_keys = {p.get("public_key", "").strip() for p in peers}
-        wg_query = db.query(WireGuardConfig).options(
-            joinedload(WireGuardConfig.user)
-        ).join(User, WireGuardConfig.user_id == User.id)
-        if not _platform_admin(admin):
-            wg_query = wg_query.filter(User.institution_id == admin.institution_id)
-        dirty = False
-        for cfg in wg_query.all():
-            is_registered = cfg.public_key.strip() in peer_keys
-            if cfg.user and cfg.user.vpn_registered != is_registered:
-                cfg.user.vpn_registered = is_registered
-                dirty = True
-        if dirty:
-            db.commit()
 
+    VPN state is refreshed by the dedicated ``/vpn/sync`` endpoint and the
+    scheduler, not by this GET: a read must not call Peer Manager or write to
+    the database.
+    """
     query = _scope_users(db.query(User), admin).order_by(User.id)
     if page is None and per_page is None:
         return query.all()
@@ -308,6 +292,15 @@ class MfaResetRequest(BaseModel):
     reason: str = Field(..., min_length=10, max_length=500)
     admin_password: str = Field(..., min_length=1, max_length=128)
     totp_code: str | None = Field(None, min_length=6, max_length=16)
+
+
+class BulkToggleRequest(BaseModel):
+    lab_ids: list[int] = Field(default_factory=list)
+    is_active: bool = True
+
+
+class RestoreRequest(BaseModel):
+    filename: str = Field(..., min_length=1, max_length=255)
 
 
 @router.post("/users/{user_id}/mfa/reset", summary="Reset another account's MFA")
@@ -1363,13 +1356,13 @@ def toggle_lab(
 
 @router.post("/labs/bulk-toggle")
 def bulk_toggle_labs(
-    body: dict,
+    payload: BulkToggleRequest,
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user)
 ):
     """Enable or disable multiple labs at once"""
-    lab_ids = body.get("lab_ids", [])
-    is_active = body.get("is_active", True)
+    lab_ids = payload.lab_ids
+    is_active = payload.is_active
     if not lab_ids:
         return {"message": "No labs specified", "count": 0}
     count = db.query(Lab).filter(Lab.id.in_(lab_ids)).update(
@@ -1428,8 +1421,8 @@ async def list_active_sessions(
 async def session_history(
     page: int = 1,
     per_page: int = 50,
-    start_date: str = None,
-    end_date: str = None,
+    start_date: str | None = None,
+    end_date: str | None = None,
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user)
 ):
@@ -1726,7 +1719,7 @@ def terminate_all_sessions(
 @limiter.limit("5/minute")
 async def clear_session_history(
     request: Request,
-    status_filter: str = None,
+    status_filter: str | None = None,
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user)
 ):
@@ -2564,8 +2557,9 @@ def register_vpn_peer(
             return {"message": f"VPN peer registered for {user.username}"}
         else:
             raise HTTPException(status_code=500, detail="Failed to register peer")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    except Exception:
+        logger.exception("Failed to register VPN peer")
+        raise HTTPException(status_code=500, detail="Could not register the VPN peer")
 
 
 @router.delete("/vpn/peer/{user_id}")
@@ -2594,8 +2588,9 @@ def remove_vpn_peer(
             return {"message": f"VPN peer removed for {user.username}"}
         else:
             raise HTTPException(status_code=500, detail="Failed to remove peer")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    except Exception:
+        logger.exception("Failed to remove VPN peer")
+        raise HTTPException(status_code=500, detail="Could not remove the VPN peer")
 
 
 @router.delete("/vpn/peer-by-key/{public_key:path}")
@@ -2629,8 +2624,9 @@ def remove_vpn_peer_by_key(
             return {"message": "VPN peer removed successfully"}
         else:
             raise HTTPException(status_code=500, detail="Failed to remove peer")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    except Exception:
+        logger.exception("Failed to remove VPN peer")
+        raise HTTPException(status_code=500, detail="Could not remove the VPN peer")
 
 
 # ==================== Container Management ====================
@@ -2655,9 +2651,12 @@ def cleanup_orphaned_containers(
             "message": f"Cleaned up {removed_count} orphaned containers",
             "removed_count": removed_count
         }
-    except Exception as e:
-        logger.error(f"Failed to cleanup orphaned containers: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+    except Exception:
+        logger.exception("Failed to clean up orphaned containers")
+        raise HTTPException(
+            status_code=500,
+            detail="Could not clean up orphaned containers",
+        )
 
 
 # ==================== Docker Disk Management ====================
@@ -3538,9 +3537,9 @@ async def sample_system_metrics(
 def get_activity_log(
     page: int = 1,
     per_page: int = 50,
-    event_type: str = None,
-    start_date: str = None,
-    end_date: str = None,
+    event_type: str | None = None,
+    start_date: str | None = None,
+    end_date: str | None = None,
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_institution_admin_user),
 ):
@@ -3684,9 +3683,9 @@ async def export_activity_log(
     request: Request,
     reason: str = Depends(require_export_reason),
     format: str = Query("json", pattern="^(json|csv)$"),
-    event_type: str = None,
-    start_date: str = None,
-    end_date: str = None,
+    event_type: str | None = None,
+    start_date: str | None = None,
+    end_date: str | None = None,
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user),
 ):
@@ -3861,8 +3860,9 @@ async def get_session_logs(
                     "status": container.status,
                     "logs": f"Error reading logs: {e}",
                 }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get logs: {e}")
+    except Exception:
+        logger.exception("Failed to read session logs")
+        raise HTTPException(status_code=500, detail="Could not read session logs")
 
     return {
         "session_id": session_id,
@@ -3899,11 +3899,12 @@ def create_backup(
             "message": "Backup created successfully",
             **result,
         }
-    except RuntimeError as e:
-        raise HTTPException(status_code=500, detail=f"Backup failed: {e}")
-    except Exception as e:
+    except RuntimeError:
+        logger.exception("Backup failed")
+        raise HTTPException(status_code=500, detail="The backup could not be created")
+    except Exception:
         logger.exception("Unexpected backup failure")
-        raise HTTPException(status_code=500, detail=f"Backup failed: {e}")
+        raise HTTPException(status_code=500, detail="The backup could not be created")
 
 
 @router.get("/system/activity-calendar")
@@ -4143,14 +4144,15 @@ def _restore_database_from_path(
         raise HTTPException(status_code=500, detail="Restore timed out after 5 minutes")
     except HTTPException:
         raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Restore failed: {e}")
+    except Exception:
+        logger.exception("Database restore failed")
+        raise HTTPException(status_code=500, detail="The restore failed")
 
 
 @router.post("/system/restore")
 @limiter.limit("1/minute")
 def restore_backup(
-    body: dict,
+    body: RestoreRequest,
     request: Request,
     admin: User = Depends(get_current_admin_user),
     _reauth: object = Depends(
@@ -4158,9 +4160,7 @@ def restore_backup(
     ),
 ):
     """Restore the database from a snapshot already on this install."""
-    filename = body.get("filename")
-    if not filename:
-        raise HTTPException(status_code=400, detail="filename is required")
+    filename = body.filename
 
     if ".." in filename or "/" in filename:
         raise HTTPException(status_code=400, detail="Invalid filename")
@@ -5141,6 +5141,9 @@ def _retention_policy(course) -> dict:
 
 
 def _retention_counts(db, course_id: int) -> dict:
+    """Return every retention count for a course in one database round trip."""
+    from sqlalchemy import func, select
+
     from app.models import (
         Achievement,
         CourseEnrollment,
@@ -5152,57 +5155,50 @@ def _retention_counts(db, course_id: int) -> dict:
         QuizAttempt,
     )
 
-    enrollments = (
-        db.query(CourseEnrollment)
-        .filter(CourseEnrollment.course_id == course_id)
-        .all()
+    user_ids = select(CourseEnrollment.user_id).where(
+        CourseEnrollment.course_id == course_id
     )
-    user_ids = [row.user_id for row in enrollments]
-    lab_ids = [
-        row.lab_id
-        for row in db.query(CourseLabAssignment)
-        .filter(CourseLabAssignment.course_id == course_id)
-        .all()
-    ]
-    if not user_ids:
-        return {
-            "enrollments": 0,
-            "lab_sessions": 0,
-            "lab_completions": 0,
-            "flag_attempts": 0,
-            "quiz_attempts": 0,
-            "exercise_quiz_attempts": 0,
-            "achievements": 0,
-        }
-    return {
-        "enrollments": len(user_ids),
-        "lab_sessions": db.query(LabSession)
-        .filter(LabSession.user_id.in_(user_ids))
-        .count(),
-        "lab_completions": db.query(LabCompletion)
-        .filter(
-            LabCompletion.user_id.in_(user_ids),
-            LabCompletion.lab_id.in_(lab_ids),
+    lab_ids = select(CourseLabAssignment.lab_id).where(
+        CourseLabAssignment.course_id == course_id
+    )
+
+    def count(column, *where):
+        return (
+            select(func.count())
+            .select_from(column)
+            .where(*where)
+            .scalar_subquery()
         )
-        .count()
-        if lab_ids
-        else 0,
-        "flag_attempts": db.query(FlagAttempt)
-        .filter(FlagAttempt.user_id.in_(user_ids))
-        .count(),
-        "quiz_attempts": db.query(QuizAttempt)
-        .filter(QuizAttempt.user_id.in_(user_ids))
-        .count(),
-        "exercise_quiz_attempts": db.query(ExerciseQuizAttempt)
-        .filter(ExerciseQuizAttempt.user_id.in_(user_ids))
-        .count(),
-        "achievements": db.query(Achievement)
-        .filter(
-            Achievement.user_id.in_(user_ids),
-            Achievement.course_id == course_id,
+
+    row = db.execute(
+        select(
+            count(CourseEnrollment, CourseEnrollment.course_id == course_id),
+            count(LabSession, LabSession.user_id.in_(user_ids)),
+            count(
+                LabCompletion,
+                LabCompletion.user_id.in_(user_ids),
+                LabCompletion.lab_id.in_(lab_ids),
+            ),
+            count(FlagAttempt, FlagAttempt.user_id.in_(user_ids)),
+            count(QuizAttempt, QuizAttempt.user_id.in_(user_ids)),
+            count(ExerciseQuizAttempt, ExerciseQuizAttempt.user_id.in_(user_ids)),
+            count(
+                Achievement,
+                Achievement.user_id.in_(user_ids),
+                Achievement.course_id == course_id,
+            ),
         )
-        .count(),
-    }
+    ).one()
+    keys = (
+        "enrollments",
+        "lab_sessions",
+        "lab_completions",
+        "flag_attempts",
+        "quiz_attempts",
+        "exercise_quiz_attempts",
+        "achievements",
+    )
+    return {key: int(value or 0) for key, value in zip(keys, row)}
 
 
 @router.get("/retention/due")
@@ -5212,16 +5208,18 @@ async def list_retention_due(
 ):
     from app.models import Course
 
-    now = datetime.now(timezone.utc)
-    rows = db.query(Course).filter(Course.retention_until.isnot(None)).all()
-    due = []
-    for course in rows:
-        until = course.retention_until
-        if until is not None and until.tzinfo is None:
-            until = until.replace(tzinfo=timezone.utc)
-        if until is not None and until <= now:
-            due.append(_retention_policy(course))
-    return {"due": due}
+    # The column is stored as naive UTC. Filter in SQL instead of loading every
+    # course with a retention date and comparing dates in Python.
+    cutoff = datetime.now(timezone.utc).replace(tzinfo=None)
+    rows = (
+        db.query(Course)
+        .filter(
+            Course.retention_until.isnot(None),
+            Course.retention_until <= cutoff,
+        )
+        .all()
+    )
+    return {"due": [_retention_policy(course) for course in rows]}
 
 
 @router.get("/courses/{course_id}/retention")
