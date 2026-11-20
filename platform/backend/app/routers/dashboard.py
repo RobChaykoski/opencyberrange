@@ -41,6 +41,7 @@ from app.services.achievements import (
 )
 from app.services.pdf_report import generate_dashboard_report
 from app.services.curriculum_manifest import chapter_label
+from app.services.exercise_quiz import quiz_available
 from app.services.spreadsheet_safety import neutralize_row
 from app.routers.courses import get_course_completed_lab_ids
 from app.routers.curriculum import (
@@ -1324,6 +1325,7 @@ async def student_dashboard(
     total_labs = 0
     completed_labs = 0
     next_objective = None
+    next_quiz = None
 
     for track in tracks:
         for level in sorted(track.levels, key=lambda l: l.level_number):
@@ -1335,6 +1337,18 @@ async def student_dashboard(
                     completed_labs += 1
                 elif next_objective is None:
                     next_objective = {
+                        "lab_id": lab.id,
+                        "lab_name": lab.name,
+                        "lab_slug": lab.slug,
+                        "track_name": track.name,
+                        "track_slug": track.slug,
+                        "level_name": level.name,
+                    }
+                # Quizzes are optional and sparse (about 13 of 210 labs), so
+                # offer the nearest visible, unfinished lab that actually has a
+                # knowledge check rather than dead-ending on the next objective.
+                if next_quiz is None and lab.id not in completed_ids and quiz_available(lab.slug):
+                    next_quiz = {
                         "lab_id": lab.id,
                         "lab_name": lab.name,
                         "lab_slug": lab.slug,
@@ -1502,6 +1516,7 @@ async def student_dashboard(
 
     return {
         "next_objective": next_objective,
+        "next_quiz": next_quiz,
         "progress_percent": progress_percent,
         "total_labs": total_labs,
         "completed_labs": completed_labs,

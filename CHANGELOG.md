@@ -26,13 +26,20 @@ All notable changes to OpenCyberRange are recorded here.
 - Applied the shared download helper to reports, admin activity/users/exercises/reports/backups, student and class reports, career profile, privacy data, portfolio, identity providers, VPN config, SBOM, and course reports.
 - Added frontend tests for the shared download helper.
 
-## [Unreleased]
+## [5.27.4] - 2026-11-20
+
+### Homepage knowledge check
+
+- Added a **Take a quiz** action to the student dashboard hero. It deep-links into the optional knowledge check for the nearest visible, unfinished exercise that actually has a question bank, and is hidden when no quiz remains.
+- Added `next_quiz` to the student dashboard payload so the UI does not have to guess which labs ship a `quiz.yaml`.
 
 ### Training lab content and operations
 
 - Added synthetic scenario packs to the single-student and cohort Moodle courses.
 - Added `docs/TRAINING-INSTRUCTOR-GUIDE.md` and `scripts/ecosystem_seed/reset_training_lab.sh`.
 - Recorded the Fleet 4.95.0 enroll-secret panic as a known dev-only limitation.
+
+## [Unreleased]
 
 ## [5.27.1] - 2026-11-19
 

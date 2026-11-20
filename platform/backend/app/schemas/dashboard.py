@@ -44,6 +44,7 @@ class PulseResponse(BaseModel):
 
 class StudentDashboardResponse(BaseModel):
     next_objective: Optional[dict] = None
+    next_quiz: Optional[dict] = None
     progress_percent: int = 0
     total_labs: int = 0
     completed_labs: int = 0

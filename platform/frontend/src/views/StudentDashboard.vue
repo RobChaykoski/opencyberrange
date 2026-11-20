@@ -66,6 +66,15 @@
               {{ certificateCount }} {{ certificateCount === 1 ? 'certificate' : 'certificates' }}
             </span>
           </div>
+          <div v-if="quizLink" class="hero__actions">
+            <router-link :to="quizLink" class="btn btn--primary btn--sm">
+              <BrainIcon class="btn-icon" />
+              Take a quiz
+            </router-link>
+            <span v-if="data.next_quiz?.lab_name" class="hero__action-note">
+              Knowledge check for {{ data.next_quiz.lab_name }}
+            </span>
+          </div>
         </div>
       </div>
 
@@ -373,6 +382,7 @@ import ServerIcon from '../components/icons/ServerIcon.vue'
 
 const data = ref({
   next_objective: null,
+  next_quiz: null,
   progress_percent: 0,
   total_labs: 0,
   completed_labs: 0,
@@ -626,6 +636,17 @@ const resumeLink = computed(() => {
     }
   }
   return '/exercises'
+})
+
+// Deep-link into the nearest visible, unfinished exercise that actually has a
+// knowledge check. The API picks it because only a small minority of labs ship
+// a question bank, so linking at the next objective would usually dead-end.
+const quizLink = computed(() => {
+  const quiz = data.value.next_quiz
+  if (quiz?.track_slug && quiz?.lab_slug) {
+    return `/exercises/${quiz.track_slug}/labs/${quiz.lab_slug}/quiz`
+  }
+  return null
 })
 
 const matrix = computed(
@@ -958,6 +979,19 @@ onMounted(loadDashboard)
   display: flex;
   flex-wrap: wrap;
   gap: 0.45rem;
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.hero__action-note {
+  font-size: 0.75rem;
+  color: var(--text-muted);
 }
 
 .hero-pill {
