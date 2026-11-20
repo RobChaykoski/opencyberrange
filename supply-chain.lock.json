@@ -343,7 +343,7 @@
       "sha256": "0f3a6214adb8453960f0e0672430a8b5e0fb91e4eaa3ae3e800db876295468d2"
     },
     "scripts/security-delta-review.py": {
-      "sha256": "1b2e5f5d8b11e599146b2d120960d3bacc234f84254b40ae4e99331994e5ee0d"
+      "sha256": "7b8aec23115ee6c6a17f20bbf0c8576153d716535656c0ae1281757b5399b3e8"
     },
     "scripts/status-dashboard.py": {
       "sha256": "e5bf60e7aec4d1724d6409c6133511bb0d3fa4ffecf511497444d8a476eacda0"
