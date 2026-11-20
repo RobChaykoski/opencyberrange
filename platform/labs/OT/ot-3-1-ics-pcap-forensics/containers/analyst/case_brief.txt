@@ -1,0 +1,44 @@
+ICS/OT PCAP FORENSICS CASE #OT-2026-031
+======================================
+
+SCENARIO
+  A utility's incident-response team recovered packet captures from a safety
+  instrumented system and a substation. The captures are real public research
+  datasets, packaged offline for this exercise. Nothing here needs a live
+  network, and nothing may be replayed onto a real control system.
+
+GUIDE
+  http://guide.lab
+  The guide is a trimmed copy of the ICS-PCAP-Challenges range. It has 17
+  guided challenges for the captures on this workstation, with objectives,
+  hints, and self-check walkthroughs.
+
+EVIDENCE
+  /home/analyst/data/nozomi-triton-tristation/malware_exec.pcap
+  /home/analyst/data/netresec-industroyer2/Industroyer2-StationAddress*.pcap
+  /home/analyst/data/goose-false-data-injection/FDI/Attack/FDI_Attack_traffic.pcapng
+  /home/analyst/data/goose-false-data-injection/FDI/Clean/clean.pcapng
+  /home/analyst/data/cisa-icsnpp-test-traces/
+  Each dataset keeps its own LICENSE-NOTICE.md and PROVENANCE.md.
+
+TOOLS
+  tshark, tcpdump, python3, jq, standard Linux text tools. The guide's
+  Pcapper track is not installed; use the tshark / Wireshark track.
+
+OBJECTIVES
+  1. Inventory the three incident captures and identify their protocols.
+  2. Reconstruct the TRITON/TRISIS TriStation session against the SIS.
+  3. Reconstruct the Industroyer2 IEC-104 command traffic.
+  4. Compare normal and injected GOOSE traffic in the substation capture.
+  5. Record detection guidance for each technique.
+
+FINAL FLAG
+  Build the flag from the TRITON capture:
+    OCR{<engineering-workstation-ip>_<TriStation-port>_<frames-on-that-port>}
+  Example shape only: OCR{10.0.0.1_1234_42}
+
+NOTES
+  - Captures are read-only evidence. Do not modify them.
+  - Real ICS malware traffic is present. Never replay it, and treat any
+    extracted file as live malware: hash it, do not run it.
+  - Work offline. The workstation has no route to a real control network.

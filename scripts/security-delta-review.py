@@ -141,6 +141,12 @@ def _changed_files(base: str | None, staged: bool) -> list[Path]:
             continue
         if normalized.startswith(".opencode/skills/"):
             continue
+        # Vendored upstream (MIT) static challenge guide for the ICS lab. It is
+        # reviewed at the pinned upstream revision, not line by line.
+        if normalized.startswith(
+            "platform/labs/OT/ot-3-1-ics-pcap-forensics/containers/guide/site/"
+        ):
+            continue
         if path.suffix.lower() not in TEXT_SUFFIXES:
             continue
         files.append(path)

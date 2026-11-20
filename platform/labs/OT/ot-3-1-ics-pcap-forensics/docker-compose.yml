@@ -1,0 +1,32 @@
+services:
+  analyst:
+    mem_limit: 2g
+    cpus: 2.0
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    build:
+      context: ./containers/analyst
+      dockerfile: Dockerfile
+    hostname: analyst.lab
+    labels:
+      ip_offset: "95"
+    environment:
+      FLAG: "OCR{192.168.1.88_1502_896}"
+    restart: unless-stopped
+
+  guide:
+    mem_limit: 128m
+    cpus: 0.25
+    build:
+      context: ./containers/guide
+      dockerfile: Dockerfile
+    hostname: guide.lab
+    labels:
+      ip_offset: "96"
+    restart: unless-stopped

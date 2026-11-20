@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ICS/OT/SCADA PCAP Challenges</title>
+<style>
+:root{
+  --bg:#0e1116; --bg2:#161b22; --bg3:#1c232d; --line:#2a3340; --line2:#394353;
+  --fg:#e6edf3; --fg2:#9fb0c3; --fg3:#6e7f92;
+  --accent:#4aa8ff; --accent2:#7ee787; --warn:#ffb86b; --danger:#ff7b72; --mag:#d2a8ff;
+  --easy:#7ee787; --med:#ffd866; --hard:#ff9e64; --expert:#ff7b72;
+  --radius:12px; --mono:"SFMono-Regular",ui-monospace,Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+:root[data-theme="light"]{
+  --bg:#f6f8fa; --bg2:#ffffff; --bg3:#eef2f6; --line:#d6dee6; --line2:#c3ccd6;
+  --fg:#1c2430; --fg2:#4a5a6a; --fg3:#768899; --accent:#0969da; --accent2:#1a7f37;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);line-height:1.55;
+  -webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+code,kbd{font-family:var(--mono)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+
+header.top{position:sticky;top:0;z-index:20;background:linear-gradient(var(--bg),var(--bg) 70%,transparent);
+  border-bottom:1px solid var(--line);backdrop-filter:blur(6px)}
+.topbar{display:flex;align-items:center;gap:14px;padding:12px 0;flex-wrap:wrap}
+.brand{font-weight:700;font-size:18px;letter-spacing:.2px;display:flex;align-items:center;gap:9px}
+.brand .dot{width:11px;height:11px;border-radius:50%;background:var(--accent2);
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--accent2) 25%,transparent)}
+.brand small{color:var(--fg3);font-weight:500;font-size:12px}
+.grow{flex:1}
+.search{flex:1 1 220px;min-width:160px;max-width:420px}
+.search input{width:100%;background:var(--bg2);border:1px solid var(--line2);color:var(--fg);
+  padding:9px 12px;border-radius:9px;font-size:14px}
+.btn{background:var(--bg2);border:1px solid var(--line2);color:var(--fg2);padding:8px 11px;
+  border-radius:9px;cursor:pointer;font-size:13px}
+.btn:hover{color:var(--fg);border-color:var(--accent)}
+
+.filters{display:flex;gap:8px;flex-wrap:wrap;padding:10px 0 4px}
+.chip{background:var(--bg2);border:1px solid var(--line);color:var(--fg2);padding:5px 11px;
+  border-radius:20px;cursor:pointer;font-size:12.5px;white-space:nowrap}
+.chip.active{background:color-mix(in srgb,var(--accent) 22%,var(--bg2));border-color:var(--accent);color:var(--fg)}
+.chip .n{color:var(--fg3);font-size:11px;margin-left:5px}
+
+.stats{display:flex;gap:18px;flex-wrap:wrap;color:var(--fg2);font-size:12.5px;padding:6px 0 14px}
+.stats b{color:var(--fg)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;padding:6px 0 48px}
+.card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--radius);padding:15px 15px 13px;
+  cursor:pointer;display:flex;flex-direction:column;gap:9px;transition:border-color .12s,transform .12s;position:relative}
+.card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.card .cat{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--fg3);font-weight:600}
+.card h3{margin:0;font-size:16px;line-height:1.3}
+.card .hook{color:var(--fg2);font-size:13px;margin:0;flex:1}
+.card .meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:11.5px;color:var(--fg3)}
+.pill{padding:2px 8px;border-radius:12px;border:1px solid var(--line2);font-weight:600}
+.diff{font-weight:700}
+.diff.Easy{color:var(--easy)} .diff.Medium{color:var(--med)}
+.diff.Hard{color:var(--hard)} .diff.Expert{color:var(--expert)}
+.card .prog{height:4px;border-radius:3px;background:var(--bg3);overflow:hidden;margin-top:2px}
+.card .prog > i{display:block;height:100%;background:var(--accent2);width:0}
+.card.done::after{content:"✓ done";position:absolute;top:12px;right:13px;font-size:10.5px;
+  color:var(--accent2);font-weight:700;letter-spacing:.3px}
+.card.missing{opacity:.55}
+.card.missing .cat::after{content:" · data not present";color:var(--warn)}
+
+/* detail */
+#detail{display:none}
+body.detail #listing{display:none}
+body.detail #detail{display:block}
+.back{display:inline-flex;align-items:center;gap:6px;margin:16px 0 8px;color:var(--fg2);cursor:pointer;font-size:13px}
+.back:hover{color:var(--accent)}
+.dhead{display:flex;flex-direction:column;gap:8px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.dhead .cat{font-size:11.5px;text-transform:uppercase;letter-spacing:.7px;color:var(--fg3);font-weight:600}
+.dhead h1{margin:0;font-size:25px;line-height:1.2}
+.dmeta{display:flex;gap:9px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--fg3)}
+.layout{display:grid;grid-template-columns:1fr 290px;gap:26px;padding:18px 0 60px}
+@media(max-width:860px){.layout{grid-template-columns:1fr}}
+.layout>.main{min-width:0}  /* let long <pre> lines scroll instead of widening the grid column */
+section.block{margin-bottom:26px}
+section.block > h2{font-size:14px;text-transform:uppercase;letter-spacing:.7px;color:var(--fg2);
+  margin:0 0 11px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.scenario{color:var(--fg);font-size:14.5px}
+.scenario p{margin:0 0 10px}
+ul.obj{margin:0;padding-left:18px;color:var(--fg)}
+ul.obj li{margin:5px 0}
+.dlnote{color:var(--fg2);font-size:12.5px;margin-bottom:8px}
+ul.dl{margin:10px 0 0;padding-left:18px}
+ul.dl li{margin:8px 0;font-size:13.5px}
+ul.dl li div{font-size:12.5px;color:var(--fg2);margin-top:3px;overflow-wrap:anywhere}
+.dl-dim{color:var(--fg3)}
+
+.step{border:1px solid var(--line);border-radius:10px;margin-bottom:11px;background:var(--bg2);overflow:hidden}
+.step .sh{display:flex;align-items:flex-start;gap:11px;padding:11px 13px}
+.step .num{flex:none;width:24px;height:24px;border-radius:7px;background:var(--bg3);border:1px solid var(--line2);
+  display:grid;place-items:center;font-size:12px;font-weight:700;color:var(--accent);cursor:pointer;user-select:none}
+.step.ok .num{background:var(--accent2);color:#06260f;border-color:var(--accent2)}
+.step .sbody{flex:1;min-width:0}
+.step .stitle{font-weight:600;font-size:14px}
+.step.ok .stitle{color:var(--fg2);text-decoration:line-through}
+.step .snote{color:var(--fg2);font-size:13px;margin-top:4px}
+.seg{display:inline-flex;border:1px solid var(--line2);border-radius:9px;overflow:hidden;margin:0 0 10px;max-width:100%}
+.seg button{background:var(--bg2);color:var(--fg2);border:0;padding:7px 13px;font:inherit;font-size:13px;cursor:pointer;white-space:nowrap}
+.seg button+button{border-left:1px solid var(--line2)}
+.seg button:hover{color:var(--fg)}
+.seg button.on{background:color-mix(in srgb,var(--accent) 22%,var(--bg2));color:var(--fg);font-weight:600}
+.seg button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.cmd{position:relative;margin-top:9px;background:var(--bg);border:1px solid var(--line2);border-radius:8px}
+.cmd pre{margin:0;padding:10px 40px 10px 12px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;
+  color:var(--accent2);white-space:pre-wrap;overflow-wrap:anywhere}   /* wrap long paths; copy uses textContent, unchanged */
+.cmd .copy{position:absolute;top:6px;right:6px;background:var(--bg3);border:1px solid var(--line2);
+  color:var(--fg2);border-radius:6px;font-size:11px;padding:3px 7px;cursor:pointer}
+.cmd .copy:hover{color:var(--fg);border-color:var(--accent)}
+.cmd .copy.done{color:var(--accent2);border-color:var(--accent2)}
+
+details.reveal{border:1px solid var(--line);border-radius:10px;background:var(--bg2);margin-bottom:11px}
+details.reveal>summary{cursor:pointer;padding:11px 13px;font-weight:600;font-size:13.5px;color:var(--fg);list-style:none;
+  display:flex;align-items:center;gap:8px}
+details.reveal>summary::-webkit-details-marker{display:none}
+details.reveal>summary::before{content:"▸";color:var(--fg3)}
+details.reveal[open]>summary::before{content:"▾"}
+details.reveal .inner{padding:0 14px 14px;color:var(--fg);font-size:14px}
+details.hint>summary{color:var(--warn)}
+details.sol>summary{color:var(--danger)}
+details.reveal .inner p{margin:9px 0}
+details.reveal .inner code{background:var(--bg3);padding:1px 5px;border-radius:5px;font-size:12.5px}
+.hintlist{counter-reset:h}
+.hintlist details{margin-bottom:7px}
+
+aside.side{position:sticky;top:78px;align-self:start;display:flex;flex-direction:column;gap:16px}
+.panel{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:13px}
+.panel h3{margin:0 0 9px;font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--fg2)}
+.kv{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;padding:3px 0;color:var(--fg2)}
+.kv b{color:var(--fg);font-weight:600}
+.files{font-family:var(--mono);font-size:11.5px;color:var(--fg2);max-height:360px;overflow:auto}
+.files div{line-height:1.4;overflow-wrap:anywhere}   /* full names, never clipped: folder once, then its files */
+.files .fdir{color:var(--fg3);margin-top:8px}
+.files .fdir:first-child{margin-top:0}
+.files .fname{color:var(--fg);padding:1px 0 1px 12px}
+.files .fmore{color:var(--fg3);font-style:italic;margin-top:6px}
+.kv .pathv{font-family:var(--mono);font-size:11px;overflow-wrap:anywhere;text-align:right;min-width:0}
+.reflist a{display:block;font-size:12.5px;padding:3px 0}
+.tag{display:inline-block;background:var(--bg3);border:1px solid var(--line);border-radius:6px;
+  padding:1px 7px;margin:2px 3px 0 0;font-size:11px;color:var(--fg2)}
+.progwrap{height:7px;border-radius:4px;background:var(--bg3);overflow:hidden;margin:7px 0}
+.progwrap>i{display:block;height:100%;background:var(--accent2);width:0;transition:width .2s}
+.resetbtn{font-size:11.5px;color:var(--fg3);background:none;border:none;cursor:pointer;padding:0;text-decoration:underline}
+.callout{background:color-mix(in srgb,var(--warn) 12%,var(--bg2));border:1px solid color-mix(in srgb,var(--warn) 40%,var(--line));
+  border-radius:9px;padding:10px 13px;font-size:13px;color:var(--fg);margin:12px 0}
+.callout b{color:var(--warn)}
+.cta{background:color-mix(in srgb,var(--accent) 9%,var(--bg2));border:1px solid color-mix(in srgb,var(--accent) 35%,var(--line));
+  border-radius:var(--radius);padding:14px 16px;margin:14px 0 4px;display:grid;grid-template-columns:1.1fr 1fr;gap:14px;align-items:center}
+.cta-text{font-size:13.5px;color:var(--fg)} .cta-text code{background:var(--bg3);padding:1px 5px;border-radius:5px;font-size:12px}
+.cta .cmd{margin-top:0;min-width:0}
+@media(max-width:860px){.cta{grid-template-columns:1fr}}
+footer{border-top:1px solid var(--line);color:var(--fg3);font-size:12px;padding:18px 0 40px}
+.empty{color:var(--fg3);text-align:center;padding:60px 0}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap topbar">
+    <div class="brand"><span class="dot"></span> ICS / OT / SCADA PCAP Challenges
+      <small id="corpusline"></small></div>
+    <div class="grow"></div>
+    <div class="search"><input id="q" type="search" placeholder="Search challenges, protocols, tags…" autocomplete="off"></div>
+    <button class="btn" id="theme">◐ Theme</button>
+  </div>
+  <div class="wrap">
+    <div class="filters" id="cats"></div>
+    <div class="filters" id="diffs"></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="listing">
+    <div class="cta" id="cta">
+      <div class="cta-text"><b>Built around Pcapper.</b> Every challenge is designed to be worked with
+        <a href="https://github.com/SackOfHacks/pcapper" target="_blank" rel="noopener">Pcapper</a> — a modular PCAP forensics tool with
+        dedicated ICS/OT analyzers (Modbus, DNP3, IEC-104, S7, EtherNet/IP &amp; CIP, IEC 61850 MMS/GOOSE/SV, BACnet, OPC UA, PROFINET,
+        TriStation…). Every challenge has <b>two complete walkthroughs</b>: the Pcapper track (default) and a <code>tshark</code> / Wireshark track — switch with the toggle on each challenge.
+        Openly licensed captures are mirrored in this repo's <a href="https://github.com/SackOfHacks/ICS-PCAP-Challenges/releases/tag/data-v1" target="_blank" rel="noopener"><code>data-v1</code> release</a>,
+        and every challenge shows the command and download links for its own captures (all datasets: <a href="https://github.com/SackOfHacks/ICS-PCAP-Challenges/blob/main/DATASETS.md" target="_blank" rel="noopener">DATASETS.md</a>); <code>python3 scripts/fetch.py --starter</code> gets you going (mirror first, original sources for the rest).</div>
+      <div class="cmd"><button class="copy">copy</button><pre>git clone https://github.com/SackOfHacks/pcapper &amp;&amp; (cd pcapper &amp;&amp; pip install .)
+git clone https://github.com/SackOfHacks/ICS-PCAP-Challenges &amp;&amp; cd ICS-PCAP-Challenges
+python3 scripts/fetch.py --starter &amp;&amp; python3 scripts/build.py
+pcapper data/modbus-labs-solymx/lab01_baseline.pcap --overview</pre></div>
+    </div>
+    <div class="stats" id="stats"></div>
+    <div class="grid" id="grid"></div>
+    <div class="empty" id="empty" style="display:none">No challenges match your filter.</div>
+  </div>
+  <div id="detail"></div>
+</main>
+
+<footer class="wrap">
+  <div>ICS / OT / SCADA practice range — static files, no server. Analysis is driven by
+  <a href="https://github.com/SackOfHacks/pcapper" target="_blank" rel="noopener">Pcapper</a>; run commands from the repo root.
+  Captures are fetched from their original sources (see ATTRIBUTION.md). Progress is saved in this browser only.</div>
+</footer>
+
+<script src="datasets.js"></script>
+<script src="challenges.js"></script>
+<script>
+(function(){
+  "use strict";
+  const C = (window.CHALLENGES||[]).slice();
+  const META = window.CORPUS_META||{};
+  const LS = "pcap-range-progress-v1";
+  const $ = s=>document.querySelector(s);
+  const el=(t,c,txt)=>{const e=document.createElement(t); if(c)e.className=c; if(txt!=null)e.textContent=txt; return e;};
+  const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+  // links built from catalog data: only http(s)/mailto URLs become links (no javascript:, data: ...)
+  const safeHref=u=>{u=String(u==null?"":u).trim(); return /^(https?:\/\/|mailto:)[^\s<>"']+$/i.test(u)?u:"";};
+  function fmtBytes(n){ if(!n) return "—"; const u=["B","KB","MB","GB","TB"]; let i=0,v=n;   // decimal units, like the pages and GitHub
+    while(v>=1000&&i<u.length-1){v/=1000;i++;} return v.toFixed(v<10&&i>0?1:0)+" "+u[i]; }
+
+  // progress store: { [challengeId]: { steps:{i:true}, done:bool } }
+  let prog={}; try{prog=JSON.parse(localStorage.getItem(LS))||{};}catch(e){}
+  const save=()=>{try{localStorage.setItem(LS,JSON.stringify(prog));}catch(e){}};
+  const cp=id=>prog[id]||(prog[id]={steps:{}});
+  // two complete walkthroughs per challenge: Pcapper (default) and tshark / Wireshark
+  const METHODS={pcapper:"Pcapper",tshark:"tshark / Wireshark"};
+  let method="pcapper"; try{const m=localStorage.getItem("ics-method"); if(METHODS[m])method=m;}catch(e){}
+  const trackOf=ch=>(ch.tracks&&ch.tracks[method])||ch.steps||[];
+  const stepCount=ch=>trackOf(ch).length;
+  const doneSteps=id=>Object.keys((prog[id]||{}).steps||{}).filter(k=>k.startsWith(method+":")&&prog[id].steps[k]).length;
+  const pct=ch=>{const t=stepCount(ch); return t?Math.round(100*doneSteps(ch.id)/t):0;};
+
+  // ---- theme
+  const theme=$("#theme");
+  const applyTheme=t=>{document.documentElement.setAttribute("data-theme",t); try{localStorage.setItem("pcap-theme",t);}catch(e){}};
+  try{const t=localStorage.getItem("pcap-theme"); if(t)applyTheme(t);}catch(e){}
+  theme.onclick=()=>applyTheme(document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark");
+
+  // ---- filters
+  let activeCat="All", activeDiff="All", query="", shown=0;
+  const PAGE=60;
+  const cats=["All",...[...new Set(C.map(c=>c.category))]];
+  const diffs=["All","Easy","Medium","Hard","Expert"];
+  function buildChips(){
+    const cc=$("#cats"); cc.innerHTML="";
+    cats.forEach(cat=>{const n=cat==="All"?C.length:C.filter(c=>c.category===cat).length;
+      const ch=el("div","chip"+(cat===activeCat?" active":"")); ch.innerHTML=esc(cat)+' <span class="n">'+n+'</span>';
+      ch.onclick=()=>{activeCat=cat;shown=PAGE;render();buildChips();}; cc.appendChild(ch);});
+    const dd=$("#diffs"); dd.innerHTML="";
+    diffs.forEach(d=>{const ch=el("div","chip"+(d===activeDiff?" active":"")); ch.textContent=d;
+      ch.onclick=()=>{activeDiff=d;shown=PAGE;render();buildChips();}; dd.appendChild(ch);});
+  }
+  $("#q").oninput=e=>{query=e.target.value.toLowerCase().trim();shown=PAGE;render();};
+
+  function matches(c){
+    if(activeCat!=="All"&&c.category!==activeCat) return false;
+    if(activeDiff!=="All"&&c.difficulty!==activeDiff) return false;
+    if(query){const hay=(c.title+" "+c.category+" "+(c.hook||"")+" "+(c.tags||[]).join(" ")+" "+(c.scenario||"")).toLowerCase();
+      if(!hay.includes(query)) return false;}
+    return true;
+  }
+
+  function render(){
+    const grid=$("#grid"); grid.innerHTML="";
+    const list=C.filter(matches);
+    if(!shown) shown=PAGE;
+    $("#empty").style.display=list.length?"none":"block";
+    list.slice(0,shown).forEach(c=>{
+      const card=el("div","card"+(prog[c.id]&&prog[c.id].done?" done":"")+(c.present===false?" missing":""));
+      const p=pct(c);
+      card.innerHTML=
+        '<div class="cat">'+esc(c.category)+'</div>'+
+        '<h3>'+esc(c.title)+'</h3>'+
+        '<p class="hook">'+esc(c.hook||"")+'</p>'+
+        '<div class="meta">'+
+          '<span class="pill diff '+c.difficulty+'">'+c.difficulty+'</span>'+
+          '<span class="pill">'+fmtBytes(c.bytes)+'</span>'+
+          (c.file_count?'<span class="pill">'+c.file_count+' file'+(c.file_count>1?"s":"")+'</span>':'')+
+          (c.packets?'<span class="pill">'+c.packets+'</span>':'')+
+        '</div>'+
+        '<div class="prog"><i style="width:'+p+'%"></i></div>';
+      card.onclick=()=>{location.hash="#"+c.id;};
+      grid.appendChild(card);
+    });
+    if(list.length>shown){
+      const more=el("div","card");
+      more.style.cssText="align-items:center;justify-content:center;text-align:center;border-style:dashed";
+      more.innerHTML='<h3 style="margin:0">Load more ↓</h3><p class="hook">showing '+shown+' of '+list.length+'</p>';
+      more.onclick=()=>{shown+=PAGE*4;render();};
+      grid.appendChild(more);
+    }
+    $("#stats").innerHTML=
+      '<span><b>'+C.length+'</b> challenges</span>'+
+      '<span><b>'+[...new Set(C.flatMap(c=>c.datasets||[]))].length+'</b> datasets</span>'+
+      '<span><b>'+fmtBytes(META.total_bytes)+'</b> of captures (fetch with <code>scripts/fetch.py</code>)</span>'+
+      '<span>completed <b>'+C.filter(c=>prog[c.id]&&prog[c.id].done).length+'</b></span>';
+  }
+
+  // safe inline markdown: escape FIRST, then `code`, **bold**, _italic_
+  function mdInline(p){
+    let t=esc(p);
+    t=t.replace(/`([^`]+)`/g,'<code>$1</code>');
+    t=t.replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>');
+    t=t.replace(/(^|[\s(])_([^_]+?)_(?=$|[\s.,;:)])/g,'$1<i>$2</i>');
+    return t;
+  }
+  // ---- detail
+  function cmdBlock(cmd){
+    if(!cmd) return "";
+    return '<div class="cmd"><button class="copy">copy</button><pre>'+esc(cmd)+'</pre></div>';
+  }
+  const DSETS=window.DATASETS||{};
+  const GH="https://github.com/SackOfHacks/ICS-PCAP-Challenges";
+  function shortUrl(u){ u=String(u||"").replace(/^https?:\/\/(www\.)?/,"").replace(/\/$/,""); return u.length>60?u.slice(0,57)+"…":u; }
+  function dataBlock(c){            // where this challenge's captures are: fetch command, release parts, original source
+    const slugs=(c.fetch&&c.fetch.length)?c.fetch:[c.dataset].filter(Boolean);
+    if(!slugs.length) return "";
+    const items=slugs.map(s=>{
+      const d=DSETS[s]||{title:s}; const m=d.mirror;
+      const where=m
+        ? 'Mirror: <a href="'+GH+'/releases/tag/'+encodeURIComponent(m.tag)+'" target="_blank" rel="noopener">'+esc(m.tag)+' release</a>, '+
+          m.parts.length+' part'+(m.parts.length>1?'s':'')+' ('+fmtBytes(m.bytes_packed)+' compressed): '+
+          m.parts.map(p=>'<a href="'+GH+'/releases/download/'+encodeURIComponent(m.tag)+'/'+encodeURIComponent(p.name)+'">'+esc(p.name.split(".tar.").pop())+'</a> <span class="dl-dim">('+fmtBytes(p.size)+')</span>').join(" · ")
+        : (d.pending?'Mirror being uploaded; until then <code>fetch.py</code> downloads it from the original source.'
+                    :'Not mirrored (no licence that allows re-hosting): <code>fetch.py</code> downloads it from the original source.');
+      const su=safeHref(d.source_url);
+      const src=su?'<div>Original source: <a href="'+esc(su)+'" target="_blank" rel="noopener">'+esc(shortUrl(su))+' ↗</a></div>':'';
+      return '<li><a href="'+GH+'/blob/main/DATASETS.md#'+encodeURIComponent(s)+'" target="_blank" rel="noopener"><b>'+esc(d.title||s)+'</b></a> <code>'+esc(s)+'</code>'+
+        (d.approx_bytes?' <span class="dl-dim">~'+fmtBytes(d.approx_bytes)+' once fetched</span>':'')+
+        '<div>'+where+'</div>'+src+'</li>';
+    }).join("");
+    return '<section class="block"><h2>Get the captures</h2>'+
+      '<div class="dlnote">The commands below read the captures from <code>data/</code>. Fetch '+
+        (slugs.length>1?'its '+slugs.length+' datasets':'the dataset')+' first, from the repo root:</div>'+
+      cmdBlock("python3 scripts/fetch.py "+slugs.join(" "))+
+      '<ul class="dl">'+items+'</ul></section>';
+  }
+  function renderDetail(c){
+    const d=$("#detail");
+    const refs=(c.references||[]).map(r=>{const h=safeHref(r.url); return h?'<a href="'+esc(h)+'" target="_blank" rel="noopener">'+esc(r.label)+' ↗</a>':'<span>'+esc(r.label)+'</span>';}).join("");
+    const shownFiles=(c.files||[]).slice().sort(), moreFiles=(c.file_count||0)-shownFiles.length, fgroups=[];
+    shownFiles.forEach(f=>{const i=f.lastIndexOf("/"), dir=f.slice(0,i+1), g=fgroups[fgroups.length-1];
+      if(g&&g.dir===dir) g.items.push(f); else fgroups.push({dir:dir,items:[f]});});
+    const files=(fgroups.map(g=>'<div class="fdir">'+esc(g.dir).replace(/\//g,"/<wbr>")+'</div>'+
+        g.items.map(f=>'<div class="fname" title="'+esc(f)+'">'+esc(f.slice(g.dir.length))+'</div>').join("")).join("")+
+      (moreFiles>0?'<div class="fmore">… and '+moreFiles+' more'+' — <a href="'+GH+'/blob/main/challenges/'+encodeURIComponent(c.id)+'.md" target="_blank" rel="noopener">full list on the challenge page</a>'+'</div>':''))||'<div style="color:var(--fg3)">—</div>';
+    const tags=(c.tags||[]).map(t=>'<span class="tag">'+esc(t)+'</span>').join("");
+    const obj=(c.objectives||[]).map(o=>'<li>'+esc(o)+'</li>').join("");
+    const scen=(c.scenario||"").split(/\n\n+/).map(p=>'<p>'+mdInline(p)+'</p>').join("");   // escape-first inline markdown
+    const steps=trackOf(c).map((s,i)=>{
+      const ok=(prog[c.id]&&prog[c.id].steps[method+":"+i])?" ok":"";
+      return '<div class="step'+ok+'" data-i="'+i+'">'+
+        '<div class="sh"><div class="num" title="mark done">'+(i+1)+'</div>'+
+        '<div class="sbody"><div class="stitle">'+esc(s.title)+'</div>'+
+        (s.note?'<div class="snote">'+esc(s.note)+'</div>':'')+
+        cmdBlock(s.cmd)+'</div></div></div>';
+    }).join("");
+    const hints=(c.hints||[]).map((h,i)=>'<details class="reveal hint"><summary>Hint '+(i+1)+'</summary><div class="inner"><p>'+esc(h)+'</p></div></details>').join("");
+    const sol=c.solution?('<details class="reveal sol"><summary>Reveal walkthrough / answer</summary><div class="inner">'+
+        c.solution.split(/\n\n+/).map(p=>'<p>'+mdInline(p)+'</p>').join("")+
+        '</div></details>'):"";
+    const warn=c.warning?'<div class="callout"><b>⚠ Safety:</b> '+esc(c.warning)+'</div>':"";
+
+    d.innerHTML=
+     '<div class="back" id="back">← all challenges</div>'+
+     '<div class="dhead"><div class="cat">'+esc(c.category)+'</div>'+
+       '<h1>'+esc(c.title)+'</h1>'+
+       '<div class="dmeta"><span class="pill diff '+c.difficulty+'">'+c.difficulty+'</span>'+
+         '<span class="pill">'+fmtBytes(c.bytes)+'</span>'+
+         (c.file_count?'<span class="pill">'+c.file_count+' file'+(c.file_count>1?"s":"")+'</span>':'')+
+         (c.packets?'<span class="pill">'+esc(c.packets)+'</span>':'')+
+         (c.present===false?'<span class="pill" style="color:var(--warn);border-color:var(--warn)">data not downloaded yet</span>':'')+
+       '</div></div>'+
+     '<div class="layout"><div class="main">'+
+       warn+
+       '<section class="block"><h2>Scenario</h2><div class="scenario">'+scen+'</div></section>'+
+       (obj?'<section class="block"><h2>Your objectives</h2><ul class="obj">'+obj+'</ul></section>':'')+
+       dataBlock(c)+
+       '<section class="block"><h2>Work it step by step</h2>'+
+         (c.tracks?'<div class="seg" role="group" aria-label="Analysis method">'+Object.keys(METHODS).map(m=>
+           '<button type="button" data-m="'+m+'" aria-pressed="'+(m===method)+'"'+(m===method?' class="on"':'')+'>'+METHODS[m]+'</button>').join("")+'</div>':'')+
+         '<div style="color:var(--fg2);font-size:12.5px;margin-bottom:10px">'+(method==="pcapper"
+           ?'Pcapper runs the OT protocol analyzers for you. Prefer to work by hand? Switch to tshark / Wireshark — it is a complete walkthrough too.'
+           :'The by-hand route with tshark and Wireshark. Switch to Pcapper to let its OT analyzers do the heavy lifting.')+
+           ' Click a step number to tick it off; run commands from the repo root.</div>'+
+         steps+'</section>'+
+       (hints?'<section class="block"><h2>Stuck? Progressive hints</h2><div class="hintlist">'+hints+'</div></section>':'')+
+       (sol?'<section class="block"><h2>Solution</h2>'+sol+'</section>':'')+
+     '</div>'+
+     '<aside class="side">'+
+       '<div class="panel"><h3>Progress</h3><div class="progwrap"><i id="pbar"></i></div>'+
+         '<div class="kv"><span id="pcttxt"></span><button class="resetbtn" id="resetp">reset</button></div>'+
+         '<label class="kv" style="cursor:pointer"><span>Mark challenge complete</span>'+
+         '<input type="checkbox" id="donechk"></label></div>'+
+       '<div class="panel"><h3>Dataset</h3>'+
+         '<div class="kv"><span>Category</span><b>'+esc(c.category)+'</b></div>'+
+         '<div class="kv"><span>Difficulty</span><b>'+c.difficulty+'</b></div>'+
+         '<div class="kv"><span>Size on disk</span><b>'+fmtBytes(c.bytes)+'</b></div>'+
+         '<div class="kv"><span>Files</span><b>'+(c.file_count||0)+'</b></div>'+
+         (c.path?'<div class="kv"><span>Path</span><b class="pathv">'+esc(c.path).replace(/\//g,"/<wbr>")+'</b></div>':'')+
+       '</div>'+
+       '<div class="panel"><h3>Capture files</h3><div class="files">'+files+'</div></div>'+
+       (tags?'<div class="panel"><h3>Tags</h3>'+tags+'</div>':'')+
+       (c.credit?'<div class="panel"><h3>Source &amp; license</h3>'+
+         '<div style="font-size:12px;color:var(--fg2);line-height:1.5">'+esc(c.credit)+'</div>'+
+         (c.license?'<div class="kv" style="margin-top:7px"><span>License</span><b>'+esc(c.license)+'</b></div>':'')+
+         '<div style="font-size:11px;color:var(--fg3);margin-top:7px">Cite the dataset authors if you use these captures (see ATTRIBUTION.md).</div></div>':'')+
+       (refs?'<div class="panel"><h3>References</h3><div class="reflist">'+refs+'</div></div>':'')+
+     '</aside></div>';
+
+    // wire the method switch + steps
+    d.querySelectorAll(".seg button").forEach(b=>{
+      b.onclick=()=>{method=b.dataset.m; try{localStorage.setItem("ics-method",method);}catch(e){}
+        const y=window.scrollY; renderDetail(c); window.scrollTo(0,y);};
+    });
+    d.querySelectorAll(".step .num").forEach(n=>{
+      n.onclick=()=>{const st=n.closest(".step"); const i=method+":"+st.dataset.i; const s=cp(c.id).steps;
+        s[i]=!s[i]; if(!s[i])delete s[i]; save(); st.classList.toggle("ok",!!s[i]); updProg();};
+    });
+    d.querySelectorAll(".cmd .copy").forEach(b=>{
+      b.onclick=()=>{const t=b.parentElement.querySelector("pre").textContent;
+        navigator.clipboard&&navigator.clipboard.writeText(t); b.textContent="copied";b.classList.add("done");
+        setTimeout(()=>{b.textContent="copy";b.classList.remove("done");},1200);};
+    });
+    const chk=$("#donechk"); chk.checked=!!(prog[c.id]&&prog[c.id].done);
+    chk.onchange=()=>{cp(c.id).done=chk.checked;save();updProg();};
+    $("#resetp").onclick=()=>{prog[c.id]={steps:{}};save();renderDetail(c);};
+    $("#back").onclick=()=>{location.hash="";};
+    function updProg(){const p=pct(c); $("#pbar").style.width=p+"%";
+      $("#pcttxt").textContent=doneSteps(c.id)+" / "+stepCount(c)+" steps ("+p+"%)";}
+    updProg();
+    window.scrollTo(0,0);
+  }
+
+  function route(){
+    const id=location.hash.replace(/^#/,"");
+    const c=C.find(x=>x.id===id);
+    if(c){document.body.classList.add("detail");renderDetail(c);}
+    else{document.body.classList.remove("detail");render();}
+  }
+  window.addEventListener("hashchange",route);
+
+  // init
+  $("#corpusline").textContent=META.subtitle||"";
+  document.querySelectorAll('#cta .copy').forEach(b=>{b.onclick=()=>{const t=b.parentElement.querySelector('pre').textContent;
+    navigator.clipboard&&navigator.clipboard.writeText(t);b.textContent='copied';setTimeout(()=>b.textContent='copy',1200);};});
+  buildChips(); route();
+})();
+</script>
+</body>
+</html>

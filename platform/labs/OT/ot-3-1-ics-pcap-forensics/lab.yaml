@@ -1,0 +1,165 @@
+title: "ICS/OT PCAP Forensics - TRITON, Industroyer2, and GOOSE"
+category: ot
+difficulty: advanced
+estimated_time: 120
+prerequisites: []
+# By completion students will be able to:
+learning_outcomes:
+  - Inventory an OT capture and identify the industrial protocols in use
+  - Reconstruct a TriStation engineering session from TRITON/TRISIS traffic
+  - Reconstruct IEC-104 control commands from the Industroyer2 captures
+  - Compare normal and injected GOOSE traffic in a substation capture
+  - Write detection guidance for each observed technique
+mapped_skills:
+  - ot_ics
+  - incident_forensics
+assessment_criteria:
+  - Submit the correct flag.
+  - Submit a short analyst finding (what happened, evidence, confidence, next step), not only the flag.
+  - Record the tshark filters and counts used to support each finding.
+analyst_finding_required: true
+mitre_attack:
+  - tactic: Execution
+    technique: T0843
+    technique_name: Program Download
+    detection: Alert on any TriStation or IEC-104 engineering session outside a planned maintenance window, especially from a non-engineering host.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.3"
+reviewed_at: "2026-11-20"
+review_status: "guided challenge range; live walkthrough pending"
+description: "Analyse real, licensed ICS/OT packet captures from a safety instrumented system and a substation. Work 17 guided challenges covering TRITON/TRISIS, Industroyer2, GOOSE false-data injection, and a protocol library, entirely offline."
+visibility: public
+flag: "OCR{192.168.1.88_1502_896}"
+
+tools:
+  - tshark
+  - ssh
+  - rangebox
+  - browser
+  - terminal
+
+scenario: |
+  A utility's incident-response team recovered packet captures from a safety
+  instrumented system and a substation. The captures are real public research
+  datasets, packaged offline for this exercise.
+
+  An analyst workstation holds the evidence and the analysis tools. A second
+  host serves the guided challenge range: 17 challenges with objectives,
+  hints, exact tshark filters, and self-check walkthroughs.
+
+  Your job is to reconstruct what happened. Start with the TRITON/TRISIS
+  safety-system traffic, then the Industroyer2 IEC-104 commands, then the
+  GOOSE false-data injection. Use the protocol library to fill gaps in your
+  understanding. Record the filters and counts behind every finding.
+
+  The final flag is built from the TRITON capture:
+  OCR{<engineering-workstation-ip>_<TriStation-port>_<frames-on-that-port>}
+
+troubleshooting: "If the guide is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a capture is missing, list /home/analyst/data and check the dataset's PROVENANCE.md. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Engineering protocols such as TriStation, IEC-104, and GOOSE have no authentication. Segment the control network, restrict engineering access to planned windows, and alert on command traffic from unexpected hosts."
+difficulty_evidence: "Guided challenge range with computed evidence; live lab run pending."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-20"
+
+hostnames:
+  - ip_offset: "95"
+    hostname: "analyst.lab"
+    description: "Analyst workstation with captures and tshark (SSH 22)"
+  - ip_offset: "96"
+    hostname: "guide.lab"
+    description: "Guided challenge range (HTTP 80)"
+
+topology:
+  nodes:
+    - id: "analyst"
+      label: "Analyst workstation"
+      type: "server"
+      ip_offset: "95"
+      ports: [22]
+      services: ["ssh", "tshark"]
+      x: 1
+      y: 1
+    - id: "guide"
+      label: "Guided challenge range"
+      type: "server"
+      ip_offset: "96"
+      ports: [80]
+      services: ["http"]
+      x: 2
+      y: 1
+
+credentials:
+  - username: "analyst"
+    password: "P4ck3t_4n4lys1s"  # security-delta: allow credential-like assignment - lab fixture
+    role: "analyst"
+    description: "Analyst workstation SSH access"
+
+hints:
+  - text: |
+      Open the guide from the RangeBox browser, then connect to the analyst
+      workstation:
+
+      ssh analyst@analyst.lab
+      cd /home/analyst
+      ls -lh data/*/
+
+      Work the guide's tshark / Wireshark track. The Pcapper track is not
+      installed in this lab.
+    unlock_after_minutes: 5
+  - text: |
+      Start with protocol inventory before chasing the malware:
+
+      tshark -r data/nozomi-triton-tristation/malware_exec.pcap -q -z io,phs
+      tshark -r data/nozomi-triton-tristation/malware_exec.pcap -q -z conv,udp
+
+      One conversation dominates. Identify the engineering workstation, the
+      controller, and the TriStation port.
+    unlock_after_minutes: 15
+  - text: |
+      The flag uses the TRITON capture only:
+
+      tshark -r data/nozomi-triton-tristation/malware_exec.pcap \
+        -Y 'udp.port==<port>' | wc -l
+
+      Combine the workstation IP, the TriStation port, and that frame count.
+    unlock_after_minutes: 30
+
+test:
+  steps:
+  - name: "Analyst workstation is reachable over SSH"
+    command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'echo connected' 2>&1"
+    expect: "connected"
+    timeout: 20
+
+  - name: "Guided challenge range is reachable"
+    command: "curl -fsS http://{target.guide}/ | grep -o 'ICS' | head -1"
+    expect: "ICS"
+    timeout: 20
+
+  - name: "TRITON evidence is present"
+    command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'test -f /home/analyst/data/nozomi-triton-tristation/malware_exec.pcap && echo evidence_found' 2>&1"
+    expect: "evidence_found"
+    timeout: 20
+
+  - name: "Tshark is installed"
+    command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'tshark -v | head -1' 2>&1"
+    expect: "TShark"
+    timeout: 20
+
+  - name: "TRITON engineering workstation is identifiable"
+    command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} \"tshark -r /home/analyst/data/nozomi-triton-tristation/malware_exec.pcap -Y 'udp.port==1502' -T fields -e ip.src 2>/dev/null | sort -u | head -1\" 2>&1"
+    expect: "192.168.1.88"
+    timeout: 60
+
+  - name: "TRITON frames on TriStation port are countable"
+    command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} \"tshark -r /home/analyst/data/nozomi-triton-tristation/malware_exec.pcap -Y 'udp.port==1502' 2>/dev/null | wc -l\" 2>&1"
+    expect: "896"
+    timeout: 60
+
+  - name: "Assembled flag"
+    command: "echo 'OCR{192.168.1.88_1502_896}'"
+    expect: "OCR{192.168.1.88_1502_896}"
+

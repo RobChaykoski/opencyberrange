@@ -1,0 +1,114 @@
+# CISA ICSNPP — Zeek ICS parser test traces
+
+- **Source:** https://github.com/cisagov/ICSNPP
+- **Authors / owner:** CISA and Idaho National Laboratory (ICSNPP project)
+- **Year:** None
+- **License / terms:** BSD-3-Clause
+- **Retrieved:** 2026-11-18 (for an offline practice range)
+- **Captures here:** 99 files, 0.01 GB (files ≥2 GB split into <2 GiB `.partNNN.pcap` parts)
+
+## Notes
+
+The protocol test captures shipped with CISA's ICSNPP Zeek parsers — BACnet, BSAP (IP/serial), EtherNet/IP, DNP3, Modbus, EtherCAT, OPC UA binary, Genisys, S7comm/S7comm-plus, HART-IP, C37.118 synchrophasor, PROFINET IO-CM, Omron FINS, ROC Plus, ANSI C12.22.
+
+## Files
+
+- `icsnpp-bacnet/bacnet_error_reject_abort.pcap` — 0.0 MB
+- `icsnpp-bacnet/bacnet_example.pcap` — 0.3 MB
+- `icsnpp-bacnet/bacnet_example_port_change.pcap` — 0.3 MB
+- `icsnpp-bacnet/bacnet_malformed_service_tags.pcap` — 0.0 MB
+- `icsnpp-bacnet/bacnet_segmented_data.pcap` — 0.0 MB
+- `icsnpp-bacnet/bacnet_services.pcap` — 0.6 MB
+- `icsnpp-bsap-ip/bsap-ip_example.pcap` — 0.6 MB
+- `icsnpp-bsap-serial/bsap-serial_example.pcapng` — 0.3 MB
+- `icsnpp-bsap/bsap-ip_example.pcap` — 0.6 MB
+- `icsnpp-bsap/bsap-serial_example.pcapng` — 0.3 MB
+- `icsnpp-c1222/c1222_custom_port_tcp.pcap` — 0.0 MB
+- `icsnpp-c1222/c1222_custom_port_udp.pcap` — 0.0 MB
+- `icsnpp-c1222/c1222_ident_service_tcp.pcap` — 0.0 MB
+- `icsnpp-c1222/c1222_logon_service_tcp.pcap` — 0.0 MB
+- `icsnpp-c1222/c1222_over_ipv6.pcap` — 0.0 MB
+- `icsnpp-c1222/c1222_reg_service_tcp.pcap` — 0.0 MB
+- `icsnpp-c1222/c1222_resolve_service_tcp.pcap` — 0.0 MB
+- `icsnpp-c1222/c1222_rw_service_tcp.pcap` — 0.0 MB
+- `icsnpp-c1222/c1222_security_service_tcp.pcap` — 0.0 MB
+- `icsnpp-c1222/c1222_service_error_tcp.pcap` — 0.0 MB
+- `icsnpp-c1222/c1222_std_example8.pcap` — 0.0 MB
+- `icsnpp-c1222/c1222_trace_service_tcp.pcap` — 0.0 MB
+- `icsnpp-c1222/c1222_wait_service_tcp.pcap` — 0.0 MB
+- `icsnpp-c1222/c1222overIPv4.cap` — 0.0 MB
+- `icsnpp-dnp3/dnp3_example.pcap` — 0.1 MB
+- `icsnpp-enip/enip_cip_example.pcap` — 0.1 MB
+- `icsnpp-enip/multiple_service_packet_cip.pcapng` — 0.0 MB
+- `icsnpp-enip/set_attribute_single_service_cip.pcapng` — 0.0 MB
+- `icsnpp-ethercat/ethercat_example.pcap` — 4.5 MB
+- `icsnpp-genisys/genisys.pcap` — 0.1 MB
+- `icsnpp-genisys/genisys_otherport.pcap` — 0.1 MB
+- `icsnpp-hart-ip/hart-ip.pcap` — 0.0 MB
+- `icsnpp-hart-ip/hart-ip_all_messageIDs.pcapng` — 0.0 MB
+- `icsnpp-hart-ip/hart-ip_all_types_and_commands_sent.pcapng` — 0.0 MB
+- `icsnpp-hart-ip/hart-ip_publish_and_keepAlive.pcapng` — 0.5 MB
+- `icsnpp-modbus/modbus_example.pcap` — 0.0 MB
+- `icsnpp-omron-fins/omron.pcap` — 0.0 MB
+- `icsnpp-omron-fins/omron_fins_tcp_commands_responses.pcap` — 0.0 MB
+- `icsnpp-omron-fins/omron_test.pcap` — 0.0 MB
+- `icsnpp-opcua-binary/opcua_with-gap.pcap` — 0.1 MB
+- `icsnpp-opcua-binary/opcua_with-gap_with-handshake.pcap` — 0.1 MB
+- `icsnpp-opcua-binary/opcua_with_nested_diagInfo.pcap` — 0.1 MB
+- `icsnpp-opcua-binary/open62541_browse_has_server_idx.pcap` — 0.1 MB
+- `icsnpp-opcua-binary/open62541_browse_next.pcap` — 0.1 MB
+- `icsnpp-opcua-binary/open62541_browse_request_with_results.pcap` — 0.0 MB
+- `icsnpp-opcua-binary/open62541_browse_with_diagnostic_info.pcap` — 0.1 MB
+- `icsnpp-opcua-binary/open62541_client-server-getEndpoints.pcap` — 0.0 MB
+- `icsnpp-opcua-binary/open62541_client-server_encrypted.pcap` — 0.0 MB
+- `icsnpp-opcua-binary/open62541_client-server_mainloop-4-InnerDiagInfo.pcap` — 0.0 MB
+- `icsnpp-opcua-binary/open62541_client-server_mainloop-ActivateSession-diagInfo.pcap` — 0.0 MB
+- `icsnpp-opcua-binary/open62541_client-server_mainloop-hasInnerDiagInfo.pcap` — 0.0 MB
+- `icsnpp-opcua-binary/open62541_client-server_mainloop-hasInnerDiagInfohasAddlInfo.pcap` — 0.0 MB
+- `icsnpp-opcua-binary/open62541_client-server_mainloop-hasInnerStatusCode.pcap` — 0.0 MB
+- `icsnpp-opcua-binary/open62541_client-server_mainloop-no-handshake-12345.pcap` — 0.0 MB
+- `icsnpp-opcua-binary/open62541_client-server_mainloop-no-handshake.pcap` — 0.0 MB
+- `icsnpp-opcua-binary/open62541_client-server_mainloop-not-localhost-non-standard-port.pcap` — 0.0 MB
+- `icsnpp-opcua-binary/open62541_client-server_mainloop-not-localhost.pcap` — 0.0 MB
+- `icsnpp-opcua-binary/open62541_client-server_mainloop-withStringTable.pcap` — 0.0 MB
+- `icsnpp-opcua-binary/open62541_client-server_mainloop.pcap` — 0.0 MB
+- `icsnpp-opcua-binary/open62541_client-server_minimal.pcap` — 0.0 MB
+- `icsnpp-opcua-binary/open62541_create_monitored_items.pcap` — 0.0 MB
+- `icsnpp-opcua-binary/open62541_discover_getendpoints_discover_urls.pcap` — 0.0 MB
+- `icsnpp-opcua-binary/open62541_read_service_test_data.pcap` — 0.1 MB
+- `icsnpp-opcua-binary/open62541_read_service_test_data_with_history.pcap` — 0.1 MB
+- `icsnpp-opcua-binary/pending_overflow.pcap` — 0.0 MB
+- `icsnpp-opcua-binary/python_opcua-client-server_encrypted.pcap` — 0.0 MB
+- `icsnpp-opcua-binary/python_opcua-client-server_minimal-2.pcap` — 0.0 MB
+- `icsnpp-opcua-binary/python_opcua-client-server_minimal.pcap` — 0.0 MB
+- `icsnpp-profinet-io-cm/profinet_io_cm.pcap` — 0.3 MB
+- `icsnpp-profinet-io-cm/profinet_io_cm_connect.pcapng` — 0.1 MB
+- `icsnpp-profinet-io-cm/profinet_io_cm_connect_minimal.pcapng` — 0.0 MB
+- `icsnpp-profinet-io-cm/profinet_io_cm_control.pcapng` — 0.1 MB
+- `icsnpp-profinet-io-cm/profinet_io_cm_device.pcapng` — 0.0 MB
+- `icsnpp-profinet-io-cm/profinet_io_cm_mixed_1.pcap` — 0.2 MB
+- `icsnpp-profinet-io-cm/profinet_io_cm_mixed_2.pcapng` — 0.2 MB
+- `icsnpp-profinet-io-cm/profinet_io_cm_read.pcapng` — 0.0 MB
+- `icsnpp-profinet-io-cm/profinet_io_cm_release.pcapng` — 0.0 MB
+- `icsnpp-profinet-io-cm/profinet_io_cm_write.pcapng` — 0.1 MB
+- `icsnpp-roc-plus/all_opcodes_tcp.pcap` — 0.0 MB
+- `icsnpp-roc-plus/all_opcodes_udp.pcap` — 0.0 MB
+- `icsnpp-roc-plus/custom_port_12345_tcp_response.pcap` — 0.0 MB
+- `icsnpp-roc-plus/custom_port_12345_udp_response.pcap` — 0.0 MB
+- `icsnpp-s7comm/s7comm_plus.pcap` — 0.0 MB
+- `icsnpp-s7comm/s7comm_plus_port_change.pcap` — 0.0 MB
+- `icsnpp-s7comm/s7ident.pcap` — 0.0 MB
+- `icsnpp-s7comm/snap7.pcap` — 0.0 MB
+- `icsnpp-synchrophasor/C37.118_1PMU_TCP.pcap` — 0.0 MB
+- `icsnpp-synchrophasor/C37.118_1PMU_TCP_minimal_otherport_serverfirst.pcap` — 0.0 MB
+- `icsnpp-synchrophasor/C37.118_1PMU_UDP.pcap` — 0.0 MB
+- `icsnpp-synchrophasor/C37.118_1PMU_UDP_minimal.pcap` — 0.0 MB
+- `icsnpp-synchrophasor/C37.118_1PMU_UDP_minimal_otherport.pcap` — 0.0 MB
+- `icsnpp-synchrophasor/C37.118_1PMU_UDP_minimal_otherport_serverfirst.pcap` — 0.0 MB
+- `icsnpp-synchrophasor/C37.118_2PMUsInSync_TCP.pcap` — 0.5 MB
+- `icsnpp-synchrophasor/C37.118_4in1PMU_TCP.pcap` — 0.7 MB
+- `icsnpp-synchrophasor/c37118_1100_unclean.pcap` — 0.3 MB
+- `icsnpp-synchrophasor/c37_1100_clean_tcp.pcap` — 0.1 MB
+- `icsnpp-synchrophasor/c37_1100_fullclean.pcap` — 0.1 MB
+- `icsnpp-synchrophasor/c37_pmu_clean.pcap` — 1.0 MB
+- `icsnpp-synchrophasor/c37_pmu_unclean.pcap` — 1.0 MB

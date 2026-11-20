@@ -7,7 +7,8 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.27.8` | SWOCTS Cyber Range Release 5.27.8 | Current lab-readiness patch (signed annotated tag): corrected the DevFest workbook path and refreshed the lab integrity manifest |
+| `v5.28.0` | SWOCTS Cyber Range Release 5.28.0 | Current feature release (signed annotated tag): offline ICS/OT PCAP forensics lab plus admin event-loop, audit, reauth, and restore-safety fixes |
+| `v5.27.8` | SWOCTS Cyber Range Release 5.27.8 | Previous lab-readiness patch (signed annotated tag): corrected the DevFest workbook path and refreshed the lab integrity manifest |
 | `v5.27.7` | SWOCTS Cyber Range Release 5.27.7 | Previous performance patch (signed annotated tag): one JWT decode per mutation, cached middleware settings, request-scoped user reuse, and per-user spawn limits |
 | `v5.27.6` | SWOCTS Cyber Range Release 5.27.6 | Previous security patch (signed annotated tag): login timing/throttling hardening, fail-closed security startup, no default LDAP admin password, and opt-in socket-proxy `EXEC` |
 | `v5.27.5` | SWOCTS Cyber Range Release 5.27.5 | Previous patch release (signed annotated tag): configurable `WG_SERVER_ADDRESS` for two-host WireGuard addressing and a routed gretap mirror |

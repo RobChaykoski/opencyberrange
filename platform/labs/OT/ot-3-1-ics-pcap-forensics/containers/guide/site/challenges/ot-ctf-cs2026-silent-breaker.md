@@ -1,0 +1,145 @@
+# CSCTF 2026 — Silent Breaker
+
+**CTF &amp; conference labs** · **Medium** · 0.0 MB · 0 capture file(s)
+
+> CTF: Silent Breaker (IEC-104).
+
+> ⚠️ **Safety:** OT capture analysis is passive and safe. Never replay this traffic onto a real industrial network or send these commands to a real controller.
+
+## Scenario
+
+A capture-the-flag challenge from CSCTF 2026 — ICS / forensics. 
+
+ICS CTF flags usually hide in protocol fields — register values, write payloads, function codes or timing — rather than in plain text. Work it like an analyst: map the protocol, find the operations that don't belong, then decode.
+
+## Objectives
+
+- Identify the protocol(s), roles and endpoints.
+- Find the anomalous operations or payloads.
+- Extract and decode the flag.
+
+## 📥 Get the captures
+
+The commands on this page read the captures from `data/`. Fetch the dataset first, from the repo root:
+
+```bash
+python3 scripts/fetch.py ctf-csctf-2026
+```
+
+- **[CSCTF 2026 — ICS / forensics](../DATASETS.md#ctf-csctf-2026)** (`ctf-csctf-2026`), ~0.1 MB once fetched
+  - **Not mirrored** (no licence that allows re-hosting): `fetch.py` downloads it from the original source
+  - **Original source:** [github.com/K0NGR3SS/CSCTF-2026-Dente](https://github.com/K0NGR3SS/CSCTF-2026-Dente)
+
+## Work it step by step
+
+Two complete walkthroughs — pick your tool. Run every command from the repo root.
+
+### With Pcapper
+
+[Pcapper](https://github.com/SackOfHacks/pcapper) runs the OT protocol analyzers for you.
+
+**1. Let Pcapper hunt the flag**
+
+--ctf runs Pcapper's flag finder and decoders; --overview runs the right OT analyzer.
+
+```bash
+pcapper 'data/ctf-csctf-2026/silent-breaker/iec104_capture.pcap' --ctf --overview
+```
+
+**2. Let Pcapper hunt for the flag**
+
+--ctf runs Pcapper's flag finder and decoders; --strings surfaces cleartext that a flag may hide in.
+
+```bash
+pcapper 'data/ctf-csctf-2026/silent-breaker/iec104_capture.pcap' --ctf --strings
+```
+
+**3. Map it to ATT&amp;CK for ICS**
+
+Pcapper maps its detections to MITRE ATT&amp;CK (Enterprise + ICS) and draws the attack path.
+
+```bash
+pcapper 'data/ctf-csctf-2026/silent-breaker/iec104_capture.pcap' --mitre
+```
+
+### With tshark / Wireshark
+
+The by-hand route: display filters, field extraction and statistics.
+
+**1. Let Pcapper hunt the flag**
+
+```bash
+capinfos 'data/ctf-csctf-2026/silent-breaker/iec104_capture.pcap'
+tshark -r 'data/ctf-csctf-2026/silent-breaker/iec104_capture.pcap' -q -z io,phs | head -40
+```
+
+**2. Map the IEC-104 conversation**
+
+Who polls whom? Masters/clients vs. outstations/servers, and the operation mix per pair.
+
+```bash
+tshark -r 'data/ctf-csctf-2026/silent-breaker/iec104_capture.pcap' -Y iec60870_asdu -T fields -e ip.src -e ip.dst -e iec60870_asdu.typeid -e iec60870_asdu.causetx | sort | uniq -c | sort -rn | head -25
+```
+
+**3. Hunt the dangerous operations**
+
+Flag control commands (TypeID 45 single, 46 double, 47 regulating step, 48–50 set-points, 51 bitstring, 58–64 time-tagged variants), interrogations (100 general, 101 counter), read (102), clock sync (103) and reset process (105).
+
+```bash
+tshark -r 'data/ctf-csctf-2026/silent-breaker/iec104_capture.pcap' -Y 'iec60870_asdu.typeid in {45, 46, 47, 48, 49, 50, 51, 58, 59, 60, 61, 62, 63, 64, 100, 101, 102, 103, 105}' -T fields -e frame.time -e ip.src -e ip.dst -e _ws.col.Info | head -40
+```
+
+**4. Decode the protocol fields**
+
+Register values, write payloads and odd function codes are the usual hiding places — try ASCII.
+
+```bash
+tshark -r 'data/ctf-csctf-2026/silent-breaker/iec104_capture.pcap' -Y 'iec60870_asdu.ioa' -T fields -e iec60870_asdu.ioa | head -60
+strings -n 6 'data/ctf-csctf-2026/silent-breaker/iec104_capture.pcap' | grep -iE 'flag|ctf|\{' | head
+```
+
+## Hints
+
+<details><summary>Hint 1</summary>
+
+Pcapper --ctf tries common encodings automatically.
+
+</details>
+
+<details><summary>Hint 2</summary>
+
+Read writes, not just reads — the flag is often written.
+
+</details>
+
+<details><summary>Hint 3</summary>
+
+Concatenate register values in order and decode the 16-bit words as ASCII.
+
+</details>
+
+## Solution
+
+<details><summary>Reveal walkthrough / answer</summary>
+
+A public write-up exists — work it yourself first, then compare: https://github.com/K0NGR3SS/CSCTF-2026-Dente/tree/main/Forencics/silent-breaker
+
+**Computed evidence (auto-extracted with tshark — verify it yourself):** IEC-104 operations — M_ME_NC_1 ×60, C_SC_NA_1 ×2; dangerous-operation matches: 2 (top sources: 192.0.2.10 ×1, 198.51.100.10 ×1); top conversations in iec104_capture.pcap: 192.0.2.10↔198.51.100.10 (127 pkts); flag-like strings found by `strings`: none in plain text (decode protocol fields) (basis: 1 of 1 capture file(s), first 300,000 packets each)
+
+_Dataset credit: CSCTF (chronos-security.ro); challenge repo by K0NGR3SS (2026) · License: None stated — credit CSCTF._
+
+</details>
+
+## Dataset & credit
+
+**CSCTF (chronos-security.ro); challenge repo by K0NGR3SS (2026)** — license: None stated — credit CSCTF
+
+- [Dataset source — CSCTF 2026 — ICS / forensics](https://github.com/K0NGR3SS/CSCTF-2026-Dente)
+- [Write-up / solution](https://github.com/K0NGR3SS/CSCTF-2026-Dente/tree/main/Forencics/silent-breaker)
+- [MITRE ATT&amp;CK for ICS](https://attack.mitre.org/matrices/ics/)
+
+<details><summary>Capture files (1)</summary>
+
+- `data/ctf-csctf-2026/silent-breaker/iec104_capture.pcap`
+
+</details>

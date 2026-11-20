@@ -68,7 +68,11 @@ from app.services import nice_framework
 from app.services import mail
 from app.services import mfa as mfa_service
 from app.services import reauth as reauth_service
-from app.services.docker_manager import DockerManager, get_subnet_id
+from app.services.docker_manager import (
+    DockerManager,
+    get_subnet_id,
+    validate_lab_compose,
+)
 from app.services.wireguard_manager import WireGuardManager
 from app.services.audit import log_admin_action, AuditActions
 from app.services.export_labels import csv_with_labels
@@ -1061,7 +1065,10 @@ async def delete_user(
     request: Request,
     user_id: int,
     db: Session = Depends(get_db),
-    admin: User = Depends(get_current_admin_user)
+    admin: User = Depends(get_current_admin_user),
+    _reauth: object = Depends(
+        reauth_service.require_recent_reauth("account erasure")
+    ),
 ):
     """Erase an account and its personal data.
 
@@ -1260,7 +1267,7 @@ async def update_lab(
 
 
 @router.post("/labs/{lab_id}/approve")
-async def approve_lab(
+def approve_lab(
     lab_id: int,
     http_request: Request,
     db: Session = Depends(get_db),
@@ -1299,7 +1306,7 @@ async def approve_lab(
 
 
 @router.post("/labs/{lab_id}/reject")
-async def reject_lab(
+def reject_lab(
     lab_id: int,
     http_request: Request,
     db: Session = Depends(get_db),
@@ -1338,7 +1345,7 @@ async def reject_lab(
 
 
 @router.post("/labs/{lab_id}/toggle")
-async def toggle_lab(
+def toggle_lab(
     lab_id: int,
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user)
@@ -1355,7 +1362,7 @@ async def toggle_lab(
 
 
 @router.post("/labs/bulk-toggle")
-async def bulk_toggle_labs(
+def bulk_toggle_labs(
     body: dict,
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user)
@@ -1469,32 +1476,52 @@ async def session_history(
 
 
 @router.post("/sessions/terminate/{session_id}")
-async def terminate_session(
+def terminate_session(
+    request: Request,
     session_id: int,
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user)
 ):
-    """Terminate a specific lab session"""
+    """Terminate a specific lab session.
+
+    Sync on purpose: destroy_lab_environment performs blocking Docker calls.
+    FastAPI runs sync endpoints in the threadpool, so one teardown cannot
+    freeze the event loop and the health probe.
+    """
     session = db.query(LabSession).filter(LabSession.id == session_id).first()
     if not session:
         raise HTTPException(status_code=404, detail="Session not found")
-    
+
     if session.status != "running":
         raise HTTPException(status_code=400, detail="Session is not running")
-    
+
+    lab_slug = session.lab.slug if session.lab else "unknown"
     try:
-        docker_manager.destroy_lab_environment(session.user_id, session.lab.slug)
-        session.status = "stopped"
-        session.stopped_at = datetime.now(timezone.utc)
-        db.commit()
-        return {"message": "Session terminated"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        docker_manager.destroy_lab_environment(session.user_id, lab_slug)
+    except Exception:
+        logger.exception("Failed to terminate session %s", session_id)
+        raise HTTPException(status_code=500, detail="Could not terminate the session")
+
+    session.status = "stopped"
+    session.stopped_at = datetime.now(timezone.utc)
+    db.commit()
+
+    log_admin_action(
+        action=AuditActions.SESSION_TERMINATED,
+        admin_user_id=admin.id,
+        admin_username=admin.username,
+        target_type="session",
+        target_id=session_id,
+        target_identifier=f"user {session.user_id}/{lab_slug}",
+        details={"user_id": session.user_id, "lab_slug": lab_slug},
+        ip_address=request.client.host if request.client else None,
+    )
+    return {"message": "Session terminated"}
 
 
 @router.post("/sessions/{session_id}/reset-stale")
 @limiter.limit("10/minute")
-async def reset_stale_session(
+def reset_stale_session(
     request: Request,
     session_id: int,
     db: Session = Depends(get_db),
@@ -1540,7 +1567,7 @@ async def reset_stale_session(
 
 @router.post("/sessions/{session_id}/resync-vpn")
 @limiter.limit("10/minute")
-async def resync_session_vpn(
+def resync_session_vpn(
     request: Request,
     session_id: int,
     db: Session = Depends(get_db),
@@ -1595,7 +1622,7 @@ async def resync_session_vpn(
 
 @router.post("/vpn/reconcile-peers")
 @limiter.limit("6/minute")
-async def reconcile_vpn_peers(
+def reconcile_vpn_peers(
     request: Request,
     apply: bool = False,
     db: Session = Depends(get_db),
@@ -1657,10 +1684,13 @@ async def reconcile_vpn_peers(
 
 @router.post("/sessions/terminate-all")
 @limiter.limit("2/minute")
-async def terminate_all_sessions(
+def terminate_all_sessions(
     request: Request,
     db: Session = Depends(get_db),
-    admin: User = Depends(get_current_admin_user)
+    admin: User = Depends(get_current_admin_user),
+    _reauth: object = Depends(
+        reauth_service.require_recent_reauth("terminate all sessions")
+    ),
 ):
     """Emergency: terminate all running sessions - rate limited to 2 per minute"""
     sessions = db.query(LabSession).options(
@@ -1970,6 +2000,7 @@ async def impersonation_status(
 
 
 @router.post("/impersonate/launch")
+@limiter.limit("10/minute")
 async def impersonate_launch_lab(
     request: Request,
     db: Session = Depends(get_db),
@@ -2363,7 +2394,7 @@ def list_vpn_peers(
 
 
 @router.post("/vpn/peers/{user_id}/repair")
-async def repair_vpn_peer(
+def repair_vpn_peer(
     user_id: int,
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user)
@@ -2475,7 +2506,7 @@ async def vpn_sync_status(
 
 
 @router.post("/vpn/sync")
-async def sync_vpn_peers(
+def sync_vpn_peers(
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user)
 ):
@@ -2511,7 +2542,7 @@ async def sync_vpn_peers(
 
 
 @router.post("/vpn/register/{user_id}")
-async def register_vpn_peer(
+def register_vpn_peer(
     user_id: int,
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user)
@@ -2538,10 +2569,13 @@ async def register_vpn_peer(
 
 
 @router.delete("/vpn/peer/{user_id}")
-async def remove_vpn_peer(
+def remove_vpn_peer(
     user_id: int,
     db: Session = Depends(get_db),
-    admin: User = Depends(get_current_admin_user)
+    admin: User = Depends(get_current_admin_user),
+    _reauth: object = Depends(
+        reauth_service.require_recent_reauth("VPN peer removal")
+    ),
 ):
     """Remove a user's VPN peer from Peer Manager"""
     user = db.query(User).filter(User.id == user_id).first()
@@ -2565,10 +2599,13 @@ async def remove_vpn_peer(
 
 
 @router.delete("/vpn/peer-by-key/{public_key:path}")
-async def remove_vpn_peer_by_key(
+def remove_vpn_peer_by_key(
     public_key: str,
     db: Session = Depends(get_db),
-    admin: User = Depends(get_current_admin_user)
+    admin: User = Depends(get_current_admin_user),
+    _reauth: object = Depends(
+        reauth_service.require_recent_reauth("VPN peer removal")
+    ),
 ):
     """Remove a VPN peer from Peer Manager by public key (for unknown peers)"""
     import urllib.parse
@@ -2599,7 +2636,7 @@ async def remove_vpn_peer_by_key(
 # ==================== Container Management ====================
 
 @router.post("/containers/cleanup-orphaned")
-async def cleanup_orphaned_containers(
+def cleanup_orphaned_containers(
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user)
 ):
@@ -2626,7 +2663,7 @@ async def cleanup_orphaned_containers(
 # ==================== Docker Disk Management ====================
 
 @router.get("/docker/disk-usage")
-async def get_docker_disk_usage(
+def get_docker_disk_usage(
     admin: User = Depends(get_current_admin_user)
 ):
     """Return Docker disk usage broken down by images, containers, build cache, and volumes."""
@@ -2637,7 +2674,7 @@ async def get_docker_disk_usage(
 
 
 @router.get("/labs/{lab_id}/images")
-async def get_lab_images(
+def get_lab_images(
     lab_id: int,
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user)
@@ -2659,7 +2696,7 @@ async def get_lab_images(
 
 @router.delete("/labs/{lab_id}/images")
 @limiter.limit("10/minute")
-async def delete_lab_images(
+def delete_lab_images(
     request: Request,
     lab_id: int,
     db: Session = Depends(get_db),
@@ -2710,7 +2747,7 @@ async def delete_lab_images(
 
 @router.post("/docker/prune-images")
 @limiter.limit("2/minute")
-async def prune_all_images(
+def prune_all_images(
     request: Request,
     admin: User = Depends(get_current_admin_user)
 ):
@@ -2740,7 +2777,7 @@ async def prune_all_images(
 
 @router.post("/docker/prune-build-cache")
 @limiter.limit("2/minute")
-async def prune_build_cache(
+def prune_build_cache(
     request: Request,
     admin: User = Depends(get_current_admin_user)
 ):
@@ -2994,12 +3031,20 @@ async def create_lab(
     ) if lab_data else payload.duration_minutes
     compose_file = payload.compose_file
 
-    # Validate compose YAML if provided
+    # Validate compose YAML if provided. Parse and run the same topology
+    # guard used at spawn time, so an instructor gets the rejection now.
     if compose_file:
         try:
-            yaml_lib.safe_load(compose_file)
+            compose_data = yaml_lib.safe_load(compose_file)
         except yaml_lib.YAMLError as e:
             raise HTTPException(status_code=400, detail=f"Invalid compose YAML: {e}")
+        try:
+            validate_lab_compose(
+                compose_data or {},
+                getattr(payload, "slug", None) or name or "new-lab",
+            )
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=f"Unsafe lab compose: {e}")
 
     # JSON-encode array fields (from YAML or form)
     learning_outcomes = (
@@ -3133,9 +3178,13 @@ async def update_lab_compose(
     if compose_content:
         import yaml
         try:
-            yaml.safe_load(compose_content)
+            compose_data = yaml.safe_load(compose_content)
         except yaml.YAMLError as e:
             raise HTTPException(status_code=400, detail=f"Invalid YAML: {e}")
+        try:
+            validate_lab_compose(compose_data or {}, lab.slug)
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=f"Unsafe lab compose: {e}")
 
     lab.compose_file = compose_content
     db.commit()
@@ -3826,7 +3875,7 @@ async def get_session_logs(
 
 @router.post("/system/backup")
 @limiter.limit("3/minute")
-async def create_backup(
+def create_backup(
     request: Request,
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user)
@@ -3998,7 +4047,7 @@ async def download_backup(
 
 @router.delete("/system/backups/{filename}")
 @limiter.limit("10/minute")
-async def delete_backup(
+def delete_backup(
     filename: str,
     request: Request,
     db: Session = Depends(get_db),
@@ -4039,6 +4088,18 @@ def _restore_database_from_path(
     """Run psql against one snapshot and audit the outcome."""
     import subprocess
     from urllib.parse import urlparse
+
+    # A restore replaces every account and record. Keep a safety snapshot of
+    # the current database first; if that fails, do not overwrite it.
+    try:
+        snapshot = create_database_backup()
+        logger.info("Pre-restore safety snapshot created: %s", snapshot)
+    except Exception:
+        logger.exception("Could not create a pre-restore safety snapshot")
+        raise HTTPException(
+            status_code=500,
+            detail="Could not create a safety snapshot before the restore.",
+        )
 
     db_url = settings.DATABASE_URL
     parsed = urlparse(db_url)
@@ -4088,10 +4149,13 @@ def _restore_database_from_path(
 
 @router.post("/system/restore")
 @limiter.limit("1/minute")
-async def restore_backup(
+def restore_backup(
     body: dict,
     request: Request,
-    admin: User = Depends(get_current_admin_user)
+    admin: User = Depends(get_current_admin_user),
+    _reauth: object = Depends(
+        reauth_service.require_recent_reauth("database restore")
+    ),
 ):
     """Restore the database from a snapshot already on this install."""
     filename = body.get("filename")
@@ -4117,6 +4181,9 @@ async def restore_uploaded_backup(
     file: UploadFile = File(...),
     restore_now: bool = Form(True),
     admin: User = Depends(get_current_admin_user),
+    _reauth: object = Depends(
+        reauth_service.require_recent_reauth("database restore")
+    ),
 ):
     """Accept a plain SQL snapshot from another installation.
 
@@ -4204,7 +4271,7 @@ async def restore_uploaded_backup(
 
 
 @router.get("/system/status")
-async def system_status(
+def system_status(
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user)
 ):

@@ -26,6 +26,23 @@ All notable changes to OpenCyberRange are recorded here.
 - Applied the shared download helper to reports, admin activity/users/exercises/reports/backups, student and class reports, career profile, privacy data, portfolio, identity providers, VPN config, SBOM, and course reports.
 - Added frontend tests for the shared download helper.
 
+## [5.28.0] - 2026-11-20
+
+### New lab: ICS/OT PCAP forensics
+
+- Added `ot-3-1-ics-pcap-forensics`, a fully offline lab built on 17 guided challenges from the MIT-licensed ICS-PCAP-Challenges range.
+- Bundles 22 MB of redistributable captures: TRITON/TRISIS (BSD-3-Clause), Industroyer2 (CC BY 4.0), GOOSE false-data injection (CC BY 4.0), and the CISA ICSNPP test traces (BSD-3-Clause).
+- Ships an SSH analyst workstation with tshark and the evidence, plus a guide service serving the trimmed challenge range. Includes the datasets' license notices and attribution.
+
+### Admin reliability and safety
+
+- Terminating one session or all sessions, stale-session reset, VPN resync, lab approve/reject/toggle, VPN peer removal, image/prune, backup/restore, and Docker maintenance endpoints now run in the threadpool instead of blocking the event loop during synchronous Docker work.
+- Single-session termination now writes an audit record.
+- Recent reauthentication is required for account erasure, database restore, terminate-all, and VPN peer removal.
+- A database restore creates a safety snapshot first and refuses to overwrite if that snapshot fails.
+- Lab compose is validated when an instructor creates or updates it, not only at spawn time.
+- `impersonate/launch` is rate limited to 10/minute.
+
 ## [5.27.8] - 2026-11-20
 
 ### Lab readiness

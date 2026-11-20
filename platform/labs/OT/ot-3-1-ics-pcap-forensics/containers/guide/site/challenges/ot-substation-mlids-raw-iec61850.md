@@ -1,0 +1,144 @@
+# Substation ML-IDS — raw IEC 61850 traffic
+
+**Power grid &amp; substations** · **Hard** · 0.0 MB · 0 capture file(s)
+
+> Substation ML-IDS: raw IEC 61850 traffic — 10 capture(s).
+
+> ⚠️ **Safety:** OT capture analysis is passive and safe. Never replay this traffic onto a real industrial network or send these commands to a real controller.
+
+## Scenario
+
+Raw IEC 61850 and IEC-104 substation traffic with attacks, curated to train ML intrusion detection for electrical substations.
+
+This challenge covers the 'raw-iec61850' set (10 capture file(s)). Characterize it, find the attack (if any) and write a detection.
+
+## Objectives
+
+- Identify the protocol roles (masters/clients vs. outstations/servers).
+- Find the malicious operations and their source.
+- Measure the attack (count, rate, window).
+- Write a detection and check it against the dataset's labels.
+
+## 📥 Get the captures
+
+The commands on this page read the captures from `data/`. Fetch the dataset first, from the repo root:
+
+```bash
+python3 scripts/fetch.py substation-ml-ids-iec61850-iec104
+```
+
+- **[Electrical-substation ML-IDS dataset — raw IEC 61850 &amp; IEC-104](../DATASETS.md#substation-ml-ids-iec61850-iec104)** (`substation-ml-ids-iec61850-iec104`), ~4.99 GB once fetched
+  - **Mirror:** this repo's [`data-v1` release](https://github.com/SackOfHacks/ICS-PCAP-Challenges/releases/tag/data-v1), 1 part (0.28 GB compressed): [part000](https://github.com/SackOfHacks/ICS-PCAP-Challenges/releases/download/data-v1/substation-ml-ids-iec61850-iec104.tar.part000) (0.28 GB)
+  - **Original source:** [zenodo.org/records/15487636](https://zenodo.org/records/15487636) · [doi:10.5281/zenodo.15487636](https://doi.org/10.5281/zenodo.15487636)
+
+Without `fetch.py`: download every part of the dataset, run `cat <dataset>.tar.part* | tar -x`, then `gunzip` the files listed in its `MIRROR-GZIPPED.txt`.
+
+## Work it step by step
+
+Two complete walkthroughs — pick your tool. Run every command from the repo root.
+
+### With Pcapper
+
+[Pcapper](https://github.com/SackOfHacks/pcapper) runs the OT protocol analyzers for you.
+
+**1. Triage the capture**
+
+Duration, endpoints and protocol mix before you dive in. Pcapper's overview auto-detects the OT protocols and runs the matching analyzers.
+
+```bash
+pcapper 'data/substation-ml-ids-iec61850-iec104/raw-iec61850/raw/iec61850/attack-data/capture61850-floodattack_withfault.pcap' --overview
+```
+
+**2. Deep-dive with Pcapper (--goose)**
+
+Pcapper's protocol analyzer decodes the operations, flags anomalies, and --ot-commands normalizes every control/write across protocols.
+
+```bash
+pcapper 'data/substation-ml-ids-iec61850-iec104/raw-iec61850/raw/iec61850/attack-data/capture61850-floodattack_withfault.pcap' --goose --ot-commands
+```
+
+**3. Map it to ATT&amp;CK for ICS**
+
+Pcapper maps its detections to MITRE ATT&amp;CK (Enterprise + ICS) and draws the attack path.
+
+```bash
+pcapper 'data/substation-ml-ids-iec61850-iec104/raw-iec61850/raw/iec61850/attack-data/capture61850-floodattack_withfault.pcap' --mitre
+```
+
+### With tshark / Wireshark
+
+The by-hand route: display filters, field extraction and statistics.
+
+**1. Triage the capture**
+
+Duration, endpoints and protocol mix before you dive in.
+
+```bash
+capinfos 'data/substation-ml-ids-iec61850-iec104/raw-iec61850/raw/iec61850/attack-data/capture61850-floodattack_withfault.pcap'
+tshark -r 'data/substation-ml-ids-iec61850-iec104/raw-iec61850/raw/iec61850/attack-data/capture61850-floodattack_withfault.pcap' -q -z io,phs | head -40
+```
+
+**2. Map the IEC 61850 GOOSE conversation**
+
+Who polls whom? Masters/clients vs. outstations/servers, and the operation mix per pair.
+
+```bash
+tshark -r 'data/substation-ml-ids-iec61850-iec104/raw-iec61850/raw/iec61850/attack-data/capture61850-floodattack_withfault.pcap' -Y goose -T fields -e eth.src -e goose.gocbRef -e goose.stNum -e goose.sqNum -e goose.timeAllowedtoLive | head -40
+```
+
+**3. Hunt the dangerous operations**
+
+Flag GOOSE has no confirmed 'write' — the attack surface is the event stream itself: stNum jumping without a real state change, sqNum resets, bursts far above the retransmission curve, the test/simulation flag, or an unexpected source MAC publishing a known gocbRef.
+
+```bash
+tshark -r 'data/substation-ml-ids-iec61850-iec104/raw-iec61850/raw/iec61850/attack-data/capture61850-floodattack_withfault.pcap' -Y 'goose' -T fields -e frame.time -e ip.src -e ip.dst -e _ws.col.Info | head -40
+```
+
+## Hints
+
+<details><summary>Hint 1</summary>
+
+The folder/file names and any bundled CSV/label files are the dataset's ground truth.
+
+</details>
+
+<details><summary>Hint 2</summary>
+
+Baseline the normal exchange first, then look for the operations that break it.
+
+</details>
+
+## Solution
+
+<details><summary>Reveal walkthrough / answer</summary>
+
+The dataset's own labels (folder name, bundled CSV/JSON/logs and paper) are the answer key for this set.
+
+**Computed evidence (auto-extracted with tshark — verify it yourself):** IEC 61850 GOOSE packets matching `goose`: 56,382; GOOSE streams — SI0001G06Q070F10iDE_SISTEMA/LLN0$GO$GoCB01 from 00:aa:00:00:00:0b: 14044 frames, 1 distinct stNum, 0 sqNum resets; SI0001G06Q0100K01iDE_SISTEMA/LLN0$GO$GoCB01 from 00:aa:00:00:00:03: 14043 frames, 1 distinct stNum, 0 sqNum resets; SI0001G06Q081K01iDE_SISTEMA/LLN0$GO$GoCB01 from 00:aa:00:00:00:05: 14043 frames, 1 distinct stNum, 0 sqNum resets; SI0001G06Q090K01iDE_SISTEMA/LLN0$GO$GoCB01 from 00:aa:00:00:00:07: 14043 frames, 1 distinct stNum, 0 sqNum resets; SI0001G06Q070F10iDE_SISTEMA/LLN0$GO$GoCB01 from 00:aa:00:00:00:05: 21 frames, 1 distinct stNum, 0 sqNum resets; top conversations in capture61850-ptpattack.pcap: 192.0.0.1↔224.0.0.2 (4 pkts), 0.0.0.0↔255.255.255.255 (2 pkts), 100.0.0.3↔234.0.0.4 (2 pkts) (basis: 3 of 10 capture file(s), first 300,000 packets each, smallest files carrying IEC 61850 GOOSE chosen)
+
+_Dataset credit: Gutierrez Mlot, Esteban Damian; Saldana, Jose; Rodríguez, Ricardo J.; Kotsiuba, Igor; Hernández Gañán, Carlos (2024) — doi:10.5281/zenodo.15487636 · License: CC BY-NC-SA 4.0._
+
+</details>
+
+## Dataset & credit
+
+**Gutierrez Mlot, Esteban Damian; Saldana, Jose; Rodríguez, Ricardo J.; Kotsiuba, Igor; Hernández Gañán, Carlos (2024) — doi:10.5281/zenodo.15487636** — license: CC BY-NC-SA 4.0
+
+- [Dataset source — Electrical-substation ML-IDS dataset — raw IEC 61850 &amp; IEC-1](https://zenodo.org/records/15487636)
+- [DOI 10.5281/zenodo.15487636](https://doi.org/10.5281/zenodo.15487636)
+- [MITRE ATT&amp;CK for ICS](https://attack.mitre.org/matrices/ics/)
+
+<details><summary>Capture files (10)</summary>
+
+- `data/substation-ml-ids-iec61850-iec104/raw-iec61850/raw/iec61850/attack-data/capture61850-floodattack_withfault.pcap`
+- `data/substation-ml-ids-iec61850-iec104/raw-iec61850/raw/iec61850/attack-data/capture61850-floodattack_withoutfault.pcap`
+- `data/substation-ml-ids-iec61850-iec104/raw-iec61850/raw/iec61850/attack-data/capture61850-fuzzyattack_withfault.pcap`
+- `data/substation-ml-ids-iec61850-iec104/raw-iec61850/raw/iec61850/attack-data/capture61850-fuzzyattack_withoutfault.pcap`
+- `data/substation-ml-ids-iec61850-iec104/raw-iec61850/raw/iec61850/attack-data/capture61850-ptpattack.pcap`
+- `data/substation-ml-ids-iec61850-iec104/raw-iec61850/raw/iec61850/attack-data/capture61850-replay.pcap`
+- `data/substation-ml-ids-iec61850-iec104/raw-iec61850/raw/iec61850/attack-free-data/capture61850-attackfree_PTP.pcap`
+- `data/substation-ml-ids-iec61850-iec104/raw-iec61850/raw/iec61850/attack-free-data/capture61850-attackfree_normal.pcap.part000.pcap`
+- `data/substation-ml-ids-iec61850-iec104/raw-iec61850/raw/iec61850/attack-free-data/capture61850-attackfree_normal.pcap.part001.pcap`
+- `data/substation-ml-ids-iec61850-iec104/raw-iec61850/raw/iec61850/attack-free-data/capture61850-attackfree_normalfault.pcap`
+
+</details>
