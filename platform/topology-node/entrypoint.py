@@ -17,7 +17,9 @@ from __future__ import annotations
 
 import json
 import os
+import pwd
 import signal
+import socketserver
 import subprocess
 import sys
 import time
@@ -73,6 +75,69 @@ def configure_ssh() -> None:
             "AllowUsers {user}\n".format(user=SSH_USER)
         )
     run("/usr/sbin/sshd")
+
+
+FW_DIR = "/srv/fw"
+FW_SOCKET = "/run/fwctl.sock"
+
+
+def _nft(args: list[str]) -> tuple[int, str]:
+    try:
+        proc = subprocess.run(args, capture_output=True, text=True, timeout=10)
+    except subprocess.TimeoutExpired:
+        return 2, "nft timed out\n"
+    return proc.returncode, (proc.stdout or "") + (proc.stderr or "")
+
+
+class FwHandler(socketserver.StreamRequestHandler):
+    """Accept `show` and `apply <path>`; everything else is refused."""
+
+    def handle(self) -> None:
+        request = self.rfile.readline(4096).decode("utf-8", "replace").strip()
+        if request == "show":
+            self._reply(*_nft(["nft", "list", "ruleset"]))
+        elif request.startswith("apply "):
+            target = os.path.realpath(request[len("apply "):].strip())
+            if not target.startswith(FW_DIR + os.sep) or not os.path.isfile(target):
+                self._reply(
+                    2, f"refusing {target}: policy files must live under {FW_DIR}\n"
+                )
+                return
+            self._reply(*_nft(["nft", "-f", target]))
+        else:
+            self._reply(2, "usage: show | apply <file under /srv/fw>\n")
+
+    def _reply(self, code: int, output: str) -> None:
+        status = "ok" if code == 0 else "err"
+        self.wfile.write(f"{status}\n{output}".encode("utf-8"))
+
+
+def start_fwctl() -> None:
+    """Give the training user a scoped way to load nftables policy.
+
+    ``no-new-privileges`` blocks sudo and setuid binaries, so a firewall lab
+    would otherwise have no way to apply rules. This server runs in the root
+    entrypoint and only accepts `show` and `apply` for files in /srv/fw, which
+    the training user owns.
+    """
+    try:
+        user = pwd.getpwnam(SSH_USER)
+    except KeyError:
+        print(f"[topology] fwctl disabled: no such user {SSH_USER}", file=sys.stderr, flush=True)
+        return
+    try:
+        os.makedirs(FW_DIR, exist_ok=True)
+        os.chown(FW_DIR, user.pw_uid, user.pw_gid)
+        os.chmod(FW_DIR, 0o770)
+        if os.path.exists(FW_SOCKET):
+            os.unlink(FW_SOCKET)
+        server = socketserver.ThreadingUnixStreamServer(FW_SOCKET, FwHandler)
+        os.chown(FW_SOCKET, user.pw_uid, user.pw_gid)
+        os.chmod(FW_SOCKET, 0o660)
+    except OSError as exc:
+        print(f"[topology] fwctl setup failed: {exc}", file=sys.stderr, flush=True)
+        return
+    Thread(target=server.serve_forever, daemon=True).start()
 
 
 def configure_network() -> None:
@@ -135,6 +200,7 @@ def main() -> int:
         flush=True,
     )
     configure_ssh()
+    start_fwctl()
     configure_network()
     start_servers()
     # Keep PID 1 alive; tini forwards signals to this process.

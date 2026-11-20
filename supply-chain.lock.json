@@ -172,7 +172,7 @@
       "sha256": "a67628fe072235c02aeecb19b468f5c71fd4e5d66163f6a3a2c4c3c19caa3fc4"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "9bc48a2f6e813cd3807dbcbb33b845e9c554580d2609d0ab1cbaf0ed95380c2f"
+      "sha256": "eb342d9864738e3fdeeffcf5643dd9af42b8f88f5209c7efcf397891c01921d0"
     },
     "platform/backend/app/security/permissions.yaml": {
       "sha256": "8df4a537d137d826dbad3e333c09a02ac87a8ec281cf40c1dc3767b418ca0404"
@@ -187,7 +187,7 @@
       "sha256": "18f211d07b779cb88dbb4e5c71c6ae4d62f4f6e38c71104b901ede93df31f6bd"
     },
     "platform/backend/app/version.py": {
-      "sha256": "eb4871ae644fc9de4526270dec3054c06525f57d873be42f19366af6e5017dae"
+      "sha256": "53a157b258e47e2732cbc9d3f8fcf594b8c2678f8f6c2c20e1e5cf59c54178ca"
     },
     "platform/backend/lab_metadata.schema.json": {
       "sha256": "00f133f45f20d1ad4fd2911cfa6e6384f5102d6f7d4502a18885d3f83333353d"
@@ -262,10 +262,10 @@
       "sha256": "d7e2f982e8a0cf9d43a29bcfe3af85676a98123d63c79e64781f97eacc32cec5"
     },
     "platform/topology-node/Dockerfile": {
-      "sha256": "c25d2ec9cd32a29c10a7de010d057b639a2c0a800a610abcd5b000b18527e981"
+      "sha256": "bca0f538d653bf120ed9c2d1945befef858d5e23e7840f8fe90b67daa10b0283"
     },
     "platform/topology-node/entrypoint.py": {
-      "sha256": "2dd3110270a0f1b72c86fe071ba225fb96e8c5e268caf1931cc46b1caca0f28b"
+      "sha256": "21e17109923390692a2d8dfcdbc11db5e82ae1d7381c5698c54cefe685e2df38"
     },
     "scripts/GDG-Deploy.sh": {
       "sha256": "7857237da1b405ebd672caf74cc7ef292313e7f847799a8a6d82d09cb718ff7b"
@@ -337,7 +337,7 @@
       "sha256": "47f9b084a529c6ef0460cdb0895f0b90d3adf18c6c37ecf97b4f34bfabe952cf"
     },
     "scripts/lab_harness.py": {
-      "sha256": "4f78498f2d67a5639b3a061f0c42b3fa3870db6bf00606cbcea9bddf1e474122"
+      "sha256": "c9392633e91bdf05bd4d7554332265e0d7140f6f90c21327c2ac41b51b6ec3ca"
     },
     "scripts/prebuild-labs.sh": {
       "sha256": "0f3a6214adb8453960f0e0672430a8b5e0fb91e4eaa3ae3e800db876295468d2"
@@ -367,7 +367,7 @@
       "sha256": "f08f563a56860357a3c246993e4fd3da16cf1df35cce49f9890c0b09eb1ab769"
     },
     "versions.yaml": {
-      "sha256": "e13fb469b649cb173eddf5d5321814ee416b8a4c7b3641e35080d2e4091d0c17"
+      "sha256": "f0e0df19aa2152a766c090dce22982cc6d4d772177158c868a1c6be38fac425b"
     }
   },
   "generator": "scripts/supply_chain.py",
@@ -932,7 +932,7 @@
       ]
     },
     "network-12-1-firewall-fundamentals": {
-      "content_hash": "a382021197a1dc6547275f59bfaf84dbc0ebb192cc1c8f7c317d1b339dfef34c",
+      "content_hash": "0fa2047aef3c910016db03a11bc65c0f51a9ceea17715fe5aef016403e20180a",
       "services": [
         "firewall",
         "traffic-gen",
@@ -956,7 +956,7 @@
       "services": []
     },
     "network-12-4-firewall-service-path": {
-      "content_hash": "022b72754eaaea798bccbfe090dffbb03b5e08a2d0a99cdd46ceddbb197016c0",
+      "content_hash": "ea1035843be8cca04378c6c66c312dbc7a6f49edf57ed4e5716cde1aa73f8f50",
       "services": []
     },
     "network-12-5-multi-service-router": {
@@ -964,7 +964,7 @@
       "services": []
     },
     "network-12-6-appliance-segment": {
-      "content_hash": "61447cb75b78c8941adb0cfb61e8c989a395bcd3e650a0aca51102765626c95d",
+      "content_hash": "7a842ca3978d4e778f72fffdcb6999057d514d2f5f055d0bf1f0e3455b1c6b0a",
       "services": [
         "protected"
       ]
@@ -1654,6 +1654,6 @@
       ]
     }
   },
-  "release": "5.28.4",
+  "release": "5.28.5",
   "schema": 1
 }

@@ -94,13 +94,13 @@
     "network-1-2-log-correlation": "abdc760baa5f3cd2c826cffeeef8ddf39d4dc0facc20e8445d9ccac6690e5dd6",
     "network-1-3-dns-anomaly-detection": "ce6395dad5f7368402c7c14d94c6c67ab8568dffbd985eb82dbdcd3f428c9d58",
     "network-1-4-failed-login-analysis": "23b97fd629600266574b27f1b93342a3c31e2ff0d4469f1b5d0ac6f5d4525ac1",
-    "network-12-1-firewall-fundamentals": "a382021197a1dc6547275f59bfaf84dbc0ebb192cc1c8f7c317d1b339dfef34c",
+    "network-12-1-firewall-fundamentals": "0fa2047aef3c910016db03a11bc65c0f51a9ceea17715fe5aef016403e20180a",
     "network-12-2-device-topology-engine": "435be4d20673f93250866cf4c225ae1e89a411c0424e76a019b5902dca692d08",
     "network-12-2-firewall-policy-hardening": "9809e0d8f8162a6c582f6a7a733b7350531d7e70d7d1ae2414ffffd4471aa0d9",
     "network-12-3-two-router-transit": "65c55243af91511b628060e194ff00f65fed59c8673edc6ac8ce64bb76c8892e",
-    "network-12-4-firewall-service-path": "022b72754eaaea798bccbfe090dffbb03b5e08a2d0a99cdd46ceddbb197016c0",
+    "network-12-4-firewall-service-path": "ea1035843be8cca04378c6c66c312dbc7a6f49edf57ed4e5716cde1aa73f8f50",
     "network-12-5-multi-service-router": "0e2fdb5b6ba668c443d5932590ba8ad2fc055bdb9974fe1d89c618793476d798",
-    "network-12-6-appliance-segment": "61447cb75b78c8941adb0cfb61e8c989a395bcd3e650a0aca51102765626c95d",
+    "network-12-6-appliance-segment": "7a842ca3978d4e778f72fffdcb6999057d514d2f5f055d0bf1f0e3455b1c6b0a",
     "network-2-1-ftp-credential-extraction": "4d58c517e6cc61c75152d135a0add328373be5368258d90928aff73bab812d9c",
     "network-2-2-smtp-email-analysis": "9a96bcb35ae136139aa2680e21ddc20e4b0d32a4009f7c7620b1334564d573eb",
     "network-2-3-http-session-hijacking": "64984c84573c7e2473c72ee2c1606b7f87ff188a9e2d71ad1ae12a91d5dd7cfc",
@@ -213,7 +213,7 @@
     "windows-9-2-multi-service-exploitation": "26eb01bca4408b0bef4dcdbe4542906cd02d2f4c7e12b99dd9c0756abaf4162b",
     "windows-9-3-complete-windows-penetration-test": "a7267f4dc93846dd833ceb86456bf76367c3c8d2d72a9868b44e051fb01a847d"
   },
-  "release": "5.28.4",
+  "release": "5.28.5",
   "schema": 1,
   "source_lock": "supply-chain.lock.json"
 }

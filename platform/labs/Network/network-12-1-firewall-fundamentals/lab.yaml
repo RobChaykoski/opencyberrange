@@ -73,6 +73,7 @@ scenario: |
 credentials:
   - role: "analyst"
     username: "analyst"
+    # Demo lab credential; security-delta: allow credential-like assignment
     password: "M3r1d14n_Fw#"
     description: "SSH access to the Meridian firewall appliance"
 
@@ -179,9 +180,9 @@ test:
       timeout: 15
 
     - name: "Traffic generator is sending traffic"
-      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.firewall} 'sudo monitor --count 5 2>/dev/null | head -10' 2>&1"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.firewall} 'sudo monitor --count 5 2>/dev/null | grep -m1 -E \"ALLOW|DROPPED\"' 2>&1"
       expect: "ALLOW"
-      timeout: 30
+      timeout: 60
 
     - name: "Web server responds on HTTP"
       command: "curl -s -o /dev/null -w '%{http_code}' --connect-timeout 5 http://{target.webserver}/"

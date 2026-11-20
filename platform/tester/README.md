@@ -94,7 +94,20 @@ docker build -t ocr-tester:latest platform/tester
 
 The solver runs commands from the tester sidecar on the lab's project network.
 `{target.NAME}`, `{cred.ROLE.user}`, `{cred.ROLE.pass}`, and `{flag}` are
-resolved before execution.
+resolved before execution. `{target.NAME}` resolves from the compose service
+name and hostname, and also from the `topology.nodes[].id` in `lab.yaml` via its
+`ip_offset` (so a diagram id such as `webserver` reaches the `web-server`
+service).
+
+### Topology labs
+
+Labs whose compose file declares `x-ocr-topology` get an extra compose override
+built by `app/services/topology_engine.py` before the project starts. The
+harness allocates a free `/29` per link inside `10.128.0.0/9`, assigns the node
+addresses, and injects `OCR_ROLE`, `OCR_LINKS`, `OCR_GATEWAY`, `OCR_ROUTES`,
+`OCR_FLAG`, and the training credentials. Without that step the nodes start
+with no role and no SSH password, so every probe fails. The override lives in a
+temporary file and is deleted after teardown.
 
 ## Release gate
 

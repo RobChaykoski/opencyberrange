@@ -7,10 +7,6 @@ source: platform/labs/Network/network-12-6-appliance-segment/lab.yaml
 expected_services:
 - port: 22
   protocol: tcp
-- port: 80
-  protocol: tcp
-- port: 18080
-  protocol: tcp
 health_timeout_seconds: 60
 solver:
   image: ocr-tester:latest

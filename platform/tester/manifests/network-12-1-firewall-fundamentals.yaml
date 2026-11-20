@@ -18,7 +18,7 @@ solver:
     command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.firewall} 'echo connected' 2>&1
     expect: connected
   - name: Traffic generator is sending traffic
-    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.firewall} 'sudo monitor --count 5 2>/dev/null | head -10' 2>&1
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.firewall} 'sudo monitor --count 5 2>/dev/null | grep -m1 -E "ALLOW|DROPPED"' 2>&1
     expect: ALLOW
   - name: Web server responds on HTTP
     command: curl -s -o /dev/null -w '%{http_code}' --connect-timeout 5 http://{target.webserver}/

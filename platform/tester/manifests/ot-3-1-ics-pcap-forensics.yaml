@@ -1,0 +1,45 @@
+# Generated from platform/labs/OT/ot-3-1-ics-pcap-forensics/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: ot-3-1-ics-pcap-forensics
+track: OT
+difficulty: advanced
+source: platform/labs/OT/ot-3-1-ics-pcap-forensics/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+- port: 80
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr-tester:latest
+  command: /tests/ot-3-1-ics-pcap-forensics.sh
+  steps:
+  - name: Analyst workstation is reachable over SSH
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'echo connected' 2>&1
+    expect: connected
+  - name: Guided challenge range is reachable
+    command: curl -fsS http://{target.guide}/ | grep -o 'ICS' | head -1
+    expect: ICS
+  - name: TRITON evidence is present
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'test -f /home/analyst/data/nozomi-triton-tristation/malware_exec.pcap && echo evidence_found' 2>&1
+    expect: evidence_found
+  - name: Tshark is installed
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'tshark -v | head -1' 2>&1
+    expect: TShark
+  - name: TRITON engineering workstation is identifiable
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} "tshark -r /home/analyst/data/nozomi-triton-tristation/malware_exec.pcap -Y 'udp.port==1502 && udp.srcport!=1502' -T fields -e ip.src 2>/dev/null | sort -u | head -1" 2>&1
+    expect: 192.168.1.88
+  - name: TRITON frames on TriStation port are countable
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} "tshark -r /home/analyst/data/nozomi-triton-tristation/malware_exec.pcap -Y 'udp.port==1502' 2>/dev/null | wc -l" 2>&1
+    expect: '896'
+  - name: Assembled flag
+    command: echo 'OCR{192.168.1.88_1502_896}'
+    expect: OCR{192.168.1.88_1502_896}
+expected_flag_count: 1
+expected_flag: OCR{192.168.1.88_1502_896}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 2304
+max_cpu: 2.25

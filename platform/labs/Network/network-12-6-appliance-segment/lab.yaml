@@ -92,6 +92,12 @@ topology:
   edges: []
 
 test:
+  # The protected service and the student's tunnel port are only reachable
+  # through the appliance, so the only port the harness can probe from the lab
+  # network is the appliance's SSH.
+  expected_services:
+    - port: 22
+      protocol: tcp
   steps:
     - name: "SSH to the appliance"
       command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR {cred.analyst.user}@{target.appliance} 'head -1 /etc/openwrt_release' 2>&1"

@@ -23,6 +23,9 @@ static ``--validate-all`` mode runs anywhere and is part of CI.
 from __future__ import annotations
 
 import argparse
+import hashlib
+import importlib.util
+import ipaddress
 import json
 import re
 import shlex
@@ -39,6 +42,10 @@ ROOT = Path(__file__).resolve().parent.parent
 MANIFEST_ROOT = ROOT / "platform" / "tester" / "manifests"
 LABS_ROOT = ROOT / "platform" / "labs"
 TESTER_DIR = ROOT / "platform" / "tester"
+TOPOLOGY_KEY = "x-ocr-topology"
+# Match the platform's protected lab range (10.128.0.0/9). The engine maps
+# second_octet=100 to 10.128, which can never collide with 10.200+ proxies.
+TOPOLOGY_SECOND_OCTET = 100
 FLAG_RE = re.compile(r"OCR\{[^}\n]+\}")
 REQUIRED_KEYS = {
     "lab_id",
@@ -199,16 +206,123 @@ def _credentials(lab: dict) -> dict[str, dict[str, str]]:
     return mapping
 
 
-def _compose(project: str, compose_file: Path, args: list[str]) -> list[str]:
-    return [
-        "docker",
-        "compose",
-        "-p",
-        project,
-        "-f",
-        str(compose_file),
-        *args,
-    ]
+_TOPOLOGY_ENGINE = None
+
+
+def _topology_engine():
+    """Load the platform's topology engine without importing the app package.
+
+    ``topology_engine`` is stdlib-only, so loading it by path keeps the harness
+    free of backend settings, database, and Docker SDK dependencies.
+    """
+    global _TOPOLOGY_ENGINE
+    if _TOPOLOGY_ENGINE is None:
+        path = (
+            ROOT / "platform" / "backend" / "app" / "services" / "topology_engine.py"
+        )
+        spec = importlib.util.spec_from_file_location("ocr_topology_engine", path)
+        if spec is None or spec.loader is None:
+            raise RuntimeError(f"cannot load topology engine from {path}")
+        module = importlib.util.module_from_spec(spec)
+        # dataclasses resolve annotations through sys.modules, so register the
+        # module before executing it.
+        sys.modules["ocr_topology_engine"] = module
+        try:
+            spec.loader.exec_module(module)
+        except Exception:
+            sys.modules.pop("ocr_topology_engine", None)
+            raise
+        _TOPOLOGY_ENGINE = module
+    return _TOPOLOGY_ENGINE
+
+
+def _docker_subnets() -> list[ipaddress.IPv4Network]:
+    """Return every IPv4 subnet already claimed by a Docker network."""
+    subnets: list[ipaddress.IPv4Network] = []
+    listed = _run(["docker", "network", "ls", "-q"], timeout=60)
+    for network_id in listed.stdout.split():
+        inspected = _run(
+            [
+                "docker",
+                "network",
+                "inspect",
+                network_id,
+                "--format",
+                "{{range .IPAM.Config}}{{.Subnet}} {{end}}",
+            ],
+            timeout=30,
+        )
+        for subnet in inspected.stdout.split():
+            try:
+                subnets.append(ipaddress.ip_network(subnet, strict=False))
+            except ValueError:
+                continue
+    return subnets
+
+
+def _free_third_octet(lab_id: str) -> int:
+    """Pick a deterministic /24 inside the lab range that Docker has not taken."""
+    used = _docker_subnets()
+    engine = _topology_engine()
+    for attempt in range(32):
+        digest = hashlib.sha256(f"{lab_id}:{attempt}".encode()).hexdigest()
+        third = 1 + int(digest[:4], 16) % 200
+        candidate = engine._link_subnet(TOPOLOGY_SECOND_OCTET, third, 0).supernet(
+            new_prefix=24
+        )
+        if not any(candidate.overlaps(subnet) for subnet in used):
+            return third
+    raise RuntimeError(f"could not find a free topology subnet for {lab_id}")
+
+
+def _topology_override(compose_file: Path, lab_id: str) -> Path | None:
+    """Expand ``x-ocr-topology`` into a compose override the harness can start.
+
+    The platform does this in ``docker_manager`` before spawning. Without it, a
+    topology node starts with no role, links, or SSH password, so the lab comes
+    up but every service stays down.
+    """
+    data = yaml.safe_load(compose_file.read_text(encoding="utf-8")) or {}
+    if not isinstance(data, dict) or TOPOLOGY_KEY not in data:
+        return None
+
+    engine = _topology_engine()
+    try:
+        topology = engine.expand(
+            data,
+            user_id=0,
+            lab_slug=lab_id,
+            second_octet=TOPOLOGY_SECOND_OCTET,
+            third_octet=_free_third_octet(lab_id),
+        )
+    except engine.TopologyError as exc:
+        raise RuntimeError(f"{TOPOLOGY_KEY} is invalid: {exc}") from exc
+
+    services: dict[str, dict] = {}
+    for service, networks in (topology.get("service_networks") or {}).items():
+        override: dict = {"networks": {"default": {}, **networks}}
+        env = (topology.get("service_env") or {}).get(service)
+        if env:
+            override["environment"] = env
+        sysctls = (topology.get("service_sysctls") or {}).get(service)
+        if sysctls:
+            override["sysctls"] = sysctls
+        services[service] = override
+
+    payload = {"services": services, "networks": topology.get("networks") or {}}
+    handle, path = tempfile.mkstemp(prefix="ocr-topology-", suffix=".yml")
+    with open(handle, "w", encoding="utf-8") as stream:
+        yaml.safe_dump(payload, stream, sort_keys=False)
+    return Path(path)
+
+
+def _compose(
+    project: str, compose_file: Path, args: list[str], extra_files: list[Path] | None = None
+) -> list[str]:
+    command = ["docker", "compose", "-p", project, "-f", str(compose_file)]
+    for extra in extra_files or []:
+        command += ["-f", str(extra)]
+    return [*command, *args]
 
 
 def _inspect(container_id: str) -> dict:
@@ -219,8 +333,10 @@ def _inspect(container_id: str) -> dict:
     return data[0] if data else {}
 
 
-def _project_containers(project: str, compose_file: Path) -> list[dict]:
-    result = _run(_compose(project, compose_file, ["ps", "-q"]), timeout=60)
+def _project_containers(
+    project: str, compose_file: Path, extra_files: list[Path] | None = None
+) -> list[dict]:
+    result = _run(_compose(project, compose_file, ["ps", "-q"], extra_files), timeout=60)
     ids = [line.strip() for line in result.stdout.splitlines() if line.strip()]
     return [_inspect(container_id) for container_id in ids]
 
@@ -249,13 +365,53 @@ def _targets(containers: list[dict], network: str) -> dict[str, str]:
     return targets
 
 
+def _diagram_targets(
+    lab_dir: Path, containers: list[dict], network: str, targets: dict[str, str]
+) -> dict[str, str]:
+    """Map the lab.yaml diagram node ids onto the containers they describe.
+
+    A lab's ``topology.nodes`` uses friendly ids (``webserver``) while Compose
+    names the service differently (``web-server``). The platform resolves
+    ``{target.webserver}`` through ``ip_offset``; the harness must do the same.
+    """
+    lab_yaml = lab_dir / "lab.yaml"
+    if not lab_yaml.exists():
+        return targets
+    data = yaml.safe_load(lab_yaml.read_text(encoding="utf-8")) or {}
+    nodes = (data.get("topology") or {}).get("nodes") or []
+    if not nodes:
+        return targets
+
+    by_offset: dict[str, str] = {}
+    for container in containers:
+        labels = (container.get("Config") or {}).get("Labels") or {}
+        offset = str(labels.get("ip_offset") or "").strip()
+        networks = (container.get("NetworkSettings") or {}).get("Networks") or {}
+        address = (networks.get(network) or {}).get("IPAddress") or ""
+        if offset and address:
+            by_offset.setdefault(offset, address)
+
+    for node in nodes:
+        if not isinstance(node, dict):
+            continue
+        node_id = str(node.get("id") or "").strip()
+        offset = str(node.get("ip_offset") or "").strip()
+        if node_id and offset in by_offset:
+            targets.setdefault(node_id, by_offset[offset])
+    return targets
+
+
 def _lab_network(containers: list[dict], project: str) -> str | None:
+    """Prefer the compose default network; topology links are extra networks."""
+    fallback = None
     for container in containers:
         networks = (container.get("NetworkSettings") or {}).get("Networks") or {}
         for name in networks:
-            if name.startswith(f"{project}_") or name == project:
+            if name == f"{project}_default":
                 return name
-    return None
+            if (name.startswith(f"{project}_") or name == project) and fallback is None:
+                fallback = name
+    return fallback
 
 
 def _start_solver(
@@ -480,11 +636,20 @@ def run_one(lab: dict, manifest: dict, args: argparse.Namespace, run_index: int)
     checks: list[Check] = []
     temp_dir = Path(tempfile.mkdtemp(prefix="ocr-lab-harness-"))
     solver_started = False
+    topology_override: Path | None = None
+    extra_files: list[Path] = []
 
     def compose(args_list: list[str], timeout: int = 300) -> subprocess.CompletedProcess:
-        return _run(_compose(project, compose_file, args_list), timeout=timeout)
+        return _run(_compose(project, compose_file, args_list, extra_files), timeout=timeout)
 
     try:
+        topology_override = _topology_override(compose_file, manifest["lab_id"])
+        if topology_override is not None:
+            extra_files = [topology_override]
+            checks.append(
+                Check("topology", True, "x-ocr-topology expanded into link networks")
+            )
+
         if not args.no_build and (run_index == 1 or args.rebuild):
             built = compose(["build"], timeout=3600)
             checks.append(
@@ -510,7 +675,7 @@ def run_one(lab: dict, manifest: dict, args: argparse.Namespace, run_index: int)
         if started.returncode != 0:
             raise RuntimeError("start failed")
 
-        containers = _project_containers(project, compose_file)
+        containers = _project_containers(project, compose_file, extra_files)
         running = [c for c in containers if (c.get("State") or {}).get("Status") == "running"]
         checks.append(
             Check(
@@ -523,6 +688,7 @@ def run_one(lab: dict, manifest: dict, args: argparse.Namespace, run_index: int)
         if not network:
             raise RuntimeError("could not find the lab compose network")
         targets = _targets(containers, network)
+        targets = _diagram_targets(lab_dir, containers, network, targets)
 
         _start_solver(
             args.solver_image or manifest["solver"]["image"],
@@ -584,6 +750,8 @@ def run_one(lab: dict, manifest: dict, args: argparse.Namespace, run_index: int)
             compose(["down", "-v", "--remove-orphans"], timeout=300)
         else:
             print(f"kept project {project} for inspection")
+        if topology_override is not None:
+            topology_override.unlink(missing_ok=True)
 
     passed = all(check.passed for check in checks)
     result = {

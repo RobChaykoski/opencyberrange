@@ -19,14 +19,29 @@ Both should work before you add a rule. If they do not, fix reachability first.
 
 ## Step 2: Apply a forward-chain policy
 
+The router keeps `no-new-privileges`, so there is no `sudo` here. `fwctl` is the
+scoped helper on the node: it applies a ruleset file you own and prints the live
+rules.
+
 ```bash
 ssh analyst@<fw-management-ip>
-sudo nft delete table inet ocr 2>/dev/null
-sudo nft add table inet ocr
-sudo nft add chain inet ocr forward '{ type filter hook forward priority 0; policy accept; }'
-sudo nft add rule inet ocr forward tcp dport 8080 drop
-sudo nft list chain inet ocr forward
+
+cat > /srv/fw/policy.nft <<'NFT'
+table inet ocr {
+  chain forward {
+    type filter hook forward priority 0; policy accept;
+    tcp dport 8080 drop
+  }
+}
+NFT
+
+fwctl apply /srv/fw/policy.nft
+fwctl show
 ```
+
+`fwctl` only accepts `show` and `apply` for files under `/srv/fw`, and the
+apply runs as root inside this router container. Nothing outside the node is
+reachable through it.
 
 The chain hooks the **forward** path, so it applies to traffic crossing the
 router, not traffic addressed to the router itself.

@@ -26,7 +26,7 @@ solver:
     command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.fw} 'cat /proc/sys/net/ipv4/ip_forward' 2>&1
     expect: '1'
   - name: Apply the forward-chain policy
-    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.fw} "nft delete table inet ocr 2>/dev/null; nft add table inet ocr; nft add chain inet ocr forward '{ type filter hook forward priority 0; policy accept; }'; nft add rule inet ocr forward tcp dport 8080 drop; nft list chain inet ocr forward" 2>&1
+    command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.fw} 'cat > /srv/fw/policy.nft <<\"NFT\"\ntable inet ocr {\n  chain forward {\n    type filter hook forward priority 0; policy accept;\n    tcp dport 8080 drop\n  }\n}\nNFT\nfwctl apply /srv/fw/policy.nft\nfwctl show' 2>&1"
     expect: tcp dport 8080 drop
   - name: Blocked status port is unreachable
     command: IP=$(curl -s --connect-timeout 5 http://{target.fw}:8080/status | jq -r '.links[] | select(.peer=="svc") | .peer_ip'); sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.h1} "if wget -qO- --timeout=2 http://$IP:8080/status; then echo reachable; else echo blocked; fi" 2>&1

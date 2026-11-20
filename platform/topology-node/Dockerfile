@@ -9,7 +9,8 @@ RUN apk add --no-cache iproute2 openssh python3 nftables tini \
     && mkdir -p /run/sshd /srv
 
 COPY entrypoint.py /usr/local/bin/topology-node
-RUN chmod 0755 /usr/local/bin/topology-node
+COPY fwctl /usr/local/bin/fwctl
+RUN chmod 0755 /usr/local/bin/topology-node /usr/local/bin/fwctl
 
 EXPOSE 22 8080
 ENTRYPOINT ["/sbin/tini", "--", "/usr/local/bin/topology-node"]

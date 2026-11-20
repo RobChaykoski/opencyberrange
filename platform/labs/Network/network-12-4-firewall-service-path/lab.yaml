@@ -44,11 +44,13 @@ hints:
       Read the router status endpoint first. It reports the service link address,
       which is the address to test from h1.
   - text: |
-      Use an `inet` table and a `forward` chain with policy `accept`. Add a drop
-      rule for TCP port 8080.
+      The router keeps no-new-privileges, so there is no `sudo` on this node.
+      `fwctl` is the scoped helper: write your ruleset to a file under `/srv/fw`
+      and apply it with `fwctl apply /srv/fw/policy.nft`.
   - text: |
-      `nft list chain inet ocr forward` shows the rule. Test port 80 and port
-      8080 separately from h1.
+      Use an `inet` table and a `forward` chain with policy `accept`. Add a drop
+      rule for TCP port 8080. `fwctl show` prints the live ruleset, and you can
+      test port 80 and port 8080 separately from h1.
   - text: |
       Forwarding must already be enabled on the router; the engine sets that for
       the router role.
@@ -56,7 +58,7 @@ flag: "OCR{f1r3w4ll_p4th}"
 
 visibility: public
 week: 12
-troubleshooting: "If nft reports that the table exists, delete it first. If the drop rule does not take effect, confirm the chain is hooked at `forward` priority 0 and that the router still reports ip_forward=1."
+troubleshooting: "If `fwctl apply` reports that the table exists, remove it from the file or reload the full ruleset. If the drop rule does not take effect, confirm the chain is hooked at `forward` priority 0 and that the router still reports ip_forward=1."
 defensive_takeaways: "A routed segment is the right place for a forward policy. Keep the allowed service reachable, deny the rest, and verify both paths after every change."
 difficulty_evidence: "Engine unit tests and live dev smoke; learner walkthrough pending."
 difficulty_evidence_source: "automated_and_manual_smoke"
@@ -119,7 +121,7 @@ test:
       timeout: 20
 
     - name: "Apply the forward-chain policy"
-      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.fw} \"nft delete table inet ocr 2>/dev/null; nft add table inet ocr; nft add chain inet ocr forward '{ type filter hook forward priority 0; policy accept; }'; nft add rule inet ocr forward tcp dport 8080 drop; nft list chain inet ocr forward\" 2>&1"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.fw} 'cat > /srv/fw/policy.nft <<\"NFT\"\ntable inet ocr {\n  chain forward {\n    type filter hook forward priority 0; policy accept;\n    tcp dport 8080 drop\n  }\n}\nNFT\nfwctl apply /srv/fw/policy.nft\nfwctl show' 2>&1"
       expect: "tcp dport 8080 drop"
       timeout: 30
 

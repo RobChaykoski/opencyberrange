@@ -26,6 +26,18 @@ All notable changes to OpenCyberRange are recorded here.
 - Applied the shared download helper to reports, admin activity/users/exercises/reports/backups, student and class reports, career profile, privacy data, portfolio, identity providers, VPN config, SBOM, and course reports.
 - Added frontend tests for the shared download helper.
 
+## [5.28.5] - 2026-11-20
+
+### Network lab harness and topology fixes
+
+- `scripts/lab_harness.py` expands `x-ocr-topology` before starting a lab: it allocates a free `/29` per link inside `10.128.0.0/9` and injects the node role, links, routes, flag, and training credentials. The five container-topology labs are now validated by the offline harness instead of failing right after start.
+- `{target.NAME}` also resolves from `topology.nodes[].id` through its `ip_offset`, so a diagram id such as `webserver` reaches the `web-server` service.
+- `topology-node`: new `fwctl` helper. The node keeps `no-new-privileges`; the root entrypoint serves a Unix socket that accepts only `show` and `apply <file under /srv/fw>`, so the firewall lab works without sudo or setuid.
+- `network-12-1`: the traffic check now waits for an `ALLOW`/`DROPPED` line instead of cutting the monitor banner with `head`.
+- `network-12-4`: applies its policy through `fwctl`; hints and workbook chapter updated.
+- `network-12-6`: declares only the appliance SSH as an expected service.
+- Generated the missing `ot-3-1-ics-pcap-forensics` manifest; all 211 labs now have a tester contract.
+
 ## [5.28.4] - 2026-11-20
 
 ### ICS lab test fix
