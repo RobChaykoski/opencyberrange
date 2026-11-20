@@ -303,6 +303,26 @@ class RestoreRequest(BaseModel):
     filename: str = Field(..., min_length=1, max_length=255)
 
 
+class ComposeUpdateRequest(BaseModel):
+    compose_file: str = Field("", max_length=200_000)
+
+
+class ImpersonateLaunchRequest(BaseModel):
+    user_id: int = Field(..., ge=1)
+    lab_slug: str = Field(..., min_length=1, max_length=150)
+
+
+class StressTestRequest(BaseModel):
+    level: int = Field(1, ge=1, le=4)
+    users: int = Field(45, ge=1, le=500)
+    concurrent_spawns: int = Field(5, ge=1, le=50)
+    lab_slug: str | None = Field(None, max_length=150)
+
+
+class StressCancelRequest(BaseModel):
+    run_id: str = Field(..., min_length=1, max_length=100)
+
+
 @router.post("/users/{user_id}/mfa/reset", summary="Reset another account's MFA")
 async def reset_user_mfa(
     user_id: int,
@@ -1995,6 +2015,7 @@ async def impersonation_status(
 @router.post("/impersonate/launch")
 @limiter.limit("10/minute")
 async def impersonate_launch_lab(
+    body: ImpersonateLaunchRequest,
     request: Request,
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user),
@@ -2006,12 +2027,8 @@ async def impersonate_launch_lab(
     """
     import asyncio
 
-    body = await request.json()
-    target_user_id = body.get("user_id")
-    lab_slug = body.get("lab_slug")
-
-    if not target_user_id or not lab_slug:
-        raise HTTPException(status_code=400, detail="user_id and lab_slug required")
+    target_user_id = body.user_id
+    lab_slug = body.lab_slug
 
     # Validate target user
     target_user = db.query(User).filter(User.id == target_user_id).first()
@@ -3164,7 +3181,7 @@ async def create_lab(
 @router.put("/labs/{lab_id}/compose")
 async def update_lab_compose(
     lab_id: int,
-    payload: dict,
+    payload: ComposeUpdateRequest,
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user)
 ):
@@ -3173,7 +3190,7 @@ async def update_lab_compose(
     if not lab:
         raise HTTPException(status_code=404, detail="Lab not found")
 
-    compose_content = payload.get("compose_file", "")
+    compose_content = payload.compose_file
     if compose_content:
         import yaml
         try:
@@ -4685,7 +4702,7 @@ def _start_stress_test_run(
 
 @router.post("/stress-test")
 async def start_stress_test(
-    body: dict,
+    body: StressTestRequest,
     admin: User = Depends(get_current_admin_user),
 ):
     """
@@ -4698,10 +4715,10 @@ async def start_stress_test(
         lab_slug: str|null
     """
     return _start_stress_test_run(
-        level=body.get("level", 1),
-        num_users=body.get("users", 45),
-        concurrent_spawns=body.get("concurrent_spawns", 5),
-        lab_slug=body.get("lab_slug") or None,
+        level=body.level,
+        num_users=body.users,
+        concurrent_spawns=body.concurrent_spawns,
+        lab_slug=body.lab_slug or None,
         admin_id=admin.id,
     )
 
@@ -4749,11 +4766,11 @@ async def get_stress_test_events(
 
 @router.post("/stress-test/cancel")
 async def cancel_stress_test(
-    body: dict,
+    body: StressCancelRequest,
     admin: User = Depends(get_current_admin_user),
 ):
     """Cancel a running stress test."""
-    run_id = body.get("run_id", "")
+    run_id = body.run_id
     # Try local cancel flag first (works if this is the worker that started it)
     flag = _stress_cancel_flags.get(run_id)
     if flag:

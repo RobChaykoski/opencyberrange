@@ -7,7 +7,8 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.28.1` | SWOCTS Cyber Range Release 5.28.1 | Current patch release (signed annotated tag): side-effect-free user listing, single-query retention counts, request models, and generic admin errors |
+| `v5.28.2` | SWOCTS Cyber Range Release 5.28.2 | Current patch release (signed annotated tag): Pydantic models for the remaining admin request bodies |
+| `v5.28.1` | SWOCTS Cyber Range Release 5.28.1 | Previous patch release (signed annotated tag): side-effect-free user listing, single-query retention counts, request models, and generic admin errors |
 | `v5.28.0` | SWOCTS Cyber Range Release 5.28.0 | Previous feature release (signed annotated tag): offline ICS/OT PCAP forensics lab plus admin event-loop, audit, reauth, and restore-safety fixes |
 | `v5.27.8` | SWOCTS Cyber Range Release 5.27.8 | Previous lab-readiness patch (signed annotated tag): corrected the DevFest workbook path and refreshed the lab integrity manifest |
 | `v5.27.7` | SWOCTS Cyber Range Release 5.27.7 | Previous performance patch (signed annotated tag): one JWT decode per mutation, cached middleware settings, request-scoped user reuse, and per-user spawn limits |

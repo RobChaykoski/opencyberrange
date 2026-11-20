@@ -26,6 +26,13 @@ All notable changes to OpenCyberRange are recorded here.
 - Applied the shared download helper to reports, admin activity/users/exercises/reports/backups, student and class reports, career profile, privacy data, portfolio, identity providers, VPN config, SBOM, and course reports.
 - Added frontend tests for the shared download helper.
 
+## [5.28.2] - 2026-11-20
+
+### Admin request validation
+
+- Impersonation launch, compose update, and stress-test start/cancel now take Pydantic models with length and range bounds instead of raw dictionaries.
+- Removed the manual `request.json()` parsing from the impersonation launch path.
+
 ## [5.28.1] - 2026-11-20
 
 ### Admin follow-ups
