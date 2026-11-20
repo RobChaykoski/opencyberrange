@@ -1,7 +1,7 @@
 <template>
   <teleport to="body">
     <transition name="confirm-fade">
-      <div v-if="open" class="confirm" @click.self="cancel">
+      <div v-if="open" class="confirm" @click.self="cancel" @keydown.esc="cancel">
         <div
           class="confirm__card"
           role="dialog"

@@ -7,7 +7,8 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.28.5` | SWOCTS Cyber Range Release 5.28.5 | Current patch release (signed annotated tag): topology-aware lab harness, scoped `fwctl` firewall helper, network lab test fixes |
+| `v5.28.6` | SWOCTS Cyber Range Release 5.28.6 | Current patch release (signed annotated tag): accessible admin dialogs, labelled copy controls, honest dismiss/badge affordances |
+| `v5.28.5` | SWOCTS Cyber Range Release 5.28.5 | Previous patch release (signed annotated tag): topology-aware lab harness, scoped `fwctl` firewall helper, network lab test fixes |
 | `v5.28.4` | SWOCTS Cyber Range Release 5.28.4 | Previous patch release (signed annotated tag): correct TRITON workstation filter in the ICS lab test |
 | `v5.28.3` | SWOCTS Cyber Range Release 5.28.3 | Previous patch release (signed annotated tag): startup-time settings validation, modern declarative base, BOM and tail cleanup |
 | `v5.28.2` | SWOCTS Cyber Range Release 5.28.2 | Previous patch release (signed annotated tag): Pydantic models for the remaining admin request bodies |

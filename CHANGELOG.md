@@ -26,6 +26,17 @@ All notable changes to OpenCyberRange are recorded here.
 - Applied the shared download helper to reports, admin activity/users/exercises/reports/backups, student and class reports, career profile, privacy data, portfolio, identity providers, VPN config, SBOM, and course reports.
 - Added frontend tests for the shared download helper.
 
+## [5.28.6] - 2026-11-20
+
+### Admin signifiers and dialog behaviour
+
+- New `v-modal-dialog` directive: every admin overlay now declares `role="dialog"` and `aria-modal`, wires `aria-labelledby` to its title, closes on Escape, moves focus inside on open, traps Tab, and restores focus on close.
+- `ConfirmDialog` closes on Escape.
+- Invite codes are a real copy button (`CopyCode.vue`) with a label, copy icon, and inline "Copied" confirmation instead of clickable text with no keyboard path.
+- The exercise-tester "Report" badge is a `<button>` with an aria-label, so it is reachable and no longer reads as part of the row checkbox.
+- Scan-warning headers no longer dismiss the whole list from a bare click; the `×` is a labelled button.
+- The `scan-warnings` and tester badge styles were adjusted for native button rendering.
+
 ## [5.28.5] - 2026-11-20
 
 ### Network lab harness and topology fixes

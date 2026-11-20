@@ -719,9 +719,15 @@
 
           <!-- Scan Warnings -->
           <div v-if="scanWarnings.length" class="scan-warnings">
-            <div class="scan-warnings__header" @click="scanWarnings = []">
+            <div class="scan-warnings__header">
               <span>Scan Warnings ({{ scanWarnings.length }})</span>
-              <span class="scan-warnings__dismiss">&times;</span>
+              <button
+                type="button"
+                class="scan-warnings__dismiss"
+                aria-label="Dismiss scan warnings"
+                title="Dismiss scan warnings"
+                @click="scanWarnings = []"
+              >&times;</button>
             </div>
             <ul class="scan-warnings__list">
               <li v-for="(w, i) in scanWarnings" :key="i">{{ w }}</li>
@@ -1241,7 +1247,7 @@
             </div>
 
             <!-- Container Logs Modal -->
-            <div v-if="viewingLogsSessionId" class="modal-overlay" @click.self="closeSessionLogs">
+            <div v-if="viewingLogsSessionId" class="modal-overlay" v-modal-dialog="closeSessionLogs" @click.self="closeSessionLogs">
               <div class="modal" style="max-width: 900px; max-height: 80vh; overflow: auto;">
                 <div class="modal-header">
                   <h3 class="modal-title">Container Logs — Session #{{ viewingLogsSessionId }}</h3>
@@ -1755,9 +1761,11 @@
                   <td>{{ course.student_count }}</td>
                   <td>{{ course.lab_count }}</td>
                   <td>
-                    <code class="invite-code-admin" @click="copyToClipboard(course.invite_code)">
-                      {{ course.invite_code }}
-                    </code>
+                    <CopyCode
+                      class="invite-code-admin"
+                      :value="course.invite_code"
+                      label="invite code"
+                    />
                   </td>
                   <td>
                     <span :class="['status-badge', adminCourseStatus(course).class]">
@@ -1829,7 +1837,7 @@
             <div class="course-overview-stats" style="display: flex; gap: 1.5rem; padding: 0.75rem 0; color: var(--text-secondary); font-size: 0.875rem;">
               <span><strong style="color: var(--text-primary);">{{ managingCourse.student_count }}</strong> students</span>
               <span><strong style="color: var(--text-primary);">{{ managingCourse.lab_count }}</strong> exercises</span>
-              <span>Invite: <code class="invite-code-admin" @click="copyToClipboard(managingCourse.invite_code)" style="cursor: pointer;">{{ managingCourse.invite_code }}</code></span>
+              <span>Invite: <CopyCode class="invite-code-admin" :value="managingCourse.invite_code" label="invite code" /></span>
             </div>
             <p style="color: var(--text-muted); font-size: 0.8125rem; margin: 0;">
               Use <strong>Manage students</strong> to add or remove learners, assign exercises,
@@ -3195,13 +3203,15 @@
                       :title="testerResults[lab.slug].status.toUpperCase() + ' - ' + (testerResults[lab.slug].date || '')"
                     ></span>
                     <span class="tester-lab-name">{{ lab.name }}</span>
-                    <span
+                    <button
                       v-if="testerResults[lab.slug]"
+                      type="button"
                       class="tester-badge tester-badge--report"
                       :class="'tester-badge--report-' + testerResults[lab.slug].status"
                       :title="'View report (' + testerResults[lab.slug].status + ')'"
-                      @click.prevent.stop="generateTestReport(lab.slug)"
-                    >Report</span>
+                      :aria-label="'View test report for ' + lab.name + ' (' + testerResults[lab.slug].status + ')'"
+                      @click.stop="generateTestReport(lab.slug)"
+                    >Report</button>
                     <span v-if="lab.has_test_steps" class="tester-badge tester-badge--test" title="Has test steps">T</span>
                     <span v-if="lab.has_flag" class="tester-badge tester-badge--flag" title="Has flag hash">F</span>
                     <span class="tester-lab-track">{{ lab.track }}</span>
@@ -3418,7 +3428,7 @@
 
       <!-- Create Track Modal -->
       <transition name="fade">
-        <div v-if="showCreateTrackModal" class="modal-overlay" @click.self="showCreateTrackModal = false">
+        <div v-if="showCreateTrackModal" class="modal-overlay" v-modal-dialog="showCreateTrackModal = false" @click.self="showCreateTrackModal = false">
           <div class="modal">
             <h3 class="modal-title">Create Track</h3>
             <div class="form-group">
@@ -3451,7 +3461,7 @@
 
       <!-- Edit Track Modal -->
       <transition name="fade">
-        <div v-if="showEditTrackModal" class="modal-overlay" @click.self="showEditTrackModal = false">
+        <div v-if="showEditTrackModal" class="modal-overlay" v-modal-dialog="showEditTrackModal = false" @click.self="showEditTrackModal = false">
           <div class="modal">
             <h3 class="modal-title">Edit Track</h3>
             <div class="form-group">
@@ -3484,7 +3494,7 @@
 
       <!-- Create Level Modal -->
       <transition name="fade">
-        <div v-if="showCreateLevelModal" class="modal-overlay" @click.self="showCreateLevelModal = false">
+        <div v-if="showCreateLevelModal" class="modal-overlay" v-modal-dialog="showCreateLevelModal = false" @click.self="showCreateLevelModal = false">
           <div class="modal">
             <h3 class="modal-title">Add Level to {{ levelFormTrack?.name }}</h3>
             <div class="form-group">
@@ -3505,7 +3515,7 @@
 
       <!-- Edit Level Modal -->
       <transition name="fade">
-        <div v-if="showEditLevelModal" class="modal-overlay" @click.self="showEditLevelModal = false">
+        <div v-if="showEditLevelModal" class="modal-overlay" v-modal-dialog="showEditLevelModal = false" @click.self="showEditLevelModal = false">
           <div class="modal">
             <h3 class="modal-title">Edit Level</h3>
             <div class="form-group">
@@ -3526,7 +3536,7 @@
 
       <!-- Disk Management Modal -->
       <transition name="fade">
-        <div v-if="showDiskModal" class="modal-overlay" @click.self="showDiskModal = false">
+        <div v-if="showDiskModal" class="modal-overlay" v-modal-dialog="showDiskModal = false" @click.self="showDiskModal = false">
           <div class="modal modal--large">
             <h3 class="modal-title">Disk Management</h3>
             <p class="modal-subtitle">Docker images, build cache, and disk usage</p>
@@ -3590,7 +3600,7 @@
       <transition name="fade">
         <div
           v-if="showImportExerciseModal"
-          class="modal-overlay"
+          class="modal-overlay" v-modal-dialog="closeImportExercise"
           @click.self="closeImportExercise"
         >
           <div class="modal modal--large">
@@ -3744,7 +3754,7 @@
 
       <!-- Create Lab Modal -->
       <transition name="fade">
-        <div v-if="showCreateLabModal" class="modal-overlay" @click.self="showCreateLabModal = false">
+        <div v-if="showCreateLabModal" class="modal-overlay" v-modal-dialog="showCreateLabModal = false" @click.self="showCreateLabModal = false">
           <div class="modal modal--xlarge">
             <h3 class="modal-title">Create Exercise</h3>
 
@@ -3930,7 +3940,7 @@ test:
 
       <!-- Edit Exercise Modal (Details + Compose tabs) -->
       <transition name="fade">
-        <div v-if="showLabEditModal" class="modal-overlay" @click.self="showLabEditModal = false">
+        <div v-if="showLabEditModal" class="modal-overlay" v-modal-dialog="showLabEditModal = false" @click.self="showLabEditModal = false">
           <div class="modal modal--large">
             <h3 class="modal-title">Edit Exercise</h3>
             <p class="modal-subtitle">{{ editLab?.name }}</p>
@@ -4015,7 +4025,7 @@ test:
 
       <!-- Edit User Modal -->
       <transition name="fade">
-        <div v-if="showEditUserModal" class="modal-overlay" @click.self="closeEditUserModal">
+        <div v-if="showEditUserModal" class="modal-overlay" v-modal-dialog="closeEditUserModal" @click.self="closeEditUserModal">
           <div
             class="modal modal--large user-modal user-modal--edit"
             role="dialog"
@@ -4363,7 +4373,7 @@ test:
 
       <!-- User Details Modal -->
       <transition name="fade">
-        <div v-if="showUserDetailsModal" class="modal-overlay" @click.self="showUserDetailsModal = false">
+        <div v-if="showUserDetailsModal" class="modal-overlay" v-modal-dialog="showUserDetailsModal = false" @click.self="showUserDetailsModal = false">
           <div
             class="modal modal--xlarge user-modal"
             role="dialog"
@@ -4654,7 +4664,7 @@ test:
 
       <!-- Launch As Student Modal -->
       <transition name="fade">
-        <div v-if="showLaunchAsModal" class="modal-overlay" @click.self="showLaunchAsModal = false">
+        <div v-if="showLaunchAsModal" class="modal-overlay" v-modal-dialog="showLaunchAsModal = false" @click.self="showLaunchAsModal = false">
           <div class="modal">
             <h3 class="modal-title">Launch Lab As Student</h3>
             <p class="modal-subtitle">Start a lab environment under a student's account. The session will be marked as admin-initiated and your RangeBox will be bridged to their network.</p>
@@ -4707,6 +4717,7 @@ test:
 
 <script setup>
 import InfoTip from '../components/InfoTip.vue'
+import CopyCode from '../components/CopyCode.vue'
 import Toast, { showToast } from '../components/Toast.vue'
 import AdminPendingTab from '../components/AdminPendingTab.vue'
 import AchievementStudio from '../components/AchievementStudio.vue'
@@ -10057,11 +10068,6 @@ const downloadClassReportAdmin = async () => {
   }
 }
 
-const copyToClipboard = (text) => {
-  navigator.clipboard.writeText(text)
-  showAlert('Copied to clipboard')
-}
-
 const formatDateShort = (dt) => {
   if (!dt) return ''
   const d = new Date(dt.endsWith('Z') || dt.includes('+') ? dt : dt + 'Z')
@@ -10465,8 +10471,20 @@ watch(activeTab, (tab) => {
 .scan-warnings__dismiss {
   font-size: 1.2rem;
   opacity: 0.7;
+  background: none;
+  border: 0;
+  padding: 0 0.25rem;
+  color: inherit;
+  font-family: inherit;
+  line-height: 1;
+  cursor: pointer;
 }
 .scan-warnings__dismiss:hover { opacity: 1; }
+.scan-warnings__dismiss:focus-visible {
+  outline: 2px solid var(--warning);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
 .scan-warnings__list {
   list-style: none;
   padding: 0 1rem 0.6rem;
@@ -12493,9 +12511,6 @@ watch(activeTab, (tab) => {
   font-size: 0.8rem;
   color: var(--warning);
   background: rgba(245, 158, 11, 0.1);
-  padding: 0.15rem 0.5rem;
-  border-radius: 4px;
-  cursor: pointer;
   font-family: 'JetBrains Mono', monospace;
 }
 
@@ -15368,6 +15383,8 @@ watch(activeTab, (tab) => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  font-family: inherit;
+  line-height: 1;
   width: 18px;
   height: 18px;
   border-radius: 3px;
