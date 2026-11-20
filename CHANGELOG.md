@@ -26,6 +26,16 @@ All notable changes to OpenCyberRange are recorded here.
 - Applied the shared download helper to reports, admin activity/users/exercises/reports/backups, student and class reports, career profile, privacy data, portfolio, identity providers, VPN config, SBOM, and course reports.
 - Added frontend tests for the shared download helper.
 
+## [5.27.7] - 2026-11-20
+
+### Request-path performance
+
+- Mutating authenticated requests now decode the JWT once: the impersonation guard validates the signature and passes the payload to `get_current_user`, which performs the single revocation check with the request session.
+- `get_current_user` publishes the authenticated user on `request.state` for downstream middleware.
+- Wiki frame-ancestor and module-gate settings are cached briefly, removing a database session from every `/api/auth/me` and gated module request.
+- Export labeling and security-event coverage reuse the authenticated user instead of resolving and decoding the token again.
+- Lab spawn and standalone RangeBox launch are rate limited to 10/minute per user (IP fallback).
+
 ## [5.27.6] - 2026-11-20
 
 ### Security hardening

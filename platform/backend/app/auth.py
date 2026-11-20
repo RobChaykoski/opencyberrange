@@ -9,7 +9,7 @@ import time
 import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Optional
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordBearer
 import jwt  # PyJWT
 from jwt import ExpiredSignatureError
@@ -528,11 +528,33 @@ class RevocationUnavailable(RuntimeError):
     """The revocation store could not be queried; authentication must deny."""
 
 
+def _enforce_revocation(payload: dict, db: Optional[Session]) -> None:
+    """Reject a revoked token; deny when the revocation store is unavailable."""
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        revoked = _check_token_revocation(
+            payload["sub"], payload["jti"], payload.get("iat", 0), db=db
+        )
+    except RevocationUnavailable:
+        logger.error("JWT rejected: revocation store unavailable")
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Authentication is temporarily unavailable",
+        )
+    if revoked:
+        raise credentials_exception
+
+
 def _decode_token(
     token: str,
     db: Optional[Session] = None,
     *,
     expected_types: tuple[str, ...] = ("access",),
+    check_revocation: bool = True,
 ) -> dict:
     """Decode and validate a platform JWT.
 
@@ -598,23 +620,16 @@ def _decode_token(
         raise credentials_exception
 
     # One DB round trip covers both individual (jti) revocation and per-user
-    # mass revocation. A revocation-store failure must deny, not allow.
-    try:
-        revoked = _check_token_revocation(
-            payload["sub"], payload["jti"], payload.get("iat", 0), db=db
-        )
-    except RevocationUnavailable:
-        logger.error("JWT rejected: revocation store unavailable")
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Authentication is temporarily unavailable",
-        )
-    if revoked:
-        raise credentials_exception
+    # mass revocation. A revocation-store failure must deny, not allow. The
+    # signature-only variant is used by the impersonation middleware, and
+    # get_current_user performs the revocation check with the request session.
+    if check_revocation:
+        _enforce_revocation(payload, db)
     return payload
 
 
 def get_current_user(
+    request: Request,
     token: str = Depends(oauth2_scheme),
     db: Session = Depends(get_db)
 ) -> User:
@@ -653,11 +668,26 @@ def get_current_user(
         except Exception:
             pass
         set_actor(actor_type="service", actor_id=service_user.id)
+        request.state.user = service_user
         return service_user
 
-    payload = _decode_token(
-        token, db=db, expected_types=("access", "impersonation")
-    )
+    # The impersonation middleware already validated the signature for
+    # mutating requests. Reuse that payload so the request pays one decode and
+    # one revocation check instead of two of each.
+    payload = getattr(request.state, "auth_payload", None)
+    if payload is not None:
+        if payload.get("type") not in ("access", "impersonation"):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Could not validate credentials",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        _enforce_revocation(payload, db)
+    else:
+        payload = _decode_token(
+            token, db=db, expected_types=("access", "impersonation")
+        )
+    request.state.auth_payload = payload
     username = payload.get("sub")
 
     user = get_user_by_username(db, username=username)
@@ -730,6 +760,9 @@ def get_current_user(
         # missing table must not break authentication.
         pass
 
+    # Downstream middlewares (export labels, security-event coverage) reuse the
+    # already-authenticated user instead of decoding the token again.
+    request.state.user = user
     return user
 
 

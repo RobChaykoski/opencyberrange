@@ -8,6 +8,7 @@ multiplied by the worker count. Setting ``RATELIMIT_STORAGE_URI`` (for example
 """
 import os
 
+from fastapi import Request
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 
@@ -15,6 +16,19 @@ from slowapi.util import get_remote_address
 def rate_limit_storage_uri() -> str:
     """Return the configured counter backend, defaulting to per-process memory."""
     return os.environ.get("RATELIMIT_STORAGE_URI", "memory://") or "memory://"
+
+
+def user_or_ip_key(request: Request) -> str:
+    """Key authenticated limits by user, falling back to the client address.
+
+    get_current_user stores the user on ``request.state`` before the endpoint
+    is called, so spawn limits follow the account rather than a shared NAT
+    address. Anonymous callers still get the per-IP behaviour.
+    """
+    user = getattr(request.state, "user", None)
+    if user is not None:
+        return f"user:{getattr(user, 'id', 'unknown')}"
+    return get_remote_address(request)
 
 
 def create_limiter(**kwargs) -> Limiter:

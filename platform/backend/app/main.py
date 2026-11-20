@@ -8,6 +8,7 @@ from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 import logging
 import os
+import time
 import uuid
 from pathlib import Path
 
@@ -1086,25 +1087,35 @@ def _wiki_frame_ancestor(db) -> str:
     return ""
 
 
+_FRAME_ANCESTOR_TTL = 30.0
+_frame_ancestor_cache: tuple[float, str] = (0.0, "")
+
+
 @app.middleware("http")
 async def wiki_frame_ancestor_header(request: Request, call_next):
     """Expose the allowed frame ancestor to nginx's auth_request.
 
     The wiki CSP cannot read PostgreSQL. The internal /api/auth/me subrequest
     returns this header, nginx captures it with auth_request_set, and the wiki
-    location interpolates it into frame-ancestors.
+    location interpolates it into frame-ancestors. The value changes only when
+    the admin edits a setting, so it is cached briefly instead of opening a
+    session on every /api/auth/me request.
     """
+    global _frame_ancestor_cache
+
     response = await call_next(request)
     if request.url.path == "/api/auth/me":
-        from app.database import SessionLocal
-
-        db = SessionLocal()
-        try:
-            value = _wiki_frame_ancestor(db)
-        except Exception:
-            value = ""
-        finally:
-            db.close()
+        now = time.monotonic()
+        expires, value = _frame_ancestor_cache
+        if now >= expires:
+            db = SessionLocal()
+            try:
+                value = _wiki_frame_ancestor(db)
+            except Exception:
+                value = ""
+            finally:
+                db.close()
+            _frame_ancestor_cache = (now + _FRAME_ANCESTOR_TTL, value)
         if value:
             response.headers["X-Wiki-Frame-Ancestor"] = value
     return response
@@ -1178,7 +1189,9 @@ async def export_label_headers(request: Request, call_next):
 
     db = SessionLocal()
     try:
-        user = data_labels_service.resolve_request_user(request, db)
+        user = getattr(request.state, "user", None)
+        if user is None:
+            user = data_labels_service.resolve_request_user(request, db)
         if user is not None and (getattr(user, "role", "") or "") != "service_account":
             from app.services import reauth as reauth_service
 
@@ -1304,20 +1317,32 @@ async def public_badge_cors(request: Request, call_next):
     return response
 
 
+_MODULE_GATE_TTL = 10.0
+_module_gate_cache: dict[str, tuple[float, bool]] = {}
+
+
 @app.middleware("http")
 async def module_access_control(request: Request, call_next):
     """Return 404 for disabled module API paths (hot-toggle without restart)."""
     path = request.url.path
     for prefix, setting_key in _MODULE_GATE.items():
         if path.startswith(prefix):
-            from app.database import SessionLocal
-            from app.services import settings_service
-            db = SessionLocal()
-            try:
-                enabled = settings_service.get_setting_fresh(db, setting_key, "false")
-            finally:
-                db.close()
-            if enabled.lower() not in ("true", "1", "yes"):
+            now = time.monotonic()
+            expires, enabled = _module_gate_cache.get(setting_key, (0.0, False))
+            if now >= expires:
+                from app.services import settings_service
+
+                db = SessionLocal()
+                try:
+                    enabled = (
+                        settings_service.get_setting_fresh(db, setting_key, "false")
+                        .lower()
+                        in ("true", "1", "yes")
+                    )
+                finally:
+                    db.close()
+                _module_gate_cache[setting_key] = (now + _MODULE_GATE_TTL, enabled)
+            if not enabled:
                 return JSONResponse(
                     status_code=404,
                     content={"detail": "Module is not enabled"},
@@ -1346,8 +1371,13 @@ async def impersonation_read_only_middleware(request: Request, call_next):
                     from app.auth import _decode_token
 
                     payload = _decode_token(
-                        token_str, expected_types=("access", "impersonation")
+                        token_str,
+                        expected_types=("access", "impersonation"),
+                        check_revocation=False,
                     )
+                    # get_current_user reuses this payload and performs the
+                    # revocation check with the request-scoped session.
+                    request.state.auth_payload = payload
                     if payload.get("imp"):
                         return JSONResponse(
                             status_code=403,

@@ -36,6 +36,7 @@ from app.models import User, Lab, LabSession, WireGuardConfig
 from app.services.docker_manager import DockerManager, get_subnet_id, RangeBoxCapacityError, rangebox_spawn_lock
 from app.services.wireguard_manager import WireGuardManager
 from app.config import settings
+from app.ratelimit import create_limiter, user_or_ip_key
 from app.crypto import encrypt_private_key, decrypt_private_key, is_encrypted
 from app.services.activity import log_activity, EventTypes
 from app.services import settings_service
@@ -149,6 +150,7 @@ def allocate_vpn_client_ip(db: Session, user_id: int, base: str = "10.0.0") -> s
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
+limiter = create_limiter()
 
 
 def _client_ip(request: Request) -> str | None:
@@ -219,6 +221,7 @@ async def get_labs(
 
 
 @router.post("/spawn/{lab_slug}")
+@limiter.limit("10/minute", key_func=user_or_ip_key)
 async def spawn_lab(
     lab_slug: str,
     request: Request,

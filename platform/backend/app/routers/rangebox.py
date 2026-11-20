@@ -12,16 +12,18 @@ import logging
 import urllib.error
 import urllib.request
 
-from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Request, WebSocket, WebSocketDisconnect, Query, status
 from sqlalchemy.orm import Session
 
 from app.database import get_db, SessionLocal
 from app.auth import get_current_active_user, create_ws_ticket, validate_ws_ticket
 from app.models import User, Lab, LabSession, LabCompletion, CourseEnrollment, CourseLabAssignment
 from app.services.docker_manager import DockerManager, RangeBoxCapacityError, RangeBoxImageUnavailableError, rangebox_spawn_lock
+from app.ratelimit import create_limiter, user_or_ip_key
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
+limiter = create_limiter()
 
 docker_manager = DockerManager()
 
@@ -209,7 +211,9 @@ async def rangebox_capacity(
 
 
 @router.post("/standalone/launch")
+@limiter.limit("10/minute", key_func=user_or_ip_key)
 async def standalone_rangebox_launch(
+    request: Request,
     current_user: User = Depends(get_current_active_user),
     image: str = Query(default=None, description="Image shorthand: 'kali', 'ubuntu', or 'remnux'"),
 ):

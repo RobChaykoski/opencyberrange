@@ -616,7 +616,7 @@ def record_http(request: Request, status_code: int) -> None:
     try:
         if not _truthy(_setting(db, "security_event_http_logging", "true"), True):
             return
-        user = resolve_request_user(request, db)
+        user = getattr(request.state, "user", None) or resolve_request_user(request, db)
         # A sync admin route writes `admin.action` through log_admin_action in a
         # worker thread, where the request context marker cannot propagate back
         # to this middleware. Avoid a duplicate generic event for the same
