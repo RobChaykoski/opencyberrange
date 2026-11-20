@@ -59,10 +59,10 @@ services:
     container_name: ocr-valkey
     # Rate-limit counters are ephemeral: no RDB snapshots, no AOF. A restart
     # only resets the current windows.
-    command: ["valkey-server", "--save", "", "--appendonly", "no"]
+    command: ["valkey-server", "--save", "", "--appendonly", "no", "--requirepass", "${VALKEY_PASSWORD:?set VALKEY_PASSWORD}"]
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "valkey-cli ping"]
+      test: ["CMD-SHELL", "valkey-cli --no-auth-warning -a ${VALKEY_PASSWORD} ping"]
       interval: 15s
       timeout: 5s
       retries: 10

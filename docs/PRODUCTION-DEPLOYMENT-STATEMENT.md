@@ -10,10 +10,10 @@ another document disagrees, this page and the signed tag win.
 | Item | Value |
 |---|---|
 | Edition | **Community / Academic** (`lite` entitlement, single-host) |
-| Release | **5.27.5** |
-| Signed tag | **`v5.27.5`** |
-| Runtime code commit | `1a5bac48` (includes signed tag `v5.27.5` at `78eff7d4`) |
-| Previous release | `5.27.4` (signed tag `v5.27.4` at `b07b8084`) |
+| Release | **5.27.6** |
+| Signed tag | **`v5.27.6`** |
+| Runtime code commit | `baa922ab` (signed tag `v5.27.6`) |
+| Previous release | `5.27.5` (signed tag `v5.27.5` at `78eff7d4`) |
 | Alembic revision | **`0048_performance_indexes`** |
 | Development host | `172.16.16.44` |
 | Production host | `172.16.16.41` / `https://ctfd.swocts.com` |
@@ -38,7 +38,25 @@ another document disagrees, this page and the signed tag win.
 | 5.27.3 backup | `~/backups/ocr-backup-20261119-205049.dump` |
 | 5.27.4 backup | `~/backups/ocr-backup-20261120-003040.dump` |
 | 5.27.5 backup | `~/backups/ocr-backup-20261120-010356.dump` |
-| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 19 November deploy, 5.19.0, 5.20.0, 5.21.0, 5.22.0, 5.27.0, 5.27.1, 5.27.2, 5.27.3, 5.27.4, and 5.27.5) |
+| 5.27.6 backup | `~/backups/ocr-backup-20261120-011049.dump` |
+| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 19 November deploy, 5.19.0, 5.20.0, 5.21.0, 5.22.0, 5.27.0, 5.27.1, 5.27.2, 5.27.3, 5.27.4, 5.27.5, and 5.27.6) |
+
+## 5.27.6 deployment verification
+
+Deployed on 20 November 2026 to development and production.
+
+| Check | Development | Production |
+|---|---|---|
+| `/api/version` | `5.27.6` | `5.27.6` |
+| Alembic | `0048_performance_indexes` (head) | `0048_performance_indexes` (head) |
+| Unknown-user login | 5 × `401`, then `429` with `Retry-After: 1` | same code path |
+| Production startup guards | — | completed; RLS, invariants, RBAC, ledger all installed |
+| Socket proxy `EXEC` | `1` (explicit) | `1` (explicit) |
+| Public entry | — | `200` |
+
+No schema change. Backup `~/backups/ocr-backup-20261120-011049.dump`; restore
+drill passed with 67 users, 210 labs, 2 courses, 46 enrolments, 124
+completions, 465 achievements, and 1,386 activity events.
 
 ## 5.27.5 deployment verification
 
