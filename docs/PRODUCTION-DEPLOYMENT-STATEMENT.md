@@ -10,10 +10,10 @@ another document disagrees, this page and the signed tag win.
 | Item | Value |
 |---|---|
 | Edition | **Community / Academic** (`lite` entitlement, single-host) |
-| Release | **5.27.7** |
-| Signed tag | **`v5.27.7`** |
-| Runtime code commit | `2dbc5fe5` (signed tag `v5.27.7`) |
-| Previous release | `5.27.6` (signed tag `v5.27.6` at `baa922ab`) |
+| Release | **5.28.0** |
+| Signed tag | **`v5.28.0`** |
+| Runtime code commit | `6adc6b1c` (includes signed tag `v5.28.0` at `4e657613`) |
+| Previous release | `5.27.8` (signed tag `v5.27.8` at `9faea72c`) |
 | Alembic revision | **`0048_performance_indexes`** |
 | Development host | `172.16.16.44` |
 | Production host | `172.16.16.41` / `https://ctfd.swocts.com` |
@@ -40,7 +40,29 @@ another document disagrees, this page and the signed tag win.
 | 5.27.5 backup | `~/backups/ocr-backup-20261120-010356.dump` |
 | 5.27.6 backup | `~/backups/ocr-backup-20261120-011049.dump` |
 | 5.27.7 backup | `~/backups/ocr-backup-20261120-011640.dump` |
-| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 19 November deploy, 5.19.0, 5.20.0, 5.21.0, 5.22.0, 5.27.0, 5.27.1, 5.27.2, 5.27.3, 5.27.4, 5.27.5, 5.27.6, and 5.27.7) |
+| 5.28.0 backup | `~/backups/ocr-backup-20261120-014044.dump` |
+| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 19 November deploy, 5.19.0, 5.20.0, 5.21.0, 5.22.0, 5.27.0, 5.27.1, 5.27.2, 5.27.3, 5.27.4, 5.27.5, 5.27.6, 5.27.7, and 5.28.0) |
+
+## 5.28.0 deployment verification
+
+Deployed on 20 November 2026 to development and production.
+
+| Check | Development | Production |
+|---|---|---|
+| `/api/version` | `5.28.0` | `5.28.0` |
+| Labs registered | 211 | 211 |
+| ICS lab | `ot-3-1-ics-pcap-forensics`, OT level 3, public | same |
+| `verify-lab-builds.sh` | standby prebuild running | **0 errors** (211 labs) |
+| Public entry | — | `200` |
+
+The new lab carries 17 guided challenges over 22 MB of licensed captures
+(TRITON/TRISIS BSD-3-Clause, Industroyer2 CC BY 4.0, GOOSE FDI CC BY 4.0,
+CISA ICSNPP BSD-3-Clause). Its analyst image was verified over SSH with
+`tshark` returning the 896 TriStation frames, and the guide serves 17
+challenges.
+
+The standby prebuild continues to close the remaining lab-image gap; run
+`bash scripts/verify-lab-builds.sh` on `.44` when it completes.
 
 ## 5.27.7 deployment verification
 
