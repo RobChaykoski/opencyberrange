@@ -62,6 +62,9 @@ services:
       - ./harden.php:/harden.php:ro
       - ./create_pilot_course.php:/create_pilot_course.php:ro
       - ./seed_moodle_lti.php:/seed_moodle_lti.php:ro
+      # NPM passes origin headers through, so HSTS is set at Apache rather than
+      # requiring a change in the NPM admin UI.
+      - ./apache-hsts.conf:/opt/bitnami/apache/conf/vhosts/zz-hsts.conf:ro
     secrets:
       - moodle_smtp_pass
     logging:

@@ -44,6 +44,10 @@ authentication; LTI covers course placement and grades.
 - Map `sub` + `iss` to `external_identities` (new provider kind `lti`) and
   provision or link the local account. Do not request email or name unless the
   institution enables it.
+- Map the LTI role claim (`…/membership#Instructor`) to the local instructor
+  role through the provider's `instructor_group`. An LMS administrator does not
+  become an OpenCyberRange administrator through a launch; only `student` and
+  `instructor` can be granted.
 - Issue a one-time platform ticket and redirect to `/sso/callback`, reusing the
   existing SSO exchange.
 - Publish `GET /api/lti/jwks` with the public key and `kid` of each enabled

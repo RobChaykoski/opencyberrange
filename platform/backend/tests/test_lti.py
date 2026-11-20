@@ -16,6 +16,7 @@ from app.services.lti import (
     build_score_payload,
     create_deep_link_session,
     create_launch_grant,
+    instructor_groups,
     lineitem_subpath,
     normalize_roster,
     platform_kid,
@@ -25,6 +26,21 @@ from app.services.lti import (
     valid_lti_url,
     verify_launch_grant,
 )
+
+
+def test_lti_instructor_role_maps_to_provider_group():
+    claim = "https://purl.imsglobal.org/spec/lti/claim/roles"
+    instructor = "http://purl.imsglobal.org/vocab/lis/v2/membership#Instructor"
+    learner = "http://purl.imsglobal.org/vocab/lis/v2/membership#Learner"
+    assert instructor_groups({claim: [learner, instructor]}) == ["Instructor"]
+    assert instructor_groups({claim: [learner]}) == []
+    assert instructor_groups({claim: instructor}) == ["Instructor"]
+    assert instructor_groups({}) == []
+    # An LMS administrator is not promoted to an OpenCyberRange admin, and
+    # does not inherit the instructor group by accident.
+    assert instructor_groups({
+        claim: ["http://purl.imsglobal.org/vocab/lis/v2/institution/person#Administrator"]
+    }) == []
 
 
 def test_lti_urls_require_http_or_https():

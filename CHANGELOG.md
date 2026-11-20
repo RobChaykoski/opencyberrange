@@ -14,6 +14,15 @@ All notable changes to OpenCyberRange are recorded here.
   table instead of raw JSON.
 - Added a screenshot-backed Moodle LTI 1.3 showcase and a launch-grant
   visibility regression test.
+- LTI teacher launches now map the `membership#Instructor` role to the local
+  instructor role. LMS administrators are not promoted.
+- Added the production pilot readiness review covering public ingress, all 201
+  workbook pages, 137 assets, 385 internal links, accounts, grade passback, and
+  backups.
+- The generated wiki serves a public empty sitemap for embedded workbook
+  frames, removing the CORS/login console error without exposing page URLs.
+- Moodle production HSTS is set at the Apache origin so it survives without an
+  NPM admin change.
 
 ## [5.27.3] - 2026-11-19
 

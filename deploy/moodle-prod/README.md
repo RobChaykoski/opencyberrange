@@ -188,6 +188,27 @@ work:
 Replace these with a public JWKS/AGS path or a narrower proxy design after the
 event. Record the exception in the pilot review.
 
+## HSTS
+
+NPM passes origin response headers through, so HSTS is set in Apache rather than
+in the NPM admin UI:
+
+```text
+deploy/moodle-prod/apache-hsts.conf
+  -> /opt/bitnami/apache/conf/vhosts/zz-hsts.conf
+```
+
+The Compose file mounts it, and `apachectl -t && apachectl -k graceful` applies
+it to a running container. Verify with an external header check; do not rely on
+the internal NPM response.
+
+## Pilot readiness review
+
+The 2026-11-20 review is in
+[`docs/PILOT-READINESS-REVIEW.md`](../../docs/PILOT-READINESS-REVIEW.md). It
+records the exact verification scope, the two pilot-only exceptions, and the
+post-event cleanup list.
+
 ## Workbook embedding
 
 The exercise workbook is an iframe served from the wiki origin. Its CSP uses the

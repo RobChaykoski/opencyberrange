@@ -3,9 +3,6 @@ site_description: "A beginner-only cybersecurity pathway with staged RangeBox, c
 site_url: ""
 docs_dir: Workbook
 exclude_docs: |
-  FREE-TRAINING-AND-CERTIFICATIONS.md
-  FREE-TRAINING-AND-CERTIFICATIONS/**
-  COVERAGE.md
   IOT-SECURITY-REFERENCES.md
   CH01_Enumeration/**
   CH02_SMB_Reconnaissance/**

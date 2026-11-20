@@ -48,6 +48,11 @@ logger = logging.getLogger(__name__)
 
 LTI_DEPLOYMENT_CLAIM = "https://purl.imsglobal.org/spec/lti/claim/deployment_id"
 LTI_MESSAGE_TYPE_CLAIM = "https://purl.imsglobal.org/spec/lti/claim/message_type"
+LTI_ROLES_CLAIM = "https://purl.imsglobal.org/spec/lti/claim/roles"
+# Provider group name used by role_for() to map an LMS instructor onto the
+# local instructor role. It is not an LMS group id; it is the internal token
+# the LTI adapter supplies from the launch's role claim.
+LTI_INSTRUCTOR_GROUP = "Instructor"
 LTI_RESOURCE_LINK_CLAIM = "https://purl.imsglobal.org/spec/lti/claim/resource_link"
 LTI_CONTEXT_CLAIM = "https://purl.imsglobal.org/spec/lti/claim/context"
 LTI_AGS_CLAIM = "https://purl.imsglobal.org/spec/lti-ags/claim/endpoint"
@@ -300,6 +305,10 @@ def _get_provider(db: Session, platform: LtiPlatform) -> IdentityProvider:
                     "auto_provision": True,
                     "auto_approve": True,
                     "default_role": "student",
+                    # LTI teachers carry a membership#Instructor role; the
+                    # adapter maps it to this group so the account follows the
+                    # LMS role instead of being provisioned as a learner.
+                    "instructor_group": LTI_INSTRUCTOR_GROUP,
                     "link_existing_by_email": False,
                 }
             ),
@@ -758,6 +767,25 @@ def subject_for_user(db: Session, platform: LtiPlatform, user_id: int) -> str:
     return link.subject
 
 
+def instructor_groups(claims: dict) -> list[str]:
+    """Map the LTI role claim onto the provider's instructor group.
+
+    LTI sends role URIs such as
+    ``http://purl.imsglobal.org/vocab/lis/v2/membership#Instructor``. The
+    account then follows the same role mapping as any other SSO provider, so a
+    teacher opening the tool from the LMS is not silently provisioned as a
+    learner. Administrator roles are deliberately not mapped; an LMS admin
+    never becomes an OpenCyberRange admin through a launch.
+    """
+    roles = claims.get(LTI_ROLES_CLAIM) or []
+    if isinstance(roles, str):
+        roles = [roles]
+    for role in roles:
+        if "#instructor" in str(role).strip().lower():
+            return [LTI_INSTRUCTOR_GROUP]
+    return []
+
+
 def provision_launch_user(
     db: Session,
     platform: LtiPlatform,
@@ -779,6 +807,7 @@ def provision_launch_user(
         first_name=claims.get("given_name"),
         last_name=claims.get("family_name"),
         name=claims.get("name"),
+        groups=instructor_groups(claims),
     )
     try:
         user, provisioned, linked = provision_or_link_external_user(
