@@ -10,10 +10,10 @@ another document disagrees, this page and the signed tag win.
 | Item | Value |
 |---|---|
 | Edition | **Community / Academic** (`lite` entitlement, single-host) |
-| Release | **5.28.1** |
-| Signed tag | **`v5.28.1`** |
-| Runtime code commit | `98d3cd3f` (signed tag `v5.28.1`) |
-| Previous release | `5.28.0` (signed tag `v5.28.0` at `4e657613`) |
+| Release | **5.28.2** |
+| Signed tag | **`v5.28.2`** |
+| Runtime code commit | `3820fab3` (signed tag `v5.28.2`) |
+| Previous release | `5.28.1` (signed tag `v5.28.1` at `98d3cd3f`) |
 | Alembic revision | **`0048_performance_indexes`** |
 | Development host | `172.16.16.44` |
 | Production host | `172.16.16.41` / `https://ctfd.swocts.com` |
@@ -42,7 +42,22 @@ another document disagrees, this page and the signed tag win.
 | 5.27.7 backup | `~/backups/ocr-backup-20261120-011640.dump` |
 | 5.28.0 backup | `~/backups/ocr-backup-20261120-014044.dump` |
 | 5.28.1 backup | `~/backups/ocr-backup-20261120-014655.dump` |
-| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 19 November deploy, 5.19.0, 5.20.0, 5.21.0, 5.22.0, 5.27.0, 5.27.1, 5.27.2, 5.27.3, 5.27.4, 5.27.5, 5.27.6, 5.27.7, 5.28.0, and 5.28.1) |
+| 5.28.2 backup | `~/backups/ocr-backup-20261120-015031.dump` |
+| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 19 November deploy, 5.19.0, 5.20.0, 5.21.0, 5.22.0, 5.27.0, 5.27.1, 5.27.2, 5.27.3, 5.27.4, 5.27.5, 5.27.6, 5.27.7, 5.28.0, 5.28.1, and 5.28.2) |
+
+## 5.28.2 deployment verification
+
+Deployed on 20 November 2026 to development and production.
+
+| Check | Development | Production |
+|---|---|---|
+| `/api/version` | `5.28.2` | `5.28.2` |
+| Labs registered | 211 | 211 |
+| Admin request bodies | Pydantic models for restore, bulk toggle, compose, impersonation launch, stress start/cancel | same |
+| `verify-lab-builds.sh` | standby prebuild running | **0 errors** |
+
+No schema change. Backup `~/backups/ocr-backup-20261120-015031.dump`; restore
+drill passed.
 
 ## 5.28.1 deployment verification
 
