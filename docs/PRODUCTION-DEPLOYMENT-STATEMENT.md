@@ -10,10 +10,10 @@ another document disagrees, this page and the signed tag win.
 | Item | Value |
 |---|---|
 | Edition | **Community / Academic** (`lite` entitlement, single-host) |
-| Release | **5.28.3** |
-| Signed tag | **`v5.28.3`** |
-| Runtime code commit | `3e159055` (signed tag `v5.28.3`) |
-| Previous release | `5.28.2` (signed tag `v5.28.2` at `3820fab3`) |
+| Release | **5.28.4** |
+| Signed tag | **`v5.28.4`** |
+| Runtime code commit | `18072c60` (signed tag `v5.28.4`) |
+| Previous release | `5.28.3` (signed tag `v5.28.3` at `3e159055`) |
 | Alembic revision | **`0048_performance_indexes`** |
 | Development host | `172.16.16.44` |
 | Production host | `172.16.16.41` / `https://ctfd.swocts.com` |
@@ -44,7 +44,27 @@ another document disagrees, this page and the signed tag win.
 | 5.28.1 backup | `~/backups/ocr-backup-20261120-014655.dump` |
 | 5.28.2 backup | `~/backups/ocr-backup-20261120-015031.dump` |
 | 5.28.3 backup | `~/backups/ocr-backup-20261120-015521.dump` |
-| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 19 November deploy, 5.19.0, 5.20.0, 5.21.0, 5.22.0, 5.27.0, 5.27.1, 5.27.2, 5.27.3, 5.27.4, 5.27.5, 5.27.6, 5.27.7, 5.28.0, 5.28.1, 5.28.2, and 5.28.3) |
+| 5.28.4 backup | `~/backups/ocr-backup-20261120-020748.dump` |
+| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 19 November deploy, 5.19.0, 5.20.0, 5.21.0, 5.22.0, 5.27.0, 5.27.1, 5.27.2, 5.27.3, 5.27.4, 5.27.5, 5.27.6, 5.27.7, 5.28.0, 5.28.1, 5.28.2, 5.28.3, and 5.28.4) |
+
+## 5.28.4 deployment verification
+
+Clean-build test for the ICS lab, performed on 20 November 2026.
+
+| Check | Result |
+|---|---|
+| No-cache prebuild | **55 s**; analyst 487 MB, guide 97.5 MB |
+| SSH to analyst | connected |
+| Guide | title served; 17 challenges |
+| Evidence | present |
+| tshark | 3.6.2 |
+| TRITON workstation | `192.168.1.88` (ephemeral source port) |
+| TriStation frames | `896` |
+| Flag | `OCR{192.168.1.88_1502_896}` |
+| `verify-lab-builds.sh` | **0 errors** on dev and prod |
+
+No schema change. Backup `~/backups/ocr-backup-20261120-020748.dump`; restore
+drill passed.
 
 ## 5.28.3 deployment verification
 
