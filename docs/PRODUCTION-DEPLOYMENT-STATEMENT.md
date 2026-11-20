@@ -55,7 +55,7 @@ Deployed on 20 November 2026 to development and production.
 | `/api/version` | `5.28.3` | `5.28.3` |
 | Startup validation | `validate_settings()` ran at lifespan start | same |
 | Labs registered | 211 | 211 |
-| `verify-lab-builds.sh` | standby prebuild 174/178 | **0 errors** |
+| `verify-lab-builds.sh` | **0 errors** | **0 errors** |
 
 No schema change. Backup `~/backups/ocr-backup-20261120-015521.dump`; restore
 drill passed.
