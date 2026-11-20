@@ -2370,7 +2370,9 @@ fi
         lab container's host-side veth so that unicast traffic (not just
         broadcast/multicast) is copied to the GRETAP interface.
         """
-        server_ip = "10.0.0.1"  # WireGuard server address
+        from app.config import settings
+
+        server_ip = settings.WG_SERVER_ADDRESS  # this host's wg0 address
         gre_name = f"gre_u{user_id}"
 
         try:

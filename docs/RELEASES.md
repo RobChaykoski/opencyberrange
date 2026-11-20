@@ -7,7 +7,8 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.27.4` | SWOCTS Cyber Range Release 5.27.4 | Current patch release (signed annotated tag): homepage **Take a quiz** entry point and the `next_quiz` dashboard field |
+| `v5.27.5` | SWOCTS Cyber Range Release 5.27.5 | Current patch release (signed annotated tag): configurable `WG_SERVER_ADDRESS` for two-host WireGuard addressing and a routed gretap mirror |
+| `v5.27.4` | SWOCTS Cyber Range Release 5.27.4 | Previous patch release (signed annotated tag): homepage **Take a quiz** entry point and the `next_quiz` dashboard field |
 | `v5.27.3` | SWOCTS Cyber Range Release 5.27.3 | Previous performance patch (signed annotated tag): blocking-call removal, query batching, indexes, and immutable asset caching |
 | `v5.27.2` | SWOCTS Cyber Range Release 5.27.2 | Previous patch release (signed annotated tag): export/download button fix and an inline export reason |
 | `v5.27.1` | SWOCTS Cyber Range Release 5.27.1 | Previous patch release (signed annotated tag): NICE provisional-mapping review action in Admin > Exercises, plus dev-only training-lab tooling and evidence |

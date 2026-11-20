@@ -50,6 +50,8 @@ class Settings(BaseSettings):
     # WireGuard Server — set via environment variable
     WG_SERVER_ENDPOINT: str = ""
     WG_SERVER_PUBLIC_KEY: str = ""
+    # This host's address on wg0. Two HA hosts must not both use 10.0.0.1.
+    WG_SERVER_ADDRESS: str = "10.0.0.1"
 
     # Peer Manager API (local WireGuard peer management)
     # NOTE: Use host.docker.internal when backend runs in a Docker container

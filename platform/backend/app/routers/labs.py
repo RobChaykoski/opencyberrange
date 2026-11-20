@@ -100,8 +100,11 @@ def vpn_allowed_ips(user_id: int) -> str:
     The previous broad routes (10.100.0.0/14, 10.104.0.0/13, 10.112.0.0/12,
     10.128.0.0/9) covered every possible lab subnet and hijacked home networks
     in 10.100-10.255. A student only needs their own /24.
+
+    The server's wg0 address is added as a host route so the client-side
+    gretap mirror (``remote <server address>``) travels inside the tunnel.
     """
-    return vpn_lab_subnet(user_id)
+    return f"{vpn_lab_subnet(user_id)},{settings.WG_SERVER_ADDRESS}/32"
 
 
 def _acquire_vpn_allocator_lock(db: Session) -> None:

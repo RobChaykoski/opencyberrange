@@ -30,10 +30,14 @@ def test_vpn_client_is_not_in_the_old_home_overlap_pool():
 
 
 def test_vpn_allowed_ips_is_the_students_own_lab_subnet():
+    from app.config import settings
     from app.routers.labs import get_subnet_id, vpn_allowed_ips
 
     second, third = get_subnet_id(6)
-    assert vpn_allowed_ips(6) == f"10.{second}.{third}.0/24"
+    # The lab /24 plus the server's wg0 host route for the gretap mirror.
+    assert vpn_allowed_ips(6) == (
+        f"10.{second}.{third}.0/24,{settings.WG_SERVER_ADDRESS}/32"
+    )
 
 
 def test_vpn_config_qr_is_png(client, auth_headers):

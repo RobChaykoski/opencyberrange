@@ -10,6 +10,8 @@ import time
 import requests
 from typing import Optional, List, Dict
 
+from app.config import settings
+
 logger = logging.getLogger(__name__)
 
 
@@ -147,7 +149,7 @@ class WireGuardManager:
             gretap_postup = (
                 f"/bin/bash -c '"
                 f"ip link del lab0 2>/dev/null; "
-                f"ip link add lab0 type gretap remote 10.0.0.1 local {client_ip}; "
+                f"ip link add lab0 type gretap remote {settings.WG_SERVER_ADDRESS} local {client_ip}; "
                 f"ip link set lab0 up"
                 f"'"
             )
@@ -175,7 +177,7 @@ PersistentKeepalive = 25
             gretap_postup = (
                 f"/bin/bash -c '"
                 f"ip link del lab0 2>/dev/null; "
-                f"ip link add lab0 type gretap remote 10.0.0.1 local {client_ip}; "
+                f"ip link add lab0 type gretap remote {settings.WG_SERVER_ADDRESS} local {client_ip}; "
                 f"ip link set lab0 up"
                 f"'"
             )

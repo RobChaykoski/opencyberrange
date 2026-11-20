@@ -26,6 +26,14 @@ All notable changes to OpenCyberRange are recorded here.
 - Applied the shared download helper to reports, admin activity/users/exercises/reports/backups, student and class reports, career profile, privacy data, portfolio, identity providers, VPN config, SBOM, and course reports.
 - Added frontend tests for the shared download helper.
 
+## [5.27.5] - 2026-11-20
+
+### WireGuard HA addressing
+
+- Added `WG_SERVER_ADDRESS` (default `10.0.0.1`) so companion HA hosts can use distinct `wg0` addresses.
+- Replaced the hardcoded server tunnel address in client configuration generation and the server-side GRETAP mirror.
+- Added the server's `wg0` host route to the client `AllowedIPs` so the gretap mirror has a path through the tunnel.
+
 ## [5.27.4] - 2026-11-20
 
 ### Homepage knowledge check
