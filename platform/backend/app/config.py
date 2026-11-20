@@ -283,5 +283,4 @@ def validate_settings():
         )
 
 
-# Validate settings on import
-validate_settings()
+# Validation runs from the application startup hook (app.main lifespan).

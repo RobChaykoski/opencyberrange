@@ -1,4 +1,4 @@
-﻿"""
+"""
 Database connection and session management
 """
 
@@ -9,7 +9,7 @@ from functools import wraps
 
 from sqlalchemy import create_engine, event, text
 from sqlalchemy.exc import OperationalError
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 from app.config import settings
 from app.actor import get_actor

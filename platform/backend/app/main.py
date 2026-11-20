@@ -51,7 +51,7 @@ from app.routers import security_admin as security_admin_router
 from app.routers import portfolio_shares as portfolio_shares_router
 from app.services.scheduler import start_scheduler, shutdown_scheduler
 from app.services.db_integrity import ensure_ledger
-from app.config import settings
+from app.config import settings, validate_settings
 from app.version import APP_VERSION, RELEASE_NAME
 from app.ratelimit import create_limiter
 from app.request_limits import BodySizeLimitMiddleware
@@ -299,6 +299,11 @@ async def lifespan(app: FastAPI):
     """Application lifespan events"""
     # Startup
     logger.info("Starting SWOCTS Cyber Range...")
+
+    # Validate security-critical configuration at startup, not at import time.
+    # This keeps `import app.config` safe for scripts while still failing fast
+    # before the server begins serving requests.
+    validate_settings()
 
     # Wait for database to become available (handles Docker restart race condition
     # where backend starts before PostgreSQL is accepting connections)

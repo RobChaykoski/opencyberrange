@@ -1153,24 +1153,3 @@ def get_track_for_lab(db: Session, lab: Lab):
     if level and level.track_id:
         return level.track_id
     return None
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

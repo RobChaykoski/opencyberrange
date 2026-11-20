@@ -26,6 +26,14 @@ All notable changes to OpenCyberRange are recorded here.
 - Applied the shared download helper to reports, admin activity/users/exercises/reports/backups, student and class reports, career profile, privacy data, portfolio, identity providers, VPN config, SBOM, and course reports.
 - Added frontend tests for the shared download helper.
 
+## [5.28.3] - 2026-11-20
+
+### Startup and code hygiene
+
+- `validate_settings()` no longer runs at import time; the application lifespan calls it at startup, so tooling can import `app.config` without a full deployment environment while the server still fails fast.
+- Removed the UTF-8 BOM from `database.py` and switched to `sqlalchemy.orm.declarative_base`.
+- Trimmed the trailing blank block in `labs.py`.
+
 ## [5.28.2] - 2026-11-20
 
 ### Admin request validation
