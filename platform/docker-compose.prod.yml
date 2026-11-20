@@ -86,7 +86,10 @@ services:
       # enabled (image builds let a compromised backend run build recipes).
       SYSTEM: 1
       POST: 1
-      EXEC: 1
+      # EXEC lets the backend run commands inside lab containers. It is needed
+      # by the exercise tester and lab network setup, so production sets
+      # OCR_DOCKER_PROXY_EXEC=1 explicitly; the default is off.
+      EXEC: ${OCR_DOCKER_PROXY_EXEC:-0}
       # Keep BUILD off unless on-demand lab builds are enabled. Image builds
       # let a compromised backend run arbitrary build-recipe instructions.
       BUILD: 0
@@ -260,6 +263,9 @@ services:
 
   # --- Optional SSO stack (profile: sso) ---
   # Start with: docker compose ... --profile sso up -d ldap dex
+  # The sso profile is a demo/reference stack. It has no default administrator
+  # password and no silent TLS downgrade: both values must be set explicitly.
+  # Enable LDAP_TLS=true with certificates before using it outside a lab.
   ldap:
     image: osixia/openldap:1.5.0
     container_name: ocr-ldap
@@ -267,8 +273,8 @@ services:
     environment:
       LDAP_ORGANISATION: "SWOCTS Cyber Range"
       LDAP_DOMAIN: "example.org"
-      LDAP_ADMIN_PASSWORD: ${SSO_LDAP_ADMIN_PASSWORD:-SsoDemoAdmin!2026}
-      LDAP_TLS: "false"
+      LDAP_ADMIN_PASSWORD: ${SSO_LDAP_ADMIN_PASSWORD:?set SSO_LDAP_ADMIN_PASSWORD for the sso profile}
+      LDAP_TLS: ${LDAP_TLS:?set LDAP_TLS explicitly (true with certificates; false only for the demo sso profile)}
       LDAP_REMOVE_CONFIG_AFTER_SETUP: "false"
       # The image copies this directory into its own bootstrap folder, so the
       # repository checkout stays read-only and keeps its host ownership.

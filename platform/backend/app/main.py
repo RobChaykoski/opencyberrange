@@ -17,7 +17,7 @@ from sqlalchemy.exc import IntegrityError, OperationalError, ProgrammingError
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
-from app.database import engine, schema_engine, Base
+from app.database import engine, schema_engine, Base, SessionLocal
 # Runtime module contract: modules under app/modules/ wire themselves in by
 # discovery. Register each present module's ORM models with Base.metadata now,
 # before create_all() runs in the lifespan startup.
@@ -236,6 +236,61 @@ def _stamp_or_upgrade_alembic() -> None:
                     conn.commit()
                 except Exception:
                     conn.rollback()
+
+
+def _production_startup() -> bool:
+    """True when this process is a production-intended deployment."""
+    environment = (settings.ENVIRONMENT or "").strip().lower()
+    mode = (settings.OCR_DEPLOYMENT_MODE or "").strip().lower()
+    return environment in {"production", "prod"} or mode in {"production", "prod"}
+
+
+def _run_startup_step(name: str, step) -> None:
+    """Run a security-critical startup step; fail closed in production.
+
+    A tenant-RLS or ledger failure must not leave a production process running
+    with weaker isolation. Development keeps the warning so a partially
+    configured workstation can still boot.
+    """
+    try:
+        step()
+    except Exception as exc:
+        if _production_startup():
+            logger.error("%s failed; refusing to start: %s", name, exc)
+            raise
+        logger.warning("%s skipped: %s", name, exc)
+
+
+def _setup_integrity_ledger() -> None:
+    ensure_ledger(schema_engine)
+
+
+def _apply_tenant_rls() -> None:
+    from app.services import tenant_rls
+
+    tenant_rls.apply(schema_engine)
+
+
+def _apply_db_invariants() -> None:
+    from app.services import db_invariants
+
+    db_invariants.apply(schema_engine)
+
+
+def _seed_rbac_catalog() -> None:
+    from app.services import rbac as _rbac
+
+    db = SessionLocal()
+    try:
+        _rbac.seed(db)
+    finally:
+        db.close()
+
+
+def _ensure_security_event_rls() -> None:
+    from app.services import security_events as _security_events
+
+    _security_events.ensure_rls(schema_engine)
 
 
 @asynccontextmanager
@@ -887,47 +942,18 @@ async def lifespan(app: FastAPI):
 
     # Append-only change ledger for critical tables. The triggers attribute
     # application writes to the authenticated actor and flag manual writes as
-    # unattributed. PostgreSQL only; SQLite tests skip it. A lock timeout is
-    # logged rather than taking the whole platform down.
-    try:
-        ensure_ledger(schema_engine)
-    except Exception as exc:
-        logger.warning("Integrity ledger setup skipped: %s", exc)
+    # unattributed.
+    _run_startup_step("Integrity ledger", _setup_integrity_ledger)
 
     # Tenant columns, derivation triggers, and forced RLS on the learner-data
     # tables. This is idempotent and backfills legacy rows from their owner.
-    try:
-        from app.services import tenant_rls
-
-        tenant_rls.apply(schema_engine)
-    except Exception as exc:
-        logger.warning("Tenant RLS setup skipped: %s", exc)
-
-    try:
-        from app.services import db_invariants
-
-        db_invariants.apply(schema_engine)
-    except Exception as exc:
-        logger.warning("Database invariant setup skipped: %s", exc)
+    _run_startup_step("Tenant RLS", _apply_tenant_rls)
+    _run_startup_step("Database invariants", _apply_db_invariants)
 
     # Seed the reviewed RBAC catalog and install the append-only security event
     # RLS policies. Both are idempotent; an admin's role edits survive a reboot.
-    try:
-        from app.services import rbac as _rbac
-
-        _rbac_db = SessionLocal()
-        try:
-            _rbac.seed(_rbac_db)
-        finally:
-            _rbac_db.close()
-    except Exception as exc:
-        logger.warning("RBAC catalog seed skipped: %s", exc)
-    try:
-        from app.services import security_events as _security_events
-
-        _security_events.ensure_rls(schema_engine)
-    except Exception as exc:
-        logger.warning("Security event RLS setup skipped: %s", exc)
+    _run_startup_step("RBAC catalog seed", _seed_rbac_catalog)
+    _run_startup_step("Security event RLS", _ensure_security_event_rls)
 
     # Enterprise deployments can fail fast when a protected route has no
     # authentication dependency. The default is a loud warning so a legacy

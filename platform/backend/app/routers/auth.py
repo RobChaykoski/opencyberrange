@@ -28,6 +28,7 @@ from app.models import (
     ImpersonationSession, LabCompletion,
 )
 from app.auth import (
+    _login_retry_after,
     authenticate_user,
     get_password_hash,
     set_user_password,
@@ -257,7 +258,20 @@ async def login(
     # generic error for all cases to prevent username enumeration.
     from app.auth import LOCKOUT_DURATION_MINUTES
 
-    user = authenticate_user(db, form_data.username, form_data.password)
+    client_ip = request.client.host if request.client else None
+    retry_after = _login_retry_after(username, client_ip)
+    if retry_after:
+        # Backoff is per (username, client IP); other users and other source
+        # addresses are unaffected.
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Too many failed attempts. Try again later.",
+            headers={"Retry-After": str(retry_after)},
+        )
+
+    user = authenticate_user(
+        db, form_data.username, form_data.password, ip_address=client_ip
+    )
     if not user:
         # Check if the account is locked so we can log it, but NEVER
         # reveal this distinction to the caller.

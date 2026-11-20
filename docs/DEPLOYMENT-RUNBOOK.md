@@ -2,7 +2,7 @@
 
 Operational commands for the two deployed environments.
 
-**Current release:** `5.27.5` (signed tag `v5.27.5`, Alembic
+**Current release:** `5.27.6` (signed tag `v5.27.6`, Alembic
 `0048_performance_indexes`). The admin **System → Health → Release status**
 panel compares the installed version with the latest GitHub release or tag.
 The authoritative deployment state, including whether cutover has run, is in

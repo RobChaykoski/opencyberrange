@@ -69,7 +69,9 @@ services:
       # BUILD stays off so a compromised backend cannot submit build recipes.
       SYSTEM: 1
       POST: 1
-      EXEC: 1
+      # EXEC is required by the exercise tester and lab network setup; it is
+      # opt-in so a host that does not run labs can leave it disabled.
+      EXEC: ${OCR_DOCKER_PROXY_EXEC:-0}
       BUILD: 0
     networks:
       - docker_control
@@ -199,8 +201,8 @@ services:
     environment:
       LDAP_ORGANISATION: "SWOCTS Cyber Range"
       LDAP_DOMAIN: "example.org"
-      LDAP_ADMIN_PASSWORD: ${SSO_LDAP_ADMIN_PASSWORD:-SsoDemoAdmin!2026}
-      LDAP_TLS: "false"
+      LDAP_ADMIN_PASSWORD: ${SSO_LDAP_ADMIN_PASSWORD:?set SSO_LDAP_ADMIN_PASSWORD for the sso profile}
+      LDAP_TLS: ${LDAP_TLS:?set LDAP_TLS explicitly (true with certificates; false only for the demo sso profile)}
       LDAP_REMOVE_CONFIG_AFTER_SETUP: "false"
       # The image copies this directory into its own bootstrap folder, so the
       # repository checkout stays read-only and keeps its host ownership.

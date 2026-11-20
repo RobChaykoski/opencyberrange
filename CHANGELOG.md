@@ -26,6 +26,16 @@ All notable changes to OpenCyberRange are recorded here.
 - Applied the shared download helper to reports, admin activity/users/exercises/reports/backups, student and class reports, career profile, privacy data, portfolio, identity providers, VPN config, SBOM, and course reports.
 - Added frontend tests for the shared download helper.
 
+## [5.27.6] - 2026-11-20
+
+### Security hardening
+
+- Login now performs a dummy Argon2 verification for unknown and SSO-only usernames, removing the response-time oracle.
+- Failed logins are throttled per (username, client IP) with exponential backoff. They no longer auto-lock the account globally, which removes the cross-IP lockout DoS; administrator locks still apply.
+- Production startup fails closed when the integrity ledger, tenant RLS, database invariants, RBAC catalog, or security-event RLS cannot be installed.
+- The SSO demo profile no longer ships a default LDAP administrator password and requires an explicit `LDAP_TLS` choice.
+- Docker socket proxy `EXEC` is opt-in through `OCR_DOCKER_PROXY_EXEC`; production sets it to `1` because the exercise tester needs it.
+
 ## [5.27.5] - 2026-11-20
 
 ### WireGuard HA addressing
