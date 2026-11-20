@@ -26,6 +26,13 @@ All notable changes to OpenCyberRange are recorded here.
 - Applied the shared download helper to reports, admin activity/users/exercises/reports/backups, student and class reports, career profile, privacy data, portfolio, identity providers, VPN config, SBOM, and course reports.
 - Added frontend tests for the shared download helper.
 
+## [5.27.8] - 2026-11-20
+
+### Lab readiness
+
+- Corrected the High School DevFest lab workbook path to the built chapter (`01_DevFest_Community_Portal`), removing the last dead workbook link found by `verify-lab-builds.sh`.
+- Rebuilt the supply-chain lock and software-integrity manifest for the corrected lab content.
+
 ## [5.27.7] - 2026-11-20
 
 ### Request-path performance

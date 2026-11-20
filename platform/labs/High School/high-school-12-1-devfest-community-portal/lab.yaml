@@ -66,7 +66,7 @@ difficulty_evidence_source: "reviewer_walkthrough"
 difficulty_evidence_sample: 1
 difficulty_evidence_quality: "provisional"
 difficulty_evidence_reviewed_at: "2026-11-08"
-workbook: "wiki/range/high-school/CH_HS12_Grade_12_Applied_Cybersecurity/01_Community Dev Day_Community_Portal/"
+workbook: "wiki/range/high-school/CH_HS12_Grade_12_Applied_Cybersecurity/01_DevFest_Community_Portal/"
 
 hostnames:
   - ip_offset: "90"
