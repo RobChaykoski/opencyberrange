@@ -37,6 +37,10 @@ FINAL FLAG
     OCR{<engineering-workstation-ip>_<TriStation-port>_<frames-on-that-port>}
   Example shape only: OCR{10.0.0.1_1234_42}
 
+  The controller listens on the TriStation port; the engineering workstation
+  is the host using an ephemeral source port. Filtering only on the port
+  returns both, so exclude the listening side when you read the address.
+
 NOTES
   - Captures are read-only evidence. Do not modify them.
   - Real ICS malware traffic is present. Never replay it, and treat any

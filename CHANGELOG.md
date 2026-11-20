@@ -26,6 +26,13 @@ All notable changes to OpenCyberRange are recorded here.
 - Applied the shared download helper to reports, admin activity/users/exercises/reports/backups, student and class reports, career profile, privacy data, portfolio, identity providers, VPN config, SBOM, and course reports.
 - Added frontend tests for the shared download helper.
 
+## [5.28.4] - 2026-11-20
+
+### ICS lab test fix
+
+- The TRITON workstation test now excludes the controller's listening port (`udp.srcport != 1502`), so it returns the engineering workstation (`192.168.1.88`) instead of the controller.
+- Added the same guidance to the hints and case brief.
+
 ## [5.28.3] - 2026-11-20
 
 ### Startup and code hygiene

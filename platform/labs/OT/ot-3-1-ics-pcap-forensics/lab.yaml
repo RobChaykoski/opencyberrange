@@ -116,7 +116,12 @@ hints:
       tshark -r data/nozomi-triton-tristation/malware_exec.pcap -q -z conv,udp
 
       One conversation dominates. Identify the engineering workstation, the
-      controller, and the TriStation port.
+      controller, and the TriStation port. The controller listens on 1502;
+      the workstation is the host using an ephemeral source port:
+
+      tshark -r data/nozomi-triton-tristation/malware_exec.pcap \
+        -Y 'udp.port==1502 && udp.srcport!=1502' \
+        -T fields -e ip.src | sort -u
     unlock_after_minutes: 15
   - text: |
       The flag uses the TRITON capture only:
@@ -124,7 +129,8 @@ hints:
       tshark -r data/nozomi-triton-tristation/malware_exec.pcap \
         -Y 'udp.port==<port>' | wc -l
 
-      Combine the workstation IP, the TriStation port, and that frame count.
+      Use the ephemeral-port side for the workstation address, then combine
+      that IP, the TriStation port, and the frame count.
     unlock_after_minutes: 30
 
 test:
@@ -150,7 +156,7 @@ test:
     timeout: 20
 
   - name: "TRITON engineering workstation is identifiable"
-    command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} \"tshark -r /home/analyst/data/nozomi-triton-tristation/malware_exec.pcap -Y 'udp.port==1502' -T fields -e ip.src 2>/dev/null | sort -u | head -1\" 2>&1"
+    command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} \"tshark -r /home/analyst/data/nozomi-triton-tristation/malware_exec.pcap -Y 'udp.port==1502 && udp.srcport!=1502' -T fields -e ip.src 2>/dev/null | sort -u | head -1\" 2>&1"
     expect: "192.168.1.88"
     timeout: 60
 
