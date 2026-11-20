@@ -10,10 +10,10 @@ another document disagrees, this page and the signed tag win.
 | Item | Value |
 |---|---|
 | Edition | **Community / Academic** (`lite` entitlement, single-host) |
-| Release | **5.27.4** |
-| Signed tag | **`v5.27.4`** |
-| Runtime code commit | `b07b8084` (signed tag `v5.27.4`) |
-| Previous release | `5.27.3` (signed tag `v5.27.3` at `82b5417a`) |
+| Release | **5.27.5** |
+| Signed tag | **`v5.27.5`** |
+| Runtime code commit | `1a5bac48` (includes signed tag `v5.27.5` at `78eff7d4`) |
+| Previous release | `5.27.4` (signed tag `v5.27.4` at `b07b8084`) |
 | Alembic revision | **`0048_performance_indexes`** |
 | Development host | `172.16.16.44` |
 | Production host | `172.16.16.41` / `https://ctfd.swocts.com` |
@@ -37,7 +37,28 @@ another document disagrees, this page and the signed tag win.
 | 5.27.2 backup | `~/backups/ocr-backup-20261119-201613.dump` |
 | 5.27.3 backup | `~/backups/ocr-backup-20261119-205049.dump` |
 | 5.27.4 backup | `~/backups/ocr-backup-20261120-003040.dump` |
-| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 19 November deploy, 5.19.0, 5.20.0, 5.21.0, 5.22.0, 5.27.0, 5.27.1, 5.27.2, 5.27.3, and 5.27.4) |
+| 5.27.5 backup | `~/backups/ocr-backup-20261120-010356.dump` |
+| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 19 November deploy, 5.19.0, 5.20.0, 5.21.0, 5.22.0, 5.27.0, 5.27.1, 5.27.2, 5.27.3, 5.27.4, and 5.27.5) |
+
+## 5.27.5 deployment verification
+
+Deployed on 20 November 2026 to development and production.
+
+| Check | Development | Production |
+|---|---|---|
+| `/api/version` | `5.27.5` | `5.27.5` |
+| Alembic | `0048_performance_indexes` (head) | `0048_performance_indexes` (head) |
+| `WG_SERVER_ADDRESS` | `10.1.0.1` | `10.0.0.1` |
+| `wg0` address | `10.1.0.1/24` | `10.0.0.1/24` |
+| Client `AllowedIPs` | lab `/24` + `10.1.0.1/32` | lab `/24` + `10.0.0.1/32` |
+| Public entry | — | `200` |
+
+No schema change. Backup `~/backups/ocr-backup-20261120-010356.dump`; restore
+drill passed with 67 users, 210 labs, 2 courses, 46 enrolments, 124
+completions, 465 achievements, and 1,386 activity events.
+
+Existing downloaded VPN configs must be re-downloaded to pick up the server
+host route; the dev configs also change to the `10.1.0.1` server address.
 
 ## 5.27.4 deployment verification
 
