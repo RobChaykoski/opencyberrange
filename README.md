@@ -108,7 +108,9 @@ workflows, privacy controls, and single-host Docker Compose install remain.
 Enterprise is additive again: it adds the lab pool, control-plane HA, gateway
 failover, and identity federation (OIDC, SAML, LDAP) without removing the
 single-host path. LMS/LTI 1.3 and the per-student accommodation engine ship in
-Release 5; multi-tenancy remains deferred.
+Release 5; multi-tenancy remains deferred. See the
+[Moodle LTI 1.3 showcase](docs/MOODLE-LTI-SHOWCASE.md) for a verified end-to-end
+walkthrough with screenshots.
 
 The five Professional priorities — Competency Framework Engine, Student
 Feedback Engine, Radar / Spider Web Reporting, Exercise Health Analytics, and

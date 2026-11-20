@@ -1,0 +1,20 @@
+{
+	email {$ACME_EMAIL}
+	admin off
+}
+
+https://{$MOODLE_TLS_HOST} {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	reverse_proxy moodle:8080 {
+		header_up X-Forwarded-Proto https
+		header_up X-Real-IP {remote_host}
+	}
+}

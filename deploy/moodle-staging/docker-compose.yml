@@ -1,0 +1,98 @@
+# Staging Moodle for https://moodle.swocts.com.
+#
+# This is a separate stack with its own database and volumes. It is not the
+# disposable training lab and must not be connected to OpenCyberRange production
+# (https://ctfd.swocts.com) or any production identity provider.
+#
+#   cd deploy/moodle-staging
+#   cp .env.example .env
+#   # replace every placeholder with a strong unique value
+#   docker compose up -d
+#   docker compose exec -T moodle php /harden.php
+#
+# Caddy obtains and renews the TLS certificate. Ports 80 and 443 must reach this
+# host, or put the stack behind the institution's TLS-terminating proxy.
+
+name: moodle-staging
+
+services:
+  moodle-db:
+    image: ${STAGING_MARIADB_IMAGE:-bitnamilegacy/mariadb:latest}
+    restart: unless-stopped
+    environment:
+      ALLOW_EMPTY_PASSWORD: "no"
+      MARIADB_ROOT_PASSWORD: ${MOODLE_DB_ROOT_PASSWORD:?set MOODLE_DB_ROOT_PASSWORD}
+      MARIADB_DATABASE: bitnami_moodle
+      MARIADB_USER: bn_moodle
+      MARIADB_PASSWORD: ${MOODLE_DB_PASSWORD:?set MOODLE_DB_PASSWORD}
+      MARIADB_CHARACTER_SET: utf8mb4
+      MARIADB_COLLATE: utf8mb4_unicode_ci
+    volumes:
+      - moodle_db_data:/bitnami/mariadb
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p${MOODLE_DB_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  moodle:
+    image: ${STAGING_MOODLE_IMAGE:-bitnamilegacy/moodle:latest}
+    restart: unless-stopped
+    depends_on:
+      moodle-db:
+        condition: service_healthy
+    environment:
+      ALLOW_EMPTY_PASSWORD: "no"
+      MOODLE_DATABASE_HOST: moodle-db
+      MOODLE_DATABASE_PORT_NUMBER: 3306
+      MOODLE_DATABASE_NAME: bitnami_moodle
+      MOODLE_DATABASE_USER: bn_moodle
+      MOODLE_DATABASE_PASSWORD: ${MOODLE_DB_PASSWORD:?set MOODLE_DB_PASSWORD}
+      MOODLE_USERNAME: ${MOODLE_ADMIN_USER:?set MOODLE_ADMIN_USER}
+      MOODLE_PASSWORD: ${MOODLE_ADMIN_PASSWORD:?set MOODLE_ADMIN_PASSWORD}
+      MOODLE_EMAIL: ${MOODLE_ADMIN_EMAIL:?set MOODLE_ADMIN_EMAIL}
+      MOODLE_SITE_URL: ${MOODLE_SITE_URL:?set MOODLE_SITE_URL}
+      MOODLE_SKIP_BOOTSTRAP: "no"
+      # The proxy preserves the public Host header, so only sslproxy is needed.
+      # Moodle's reverseproxy mode rejects a proxy that forwards the public
+      # host/port unchanged.
+      MOODLE_REVERSEPROXY: "no"
+      MOODLE_SSLPROXY: "yes"
+    # Keep direct HTTP loopback-only for debugging. Caddy is the public entry.
+    ports:
+      - "${MOODLE_DEBUG_BIND:-127.0.0.1}:${MOODLE_DEBUG_PORT:-8092}:8080"
+    volumes:
+      - moodle_data:/bitnami/moodle
+      - moodledata_data:/bitnami/moodledata
+      - ../../scripts/ecosystem_seed:/seed:ro
+      - ./harden.php:/harden.php:ro
+    healthcheck:
+      test: ["CMD-SHELL", "php -r 'exit(@fsockopen(\"127.0.0.1\",8080)?0:1);'"]
+      interval: 15s
+      timeout: 5s
+      retries: 30
+      start_period: 120s
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      moodle:
+        condition: service_healthy
+    environment:
+      MOODLE_TLS_HOST: ${MOODLE_TLS_HOST:?set MOODLE_TLS_HOST}
+      ACME_EMAIL: ${ACME_EMAIL:?set ACME_EMAIL}
+    ports:
+      - "${CADDY_HTTP_PORT:-80}:80"
+      - "${CADDY_HTTPS_PORT:-443}:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  moodle_db_data:
+  moodle_data:
+  moodledata_data:
+  caddy_data:
+  caddy_config:

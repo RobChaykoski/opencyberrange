@@ -6,6 +6,8 @@ systems.
 | Document | Use it for |
 |---|---|
 | [LTI 1.3](../LTI.md) | Moodle/Canvas launch, AGS, NRPS, and Deep Linking |
+| [Moodle LTI showcase](../MOODLE-LTI-SHOWCASE.md) | A verified end-to-end Moodle demo with screenshots |
+| [Moodle Authentik and secrets plan](../MOODLE-AUTHENTIK-AND-SECRETS-PLAN.md) | The live-pilot identity and secret-storage follow-on plan |
 | [SSO with OIDC](../SSO-OIDC.md) | OpenID Connect providers |
 | [SSO with SAML and LDAP](../SSO-SAML-LDAP.md) | SAML 2.0 and directory providers |
 | [Identity providers](../../Manual-Lite/04_Admin_Guide/30_Identity_Providers.md) | The admin configuration walkthrough |

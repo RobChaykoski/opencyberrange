@@ -40,6 +40,10 @@ function training_ensure_user(string $username, string $firstname, string $lastn
     global $DB;
     $existing = $DB->get_record('user', ['username' => $username, 'deleted' => 0]);
     if ($existing) {
+        if (getenv('TRAINING_RESET_PASSWORDS') === '1') {
+            $existing->password = hash_internal_user_password($password);
+            $DB->update_record('user', $existing);
+        }
         return (int)$existing->id;
     }
     $user = (object)[
@@ -326,7 +330,9 @@ training_ensure_page($courseids['OCR-FOUND'], 'Training lab guide', $foundGuide)
 training_ensure_page($courseids['OCR-CAP-SINGLE'], 'Scenario pack: suspicious login', $singleScenario);
 training_ensure_page($courseids['OCR-CAP-COHORT'], 'Scenario pack: suspicious login and asset drift', $cohortScenario);
 
+$admins = get_admins();
+$adminUsername = $admins ? reset($admins)->username : 'admin';
 echo "Seeded Moodle training data.\n";
-echo "Admin: admin / (see .env MOODLE_ADMIN_PASSWORD)\n";
-echo "Staff: instructor01, mentor01, ta01 / {$password}\n";
-echo "Students: student01 .. student08 / {$password}\n";
+echo "Admin: {$adminUsername} / (see .env MOODLE_ADMIN_PASSWORD)\n";
+echo "Staff: instructor01, mentor01, ta01 / (see TRAINING_PASSWORD)\n";
+echo "Students: student01 .. student08 / (see TRAINING_PASSWORD)\n";

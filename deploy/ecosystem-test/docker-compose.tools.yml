@@ -1,0 +1,71 @@
+# Optional training tools layered on top of docker-compose.yml.
+#
+#   docker compose -f docker-compose.yml -f docker-compose.tools.yml \
+#     --profile target up -d
+#
+# Profiles:
+#   target       OWASP Juice Shop (safe, deliberately vulnerable practice target)
+#   scanner      OWASP ZAP baseline scan against Juice Shop (one-shot)
+#   codequality  SonarQube Community + PostgreSQL
+#
+# These are training systems. Do not expose them publicly or point them at
+# production data.
+
+services:
+  juice-shop:
+    image: bkimminich/juice-shop:latest
+    profiles: ["target"]
+    restart: unless-stopped
+    ports:
+      - "${JUICE_SHOP_BIND:-127.0.0.1}:${JUICE_SHOP_PORT:-3000}:3000"
+
+  zap:
+    image: ghcr.io/zaproxy/zaproxy:stable
+    profiles: ["scanner"]
+    depends_on:
+      - juice-shop
+    command:
+      - zap-baseline.py
+      - -t
+      - http://juice-shop:3000
+      - -J
+      - /zap/wrk/report.json
+      - -r
+      - /zap/wrk/report.html
+    volumes:
+      - zap_reports:/zap/wrk
+
+  sonar-db:
+    image: postgres:16-alpine
+    profiles: ["codequality"]
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: ${SONAR_DB_PASSWORD}
+      POSTGRES_DB: sonar
+    volumes:
+      - sonar_db_data:/var/lib/postgresql/data
+
+  sonarqube:
+    image: sonarqube:lts-community
+    profiles: ["codequality"]
+    restart: unless-stopped
+    depends_on:
+      - sonar-db
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://sonar-db:5432/sonar
+      SONAR_JDBC_USERNAME: sonar
+      SONAR_JDBC_PASSWORD: ${SONAR_DB_PASSWORD}
+    ports:
+      - "${SONAR_BIND:-127.0.0.1}:${SONAR_PORT:-9001}:9000"
+    sysctls:
+      - vm.max_map_count=524288
+    volumes:
+      - sonar_data:/opt/sonarqube/data
+      - sonar_extensions:/opt/sonarqube/extensions
+
+volumes:
+  zap_reports:
+  sonar_db_data:
+  sonar_data:
+  sonar_extensions:

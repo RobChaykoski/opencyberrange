@@ -36,6 +36,12 @@
       "docs_dir": "Workbook",
       "theme": "deep orange"
     },
+    "msfpt": {
+      "auth": "student",
+      "config": "mkdocs-msfpt.yml",
+      "docs_dir": "Workbook",
+      "theme": "red"
+    },
     "netfor": {
       "auth": "student",
       "config": "mkdocs-netfor.yml",

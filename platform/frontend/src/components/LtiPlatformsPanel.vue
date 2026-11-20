@@ -181,7 +181,38 @@
           </table>
         </div>
         <pre v-if="results" class="lti-results">{{ results }}</pre>
-        <pre v-if="roster" class="lti-results">{{ roster }}</pre>
+        <div v-if="rosterLoaded" class="lti-roster">
+          <h5>
+            Saved NRPS roster
+            <span class="lti-roster__count">{{ rosterMembers.length }} member(s)</span>
+          </h5>
+          <p v-if="!rosterMembers.length" class="lti-state">
+            No roster members are saved for this link. Use Sync roster first.
+          </p>
+          <table v-else class="lti-scores__table">
+            <thead>
+              <tr>
+                <th>LMS subject</th>
+                <th>Roles</th>
+                <th>Status</th>
+                <th>Context</th>
+                <th>Updated</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="member in rosterMembers" :key="`${member.subject}-${member.context_id}`">
+                <td>{{ member.subject }}</td>
+                <td>{{ (member.roles || []).join(', ') || '—' }}</td>
+                <td>{{ member.status || '—' }}</td>
+                <td>{{ member.context_id || '—' }}</td>
+                <td>{{ formatTime(member.updated_at) }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="lti-roster__note">
+            Only the minimum NRPS fields are stored: subject, role, status, and context.
+          </p>
+        </div>
       </div>
     </section>
 
@@ -268,11 +299,17 @@ const lineitemBusy = ref(false)
 const resultsBusy = ref(false)
 const rosterBusy = ref(false)
 const results = ref('')
-const roster = ref('')
+const rosterMembers = ref([])
+const rosterLoaded = ref(false)
 const scoreForm = reactive({ user_id: '', score: '', max_score: '100', reason: '' })
 
 const platformName = (id) => platforms.value.find((platform) => platform.id === id)?.name || `Platform ${id}`
 const formatTime = (value) => (value ? new Date(value).toLocaleString() : '—')
+const normalizeRoster = (rows) => (rows || []).map((member) => ({
+  ...member,
+  // The sync response uses `user_id`; the saved roster uses `subject`.
+  subject: member.subject || member.user_id || '',
+}))
 
 const loginUrl = computed(() => `${window.location.origin}/api/lti/login`)
 const launchUrl = computed(() => `${window.location.origin}/api/lti/launch`)
@@ -434,7 +471,8 @@ const loadScores = async (linkId) => {
 const selectLink = async (link) => {
   selectedLinkId.value = link.id
   results.value = ''
-  roster.value = ''
+  rosterMembers.value = []
+  rosterLoaded.value = false
   scoreMessage.value = ''
   scoreError.value = false
   scoreForm.max_score = '100'
@@ -481,12 +519,14 @@ const loadResults = async () => {
 const syncRoster = async () => {
   if (!selectedLink.value) return
   rosterBusy.value = true
-  roster.value = ''
+  rosterMembers.value = []
+  rosterLoaded.value = false
   scoreMessage.value = ''
   scoreError.value = false
   try {
     const { data } = await axios.post(`/lti/admin/links/${selectedLink.value.id}/sync-roster`)
-    roster.value = JSON.stringify(data, null, 2)
+    rosterMembers.value = normalizeRoster(data.members)
+    rosterLoaded.value = true
     scoreMessage.value = `Roster synced: ${data.count} member(s).`
   } catch (e) {
     scoreError.value = true
@@ -499,12 +539,14 @@ const syncRoster = async () => {
 const loadSavedRoster = async () => {
   if (!selectedLink.value) return
   rosterBusy.value = true
-  roster.value = ''
+  rosterMembers.value = []
+  rosterLoaded.value = false
   scoreMessage.value = ''
   scoreError.value = false
   try {
     const { data } = await axios.get(`/lti/admin/links/${selectedLink.value.id}/roster/saved`)
-    roster.value = JSON.stringify(data, null, 2)
+    rosterMembers.value = normalizeRoster(data.members)
+    rosterLoaded.value = true
   } catch (e) {
     scoreError.value = true
     scoreMessage.value = e.response?.data?.detail || 'Could not load the saved roster.'
@@ -603,6 +645,10 @@ onMounted(async () => {
 .lti-scores__table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
 .lti-scores__table th, .lti-scores__table td { text-align: left; padding: 0.3rem 0.35rem; border-bottom: 1px solid var(--border-color); }
 .lti-scores__table th { color: var(--text-muted); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.04em; }
+.lti-roster { margin-top: 0.75rem; }
+.lti-roster h5 { display: flex; align-items: baseline; gap: 0.45rem; margin: 0 0 0.35rem; font-size: 0.75rem; }
+.lti-roster__count { color: var(--text-muted); font-size: 0.62rem; font-weight: 500; }
+.lti-roster__note { margin: 0.4rem 0 0; color: var(--text-muted); font-size: 0.66rem; }
 .lti-results { max-height: 16rem; overflow: auto; margin: 0; padding: 0.6rem; border: 1px solid var(--border-color); border-radius: 0.35rem; background: var(--bg-primary); color: var(--text-secondary); font-size: 0.66rem; }
 @media (max-width: 720px) {
   .lti-panel__head, .lti-card__head, .lti-score-panel__head { flex-direction: column; }

@@ -1,0 +1,86 @@
+# Production pilot Moodle for https://moodle.swocts.com.
+#
+# This is a separate stack with its own database and volumes. Nginx Proxy
+# Manager terminates TLS; this stack serves plain HTTP only on the private
+# upstream port. Do not expose 8092 publicly.
+#
+# Deploy on the production host, not the development host:
+#   cd ~/moodle-prod
+#   cp .env.example .env
+#   # set strong unique values
+#   docker compose up -d
+#   docker compose exec -T -u daemon moodle php /harden.php
+
+name: moodle-prod
+
+services:
+  moodle-db:
+    image: ${MOODLE_MARIADB_IMAGE:-bitnamilegacy/mariadb:latest}
+    restart: unless-stopped
+    environment:
+      ALLOW_EMPTY_PASSWORD: "no"
+      MARIADB_ROOT_PASSWORD: ${MOODLE_DB_ROOT_PASSWORD:?set MOODLE_DB_ROOT_PASSWORD}
+      MARIADB_DATABASE: bitnami_moodle
+      MARIADB_USER: bn_moodle
+      MARIADB_PASSWORD: ${MOODLE_DB_PASSWORD:?set MOODLE_DB_PASSWORD}
+      MARIADB_CHARACTER_SET: utf8mb4
+      MARIADB_COLLATE: utf8mb4_unicode_ci
+    volumes:
+      - moodle_db_data:/bitnami/mariadb
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p${MOODLE_DB_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  moodle:
+    image: ${MOODLE_IMAGE:-bitnamilegacy/moodle:latest}
+    restart: unless-stopped
+    depends_on:
+      moodle-db:
+        condition: service_healthy
+    environment:
+      ALLOW_EMPTY_PASSWORD: "no"
+      MOODLE_DATABASE_HOST: moodle-db
+      MOODLE_DATABASE_PORT_NUMBER: 3306
+      MOODLE_DATABASE_NAME: bitnami_moodle
+      MOODLE_DATABASE_USER: bn_moodle
+      MOODLE_DATABASE_PASSWORD: ${MOODLE_DB_PASSWORD:?set MOODLE_DB_PASSWORD}
+      MOODLE_USERNAME: ${MOODLE_ADMIN_USER:?set MOODLE_ADMIN_USER}
+      MOODLE_PASSWORD: ${MOODLE_ADMIN_PASSWORD:?set MOODLE_ADMIN_PASSWORD}
+      MOODLE_EMAIL: ${MOODLE_ADMIN_EMAIL:?set MOODLE_ADMIN_EMAIL}
+      MOODLE_SITE_URL: ${MOODLE_SITE_URL:?set MOODLE_SITE_URL}
+      MOODLE_SKIP_BOOTSTRAP: "no"
+      # NPM preserves the public Host header; only sslproxy is needed.
+      MOODLE_REVERSEPROXY: "no"
+      MOODLE_SSLPROXY: "yes"
+    ports:
+      - "${MOODLE_UPSTREAM_BIND:?set MOODLE_UPSTREAM_BIND}:${MOODLE_UPSTREAM_PORT:-8092}:8080"
+    volumes:
+      - moodle_data:/bitnami/moodle
+      - moodledata_data:/bitnami/moodledata
+      - ./harden.php:/harden.php:ro
+      - ./create_pilot_course.php:/create_pilot_course.php:ro
+      - ./seed_moodle_lti.php:/seed_moodle_lti.php:ro
+    secrets:
+      - moodle_smtp_pass
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD-SHELL", "php -r 'exit(@fsockopen(\"127.0.0.1\",8080)?0:1);'"]
+      interval: 15s
+      timeout: 5s
+      retries: 30
+      start_period: 120s
+
+volumes:
+  moodle_db_data:
+  moodle_data:
+  moodledata_data:
+
+secrets:
+  moodle_smtp_pass:
+    file: ./secrets/moodle_smtp_pass

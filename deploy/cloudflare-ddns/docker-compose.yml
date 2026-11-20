@@ -1,0 +1,36 @@
+# Cloudflare dynamic DNS updater for the public SWOCTS records.
+#
+# Run this on an always-on host behind the firewall, preferably the Nginx Proxy
+# Manager host. It detects the current public IPv4 and updates the configured
+# Cloudflare A records when the firewall's WAN address changes.
+#
+#   cd deploy/cloudflare-ddns
+#   cp .env.example .env
+#   chmod 600 .env
+#   docker compose up -d
+#
+# Use a Cloudflare API token scoped to Zone:DNS:Edit for swocts.com only.
+
+name: cloudflare-ddns
+
+services:
+  cloudflare-ddns:
+    image: ${CLOUDFLARE_DDNS_IMAGE:-favonia/cloudflare-ddns:latest}
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    environment:
+      CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN:?set CLOUDFLARE_API_TOKEN}
+      DOMAINS: ${DDNS_DOMAINS:?set DDNS_DOMAINS}
+      PROXIED: ${DDNS_PROXIED:-false}
+      IP4_PROVIDER: ${DDNS_IP4_PROVIDER:-cloudflare.trace}
+      IP6_PROVIDER: ${DDNS_IP6_PROVIDER:-none}
+      UPDATE_CRON: ${DDNS_UPDATE_CRON:-*/5 * * * *}
+      TZ: ${TZ:-UTC}
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

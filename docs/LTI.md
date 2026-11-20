@@ -109,6 +109,12 @@ second identity table.
 - Grade passback is disabled until an instructor approves, unless the
   institution sets the per-course auto-sync flag.
 - Every passback is audited with the local user, score, time, and reviewer.
+- A verified launch grant may open the assigned course-only exercise without a
+  local course enrolment. It is scoped to one user and one lab, expires after
+  ten minutes, and does not bypass inactive, draft-owner, or minor/OSINT rules.
+- When workbook pages are embedded in an LTI launch, the wiki
+  `frame-ancestors` setting must include the LMS origin. Otherwise the workbook
+  iframe is blocked even though the exercise itself loaded.
 - The Deep Linking picker and the LTI launch callback (`/lti/callback`) are
   served without app chrome and with an LTI-only CSP: `frame-ancestors https:`
   so an LMS can embed them and `form-action 'self' https:` so the picker can
@@ -141,3 +147,7 @@ Moodle 5.0.2 staging (2026-11-13): passed. An instructor selected a lab through
 Deep Linking, a student launch opened that lab, a reviewed score reached the
 Moodle gradebook, and NRPS returned the course roster. Canvas and Brightspace
 remain recommended validation targets.
+
+Moodle 5 showcase (2026-11-20): passed. This pass added a course-only exercise
+launch through a signed grant and a minimum-field roster view. See
+[`MOODLE-LTI-SHOWCASE.md`](MOODLE-LTI-SHOWCASE.md).

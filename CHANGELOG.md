@@ -2,6 +2,19 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [Unreleased]
+
+### LTI 1.3
+
+- A verified launch grant now opens the deep-linked course-only exercise even
+  when the provisioned LMS user has no local course enrolment. The grant stays
+  scoped to one user and one lab and does not bypass inactive, draft-owner, or
+  minor/OSINT rules.
+- The LTI platforms admin panel renders the saved NRPS roster as a minimum-field
+  table instead of raw JSON.
+- Added a screenshot-backed Moodle LTI 1.3 showcase and a launch-grant
+  visibility regression test.
+
 ## [5.27.3] - 2026-11-19
 
 ### Performance before HA

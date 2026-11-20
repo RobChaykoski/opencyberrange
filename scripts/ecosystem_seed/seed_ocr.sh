@@ -9,7 +9,15 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-OCR_BACKEND_CONTAINER="${OCR_BACKEND_CONTAINER:-ocr-backend}"
+if [ -z "${OCR_BACKEND_CONTAINER:-}" ]; then
+  if docker inspect --format '{{.State.Running}}' ocr-backend 2>/dev/null | grep -qx true; then
+    OCR_BACKEND_CONTAINER=ocr-backend
+  elif docker inspect --format '{{.State.Running}}' ocr-r5-backend 2>/dev/null | grep -qx true; then
+    OCR_BACKEND_CONTAINER=ocr-r5-backend
+  else
+    OCR_BACKEND_CONTAINER=ocr-backend
+  fi
+fi
 # security-delta: allow credential-like assignment (synthetic lab password)
 TRAINING_PASSWORD="${TRAINING_PASSWORD:-TrainLab!2026#Student}"
 

@@ -282,13 +282,25 @@ def get_accessible_exclusive_lab_ids(db: Session, user_id: int) -> set:
     )
 
 
-def _is_lab_visible(lab, user, accessible_course_lab_ids: set, *, course_context: bool = False) -> bool:
+def _is_lab_visible(
+    lab,
+    user,
+    accessible_course_lab_ids: set,
+    *,
+    course_context: bool = False,
+    lti_launch: bool = False,
+) -> bool:
     """Check if a lab should be visible to the current user.
 
     When *course_context* is False (the default — main exercise list), labs with
     visibility 'course' are hidden so they only appear inside their course view.
     When *course_context* is True, course-visibility labs are shown if the user
     is enrolled in a course that assigned them.
+
+    *lti_launch* is set only after a signed LTI launch grant has been verified
+    for this user and lab. It lets the assigned exercise open even when the
+    provisioned LTI user is not enrolled in the owning course. It does not
+    override the inactive, draft, or minor/OSINT safety rules.
 
     Admins follow the same course-context rule: course-only labs stay out of
     the main exercise list for everyone. Admin management access is unaffected
@@ -314,6 +326,8 @@ def _is_lab_visible(lab, user, accessible_course_lab_ids: set, *, course_context
     if vis == 'draft':
         return getattr(lab, 'created_by', None) == user.id
     if vis in ('course', 'pending_public'):
+        if lti_launch:
+            return True
         # In the main exercise list, hide course-only labs entirely
         if not course_context:
             return False
@@ -2280,7 +2294,11 @@ async def get_lab_details(
     # Block course/pending_public labs for non-enrolled users (also check legacy is_course_exclusive)
     vis = getattr(lab, 'visibility', 'public')
     is_legacy_exclusive = getattr(lab, 'is_course_exclusive', False)
-    if not current_user.is_admin and (vis in ('course', 'pending_public') or is_legacy_exclusive):
+    if (
+        not lti_bypass
+        and not current_user.is_admin
+        and (vis in ('course', 'pending_public') or is_legacy_exclusive)
+    ):
         accessible = get_accessible_exclusive_lab_ids(db, current_user.id)
         if lab.id not in accessible:
             raise HTTPException(status_code=404, detail="Lab not found")

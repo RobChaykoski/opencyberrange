@@ -211,6 +211,28 @@ def build_nginx_redirect_blocks():
 """
 
 
+def build_nginx_sitemap_block():
+    """A public, empty sitemap for embedded workbook pages.
+
+    MkDocs Material probes sitemap.xml for alternate/version links. The
+    workbook iframe is sandboxed without allow-same-origin, so that probe has an
+    opaque origin, does not send the wiki session cookie, and is rejected as a
+    CORS/login error. Returning an empty sitemap avoids the console error
+    without exposing any workbook URLs. The real sitemap stays behind the
+    normal authenticated wiki location.
+    """
+    return """    # Public empty sitemap for embedded workbook frames.
+    location ~ ^/wiki/(range|reference|course)/[a-z0-9][a-z0-9._-]*/sitemap\\.xml$ {
+        default_type application/xml;
+        add_header Access-Control-Allow-Origin "*" always;
+        add_header Cache-Control "no-store" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header X-Robots-Tag "noindex, nofollow, noarchive, nosnippet, noimageindex, noai, noimageai" always;
+        return 200 '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>';
+    }
+"""
+
+
 def build_nginx_index_block():
     """The /wiki/ landing: range-only index, student auth, no content fallback."""
     return f"""    # /wiki/ landing index (range tracks only; no chapter content here)
@@ -235,6 +257,7 @@ def build_nginx_index_block():
 def build_nginx(all_wikis):
     parts = [NGINX_BEGIN, ""]
     parts.append(build_nginx_redirect_blocks())
+    parts.append(build_nginx_sitemap_block())
     parts.append(build_nginx_index_block())
     # Group by (namespace, auth). Auth is currently a function of namespace, so
     # this yields one block per namespace; the grouping is kept explicit so a

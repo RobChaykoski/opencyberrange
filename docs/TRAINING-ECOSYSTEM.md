@@ -189,8 +189,25 @@ The production range must keep zero configuration that references these hosts.
 
 ### LTI 1.3 launch
 
-The training stack includes a dev-only Caddy TLS front for Moodle. The LTI seed
-registers both sides:
+The training stack includes a dev-only Caddy TLS front for Moodle. For a
+screenshot-backed walkthrough of the full flow (Deep Linking, learner launch,
+reviewed grade passback, and NRPS roster), see
+[`MOODLE-LTI-SHOWCASE.md`](MOODLE-LTI-SHOWCASE.md).
+
+The whole local showcase is one command after both stacks are running:
+
+```bash
+python scripts/ecosystem_seed/seed_showcase.py
+# or
+bash scripts/ecosystem_seed/seed_showcase.sh
+pwsh scripts/ecosystem_seed/seed_showcase.ps1
+```
+
+That command seeds Moodle and OpenCyberRange, creates the Moodle 5 course tool
+and the pre-linked demo activity, registers the matching LTI platform, and
+generates the tool RSA key on first use. It is idempotent.
+
+To refresh only the LTI side:
 
 ```bash
 # on the development host
@@ -199,12 +216,19 @@ bash scripts/ecosystem_seed/seed_lti.sh
 
 It performs three steps:
 
-1. Trusts the OCR dev certificate in Moodle and the Caddy root CA in OCR. This
-   is a runtime trust change, so re-run it after recreating either container.
-2. Creates a preconfigured LTI 1.3 tool in `OCR-CAP-COHORT` with client ID
-   `ocr-training-client`.
-3. Registers the matching platform in OCR using the Moodle issuer and the tool
-   deployment id.
+1. Trusts the OCR dev certificate in Moodle and the Caddy root CA in OCR when
+   the URLs use HTTPS. This is a runtime trust change, so re-run it after
+   recreating either container.
+2. Creates or updates a Moodle 5 course-level LTI 1.3 tool in `OCR-CAP-COHORT`
+   and a demo activity linked to the selected exercise. The seed prints the
+   actual client ID and deployment ID; it may not be `ocr-training-client` if
+   that ID is already taken by another tool.
+3. Registers or updates the matching platform in OCR and stores a tool RSA key
+   so Deep Linking responses and AGS client assertions can be signed.
+
+For a private Docker host, the seed also relaxes Moodle's cURL SSRF allow-list
+(`MOODLE_ALLOW_PRIVATE_LTI_URLS=1`, the default) so Moodle can fetch the tool
+JWKS and call AGS/NRPS. Set it to `0` when the tool uses a public HTTPS URL.
 
 The verified launch flow is:
 

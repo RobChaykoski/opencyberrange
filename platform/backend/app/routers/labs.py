@@ -266,13 +266,18 @@ async def spawn_lab(
         lab_unlocked_for_user,
     )
 
+    lti_bypass = verify_launch_grant(launch, current_user.id, lab.id)
     accessible = get_accessible_exclusive_lab_ids(db, current_user.id)
-    if not _is_lab_visible(lab, current_user, accessible, course_context=True):
+    if not _is_lab_visible(
+        lab,
+        current_user,
+        accessible,
+        course_context=True,
+        lti_launch=lti_bypass,
+    ):
         raise HTTPException(status_code=404, detail=f"Lab '{lab_slug}' not found")
 
-    if not lab_unlocked_for_user(db, current_user, lab) and not verify_launch_grant(
-        launch, current_user.id, lab.id
-    ):
+    if not lti_bypass and not lab_unlocked_for_user(db, current_user, lab):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="This lab is locked. Complete previous labs first.",
