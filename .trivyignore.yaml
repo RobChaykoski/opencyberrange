@@ -14,13 +14,12 @@ misconfigurations:
       - "platform/templates/**"
     statement: Intentional - lab targets emulate privileged vulnerable services.
 
-  # Platform components that need host-level privileges or a writable shared
-  # volume. The backend needs the Docker socket and the labs tree; nginx binds
-  # ports 80/443 before dropping to worker processes; the tap needs raw sockets;
-  # the tester and wiki builder run inside Docker-managed volumes.
+  # Platform components that still need host-level privileges or a writable
+  # shared volume. The backend is deliberately absent: it now runs as USER ocr.
+  # nginx binds ports 80/443 before dropping to worker processes; the tap needs
+  # raw sockets; the tester and wiki builder run inside Docker-managed volumes.
   - id: DS-0002
     paths:
-      - "platform/backend/Dockerfile"
       - "platform/frontend/Dockerfile"
       - "platform/network-tap/Dockerfile"
       - "platform/tester/Dockerfile"
@@ -60,10 +59,10 @@ misconfigurations:
       - "platform/labs/**"
     statement: Intentional - weak credentials are the vulnerable lab content.
 
-  # Kali rolling is a rolling base with no versioned tag. Lab images are
-  # rebuilt deliberately and verified by the supply-chain lock.
+  # One lab target still uses a rolling Kali base with no versioned tag.
+  # RangeBox is digest-pinned, so it is no longer waived. Lab images are rebuilt
+  # deliberately and verified by the supply-chain lock.
   - id: DS-0001
     paths:
-      - "RangeBox/Dockerfile"
       - "platform/labs/Linux/linux-3-2-password-hash-cracking/containers/target/Dockerfile"
     statement: Intentional - rolling Kali base has no fixed version tag.

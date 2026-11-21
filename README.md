@@ -973,7 +973,7 @@ For production deployments or custom configurations, see the [Server Deployment 
 | Component | Technology | Container |
 |-----------|-----------|-----------|
 | Frontend | Vue.js 3.5.45 + Vite 8.3.6, served by nginx | `ocr-frontend` (port 80/443) |
-| Backend | Python 3.11 + FastAPI 0.162.2 | `ocr-backend` (port 8000, localhost only) |
+| Backend | Python 3.13 + FastAPI 0.162.2 | `ocr-backend` (port 8000, localhost only) |
 | Database | PostgreSQL 15 | `ocr-db` (port 5432, internal only) |
 | Cache and rate limits | Valkey 9.1.3 | `ocr-valkey` (port 6379, internal only) |
 | VPN | WireGuard + Peer Manager API | Host systemd services (port 51820/UDP) |
