@@ -201,6 +201,11 @@ jobs:
           SERVER_PUBLIC_HOST: ci.invalid
           CORS_ORIGINS: https://ci.invalid
           LABS_HOST_PATH: ${{ github.workspace }}/platform/labs
+          # The sso profile is optional, but Compose still interpolates its
+          # services when validating the file.
+          SSO_LDAP_ADMIN_PASSWORD: ci-only-ldap-password
+          LDAP_TLS: "false"
+          VALKEY_PASSWORD: ci-only-valkey-password
         run: docker compose -f docker-compose.prod.yml config >/dev/null
 
       - name: Build backend

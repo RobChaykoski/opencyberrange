@@ -166,6 +166,10 @@ owner-only unless an explicit share or break-glass grant exists.
 | `GET` | `/api/admin/rangebox-capacity` | Get Rangebox Capacity | OAuth2PasswordBearer |
 | `POST` | `/api/admin/rangebox-capacity/test` | Run Rangebox Capacity Test | OAuth2PasswordBearer |
 | `GET` | `/api/admin/retention/due` | List Retention Due | OAuth2PasswordBearer |
+| `GET` | `/api/admin/security/access-rules` | List sign-in and registration allow/deny rules | OAuth2PasswordBearer |
+| `POST` | `/api/admin/security/access-rules` | Add a sign-in or registration allow/deny rule | OAuth2PasswordBearer |
+| `POST` | `/api/admin/security/access-rules/test` | Explain how the current rules evaluate one request | OAuth2PasswordBearer |
+| `DELETE` | `/api/admin/security/access-rules/{rule_id}` | Remove a sign-in or registration allow/deny rule | OAuth2PasswordBearer |
 | `GET` | `/api/admin/security/break-glass` | Break-glass grants and review state | OAuth2PasswordBearer |
 | `POST` | `/api/admin/security/break-glass` | Request time-bound emergency access | OAuth2PasswordBearer |
 | `POST` | `/api/admin/security/break-glass/{grant_id}/approve` | Approve a pending grant | OAuth2PasswordBearer |
@@ -724,9 +728,9 @@ Get paginated activity log with optional event type and date range filters.
 |---|---|---|---|---|
 | `page` | query | integer | no |  |
 | `per_page` | query | integer | no |  |
-| `event_type` | query | string | no |  |
-| `start_date` | query | string | no |  |
-| `end_date` | query | string | no |  |
+| `event_type` | query | string or null | no |  |
+| `start_date` | query | string or null | no |  |
+| `end_date` | query | string or null | no |  |
 
 **Responses**
 
@@ -769,9 +773,9 @@ Download the filtered activity log as JSON or CSV.  This is the archive path: ex
 | Parameter | In | Type | Required | Description |
 |---|---|---|---|---|
 | `format` | query | string | no |  |
-| `event_type` | query | string | no |  |
-| `start_date` | query | string | no |  |
-| `end_date` | query | string | no |  |
+| `event_type` | query | string or null | no |  |
+| `start_date` | query | string or null | no |  |
+| `end_date` | query | string or null | no |  |
 | `reason` | query | string | yes | Why this export is needed (recorded in the audit log) |
 
 **Responses**
@@ -972,9 +976,19 @@ Launch a lab AS a specific student, even if they aren't logged in. Creates a ses
 
 **Authentication:** OAuth2PasswordBearer
 
+**Request body** (`application/json`)
+
+**Schema:** `ImpersonateLaunchRequest`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `user_id` | integer | yes |  |
+| `lab_slug` | string | yes |  |
+
 **Responses**
 
 - `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
 
 ### `GET /api/admin/impersonate/status`
 
@@ -1070,7 +1084,12 @@ Enable or disable multiple labs at once
 
 **Request body** (`application/json`)
 
-**Schema:** object
+**Schema:** `BulkToggleRequest`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `lab_ids` | array[integer] | no |  |
+| `is_active` | boolean | no |  |
 
 **Responses**
 
@@ -1191,7 +1210,11 @@ Update a lab's docker-compose file content.
 
 **Request body** (`application/json`)
 
-**Schema:** object
+**Schema:** `ComposeUpdateRequest`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `compose_file` | string | no |  |
 
 **Responses**
 
@@ -1396,7 +1419,7 @@ Clear session history (non-running sessions only) - rate limited to 5 per minute
 
 | Parameter | In | Type | Required | Description |
 |---|---|---|---|---|
-| `status_filter` | query | string | no |  |
+| `status_filter` | query | string or null | no |  |
 
 **Responses**
 
@@ -1417,8 +1440,8 @@ Get paginated session history with optional date range filters.
 |---|---|---|---|---|
 | `page` | query | integer | no |  |
 | `per_page` | query | integer | no |  |
-| `start_date` | query | string | no |  |
-| `end_date` | query | string | no |  |
+| `start_date` | query | string or null | no |  |
+| `end_date` | query | string or null | no |  |
 
 **Responses**
 
@@ -1441,7 +1464,7 @@ Emergency: terminate all running sessions - rate limited to 2 per minute
 
 **Terminate Session**
 
-Terminate a specific lab session
+Terminate a specific lab session.  Sync on purpose: destroy_lab_environment performs blocking Docker calls. FastAPI runs sync endpoints in the threadpool, so one teardown cannot freeze the event loop and the health probe.
 
 **Authentication:** OAuth2PasswordBearer
 
@@ -1536,7 +1559,14 @@ Launch a stress test in the background.  Body:     level: 1\|2\|3\|4     users: 
 
 **Request body** (`application/json`)
 
-**Schema:** object
+**Schema:** `StressTestRequest`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `level` | integer | no |  |
+| `users` | integer | no |  |
+| `concurrent_spawns` | integer | no |  |
+| `lab_slug` | string or null | no |  |
 
 **Responses**
 
@@ -1565,7 +1595,11 @@ Cancel a running stress test.
 
 **Request body** (`application/json`)
 
-**Schema:** object
+**Schema:** `StressCancelRequest`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `run_id` | string | yes |  |
 
 **Responses**
 
@@ -1810,7 +1844,11 @@ Restore the database from a snapshot already on this install.
 
 **Request body** (`application/json`)
 
-**Schema:** object
+**Schema:** `RestoreRequest`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `filename` | string | yes |  |
 
 **Responses**
 
@@ -1867,7 +1905,7 @@ Minimal, plain-language status for non-technical admins. Every item is derived f
 
 **List Users**
 
-List users — bulk-syncs vpn_registered flags from Peer Manager.  A platform admin sees every institution; an institution admin sees only its own tenant. Without ``page``/``per_page`` this keeps the original array response; supplying either returns a page envelope with totals.
+List users without side effects.  A platform admin sees every institution; an institution admin sees only its own tenant. Without ``page``/``per_page`` this keeps the original array response; supplying either returns a page envelope with totals.  VPN state is refreshed by the dedicated ``/vpn/sync`` endpoint and the scheduler, not by this GET: a read must not call Peer Manager or write to the database.
 
 **Authentication:** OAuth2PasswordBearer
 
@@ -1927,6 +1965,8 @@ Create a new user - rate limited to 5 per minute
 | `is_admin` | boolean | no |  |
 | `role` | string or null | no |  |
 | `institution_id` | string or null | no |  |
+| `age_band` | `under_13` | `13_15` | `16_17` | `18_plus` or null | no |  |
+| `parental_consent_reference` | string or null | no |  |
 
 **Responses**
 
@@ -2064,6 +2104,8 @@ Update user details
 | `is_admin` | boolean or null | no |  |
 | `role` | string or null | no |  |
 | `must_change_password` | boolean or null | no |  |
+| `age_band` | `under_13` | `13_15` | `16_17` | `18_plus` or null | no |  |
+| `parental_consent_reference` | string or null | no |  |
 
 **Responses**
 
@@ -3282,6 +3324,8 @@ Register a new user.  Per-IP limits are strict normally (5/minute; 30/hour; 100/
 | `competition_id` | integer or null | no |  |
 | `send_registration_email` | boolean | no |  |
 | `is_minor` | boolean | no |  |
+| `age_band` | `under_13` | `13_15` | `16_17` | `18_plus` or null | no |  |
+| `privacy_acknowledged` | boolean | no |  |
 
 **Responses**
 
@@ -3362,6 +3406,7 @@ Register a new user.  Per-IP limits are strict normally (5/minute; 30/hour; 100/
 | `show_hidden_achievements` | boolean or null | no |  |
 | `certificates_public` | boolean or null | no |  |
 | `is_minor` | boolean or null | no |  |
+| `privacy_acknowledged` | boolean or null | no |  |
 
 **Responses**
 
@@ -8575,6 +8620,85 @@ Verify that a report file matches the platform manifest.  This endpoint is inten
 - `422`: Validation Error — `HTTPValidationError`
 
 ## Security administration
+
+### `GET /api/admin/security/access-rules`
+
+**List sign-in and registration allow/deny rules**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `scope` | query | string or null | no |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `POST /api/admin/security/access-rules`
+
+**Add a sign-in or registration allow/deny rule**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Request body** (`application/json`)
+
+**Schema:** `AccessRuleCreate`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `scope` | string | yes |  |
+| `kind` | string | yes |  |
+| `value` | string | yes |  |
+| `action` | string | yes |  |
+| `note` | string or null | no |  |
+| `expires_at` | string or null | no |  |
+
+**Responses**
+
+- `201`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `POST /api/admin/security/access-rules/test`
+
+**Explain how the current rules evaluate one request**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Request body** (`application/json`)
+
+**Schema:** `AccessRuleTest`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `scope` | string | yes |  |
+| `ip_address` | string or null | no |  |
+| `email` | string or null | no |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `DELETE /api/admin/security/access-rules/{rule_id}`
+
+**Remove a sign-in or registration allow/deny rule**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `rule_id` | path | integer | yes |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
 
 ### `GET /api/admin/security/break-glass`
 
