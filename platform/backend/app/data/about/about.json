@@ -1,9 +1,9 @@
 {
-  "generated_for_release": "5.28.6",
-  "release_date": "2026-11-20",
+  "generated_for_release": "5.29.0",
+  "release_date": "2026-11-21",
   "platform": {
     "name": "SWOCTS Cyber Range",
-    "version": "5.28.6",
+    "version": "5.29.0",
     "status": "release",
     "edition": "Community / Academic",
     "python": "3.13",
@@ -211,15 +211,15 @@
         "scope": "frontend runtime"
       },
       {
-        "name": "chart.js",
-        "version": "4.6.1",
-        "licence": "MIT",
-        "scope": "frontend runtime"
-      },
-      {
         "name": "dompurify",
         "version": "3.4.17",
         "licence": "(MPL-2.0 OR Apache-2.0)",
+        "scope": "frontend runtime"
+      },
+      {
+        "name": "echarts",
+        "version": "6.1.0",
+        "licence": "Apache-2.0",
         "scope": "frontend runtime"
       },
       {
@@ -237,12 +237,6 @@
       {
         "name": "vue",
         "version": "3.5.45",
-        "licence": "MIT",
-        "scope": "frontend runtime"
-      },
-      {
-        "name": "vue-chartjs",
-        "version": "5.3.4",
         "licence": "MIT",
         "scope": "frontend runtime"
       },

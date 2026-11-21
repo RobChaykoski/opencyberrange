@@ -2,6 +2,38 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.29.0] - 2026-11-21
+
+### Lab launch preflight
+
+- When on-demand lab builds are disabled, an unbuilt lab is refused before a
+  session is created. Students see a plain "still being prepared" message, and
+  the exact `scripts/prebuild-labs.sh --lab <slug>` command is recorded for the
+  admin health panel.
+- The spawn-status fallback uses the same learner-facing message instead of a
+  generic environment error.
+
+### Analytics
+
+- Added a shared ECharts wrapper and adopted it for the instructor pulse chart
+  and course completion chart. Charts keep accessible data tables and load only
+  in instructor-only chunks.
+
+### Security and data handling
+
+- Uploaded SQL dumps are validated before restore; `psql` runs as the migrator
+  role with `-X` and `--no-psqlrc`.
+- ZIP lab uploads reject symlinks, encrypted entries, duplicate paths,
+  backslash/absolute paths, excessive entry counts, oversized entries, and
+  suspicious compression ratios. Extraction is streamed and bounded.
+- Refreshed Trivy waivers for the non-root backend and digest-pinned RangeBox.
+
+### Content and contracts
+
+- Added the 211th lab, regenerated competency contracts and outcomes, and
+  refreshed the workbook coverage, API manual, data dictionary, and signed
+  supply-chain lock.
+
 ## [Unreleased]
 
 ### Privacy and age defaults
