@@ -7,7 +7,8 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.29.0` | SWOCTS Cyber Range Release 5.29.0 | Current feature release (signed annotated tag): lab preflight and admin health action, ECharts instructor analytics, restore and ZIP upload hardening, 211-lab content refresh |
+| `v5.29.1` | SWOCTS Cyber Range Release 5.29.1 | Current patch release (signed annotated tag): strip the PostgreSQL 17-only `transaction_timeout` setting from plain SQL backups so restores work on the supported PostgreSQL 15 line |
+| `v5.29.0` | SWOCTS Cyber Range Release 5.29.0 | Previous feature release (signed annotated tag): lab preflight and admin health action, ECharts instructor analytics, restore and ZIP upload hardening, 211-lab content refresh |
 | `v5.28.6` | SWOCTS Cyber Range Release 5.28.6 | Previous patch release (signed annotated tag): accessible admin dialogs, labelled copy controls, honest dismiss/badge affordances |
 | `v5.28.5` | SWOCTS Cyber Range Release 5.28.5 | Previous patch release (signed annotated tag): topology-aware lab harness, scoped `fwctl` firewall helper, network lab test fixes |
 | `v5.28.4` | SWOCTS Cyber Range Release 5.28.4 | Previous patch release (signed annotated tag): correct TRITON workstation filter in the ICS lab test |
