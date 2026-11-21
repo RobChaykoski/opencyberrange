@@ -10,14 +10,16 @@ another document disagrees, this page and the signed tag win.
 | Item | Value |
 |---|---|
 | Edition | **Community / Academic** (`lite` entitlement, single-host) |
-| Release | **5.28.6** |
-| Signed tag | **`v5.28.6`** |
-| Runtime code commit | `dabc9c0d` (signed tag `v5.28.6`) |
-| Previous release | `5.28.5` (signed tag `v5.28.5` at `160cfe56`) |
-| Alembic revision | **`0048_performance_indexes`** |
+| Release | **5.29.1** |
+| Signed tag | **`v5.29.1`** |
+| Runtime code commit | `29266761` (signed tag `v5.29.1`) |
+| Previous release | `5.29.0` (signed tag `v5.29.0` at `cb2f7278`) |
+| Alembic revision | **`0050_child_privacy_defaults`** |
 | Development host | `172.16.16.44` |
 | Production host | `172.16.16.41` / `https://ctfd.swocts.com` |
 | Repository | `RobChaykoski/opencyberrange` (`main`) |
+| Pre-5.29.1 backup | `~/backups/ocr-backup-20261121-065211.dump` |
+| 5.29.0 pre-deploy backup | `~/backups/ocr-backup-20261121-064246.dump` |
 | Pre-cutover backup | `~/backups/ocr-backup-20261116-181526.dump` |
 | Post-cutover backup | `~/backups/ocr-backup-20261116-192307.dump` |
 | 5.17.5 backup | `~/backups/ocr-backup-20261116-223835.dump` |
@@ -47,7 +49,34 @@ another document disagrees, this page and the signed tag win.
 | 5.28.4 backup | `~/backups/ocr-backup-20261120-020748.dump` |
 | 5.28.5 backup | `~/backups/ocr-backup-20261120-025933.dump` |
 | 5.28.6 backup | `~/backups/ocr-backup-20261120-033403.dump` |
-| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 19 November deploy, 5.19.0, 5.20.0, 5.21.0, 5.22.0, 5.27.0, 5.27.1, 5.27.2, 5.27.3, 5.27.4, 5.27.5, 5.27.6, 5.27.7, 5.28.0, 5.28.1, 5.28.2, 5.28.3, 5.28.4, 5.28.5, and 5.28.6) |
+| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 19 November deploy, 5.19.0, 5.20.0, 5.21.0, 5.22.0, 5.27.0, 5.27.1, 5.27.2, 5.27.3, 5.27.4, 5.27.5, 5.27.6, 5.27.7, 5.28.0, 5.28.1, 5.28.2, 5.28.3, 5.28.4, 5.28.5, 5.28.6, 5.29.0, and 5.29.1) |
+
+## 5.29.1 deployment verification
+
+Lab preflight, ECharts instructor analytics, restore/ZIP hardening, the
+211-lab content refresh, and the PostgreSQL 15 backup compatibility hotfix.
+Deployed on 21 November 2026.
+
+| Check | Result |
+|---|---|
+| CI, Quality checks, CodeQL, Trivy, and Security delta review | **passed** |
+| `/api/version` | `5.29.1` on production |
+| Backend and frontend health | **healthy** |
+| Alembic | **`0050_child_privacy_defaults` (head)** |
+| Registered labs | **211** |
+| `deployment_mode` | **`production`** |
+| Runtime / migrator roles | `ocr_runtime` / `ocr_migrator` (no superuser warning) |
+| ECharts assets | `echartsTheme` and `CourseAnalytics` chunks served |
+| Pre-deploy backup | `~/backups/ocr-backup-20261121-065211.dump` |
+| Application backup | `ocr_backup_20261121_065350.sql` |
+| PG17-only setting | **absent** from the new application backup |
+| Restore drill | **PASSED**, `psql` exit 0 |
+| Restored counts | 50 users, 211 labs, 125 completions, 476 achievements, 1,409 activity events |
+| Rollback tags | `ocr-backend:pre-5.29.1`, `ocr-frontend:pre-5.29.1` |
+
+The 5.29.0 deploy on `cb2f7278` was healthy and served 5.29.0, but its restore
+drill exposed the PostgreSQL 17 client setting described in the 5.29.1
+changelog. 5.29.1 replaces it before the production statement was finalised.
 
 ## 5.28.6 deployment verification
 
