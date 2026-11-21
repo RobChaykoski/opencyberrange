@@ -23,6 +23,9 @@ All notable changes to OpenCyberRange are recorded here.
   frames, removing the CORS/login console error without exposing page URLs.
 - Moodle production HSTS is set at the Apache origin so it survives without an
   NPM admin change.
+- Added the pilot event runbook: pre-flight checks, participant flow,
+  troubleshooting, rollback, and the post-event cleanup list.
+- Cloudflare DDNS is deployed and verified for the two public pilot records.
 
 ## [5.27.3] - 2026-11-19
 

@@ -99,13 +99,32 @@ docker compose logs --tail=100 cloudflare-ddns
 - After a reboot, verify both public hostnames and the NPM proxy hosts. A stale
   DNS record is the most likely cause of a sudden TLS or connection failure.
 
+## Deployment status
+
+Deployed on `ocr-prod` on 2026-11-20 and verified:
+
+- `.env` is mode `600`, owned by the deploy user.
+- The container is `running` with restart policy `unless-stopped`; Docker is
+  enabled at boot.
+- It detected WAN IPv4 `70.54.16.7` and reported both records already current.
+- A no-op DNS write returned `200`, confirming the token can edit records.
+- Public resolvers return `70.54.16.7` for both names.
+
+```bash
+cd ~/cloudflare-ddns
+docker compose ps
+docker compose logs --tail 30 --no-log-prefix
+```
+
 ## Security
 
-- The token is scoped to one zone and DNS edit only.
+- Use a token scoped to `Zone:DNS:Edit` for `swocts.com` only. The current pilot
+  token was supplied interactively and should be rotated after the event.
 - `.env` is mode 600 and gitignored.
 - The container drops capabilities and enables `no-new-privileges`.
 - Do not run multiple updaters for the same records.
-- Rotate the token after the event.
+- After rotating the token, replace `CLOUDFLARE_API_TOKEN` in `.env` and run
+  `docker compose up -d`; the records do not change.
 - OpenBao should hold the token after the event; see
   [`docs/MOODLE-AUTHENTIK-AND-SECRETS-PLAN.md`](../../docs/MOODLE-AUTHENTIK-AND-SECRETS-PLAN.md).
 

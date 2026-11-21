@@ -22,7 +22,8 @@ Two items are deliberate pilot exceptions and one code change is pending:
    the instructor UI is usable now.
 2. `sso_enabled=true`, the relaxed cURL host allow-list, and the broad
    `wiki_frame_ancestor` list are pilot-only settings to revert after the event.
-3. Cloudflare DDNS still needs the scoped API token (owner action).
+3. Cloudflare DDNS is deployed and verified; the pilot token should be rotated
+   after the event because it was supplied interactively.
 
 ## Verified
 
@@ -169,10 +170,16 @@ Revert the pilot-only settings documented in `deploy/moodle-prod/README.md`:
 
 ### 7. Cloudflare DDNS
 
-The stack is ready at `deploy/cloudflare-ddns/` and on `ocr-prod`, but it has
-not been started because `~/cloudflare-ddns/.env` has no scoped API token.
-Public DNS currently resolves correctly; this is a resilience item, not a
-launch blocker.
+Deployed on `ocr-prod` and verified on 2026-11-20:
+
+- container running with `unless-stopped`, Docker enabled at boot
+- detects WAN IPv4 `70.54.16.7`
+- both records current; a no-op write returned `200`, confirming edit access
+- checks every five minutes and on startup
+
+Rotate the pilot token after the event, replace it in
+`~/cloudflare-ddns/.env`, and run `docker compose up -d`. Public DNS currently
+resolves correctly; DDNS is a resilience control for firewall/WAN changes.
 
 ## Operational note
 
