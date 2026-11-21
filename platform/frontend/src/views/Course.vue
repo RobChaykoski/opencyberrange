@@ -171,16 +171,21 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { defineAsyncComponent, ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from '../api/axios'
 import PrivacyText from '../components/PrivacyText.vue'
 import { getUserTimeZone } from '../utils/timezone'
 import { requireExportReason } from '../utils/exportReason'
 import { downloadBlob } from '../utils/download'
-import CourseAnalytics from '../components/CourseAnalytics.vue'
 import CourseFeedbackPanel from '../components/CourseFeedbackPanel.vue'
 import CourseHealthOverview from '../components/CourseHealthOverview.vue'
+
+// Analytics pulls the ECharts chunk. Load it only when the instructor opens
+// the Analytics tab, not for every learner who visits a course page.
+const CourseAnalytics = defineAsyncComponent(
+  () => import('../components/CourseAnalytics.vue')
+)
 
 const route = useRoute()
 const router = useRouter()

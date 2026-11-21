@@ -15,12 +15,11 @@
   "dependencies": {
     "@novnc/novnc": "^1.7.0",
     "axios": "^1.21.0",
-    "chart.js": "^4.4.7",
     "dompurify": "^3.4.17",
+    "echarts": "^6.1.0",
     "marked": "^18.1.2",
     "sortablejs": "^1.15.7",
     "vue": "^3.3.4",
-    "vue-chartjs": "^5.3.4",
     "vue-eslint-parser": "^10.4.2",
     "vue-router": "^5.4.0"
   },
