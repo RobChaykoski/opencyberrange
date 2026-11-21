@@ -28,7 +28,7 @@ def _first_lab() -> dict:
 def test_every_lab_matches_the_contract():
     validator = _validator()
     files = sorted(LABS.rglob("lab.yaml"))
-    assert len(files) == 210
+    assert len(files) == 211
     failures = []
     for path in files:
         data = yaml.safe_load(path.read_text(encoding="utf-8"))

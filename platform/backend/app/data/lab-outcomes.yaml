@@ -877,7 +877,7 @@ labs:
     track: High School
     difficulty: beginner
     expected_duration_minutes: 25
-    workbook: wiki/range/high-school/CH_HS12_Grade_12_Applied_Cybersecurity/01_Community Dev Day_Community_Portal/
+    workbook: wiki/range/high-school/CH_HS12_Grade_12_Applied_Cybersecurity/01_DevFest_Community_Portal/
     skills_earned:
     - id: PROF-001
       name: Technical Documentation
@@ -6285,6 +6285,60 @@ labs:
       label: ICS/OT Security
     practice_axes:
     - OT and ICS
+    evidence_artifacts:
+    - flag
+    - automated validation
+    - analyst finding
+    - submitted artifact
+    confidence:
+      score: 0.65
+      level: medium
+      basis: Baseline contract derived from the reviewed competency mapping. The evidence types and weights
+        are explicit; live harness evidence and analyst-answer moderation are required before marking
+        reviewed.
+    review_status: baseline_derived
+    reviewed_at: null
+  ot-3-1-ics-pcap-forensics:
+    track: OT
+    difficulty: advanced
+    expected_duration_minutes: 120
+    workbook: ''
+    skills_earned:
+    - id: OT-001
+      name: ICS Architecture
+      weight: 0.4
+    - id: OT-002
+      name: Purdue Model
+      weight: 0.3
+    - id: OT-006
+      name: Modbus
+      weight: 0.2
+    - id: OT-010
+      name: ICS Threat Landscape
+      weight: 0.1
+    competencies_proven:
+    - id: OT-001
+      name: ICS Architecture
+      weight: 0.4
+      category: OT Fundamentals
+    - id: OT-002
+      name: Purdue Model
+      weight: 0.3
+      category: OT Fundamentals
+    - id: OT-006
+      name: Modbus
+      weight: 0.2
+      category: OT Protocols
+    - id: OT-010
+      name: ICS Threat Landscape
+      weight: 0.1
+      category: OT Security
+    knowledge_domains:
+    - id: OT
+      label: ICS/OT Security
+    practice_axes:
+    - OT and ICS
+    - Incident and forensics
     evidence_artifacts:
     - flag
     - automated validation
