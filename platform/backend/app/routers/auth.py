@@ -46,6 +46,7 @@ from app.auth import (
     oauth2_scheme,
 )
 from app.services import mail
+from app.services import network_access
 from app.services import totp as totp_service
 from app.services import mfa as mfa_service
 from app.services import auth_sessions
@@ -126,6 +127,11 @@ class RegisterRequest(BaseModel):
     # Privacy control for learners under 18. When true, reporting and analytics
     # endpoints exclude this account from instructor-facing datasets.
     is_minor: bool = False
+    # Privacy-preserving age band. Under-13 self-registration is blocked; those
+    # accounts are created by an instructor or guardian through the admin path.
+    age_band: Optional[Literal["under_13", "13_15", "16_17", "18_plus"]] = None
+    # Recorded only when the form actually required the privacy acknowledgement.
+    privacy_acknowledged: bool = False
 
     @field_validator('username')
     @classmethod
@@ -259,6 +265,22 @@ async def login(
     from app.auth import LOCKOUT_DURATION_MINUTES
 
     client_ip = request.client.host if request.client else None
+    access_decision = network_access.evaluate_ip(db, "access", client_ip)
+    if not access_decision.allowed:
+        network_access.record_denial(
+            "access",
+            access_decision,
+            ip_address=client_ip,
+            username=username,
+            path="/api/auth/login",
+            user_agent=request.headers.get("user-agent"),
+            request_id=request.headers.get("x-request-id"),
+        )
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access from this network is not permitted on this deployment.",
+        )
+
     retry_after = _login_retry_after(username, client_ip)
     if retry_after:
         # Backoff is per (username, client IP); other users and other source
@@ -344,6 +366,28 @@ async def login(
                 "Your account is inactive. Contact an administrator to "
                 "reactivate it."
             ),
+        )
+
+    # Domain rules can only be evaluated after the account is known. The
+    # password has already verified, so a specific message does not reveal
+    # whether an unrelated account exists.
+    domain_decision = network_access.evaluate_domain(
+        db, "access", getattr(user, "email", None)
+    )
+    if not domain_decision.allowed:
+        network_access.record_denial(
+            "access",
+            domain_decision,
+            ip_address=client_ip,
+            email=getattr(user, "email", None),
+            username=user.username,
+            path="/api/auth/login",
+            user_agent=request.headers.get("user-agent"),
+            request_id=request.headers.get("x-request-id"),
+        )
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access from this email domain is not permitted on this deployment.",
         )
 
     # Second factor. Only enforced after the password checks out, so the
@@ -563,6 +607,7 @@ class UserSettingsUpdate(BaseModel):
     show_hidden_achievements: Optional[bool] = None
     certificates_public: Optional[bool] = None
     is_minor: Optional[bool] = None
+    privacy_acknowledged: Optional[bool] = None
 
     @field_validator("avatar_data")
     @classmethod
@@ -636,10 +681,10 @@ async def get_user_settings(
         "avatar_border_style": getattr(current_user, "avatar_border_style", None) or "solid",
         "avatar_border_color": getattr(current_user, "avatar_border_color", None) or "blue",
         "timezone": current_user.timezone,
-        "show_on_scoreboard": getattr(current_user, "show_on_scoreboard", True),
-        "scoreboard_name_mode": getattr(current_user, "scoreboard_name_mode", None) or "real_name",
+        "show_on_scoreboard": getattr(current_user, "show_on_scoreboard", False),
+        "scoreboard_name_mode": getattr(current_user, "scoreboard_name_mode", None) or "anonymous",
         "login_notifications": getattr(current_user, "login_notifications", True),
-        "email_notifications": getattr(current_user, "email_notifications", True),
+        "email_notifications": getattr(current_user, "email_notifications", False),
         "email_consent_version": getattr(current_user, "email_consent_version", None),
         "email_consent_updated_at": getattr(current_user, "email_consent_updated_at", None),
         "notification_prefs": prefs or {},
@@ -654,9 +699,16 @@ async def get_user_settings(
         "survey_opt_in": bool(getattr(current_user, "survey_opt_in", False)),
         "survey_consent_version": getattr(current_user, "survey_consent_version", None),
         "certificates_public": bool(
-            getattr(current_user, "certificates_public", True)
+            getattr(current_user, "certificates_public", False)
         ),
         "is_minor": bool(getattr(current_user, "is_minor", False)),
+        "age_band": getattr(current_user, "age_band", None),
+        "privacy_acknowledged_at": getattr(
+            current_user, "privacy_acknowledged_at", None
+        ),
+        "parental_consent_recorded": bool(
+            getattr(current_user, "parental_consent_recorded_at", None)
+        ),
         "data_exported_at": getattr(current_user, "data_exported_at", None),
         "mfa_enabled": getattr(current_user, "mfa_enabled", False),
         "recovery_codes_remaining": recovery_count,
@@ -706,10 +758,19 @@ async def update_user_settings(
     if payload.is_minor is not None:
         current_user.is_minor = payload.is_minor
         if payload.is_minor:
+            # Keep the age band consistent when the learner uses the simple
+            # under-18 toggle instead of the registration age-group picker.
+            if getattr(current_user, "age_band", None) in {None, "18_plus"}:
+                current_user.age_band = "13_15"
             # Enforce the privacy rule immediately, even for an account that
-            # previously opted into the scoreboard.
+            # previously opted into the scoreboard or public certificates.
             current_user.show_on_scoreboard = False
             current_user.scoreboard_name_mode = "anonymous"
+            current_user.certificates_public = False
+        else:
+            current_user.age_band = "18_plus"
+    if payload.privacy_acknowledged:
+        current_user.privacy_acknowledged_at = datetime.now(timezone.utc)
     if payload.login_notifications is not None:
         current_user.login_notifications = payload.login_notifications
     if payload.email_notifications is not None:
@@ -1085,9 +1146,21 @@ async def export_user_data(
             "timezone": current_user.timezone,
             "show_on_scoreboard": current_user.show_on_scoreboard,
             "is_minor": bool(getattr(current_user, "is_minor", False)),
-            "scoreboard_name_mode": getattr(current_user, "scoreboard_name_mode", None) or "real_name",
+            "age_band": getattr(current_user, "age_band", None),
+            "parental_consent_recorded_at": getattr(
+                current_user, "parental_consent_recorded_at", None
+            ),
+            "privacy_acknowledged_at": getattr(
+                current_user, "privacy_acknowledged_at", None
+            ),
+            "certificates_public": bool(
+                getattr(current_user, "certificates_public", False)
+            ),
+            "scoreboard_name_mode": getattr(current_user, "scoreboard_name_mode", None) or "anonymous",
             "login_notifications": current_user.login_notifications,
-            "email_notifications": getattr(current_user, "email_notifications", True),
+            "email_notifications": bool(
+                getattr(current_user, "email_notifications", False)
+            ),
             "email_consent_version": getattr(current_user, "email_consent_version", None),
             "email_consent_updated_at": getattr(current_user, "email_consent_updated_at", None),
             "login_streak": getattr(current_user, "login_streak", 0),
@@ -1382,6 +1455,56 @@ async def register(
     margin after it ends. The invite-code and approval gates remain the
     controls that decide *who* may register.
     """
+    # Network and email-domain rules are checked before account existence so a
+    # blocked source cannot use the response to enumerate accounts.
+    client_ip = request.client.host if request.client else None
+    registration_decision = network_access.check(
+        db,
+        "registration",
+        ip_address=client_ip,
+        email=user_data.email,
+    )
+    if not registration_decision.allowed:
+        network_access.record_denial(
+            "registration",
+            registration_decision,
+            ip_address=client_ip,
+            email=user_data.email,
+            username=user_data.username,
+            path="/api/auth/register",
+            user_agent=request.headers.get("user-agent"),
+            request_id=request.headers.get("x-request-id"),
+        )
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=(
+                "Registration is not available from this network or email "
+                "domain."
+            ),
+        )
+
+    # Age band drives the consent and public-visibility defaults. Under-13
+    # accounts are institution-managed so a parent or guardian consent record
+    # exists before the account is created. Older clients that only send
+    # is_minor are mapped to 13-15 rather than being silently treated as adults.
+    age_band = user_data.age_band
+    if age_band is None:
+        age_band = "13_15" if user_data.is_minor else "18_plus"
+    if age_band == "under_13":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=(
+                "Learners under 13 cannot self-register. Ask your instructor to "
+                "create an institution-managed account with a parental or "
+                "guardian consent reference."
+            ),
+        )
+    if not user_data.privacy_acknowledged:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Acknowledge the Privacy notice before creating an account.",
+        )
+
     # Check for existing username, email, or student_id.
     # Use a single generic error to prevent account enumeration.
     existing = get_user_by_username(db, user_data.username)
@@ -1498,13 +1621,19 @@ async def register(
         invite.used_by = new_user.id
         invite.used_at = datetime.now(timezone.utc)
 
+    acknowledged_at = datetime.now(timezone.utc)
     new_user.email_notifications = bool(user_data.send_registration_email)
     new_user.email_consent_version = EMAIL_CONSENT_VERSION
-    new_user.email_consent_updated_at = datetime.now(timezone.utc)
-    new_user.is_minor = bool(user_data.is_minor)
-    if new_user.is_minor:
-        new_user.show_on_scoreboard = False
-        new_user.scoreboard_name_mode = "anonymous"
+    new_user.email_consent_updated_at = acknowledged_at
+    new_user.privacy_acknowledged_at = acknowledged_at
+    new_user.age_band = age_band
+    new_user.is_minor = age_band in {"13_15", "16_17"}
+    # Every new account starts private. Public scoreboards and public
+    # certificate verification require an explicit opt-in, and a minor account
+    # cannot turn the scoreboard on while is_minor is true.
+    new_user.show_on_scoreboard = False
+    new_user.scoreboard_name_mode = "anonymous"
+    new_user.certificates_public = False
 
     db.commit()
     db.refresh(new_user)
@@ -1708,9 +1837,9 @@ async def get_current_user_info(
         "must_change_password": getattr(current_user, 'must_change_password', False),
         "mfa_enabled": bool(getattr(current_user, "mfa_enabled", False)),
         "timezone": getattr(current_user, 'timezone', None),
-        "show_on_scoreboard": getattr(current_user, "show_on_scoreboard", True),
+        "show_on_scoreboard": getattr(current_user, "show_on_scoreboard", False),
         "is_minor": bool(getattr(current_user, "is_minor", False)),
-        "scoreboard_name_mode": getattr(current_user, "scoreboard_name_mode", None) or "real_name",
+        "scoreboard_name_mode": getattr(current_user, "scoreboard_name_mode", None) or "anonymous",
         "show_hidden_achievements": bool(
             getattr(current_user, "show_hidden_achievements", False)
         ),

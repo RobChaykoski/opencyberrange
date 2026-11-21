@@ -56,14 +56,16 @@ class User(Base):
     # --- Optional user security/privacy settings ---
     # MFA recovery (backup) codes, stored hashed (JSON array of hashes).
     mfa_recovery_codes = Column(Text, nullable=True)
-    # Show this user on public scoreboards / leaderboards.
-    show_on_scoreboard = Column(Boolean, default=True, server_default=text("true"), nullable=False)
+    # Show this user on public scoreboards / leaderboards. Public visibility is
+    # private by default; a learner must opt in. This also keeps school and
+    # auto-provisioned accounts private when age is not known.
+    show_on_scoreboard = Column(Boolean, default=False, server_default=text("false"), nullable=False)
     # How the user's name appears on public scoreboards / the celebration wall:
     # "real_name", "username", or "anonymous".
     scoreboard_name_mode = Column(
         String(20),
-        default="real_name",
-        server_default=text("'real_name'"),
+        default="anonymous",
+        server_default=text("'anonymous'"),
         nullable=False,
     )
     # Trusted devices (JSON list of {id, name, created_at, last_used}).
@@ -82,11 +84,21 @@ class User(Base):
     is_minor = Column(
         Boolean, default=False, server_default=text("false"), nullable=False
     )
+    # Privacy-preserving age band. Exact dates of birth are never collected.
+    # under_13 | 13_15 | 16_17 | 18_plus. Null means "not stated".
+    age_band = Column(String(16), nullable=True)
+    # Under-13 accounts are institution-managed. This stores the institution's
+    # parental/guardian consent reference, never identity documents.
+    parental_consent_reference = Column(String(255), nullable=True)
+    parental_consent_recorded_at = Column(DateTime, nullable=True)
+    # Set when the account holder acknowledges the privacy notice. Accounts
+    # created by an instructor or an identity provider acknowledge on first use.
+    privacy_acknowledged_at = Column(DateTime, nullable=True)
     # Allow the public certificate verification page to confirm this account's
-    # certificates. Off means the account holder has opted out; their own
-    # certificate view and PDF still work.
+    # certificates. Public visibility is off by default; the account holder must
+    # opt in. Their own certificate view and PDF still work either way.
     certificates_public = Column(
-        Boolean, default=True, server_default=text("true"), nullable=False
+        Boolean, default=False, server_default=text("false"), nullable=False
     )
     # Equipped achievement title (key from app.services.titles). Null shows the
     # learner's current Skill DNA class instead.
@@ -100,8 +112,9 @@ class User(Base):
     login_notifications = Column(Boolean, default=True, server_default=text("true"), nullable=False)
     # Consent to optional account email. Essential security/service messages may
     # still be sent where required; the version and timestamp make the consent
-    # record auditable and support withdrawal under PIPEDA.
-    email_notifications = Column(Boolean, default=True, server_default=text("true"), nullable=False)
+    # record auditable and support withdrawal under PIPEDA. Optional email is
+    # opt-in, including for auto-provisioned SSO/LTI accounts.
+    email_notifications = Column(Boolean, default=False, server_default=text("false"), nullable=False)
     email_consent_version = Column(String(32), nullable=True)
     email_consent_updated_at = Column(DateTime, nullable=True)
     # Consecutive UTC calendar days with a successful sign-in. Kept separately
@@ -197,7 +210,7 @@ class User(Base):
         """
         if getattr(self, "is_minor", False):
             return "Anonymous participant"
-        mode = getattr(self, "scoreboard_name_mode", None) or "real_name"
+        mode = getattr(self, "scoreboard_name_mode", None) or "anonymous"
         if mode == "anonymous":
             return "Anonymous participant"
         if mode == "username":

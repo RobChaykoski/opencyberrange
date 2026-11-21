@@ -248,6 +248,12 @@ def provision_or_link_external_user(
         role=role,
         password_login_disabled=True,
         password_rehashed_at=datetime.now(timezone.utc),
+        # The IdP does not reliably provide age. Keep auto-provisioned accounts
+        # private until the learner opts in or the institution sets an age band.
+        show_on_scoreboard=False,
+        scoreboard_name_mode="anonymous",
+        certificates_public=False,
+        email_notifications=False,
     )
     db.add(user)
     db.flush()

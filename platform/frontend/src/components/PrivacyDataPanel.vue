@@ -9,11 +9,11 @@
     <section class="privacy-panel__email" aria-labelledby="certificate-pref-title">
       <h3 id="certificate-pref-title">Public certificate verification</h3>
       <p class="privacy-panel__email-help">
-        When this is on, anyone with your certificate ID or verification link can
-        confirm the track, level, award date, and certificate ID. When it is off,
-        the public verification page will not confirm your certificate. Your own
-        certificate view, PDF, and profile still work, and you can share the PDF
-        directly if you choose.
+        Public verification is off by default. When you turn it on, anyone with
+        your certificate ID or verification link can confirm the track, level,
+        award date, and certificate ID. When it is off, the public verification
+        page will not confirm your certificate. Your own certificate view, PDF,
+        and profile still work, and you can share the PDF directly if you choose.
       </p>
       <label class="privacy-panel__email-toggle">
         <input
@@ -34,8 +34,10 @@
       <p class="privacy-panel__email-help">
         If you are under 18, select this option. Your individual activity is then
         excluded from instructor reports, course analytics, coaching queues, and
-        public leaderboards. Your own dashboard and progress remain available to
-        you. You can clear this setting when it no longer applies.
+        public leaderboards, and public certificate verification is turned off.
+        Your own dashboard and progress remain available to you. You can clear
+        this setting when it no longer applies. Learners under 13 need an
+        institution-managed account created by an instructor.
       </p>
       <label class="privacy-panel__email-toggle">
         <input
@@ -57,8 +59,9 @@
           <h3 id="email-pref-title">Email preferences</h3>
           <p class="privacy-panel__email-help">
             We collect your email address to create and secure your account,
-            confirm registration, and send essential service notices. We do not
-            sell your email or use it for marketing.
+            confirm registration, and send essential service notices. Optional
+            account email is off by default. We do not sell your email or use it
+            for marketing.
           </p>
         </div>
       </div>
@@ -264,10 +267,10 @@ const fetchExportStatus = async () => {
   try {
     const { data } = await axios.get('/auth/settings')
     lastExportedAt.value = data.data_exported_at || null
-    emailNotifications.value = data.email_notifications !== false
+    emailNotifications.value = data.email_notifications === true
     emailConsentVersion.value = data.email_consent_version || ''
     emailConsentUpdatedAt.value = data.email_consent_updated_at || ''
-    certificatesPublic.value = data.certificates_public !== false
+    certificatesPublic.value = data.certificates_public === true
     isMinor.value = data.is_minor === true
   } catch {
     lastExportedAt.value = null

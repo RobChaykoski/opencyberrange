@@ -18,12 +18,17 @@ privacy > AI and career data** to review each one.
 
 | Consent | What it enables | Default |
 |---|---|---|
-| Cyber DNA | competency evidence, behaviour/interest profiles, affinity signals, DNA snapshots | On |
-| Cyber GPS | direction finding, learning routes, gap analysis, readiness | On |
-| Professional portfolio | stored portfolio and career/report snapshots | On |
+| Cyber DNA | competency evidence, behaviour/interest profiles, affinity signals, DNA snapshots | Off — explicit opt-in |
+| Cyber GPS | direction finding, learning routes, gap analysis, readiness | Off — explicit opt-in |
+| Professional portfolio | stored portfolio and career/report snapshots | Off — explicit opt-in |
 | Portfolio sharing | employer/public share links and public profiles | Off |
 | AI coach | conversations, prompt context, embeddings, and memory | Off |
 | Research | learner-level analytics, segmentation, and research datasets | Off |
+
+Public scoreboards and public certificate verification are **off by default**.
+You choose whether to appear publicly. Learners under 13 need an
+institution-managed account created by an instructor with a parental or
+guardian consent reference.
 
 When you **revoke** a consent:
 

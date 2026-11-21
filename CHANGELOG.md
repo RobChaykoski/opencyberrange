@@ -4,6 +4,20 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
+### Privacy and age defaults
+
+- New accounts now start private: public scoreboards, public certificate
+  verification, and optional account email are opt-in. Minor accounts force
+  scoreboards and public certificate verification off.
+- Registration now collects a privacy-preserving age band instead of a single
+  under-18 checkbox. Under-13 self-registration is blocked; an instructor must
+  create an institution-managed account with a parental/guardian consent
+  reference.
+- SSO and LTI auto-provisioned accounts start private. A first-login privacy
+  acknowledgement links to a new plain-language youth notice.
+- The privacy notice, in-app privacy page, and student manual now correctly say
+  Cyber DNA, Cyber GPS, and the professional portfolio are off until opted in.
+
 ### LTI 1.3
 
 - A verified launch grant now opens the deep-linked course-only exercise even

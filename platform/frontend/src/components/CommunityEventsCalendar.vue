@@ -84,14 +84,22 @@
               Open event &rarr;
             </router-link>
             <a
-              v-else
+              v-else-if="safeHttpUrl(event.url)"
               :href="safeHttpUrl(event.url)"
               target="_blank"
-              rel="noopener noreferrer"
+              rel="noopener noreferrer nofollow external"
+              referrerpolicy="no-referrer"
+              :title="externalHost(event.url) ? `Opens ${externalHost(event.url)} in a new tab` : 'Opens in a new tab'"
+              :aria-label="externalHost(event.url) ? `Event details on ${externalHost(event.url)} (opens in a new tab)` : 'Event details (opens in a new tab)'"
               class="community-event__link"
             >
-              Event details &rarr;
+              Event details
+              <span v-if="externalHost(event.url)" class="community-event__host">({{ externalHost(event.url) }})</span>
+              &rarr;
             </a>
+            <span v-else class="community-event__link community-event__link--unavailable">
+              External link unavailable
+            </span>
           </div>
         </article>
 
@@ -104,14 +112,24 @@
               <p class="community-source__meta">{{ source.location }}</p>
             </div>
             <div class="community-source__actions">
-              <a :href="safeHttpUrl(source.url)" target="_blank" rel="noopener noreferrer" class="btn btn--primary btn--sm">
+              <a
+                v-if="safeHttpUrl(source.url)"
+                :href="safeHttpUrl(source.url)"
+                target="_blank"
+                rel="noopener noreferrer nofollow external"
+                referrerpolicy="no-referrer"
+                :title="externalHost(source.url) ? `Opens ${externalHost(source.url)} in a new tab` : 'Opens in a new tab'"
+                class="btn btn--primary btn--sm"
+              >
                 Events
               </a>
               <a
-                v-if="source.calendarUrl"
+                v-if="safeHttpUrl(source.calendarUrl)"
                 :href="safeHttpUrl(source.calendarUrl)"
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="noopener noreferrer nofollow external"
+                referrerpolicy="no-referrer"
+                :title="externalHost(source.calendarUrl) ? `Opens ${externalHost(source.calendarUrl)} in a new tab` : 'Opens in a new tab'"
                 class="btn btn--outline btn--sm"
               >
                 Calendar
@@ -242,6 +260,18 @@ const formatEventDate = (event) =>
     day: 'numeric',
     year: 'numeric',
   })
+
+// Show the destination host beside every external event link so a learner can
+// see where the platform is sending them before they click.
+const externalHost = (value) => {
+  const safe = safeHttpUrl(value)
+  if (!safe) return ''
+  try {
+    return new URL(safe).hostname.replace(/^www\./i, '')
+  } catch {
+    return ''
+  }
+}
 </script>
 
 <style scoped>
@@ -521,6 +551,17 @@ const formatEventDate = (event) =>
 .community-event__link:hover {
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+
+.community-event__link--unavailable {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.community-event__host {
+  color: var(--text-muted);
+  font-weight: 500;
+  overflow-wrap: anywhere;
 }
 
 .community-events__sources {

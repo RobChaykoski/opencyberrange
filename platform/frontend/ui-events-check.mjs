@@ -32,11 +32,18 @@ const events = await page.locator('.community-event').count()
 const sources = await page.locator('.community-source').count()
 const dots = await page.locator('.calendar-day__dot--community').count()
 const links = await page.locator('.community-source a').evaluateAll((nodes) => nodes.map((node) => node.href))
+const eventLinks = await page.locator('.community-event__link').evaluateAll((nodes) => nodes.map((node) => node.href))
 console.log({ title, calendar, events, sources, dots })
 console.log(links)
+console.log(eventLinks)
 if (!calendar || !events || sources < 2) throw new Error('community calendar did not render')
 if (!links.some((href) => href.includes('swocts.com/events'))) throw new Error('SWOCTS source missing')
 if (!links.some((href) => href.includes('eventbrite.ca/o/cyber-hive-yxu'))) throw new Error('Cyber Hive source missing')
+// Every rendered external link must be an absolute http(s) URL. This catches
+// an empty href, a javascript:/data: value, or a sanitizer regression before
+// the page ships.
+const unsafeLinks = [...links, ...eventLinks].filter((href) => !/^https?:\/\//i.test(href))
+if (unsafeLinks.length) throw new Error(`unsafe or empty event link: ${unsafeLinks.join(', ')}`)
 const screenshot = process.env.UI_EVENTS_SCREENSHOT
 if (screenshot) {
   await page.locator('.community-events').first().screenshot({ path: screenshot, animations: 'disabled' })

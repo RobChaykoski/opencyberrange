@@ -708,6 +708,18 @@ async def create_user(
 
     await enforce_password_breach_check(db, user_data.password)
 
+    age_band = user_data.age_band
+    consent_reference = (user_data.parental_consent_reference or "").strip() or None
+    if age_band == "under_13" and not consent_reference:
+        raise HTTPException(
+            status_code=422,
+            detail=(
+                "An institution parental or guardian consent reference is "
+                "required to create an under-13 account."
+            ),
+        )
+    is_minor = age_band in {"under_13", "13_15", "16_17"}
+
     user = User(
         username=user_data.username,
         email=user_data.email,
@@ -719,6 +731,18 @@ async def create_user(
         is_admin=is_admin,
         role=role,
         institution_id=(user_data.institution_id or admin.institution_id or "default"),
+        age_band=age_band,
+        is_minor=is_minor,
+        # Every new account starts private. Public scoreboards and certificate
+        # verification require an explicit opt-in by the account holder.
+        show_on_scoreboard=False,
+        scoreboard_name_mode="anonymous",
+        certificates_public=False,
+        email_notifications=False,
+        parental_consent_reference=consent_reference,
+        parental_consent_recorded_at=(
+            datetime.now(timezone.utc) if consent_reference else None
+        ),
     )
     user.password_rehashed_at = datetime.now(timezone.utc)
     db.add(user)
@@ -733,7 +757,15 @@ async def create_user(
         target_type="user",
         target_id=user.id,
         target_identifier=user.username,
-        details={"email": user.email, "is_admin": user.is_admin, "role": user.role, "is_approved": user.is_approved},
+        details={
+            "email": user.email,
+            "is_admin": user.is_admin,
+            "role": user.role,
+            "is_approved": user.is_approved,
+            "age_band": user.age_band,
+            "is_minor": user.is_minor,
+            "parental_consent_recorded": bool(user.parental_consent_recorded_at),
+        },
         ip_address=request.client.host if request.client else None
     )
     
@@ -873,7 +905,47 @@ async def update_user(
         except AttributeError:
             # Column doesn't exist yet - skip this update
             logger.warning("must_change_password column does not exist in database. Migration required.")
-    
+
+    # Privacy and age band. Under-13 accounts must retain a consent reference.
+    # model_fields_set distinguishes "field omitted" from an explicit null used
+    # to clear an age band back to "not stated".
+    reference_provided = "parental_consent_reference" in user_request.model_fields_set
+    age_band_provided = "age_band" in user_request.model_fields_set
+    new_reference = (
+        (user_request.parental_consent_reference or "").strip() or None
+        if reference_provided
+        else user.parental_consent_reference
+    )
+    new_age_band = user_request.age_band if age_band_provided else user.age_band
+    if new_age_band == "under_13" and not new_reference:
+        raise HTTPException(
+            status_code=422,
+            detail=(
+                "An institution parental or guardian consent reference is "
+                "required for an under-13 account."
+            ),
+        )
+    if reference_provided:
+        changes["parental_consent_reference"] = {
+            "old": bool(user.parental_consent_reference),
+            "new": bool(new_reference),
+        }
+        user.parental_consent_reference = new_reference
+        user.parental_consent_recorded_at = (
+            datetime.now(timezone.utc) if new_reference else None
+        )
+    if age_band_provided:
+        old_age_band = user.age_band
+        old_is_minor = bool(user.is_minor)
+        changes["age_band"] = {"old": old_age_band, "new": new_age_band}
+        user.age_band = new_age_band
+        user.is_minor = new_age_band in {"under_13", "13_15", "16_17"}
+        changes["is_minor"] = {"old": old_is_minor, "new": bool(user.is_minor)}
+        if user.is_minor:
+            user.show_on_scoreboard = False
+            user.scoreboard_name_mode = "anonymous"
+            user.certificates_public = False
+
     if any(
         key in changes
         for key in ("role", "institution_id", "is_active", "is_approved", "is_admin")
@@ -5215,7 +5287,10 @@ def _retention_counts(db, course_id: int) -> dict:
         "exercise_quiz_attempts",
         "achievements",
     )
-    return {key: int(value or 0) for key, value in zip(keys, row)}
+    return {
+        key: int(value or 0)
+        for key, value in zip(keys, row, strict=False)
+    }
 
 
 @router.get("/retention/due")

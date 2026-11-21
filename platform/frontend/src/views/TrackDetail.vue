@@ -1111,6 +1111,7 @@
       :hints-used="celebrationData.hintsUsed"
       :next-label="celebrationData.nextLabel"
       :new-achievements="celebrationAchievements"
+      :effect="celebrationEffect"
       @close="handleCelebrationClose"
       @next="handleCelebrationNext"
     />
@@ -1183,6 +1184,7 @@ import ArrowLeftIcon from '../components/icons/ArrowLeftIcon.vue'
 import FlagCelebration from '../components/FlagCelebration.vue'
 import PulseSurveyModal from '../components/PulseSurveyModal.vue'
 import RangeBox from '../components/RangeBox.vue'
+import { useCelebration } from '../composables/useCelebration'
 import { CERTIFICATION_ROADMAP_URL, CISO_MINDMAP_URL, SWOCTS_RESOURCES_URL, getCertificationPath } from '../data/certificationPaths'
 // RangeBox opens in a dedicated /rangebox tab (not embedded)
 
@@ -1190,6 +1192,7 @@ const route = useRoute()
 const router = useRouter()
 const { isMobile } = useMobileView()
 const { openTool } = useToolPanel()
+const { effect: celebrationEffect, load: loadCelebrationEffect } = useCelebration()
 
 const scrollToLabSection = (id) => {
   const element = document.getElementById(id)
@@ -2569,6 +2572,7 @@ const renderScenario = (text) => {
 
 // Lifecycle
 onMounted(async () => {
+  loadCelebrationEffect()
   const slug = route.params.trackSlug
   if (!slug) {
     router.push('/exercises')

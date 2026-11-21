@@ -223,6 +223,8 @@ def test_new_user_signup_marks_competition_registration(
             "email": f"devfest_student_{suffix}@example.invalid",
             "password": TEST_PASSWORD,
             "competition_id": competition_id,
+            "age_band": "18_plus",
+            "privacy_acknowledged": True,
         },
     )
     assert registered.status_code == 200, registered.text

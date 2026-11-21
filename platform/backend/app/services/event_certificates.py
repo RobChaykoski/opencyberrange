@@ -279,7 +279,7 @@ def build_event_certificate(
         raise ValueError(f"Unknown event award: {award_key}")
     award = AWARDS[award_key]
     certificate_id = event_certificate_id(competition.id, user.id, award_key)
-    public_verification = bool(getattr(user, "certificates_public", True))
+    public_verification = bool(getattr(user, "certificates_public", False))
     base = certificate_base_url(db, base_url)
     verify_path = f"/verify/certificate/{certificate_id}"
     verify_url = f"{base}{verify_path}" if base else verify_path
@@ -392,7 +392,7 @@ def verify_event_certificate(
         return invalid
     if not event_ended(competition):
         return invalid
-    if not bool(getattr(user, "certificates_public", True)):
+    if not bool(getattr(user, "certificates_public", False)):
         return invalid
     if award_key not in event_award_keys_for_user(
         db, user_id, competition_id, competition.experience_key

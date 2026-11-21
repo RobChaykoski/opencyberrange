@@ -97,6 +97,7 @@ from app.models.platform import (
 )
 from app.models.security import (
     BreakGlassGrant,
+    NetworkAccessRule,
     PortfolioShare,
     RbacPermission,
     RbacRole,
@@ -182,6 +183,7 @@ __all__ = [
     "Level",
     "LevelQuiz",
     "LtiDeepLinkSession",
+    "NetworkAccessRule",
     "LtiLink",
     "LtiLoginState",
     "LtiPlatform",

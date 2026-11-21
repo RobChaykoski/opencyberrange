@@ -693,6 +693,54 @@ async def lifespan(app: FastAPI):
                 ))
                 conn.commit()
                 logger.info("Added last_login_day column to users table")
+            if 'age_band' not in user_columns:
+                conn.execute(text(
+                    "ALTER TABLE users ADD COLUMN age_band VARCHAR(16)"
+                ))
+                conn.commit()
+                logger.info("Added age_band column to users table")
+            if 'parental_consent_reference' not in user_columns:
+                conn.execute(text(
+                    "ALTER TABLE users ADD COLUMN parental_consent_reference VARCHAR(255)"
+                ))
+                conn.commit()
+                logger.info("Added parental_consent_reference column to users table")
+            if 'parental_consent_recorded_at' not in user_columns:
+                conn.execute(text(
+                    "ALTER TABLE users ADD COLUMN parental_consent_recorded_at TIMESTAMP"
+                ))
+                conn.commit()
+                logger.info("Added parental_consent_recorded_at column to users table")
+            if 'privacy_acknowledged_at' not in user_columns:
+                conn.execute(text(
+                    "ALTER TABLE users ADD COLUMN privacy_acknowledged_at TIMESTAMP"
+                ))
+                conn.commit()
+                logger.info("Added privacy_acknowledged_at column to users table")
+            # Safety net for accounts already marked as minors: public
+            # scoreboards and public certificate verification stay off.
+            conn.execute(text(
+                "UPDATE users SET show_on_scoreboard = false, "
+                "scoreboard_name_mode = 'anonymous', certificates_public = false "
+                "WHERE is_minor = true"
+            ))
+            conn.commit()
+            if conn.dialect.name == "postgresql":
+                # Private-by-default also applies to raw inserts and scripts
+                # that omit the columns.
+                conn.execute(text(
+                    "ALTER TABLE users ALTER COLUMN show_on_scoreboard SET DEFAULT false"
+                ))
+                conn.execute(text(
+                    "ALTER TABLE users ALTER COLUMN scoreboard_name_mode SET DEFAULT 'anonymous'"
+                ))
+                conn.execute(text(
+                    "ALTER TABLE users ALTER COLUMN certificates_public SET DEFAULT false"
+                ))
+                conn.execute(text(
+                    "ALTER TABLE users ALTER COLUMN email_notifications SET DEFAULT false"
+                ))
+                conn.commit()
 
         # --- Competitions: archive flag (keeps results, hides from default list)
         if 'competitions' in inspector.get_table_names():

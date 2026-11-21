@@ -74,6 +74,42 @@ class SecurityEvent(Base):
     )
 
 
+class NetworkAccessRule(Base):
+    """An allow or deny rule for sign-in or self-service registration.
+
+    ``scope`` is ``access`` or ``registration``. ``kind`` is ``ip``,
+    ``network``, or ``domain``. A domain rule compares the email domain (the
+    part after ``@``) of the account or registration request, so an institution
+    can restrict sign-in and sign-up to its own email namespace as well as to
+    known client networks.
+    """
+
+    __tablename__ = "network_access_rules"
+
+    id = Column(Integer, primary_key=True)
+    scope = Column(String(16), nullable=False, index=True)
+    kind = Column(String(16), nullable=False)
+    value = Column(String(255), nullable=False, index=True)
+    action = Column(String(8), nullable=False)
+    note = Column(String(255), nullable=True)
+    created_by_id = Column(
+        Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    expires_at = Column(DateTime(timezone=True), nullable=True, index=True)
+
+    __table_args__ = (
+        UniqueConstraint(
+            "scope", "kind", "value", "action", name="uq_network_access_rule"
+        ),
+        Index(
+            "ix_network_access_rules_scope_action",
+            "scope",
+            "action",
+        ),
+    )
+
+
 class RbacRole(Base):
     """A named role. ``User.role`` stays the primary assignment."""
 

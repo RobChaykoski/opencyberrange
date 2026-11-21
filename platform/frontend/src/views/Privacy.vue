@@ -13,7 +13,10 @@
           and is written to align with Canada's Personal Information Protection
           and Electronic Documents Act (PIPEDA).
         </p>
-        <p class="privacy-card__meta">Effective 15 November 2026</p>
+        <p class="privacy-card__meta">Effective 21 November 2026</p>
+        <p class="privacy-card__meta">
+          <router-link to="/privacy/youth">Read the youth privacy summary</router-link>
+        </p>
       </header>
 
       <section>
@@ -106,7 +109,8 @@
             Course and exercise analytics are suppressed below the configured
             minimum cohort (default 5 learners), and the interface shows
             "Suppressed" or "No evidence" instead of a misleading zero. Public
-            rankings are not used, and celebrations are voluntary and anonymous.
+            scoreboards and public certificate verification are off by default,
+            and celebrations are voluntary and anonymous.
           </li>
           <li>
             <strong>Data minimisation and purpose limitation.</strong> We collect
@@ -199,9 +203,9 @@
           choices, not one blanket agreement:
         </p>
         <ul>
-          <li><strong>Cyber DNA:</strong> competency evidence, behaviour and interest profiles, affinity signals, and DNA snapshots. On by default.</li>
-          <li><strong>Cyber GPS:</strong> direction finding, learning routes, gap analysis, and readiness views. On by default.</li>
-          <li><strong>Professional portfolio:</strong> stored portfolio and career/report snapshots. On by default.</li>
+          <li><strong>Cyber DNA:</strong> competency evidence, behaviour and interest profiles, affinity signals, and DNA snapshots. Off by default — explicit opt-in.</li>
+          <li><strong>Cyber GPS:</strong> direction finding, learning routes, gap analysis, and readiness views. Off by default — explicit opt-in.</li>
+          <li><strong>Professional portfolio:</strong> stored portfolio and career/report snapshots. Off by default — explicit opt-in.</li>
           <li><strong>Portfolio sharing:</strong> employer/public share links and public profiles. Off by default.</li>
           <li><strong>AI coach:</strong> AI conversations, prompt context, embeddings, and memory. Off by default.</li>
           <li><strong>Research:</strong> learner-level analytics, segmentation, and research datasets. Off by default.</li>
@@ -320,15 +324,24 @@
           required consent.
         </p>
         <p>
-          A learner can mark their account as under 18 on the registration form
-          or later in <strong>Profile → Security &amp; privacy</strong>. When this
-          setting is on, the platform excludes that learner's individual activity
-          from instructor reports, course analytics, coaching queues, public
-          leaderboards, and competition scoreboards. The learner's own dashboard
-          and progress remain available to them. The setting is a privacy
-          declaration by the account holder; it does not verify age. The
-          institution remains responsible for any consent or age-verification
-          requirement that applies to its programme.
+          A learner chooses an age group on the registration form, or later marks
+          their account as under 18 in
+          <strong>Profile → Security &amp; privacy</strong>. When this setting is
+          on, the platform excludes that learner's individual activity from
+          instructor reports, course analytics, coaching queues, public
+          leaderboards, and competition scoreboards, and keeps public certificate
+          verification off. The learner's own dashboard and progress remain
+          available to them. The setting is a privacy declaration by the account
+          holder; it does not verify age. The institution remains responsible for
+          any consent or age-verification requirement that applies to its
+          programme.
+        </p>
+        <p>
+          Learners under 13 cannot self-register. An instructor must create an
+          institution-managed account and record a parental or guardian consent
+          reference. Read the
+          <router-link to="/privacy/youth">youth privacy summary</router-link>
+          for plain-language information.
         </p>
       </section>
 

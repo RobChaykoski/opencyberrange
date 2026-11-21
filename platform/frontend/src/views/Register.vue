@@ -349,20 +349,34 @@
             </div>
 
             <div class="form-group">
-              <label class="form-check" for="isMinor">
-                <input
-                  id="isMinor"
-                  v-model="form.isMinor"
-                  name="is_minor"
-                  type="checkbox"
-                  aria-describedby="minor-help"
-                />
-                <span>I am under 18</span>
-              </label>
-              <p id="minor-help" class="help-text">
-                If selected, your individual activity is excluded from instructor
-                reports and course analytics. Your own progress remains visible to
-                you. You can change this later in Profile → Security &amp; privacy.
+              <label for="ageBand">Age group</label>
+              <select
+                id="ageBand"
+                v-model="form.ageBand"
+                name="age_band"
+                class="form-input"
+                :class="{ 'form-input--error': errors.ageBand }"
+                :aria-invalid="errors.ageBand ? 'true' : 'false'"
+                aria-describedby="age-help"
+                @change="validateAgeBand"
+              >
+                <option value="">Select your age group</option>
+                <option value="18_plus">18 or older</option>
+                <option value="16_17">16–17</option>
+                <option value="13_15">13–15</option>
+                <option value="under_13">Under 13</option>
+              </select>
+              <p v-if="errors.ageBand" id="age-help" class="error-text">{{ errors.ageBand }}</p>
+              <p v-else id="age-help" class="help-text">
+                We use this only to choose the right privacy defaults. We never
+                collect your date of birth. Under-18 accounts are excluded from
+                instructor reports, course analytics, and public leaderboards.
+                <template v-if="form.ageBand === 'under_13'">
+                  Learners under 13 cannot self-register. Ask your instructor to
+                  create an institution-managed account; a parent or guardian
+                  must provide a consent reference. Contact
+                  <a href="mailto:privacy@swocts.com">privacy@swocts.com</a>.
+                </template>
               </p>
             </div>
 
@@ -378,12 +392,14 @@
                   @change="validatePrivacyAcknowledged"
                 />
                 <span>
-                  I acknowledge the Privacy notice. If I am under 18, I have permission
-                  from a parent or guardian to use this account.
+                  I acknowledge the Privacy notice. If I am under 13, I understand
+                  that an instructor must record a parent or guardian consent
+                  reference before an institution-managed account is created.
                 </span>
               </label>
               <p id="privacy-help" class="help-text">
-                Read the <router-link to="/privacy">Privacy notice</router-link>.
+                Read the <router-link to="/privacy/youth">youth privacy summary</router-link>
+                or the <router-link to="/privacy">full Privacy notice</router-link>.
                 Privacy questions: <a href="mailto:privacy@swocts.com">privacy@swocts.com</a>.
               </p>
               <p v-if="errors.privacyAcknowledged" class="error-text">
@@ -541,7 +557,7 @@ const form = reactive({
   inviteCode: '',
   sendRegistrationEmail: false,
   privacyAcknowledged: false,
-  isMinor: false
+  ageBand: ''
 })
 
 const errors = reactive({
@@ -550,7 +566,8 @@ const errors = reactive({
   password: '',
   confirmPassword: '',
   inviteCode: '',
-  privacyAcknowledged: ''
+  privacyAcknowledged: '',
+  ageBand: ''
 })
 
 // Invite codes are off by default and a class can turn them on. Rather than
@@ -721,12 +738,26 @@ const validatePrivacyAcknowledged = () => {
     : 'Please acknowledge the Privacy notice before creating an account.'
 }
 
+const validateAgeBand = () => {
+  errors.ageBand = ''
+  if (!form.ageBand) {
+    errors.ageBand = 'Please select your age group so we can apply the right privacy defaults.'
+    return
+  }
+  if (form.ageBand === 'under_13') {
+    errors.ageBand =
+      'Learners under 13 cannot self-register. Ask your instructor to create an institution-managed account with a parent or guardian consent reference.'
+  }
+}
+
 const focusFirstInvalidField = async () => {
   await nextTick()
   if (errors.username) usernameInput.value?.focus()
   else if (errors.email) emailInput.value?.focus()
   else if (errors.password) passwordInput.value?.focus()
   else if (errors.confirmPassword) confirmPasswordInput.value?.focus()
+  else if (errors.inviteCode) document.getElementById('inviteCode')?.focus()
+  else if (errors.ageBand) document.getElementById('ageBand')?.focus()
   else errorBanner.value?.focus()
 }
 
@@ -741,8 +772,9 @@ const handleRegister = async () => {
   validateConfirmPassword()
   validateInviteCode()
   validatePrivacyAcknowledged()
+  validateAgeBand()
 
-  if (errors.username || errors.email || errors.password || errors.confirmPassword || errors.inviteCode || errors.privacyAcknowledged) {
+  if (errors.username || errors.email || errors.password || errors.confirmPassword || errors.inviteCode || errors.privacyAcknowledged || errors.ageBand) {
     errorMessage.value = 'Please fix the highlighted fields before creating your account.'
     await focusFirstInvalidField()
     return
@@ -762,7 +794,9 @@ const handleRegister = async () => {
       email: form.email.trim(),
       password: form.password,
       send_registration_email: form.sendRegistrationEmail,
-      is_minor: form.isMinor
+      age_band: form.ageBand,
+      is_minor: form.ageBand !== '18_plus',
+      privacy_acknowledged: form.privacyAcknowledged
     }
     if (form.firstName.trim()) payload.first_name = form.firstName.trim()
     if (form.lastName.trim()) payload.last_name = form.lastName.trim()
@@ -790,7 +824,7 @@ const handleRegister = async () => {
     form.confirmPassword = ''
     form.inviteCode = ''
     form.privacyAcknowledged = false
-    form.isMinor = false
+    form.ageBand = ''
     form.sendRegistrationEmail = false
 
     await nextTick()

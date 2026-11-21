@@ -245,6 +245,11 @@ const routes = [
     component: () => import('../views/Privacy.vue')
   },
   {
+    path: '/privacy/youth',
+    name: 'YouthPrivacy',
+    component: () => import('../views/YouthPrivacy.vue')
+  },
+  {
     path: '/rangebox',
     name: 'RangeBox',
     component: () => import('../views/RangeBoxView.vue'),

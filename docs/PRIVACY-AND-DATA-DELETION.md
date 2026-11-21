@@ -48,12 +48,15 @@ Two account settings limit where a learner's information can appear:
 - **Under-18 reporting privacy** (`users.is_minor`). When enabled, the learner's
   individual activity is excluded from instructor reports, course analytics,
   coaching queues, public leaderboards, celebration walls, and competition
-  scoreboards. Their own dashboard and progress remain available. The setting is
-  a privacy declaration, not age verification.
-- **Public certificate verification** (`users.certificates_public`). When
-  disabled, the public verification page returns the same generic invalid result
-  as an unknown certificate, and the certificate payload omits the verification
-  URL and QR code. The learner's own certificate and PDF still work.
+  scoreboards. Public certificate verification is forced off. Their own
+  dashboard and progress remain available. The setting is a privacy declaration,
+  not age verification. Under-13 accounts are institution-managed and store a
+  parental/guardian consent reference.
+- **Public certificate verification** (`users.certificates_public`). Off by
+  default for new accounts and forced off for minor accounts. When disabled, the
+  public verification page returns the same generic invalid result as an unknown
+  certificate, and the certificate payload omits the verification URL and QR
+  code. The learner's own certificate and PDF still work.
 
 Both settings are controlled from **Profile → Security & privacy**. Reports also
 exclude under-18 learners by default; an instructor cannot override that from

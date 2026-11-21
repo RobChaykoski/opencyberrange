@@ -58,6 +58,7 @@ def celebration_data(db_session, test_user):
         role="student",
         is_approved=True,
         show_on_scoreboard=True,
+        scoreboard_name_mode="real_name",
         avatar_data="data:image/png;base64,cHl0ZXN0LWF2YXRhcg==",
         avatar_border_style="glow",
         avatar_border_color="gold",
