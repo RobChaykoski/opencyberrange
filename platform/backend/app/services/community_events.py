@@ -13,13 +13,14 @@ page.
 from __future__ import annotations
 
 import html
+import ipaddress
 import logging
 import os
 import re
 import threading
 import time
 from datetime import datetime, timedelta, timezone
-from urllib.parse import quote
+from urllib.parse import parse_qsl, quote, urlencode, urlsplit, urlunsplit
 from zoneinfo import ZoneInfo
 
 import requests
@@ -53,6 +54,30 @@ ALLOWED_FREQUENCIES = {"DAILY", "WEEKLY", "MONTHLY", "YEARLY"}
 TITLE_LIMIT = 200
 LOCATION_LIMIT = 300
 URL_LIMIT = 2000
+
+# Calendar descriptions and locations often contain the only usable event
+# link. Prefer recognised event platforms over arbitrary links (tracking
+# pixels, social profiles) when a description contains more than one URL.
+PREFERRED_EVENT_HOSTS = tuple(
+    host.strip().lower()
+    for host in os.environ.get(
+        "OCR_COMMUNITY_EVENT_HOSTS",
+        "eventbrite.ca,eventbrite.com,eventbrite.co.uk,eventbrite.ie,"
+        "gdg.community.dev,discord.gg,swocts.com",
+    ).split(",")
+    if host.strip()
+)
+TRACKING_QUERY_KEYS = {
+    "aff",
+    "fbclid",
+    "gclid",
+    "igshid",
+    "mc_cid",
+    "mc_eid",
+    "ref",
+}
+_URL_RE = re.compile(r"https?://[^\s<>\"']+", re.IGNORECASE)
+_CONTROL_RE = re.compile(r"[\x00-\x1f\x7f]")
 
 _CACHE: dict = {"at": 0.0, "failure_at": 0.0, "payload": None}
 _CACHE_LOCK = threading.Lock()
@@ -250,6 +275,104 @@ def parse_ics(
     return sorted(events.values(), key=lambda item: (item["start"], item["title"]))
 
 
+def _host_is_public(host: str) -> bool:
+    """Reject loopback, private, link-local, and internal hostnames."""
+    host = (host or "").strip().lower().rstrip(".")
+    if not host:
+        return False
+    try:
+        address = ipaddress.ip_address(host)
+        return not (
+            address.is_private
+            or address.is_loopback
+            or address.is_link_local
+            or address.is_multicast
+            or address.is_reserved
+            or address.is_unspecified
+        )
+    except ValueError:
+        pass
+    return host not in {"localhost", "localhost.localdomain"} and not host.endswith(
+        (".local", ".internal", ".localhost", ".home.arpa")
+    )
+
+
+def _sanitize_event_url(value: str) -> str | None:
+    """Return a safe public https event URL, or None.
+
+    The calendar is editor-controlled input. Reject plaintext HTTP,
+    credentials, control characters, private destinations, and tracking
+    parameters before a URL is shown to a learner. This also keeps the link the
+    browser sees identical to the link the server validated.
+    """
+    raw = (value or "").strip().strip("<>\"'")
+    if not raw or len(raw) > URL_LIMIT:
+        return None
+    if _CONTROL_RE.search(raw) or "\\" in raw:
+        return None
+    try:
+        parts = urlsplit(raw)
+    except ValueError:
+        return None
+    if parts.scheme.lower() != "https":
+        return None
+    if not parts.netloc or not parts.hostname:
+        return None
+    if parts.username or parts.password:
+        return None
+    if not _host_is_public(parts.hostname):
+        return None
+    query = urlencode(
+        [
+            (key, item)
+            for key, item in parse_qsl(parts.query, keep_blank_values=True)
+            if key.lower() not in TRACKING_QUERY_KEYS
+            and not key.lower().startswith("utm_")
+        ],
+        doseq=True,
+    )
+    return urlunsplit(
+        (
+            parts.scheme.lower(),
+            parts.netloc.lower(),
+            parts.path or "/",
+            query,
+            parts.fragment,
+        )
+    )
+
+
+def _urls_in_text(value: str) -> list[str]:
+    """Extract public http(s) URLs from free-form calendar text."""
+    text = html.unescape(value or "")
+    urls: list[str] = []
+    for match in _URL_RE.finditer(text):
+        candidate = match.group(0).rstrip(").,;:!?]}\"'")
+        safe = _sanitize_event_url(candidate)
+        if safe and safe not in urls:
+            urls.append(safe)
+    return urls
+
+
+def _is_preferred_event_host(url: str) -> bool:
+    host = (urlsplit(url).hostname or "").lower()
+    return any(
+        host == allowed or host.endswith("." + allowed)
+        for allowed in PREFERRED_EVENT_HOSTS
+    )
+
+
+def _choose_event_url(*candidates: str) -> str | None:
+    """Pick a preferred event-platform URL, then any other safe public URL."""
+    extracted: list[str] = []
+    for candidate in candidates:
+        extracted.extend(_urls_in_text(candidate))
+    for url in extracted:
+        if _is_preferred_event_host(url):
+            return url
+    return extracted[0] if extracted else None
+
+
 def _add_event(
     events: dict[str, dict],
     data: dict[str, tuple[dict[str, str], str]],
@@ -277,17 +400,19 @@ def _add_event(
         TITLE_LIMIT,
     ) or "Community event"
     uid = _text(data.get("UID", ({}, ""))[1])
-    location = _shorten(
-        _text(data.get("LOCATION", ({}, ""))[1]),
-        LOCATION_LIMIT,
-    ) or "Southwestern Ontario"
-    description = _shorten(_text(data.get("DESCRIPTION", ({}, ""))[1]))
-    url = _shorten(
-        _text(data.get("URL", ({}, SWOCTS_CALENDAR_URL))[1]),
-        URL_LIMIT,
-    )
-    if not url.lower().startswith(("http://", "https://")):
-        url = SWOCTS_CALENDAR_URL
+    raw_location = data.get("LOCATION", ({}, ""))[1]
+    location = _shorten(_text(raw_location), LOCATION_LIMIT) or "Southwestern Ontario"
+    raw_description = data.get("DESCRIPTION", ({}, ""))[1]
+    description = _shorten(_text(raw_description))
+
+    # Google Calendar commonly leaves URL empty and puts the event link in
+    # LOCATION or DESCRIPTION. Extract and validate a safe public link so a
+    # learner reaches the advertised event instead of the generic calendar.
+    url = _choose_event_url(
+        _text(data.get("URL", ({}, ""))[1]),
+        raw_location,
+        raw_description,
+    ) or SWOCTS_CALENDAR_URL
 
     occurrences: list[datetime] = []
     rule_raw = data.get("RRULE")

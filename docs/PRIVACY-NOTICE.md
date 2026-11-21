@@ -1,6 +1,6 @@
 # SWOCTS Cyber Range privacy notice
 
-**Effective 15 November 2026**
+**Effective 21 November 2026**
 
 This notice explains how the SWOCTS Cyber Range handles personal information.
 It supplements the [SWOCTS Privacy Policy](https://www.swocts.com/privacy) and
@@ -80,7 +80,8 @@ We apply these practices across the platform:
   are off until the learner opts in. Course and exercise analytics are
   suppressed below the configured minimum cohort (default 5 learners), and the
   interface shows "Suppressed" or "No evidence" instead of a misleading zero.
-  Public rankings are not used, and celebrations are voluntary and anonymous.
+  Public scoreboards and public certificate verification are off by default,
+  and celebrations are voluntary and anonymous.
 - **Data minimisation and purpose limitation.** We collect the account,
   learning, security, VPN, and support data needed to run the training service.
   We do not collect keystrokes, screen recordings, or browsing history outside
@@ -143,9 +144,9 @@ blanket agreement:
 
 | Consent | What it enables | Default |
 |---|---|---|
-| Cyber DNA | competency evidence, behaviour/interest profiles, affinity signals, DNA snapshots | on |
-| Cyber GPS | direction finding, learning routes, gap analysis, readiness views | on |
-| Professional portfolio | stored portfolio and career/report snapshots | on |
+| Cyber DNA | competency evidence, behaviour/interest profiles, affinity signals, DNA snapshots | off — explicit opt-in |
+| Cyber GPS | direction finding, learning routes, gap analysis, readiness views | off — explicit opt-in |
+| Professional portfolio | stored portfolio and career/report snapshots | off — explicit opt-in |
 | Portfolio sharing | employer/public share links and public profiles | off |
 | AI coach | AI conversations, prompt context, embeddings, memory | off |
 | Research | learner-level analytics, segmentation, research datasets | off |
@@ -260,14 +261,20 @@ guardian consent and for limiting collection to what the programme needs.
 Learners under 18 should not be included in optional research, public
 showcases, or external reporting without the required consent.
 
-A learner can mark their account as under 18 on the registration form or later
-in **Profile → Security & privacy**. When this setting is on, the platform
-excludes that learner's individual activity from instructor reports, course
-analytics, coaching queues, public leaderboards, and competition scoreboards.
-The learner's own dashboard and progress remain available to them. The setting
-is a privacy declaration by the account holder; it does not verify age. The
-institution remains responsible for any consent or age-verification requirement
-that applies to its programme.
+A learner chooses an age group on the registration form or later marks their
+account as under 18 in **Profile → Security & privacy**. When this setting is
+on, the platform excludes that learner's individual activity from instructor
+reports, course analytics, coaching queues, public leaderboards, and competition
+scoreboards, and keeps public certificate verification off. The learner's own
+dashboard and progress remain available to them. The setting is a privacy
+declaration by the account holder; it does not verify age. The institution
+remains responsible for any consent or age-verification requirement that
+applies to its programme.
+
+Learners under 13 cannot self-register. An instructor must create an
+institution-managed account and record a parental or guardian consent reference.
+The platform stores a reference only, never identity documents. See the
+youth privacy summary in the platform at `/privacy/youth`.
 
 ## Suspected privacy incidents
 

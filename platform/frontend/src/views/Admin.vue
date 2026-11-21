@@ -275,7 +275,25 @@
                   <input v-model="newUser.first_name" placeholder="First name (optional)" class="form-input" autocomplete="given-name">
                   <input v-model="newUser.last_name" placeholder="Last name (optional)" class="form-input" autocomplete="family-name">
                   <input v-model="newUser.password" type="password" maxlength="128" autocomplete="new-password" placeholder="Password" class="form-input">
+                  <select v-model="newUser.age_band" class="form-input" aria-label="Age group">
+                    <option value="18_plus">Age 18 or older</option>
+                    <option value="16_17">Age 16–17</option>
+                    <option value="13_15">Age 13–15</option>
+                    <option value="under_13">Age under 13 (institution-managed)</option>
+                  </select>
+                  <input
+                    v-if="newUser.age_band === 'under_13'"
+                    v-model="newUser.parental_consent_reference"
+                    maxlength="255"
+                    placeholder="Parental/guardian consent reference"
+                    aria-label="Parental or guardian consent reference"
+                    class="form-input"
+                  >
                 </div>
+                <p class="help-text" style="margin: 0.5rem 0 0;">
+                  New accounts start private. Under-13 accounts require a recorded
+                  parental or guardian consent reference before creation.
+                </p>
                 <div class="form-actions">
                   <label class="checkbox-label">
                     <input type="checkbox" v-model="newUser.is_approved">
@@ -2634,6 +2652,9 @@
                     <span class="security-check-name">{{ item.name }}</span>
                   </div>
                   <div class="security-check-detail">{{ item.detail }}</div>
+                  <div v-if="item.commands && item.commands.length" class="security-check-commands">
+                    <code v-for="cmd in item.commands" :key="cmd">{{ cmd }}</code>
+                  </div>
                   <button
                     v-if="item.name === 'Data integrity'"
                     type="button"
@@ -4176,6 +4197,53 @@ test:
                 </div>
               </section>
 
+              <section class="user-form-section">
+                <header class="user-form-section__head">
+                  <div>
+                    <h4>Privacy and age</h4>
+                    <p>
+                      New accounts start private. Age groups control reporting
+                      privacy and public visibility. Under-13 accounts require a
+                      parental or guardian consent reference.
+                    </p>
+                  </div>
+                </header>
+
+                <div class="user-form-grid">
+                  <div class="form-group">
+                    <label for="edit-age-band">Age group</label>
+                    <select id="edit-age-band" v-model="editForm.age_band" class="form-select">
+                      <option :value="null">Not stated</option>
+                      <option value="18_plus">18 or older</option>
+                      <option value="16_17">16–17</option>
+                      <option value="13_15">13–15</option>
+                      <option value="under_13">Under 13 (institution-managed)</option>
+                    </select>
+                    <p class="user-form-hint">
+                      Minors are excluded from reports and public leaderboards, and
+                      their public certificate verification is forced off.
+                    </p>
+                  </div>
+                  <div class="form-group">
+                    <label for="edit-consent-reference">Parental/guardian consent reference</label>
+                    <input
+                      id="edit-consent-reference"
+                      v-model="editForm.parental_consent_reference"
+                      type="text"
+                      maxlength="255"
+                      class="form-input"
+                      :class="{ 'error': editErrors.consent }"
+                      placeholder="Reference only, never identity documents"
+                    />
+                    <p v-if="editErrors.consent" class="error-text">{{ editErrors.consent }}</p>
+                    <p v-else class="user-form-hint">
+                      Required for under-13 accounts. This is an institution
+                      reference, not a scan or identity document.
+                    </p>
+                  </div>
+                </div>
+              </section>
+
               <section class="user-form-section user-form-section--danger">
                 <header class="user-form-section__head">
                   <div>
@@ -5362,7 +5430,17 @@ function getTimeRangeDates(rangeVal, customStart, customEnd) {
 }
 
 const showCreateForm = ref(false)
-const newUser = reactive({ username: '', email: '', first_name: '', last_name: '', password: '', is_approved: false, role: 'student' })
+const newUser = reactive({
+  username: '',
+  email: '',
+  first_name: '',
+  last_name: '',
+  password: '',
+  is_approved: false,
+  role: 'student',
+  age_band: '18_plus',
+  parental_consent_reference: ''
+})
 
 const showEditUserModal = ref(false)
 const editUser = ref(null)
@@ -5374,11 +5452,14 @@ const editForm = reactive({
   is_approved: false,
   role: 'student',
   is_active: true,
-  must_change_password: false
+  must_change_password: false,
+  age_band: null,
+  parental_consent_reference: ''
 })
 const editErrors = reactive({
   username: '',
-  email: ''
+  email: '',
+  consent: ''
 })
 const editLoading = ref(false)
 const editErrorMessage = ref('')
@@ -8450,6 +8531,9 @@ const createUser = async () => {
     errors.push('A valid email address is required')
   }
   errors.push(...validatePasswordComplexity(newUser.password))
+  if (newUser.age_band === 'under_13' && !newUser.parental_consent_reference.trim()) {
+    errors.push('An under-13 account requires a parental or guardian consent reference')
+  }
   if (errors.length) {
     showAlert(errors.join('. '), 'error')
     return
@@ -8458,7 +8542,17 @@ const createUser = async () => {
   try {
     await axios.post('/admin/users/create', newUser)
     showAlert('User created successfully')
-    Object.assign(newUser, { username: '', email: '', first_name: '', last_name: '', password: '', is_approved: false, role: 'student' })
+    Object.assign(newUser, {
+      username: '',
+      email: '',
+      first_name: '',
+      last_name: '',
+      password: '',
+      is_approved: false,
+      role: 'student',
+      age_band: '18_plus',
+      parental_consent_reference: ''
+    })
     showCreateForm.value = false
     fetchAll()
   } catch (e) {
@@ -8642,10 +8736,13 @@ const openEditUserModal = (user) => {
   editForm.role = user.role || 'student'
   editForm.is_active = user.is_active !== undefined ? user.is_active : true
   editForm.must_change_password = user.must_change_password || false
+  editForm.age_band = user.age_band || null
+  editForm.parental_consent_reference = user.parental_consent_reference || ''
 
   // Clear errors and any previous privileged reset state.
   editErrors.username = ''
   editErrors.email = ''
+  editErrors.consent = ''
   editErrorMessage.value = ''
   editSuccessMessage.value = ''
   cancelPasswordReset()
@@ -8664,6 +8761,13 @@ const validateEditForm = () => {
   // Clear previous errors
   editErrors.username = ''
   editErrors.email = ''
+  editErrors.consent = ''
+
+  if (editForm.age_band === 'under_13' && !editForm.parental_consent_reference.trim()) {
+    editErrors.consent =
+      'An under-13 account requires a parental or guardian consent reference.'
+    isValid = false
+  }
   
   // Validate username if provided
   if (editForm.username) {
@@ -8725,6 +8829,12 @@ const saveUserEdits = async () => {
     }
     if (editForm.must_change_password !== (editUser.value.must_change_password || false)) {
       payload.must_change_password = editForm.must_change_password
+    }
+    if ((editForm.age_band || null) !== (editUser.value.age_band || null)) {
+      payload.age_band = editForm.age_band || null
+    }
+    if ((editForm.parental_consent_reference || '') !== (editUser.value.parental_consent_reference || '')) {
+      payload.parental_consent_reference = editForm.parental_consent_reference.trim() || null
     }
     
     await axios.put(`/admin/users/${editUser.value.id}`, payload)
@@ -14407,6 +14517,26 @@ watch(activeTab, (tab) => {
   font-size: 0.8125rem;
   color: var(--text-secondary);
   line-height: 1.4;
+}
+
+.security-check-commands {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-top: 0.6rem;
+}
+
+.security-check-commands code {
+  display: block;
+  padding: 0.4rem 0.55rem;
+  border: 1px solid var(--border-color, #334155);
+  border-radius: 0.35rem;
+  background: var(--bg-primary, #0f172a);
+  color: var(--text-primary);
+  font-size: 0.75rem;
+  line-height: 1.35;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .security-check-action {

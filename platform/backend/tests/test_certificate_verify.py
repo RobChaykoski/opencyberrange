@@ -9,6 +9,9 @@ pytestmark = pytest.mark.db
 
 
 def test_public_certificate_verification(client, auth_headers, test_user, test_lab, test_flag, db_session):
+    # Public verification is opt-in now; this test exercises the opted-in path.
+    test_user.certificates_public = True
+    db_session.commit()
     suffix = uuid.uuid4().hex[:8]
     track = Track(
         name=f"Verification Test {suffix}",
@@ -117,6 +120,8 @@ def test_public_verification_accepts_compound_track_slug(
     client, auth_headers, test_user, test_lab, test_flag, db_session
 ):
     """high-school-... certificates carry a hyphen in the track prefix."""
+    test_user.certificates_public = True
+    db_session.commit()
     track = Track(
         name="High School Verification Test",
         slug="high-school",

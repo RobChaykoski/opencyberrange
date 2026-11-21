@@ -111,9 +111,9 @@ def test_scoreboard_name_modes():
     user.scoreboard_name_mode = "anonymous"
     assert user.scoreboard_name == "Anonymous participant"
 
-    # Legacy rows created before the preference existed fall back to the name.
+    # Legacy rows created before the preference existed stay anonymous.
     user.scoreboard_name_mode = None
-    assert user.scoreboard_name == "Ada Lovelace"
+    assert user.scoreboard_name == "Anonymous participant"
 
 
 def test_scoreboard_name_mode_round_trip(client, auth_headers, test_user):
@@ -147,6 +147,17 @@ def test_certificate_public_verification_preference_round_trip(
 ):
     settings = client.get("/api/auth/settings", headers=auth_headers)
     assert settings.status_code == 200
+    assert settings.json()["certificates_public"] is False
+
+    resp = client.put(
+        "/api/auth/settings",
+        json={"certificates_public": True},
+        headers=auth_headers,
+    )
+    assert resp.status_code == 200, resp.text
+
+    settings = client.get("/api/auth/settings", headers=auth_headers)
+    assert settings.status_code == 200
     assert settings.json()["certificates_public"] is True
 
     resp = client.put(
@@ -155,10 +166,7 @@ def test_certificate_public_verification_preference_round_trip(
         headers=auth_headers,
     )
     assert resp.status_code == 200, resp.text
-
-    settings = client.get("/api/auth/settings", headers=auth_headers)
-    assert settings.status_code == 200
-    assert settings.json()["certificates_public"] is False
+    assert client.get("/api/auth/settings", headers=auth_headers).json()["certificates_public"] is False
 
 
 def test_profile_names_are_saved_and_returned(client, auth_headers, test_user):
@@ -578,6 +586,23 @@ def test_admin_can_edit_user_names(client, admin_auth):
     assert not cleared.json()["last_name"]
 
 
+def test_privacy_acknowledgement_records_timestamp(client, auth_headers):
+    before = client.get("/api/auth/settings", headers=auth_headers)
+    assert before.status_code == 200
+    assert before.json()["privacy_acknowledged_at"] is None
+
+    resp = client.put(
+        "/api/auth/settings",
+        json={"privacy_acknowledged": True},
+        headers=auth_headers,
+    )
+    assert resp.status_code == 200, resp.text
+
+    after = client.get("/api/auth/settings", headers=auth_headers)
+    assert after.status_code == 200
+    assert after.json()["privacy_acknowledged_at"] is not None
+
+
 def test_under_18_setting_enforces_reporting_privacy(client, auth_headers, test_user):
     resp = client.put(
         "/api/auth/settings",
@@ -591,6 +616,7 @@ def test_under_18_setting_enforces_reporting_privacy(client, auth_headers, test_
     assert settings.json()["is_minor"] is True
     assert settings.json()["show_on_scoreboard"] is False
     assert settings.json()["scoreboard_name_mode"] == "anonymous"
+    assert settings.json()["certificates_public"] is False
 
     blocked = client.put(
         "/api/auth/settings",
@@ -618,7 +644,8 @@ def test_under_18_registration_sets_privacy_defaults(client, db_session):
             "email": f"{username}@university.edu",
             "password": "Correct#Horse7Battery",
             "send_registration_email": False,
-            "is_minor": True,
+            "privacy_acknowledged": True,
+            "age_band": "13_15",
         },
     )
     assert resp.status_code in (200, 201), resp.text
@@ -627,8 +654,79 @@ def test_under_18_registration_sets_privacy_defaults(client, db_session):
     try:
         assert user is not None
         assert user.is_minor is True
+        assert user.age_band == "13_15"
         assert user.show_on_scoreboard is False
         assert user.scoreboard_name == "Anonymous participant"
+        assert user.certificates_public is False
+        assert user.privacy_acknowledged_at is not None
+    finally:
+        if user is not None:
+            db_session.delete(user)
+            db_session.commit()
+
+
+def test_under_13_self_registration_is_blocked(client, db_session):
+    suffix = uuid.uuid4().hex[:10]
+    username = f"child_{suffix}"
+    resp = client.post(
+        "/api/auth/register",
+        json={
+            "username": username,
+            "email": f"{username}@university.edu",
+            "password": "Correct#Horse7Battery",
+            "send_registration_email": False,
+            "privacy_acknowledged": True,
+            "age_band": "under_13",
+        },
+    )
+    assert resp.status_code == 403, resp.text
+    assert "under 13" in resp.json()["detail"].lower()
+    assert db_session.query(User).filter(User.username == username).first() is None
+
+
+def test_registration_requires_privacy_acknowledgement(client, db_session):
+    suffix = uuid.uuid4().hex[:10]
+    username = f"noack_{suffix}"
+    resp = client.post(
+        "/api/auth/register",
+        json={
+            "username": username,
+            "email": f"{username}@university.edu",
+            "password": "Correct#Horse7Battery",
+            "send_registration_email": False,
+            "age_band": "18_plus",
+        },
+    )
+    assert resp.status_code == 400, resp.text
+    assert "privacy notice" in resp.json()["detail"].lower()
+    assert db_session.query(User).filter(User.username == username).first() is None
+
+
+def test_new_adult_account_is_private_by_default(client, db_session):
+    suffix = uuid.uuid4().hex[:10]
+    username = f"adult_{suffix}"
+    resp = client.post(
+        "/api/auth/register",
+        json={
+            "username": username,
+            "email": f"{username}@university.edu",
+            "password": "Correct#Horse7Battery",
+            "send_registration_email": False,
+            "privacy_acknowledged": True,
+            "age_band": "18_plus",
+        },
+    )
+    assert resp.status_code in (200, 201), resp.text
+
+    user = db_session.query(User).filter(User.username == username).first()
+    try:
+        assert user is not None
+        assert user.is_minor is False
+        assert user.show_on_scoreboard is False
+        assert user.scoreboard_name_mode == "anonymous"
+        assert user.certificates_public is False
+        assert user.email_notifications is False
+        assert user.privacy_acknowledged_at is not None
     finally:
         if user is not None:
             db_session.delete(user)

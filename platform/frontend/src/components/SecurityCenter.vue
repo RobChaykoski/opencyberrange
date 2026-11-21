@@ -531,6 +531,162 @@
       </div>
     </template>
 
+    <template v-else-if="activeView === 'network'">
+      <div
+        id="security-panel-network"
+        role="tabpanel"
+        aria-labelledby="security-tab-network"
+        class="security-panel"
+      >
+        <div class="security-section-head">
+          <div>
+            <h3>Sign-in and registration rules</h3>
+            <p class="security-meta">
+              Platform-wide rules for every account, including administrators.
+              A deny rule always wins. Allow rules apply only when at least one
+              allow rule exists: a client must match an allow IP or network when
+              any allow IP rules are present, and must match an allow email
+              domain when any allow domain rules are present. With no allow
+              rules the dimension stays open.
+            </p>
+          </div>
+          <button type="button" class="btn btn--outline btn--sm" :disabled="accessLoading" @click="loadAccessRules">
+            {{ accessLoading ? 'Refreshing...' : 'Refresh' }}
+          </button>
+        </div>
+
+        <div class="security-filters">
+          <label>
+            <span>List</span>
+            <select v-model="accessScope" @change="loadAccessRules">
+              <option value="access">Sign-in access</option>
+              <option value="registration">Registration</option>
+            </select>
+          </label>
+        </div>
+
+        <form class="security-form" @submit.prevent="createAccessRule">
+          <h3>Add a rule to {{ accessScope === 'access' ? 'sign-in access' : 'registration' }}</h3>
+          <div class="security-form__row">
+            <label>
+              <span>Type</span>
+              <select v-model="accessForm.kind">
+                <option value="ip">Single IP</option>
+                <option value="network">Network (CIDR)</option>
+                <option value="domain">Email domain</option>
+              </select>
+            </label>
+            <label>
+              <span>Action</span>
+              <select v-model="accessForm.action">
+                <option value="deny">Deny</option>
+                <option value="allow">Allow</option>
+              </select>
+            </label>
+            <label>
+              <span>Expires (optional)</span>
+              <input v-model="accessForm.expires_at" type="datetime-local" />
+            </label>
+          </div>
+          <label>
+            <span>Value</span>
+            <input
+              v-model.trim="accessForm.value"
+              :placeholder="accessValuePlaceholder"
+              required
+              maxlength="255"
+            />
+          </label>
+          <label>
+            <span>Note (optional)</span>
+            <input
+              v-model.trim="accessForm.note"
+              maxlength="255"
+              placeholder="Why this rule exists, or a change reference"
+            />
+          </label>
+          <button type="submit" class="btn btn--primary btn--sm" :disabled="accessSaving">
+            {{ accessSaving ? 'Adding...' : 'Add rule' }}
+          </button>
+          <p v-if="accessError" class="security-state security-state--error" role="alert">{{ accessError }}</p>
+        </form>
+
+        <div class="table-container" v-if="accessRules.length">
+          <table class="data-table">
+            <caption class="visually-hidden">Allow and deny rules for the selected scope</caption>
+            <thead>
+              <tr>
+                <th scope="col">Action</th>
+                <th scope="col">Type</th>
+                <th scope="col">Value</th>
+                <th scope="col">Note</th>
+                <th scope="col">Expires</th>
+                <th scope="col">Added</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="row in accessRules" :key="row.id">
+                <td>
+                  <span :class="['security-badge', row.action === 'deny' ? 'security-badge--deny' : 'security-badge--allow']">
+                    {{ row.action }}
+                  </span>
+                </td>
+                <td>{{ row.kind }}</td>
+                <td class="security-mono">{{ row.value }}</td>
+                <td>{{ row.note || '—' }}</td>
+                <td class="security-mono">{{ row.expires_at ? formatTime(row.expires_at) : 'Never' }}</td>
+                <td class="security-mono">{{ formatTime(row.created_at) }}</td>
+                <td>
+                  <button type="button" class="btn btn--outline btn--sm" @click="deleteAccessRule(row)">
+                    Remove
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p v-else-if="!accessLoading" class="security-state">
+          No {{ accessScope === 'access' ? 'sign-in' : 'registration' }} rules yet. Both lists are open by default.
+        </p>
+
+        <form class="security-form" @submit.prevent="testAccessRule">
+          <h3>Check a request</h3>
+          <p class="security-meta">
+            Preview the selected list without saving anything. Domain checks use
+            the email domain, so leave the email blank for an IP-only preview.
+          </p>
+          <div class="security-form__row">
+            <label>
+              <span>Client IP</span>
+              <input v-model.trim="accessTestForm.ip_address" placeholder="203.0.113.10" maxlength="64" />
+            </label>
+            <label>
+              <span>Email (optional)</span>
+              <input v-model.trim="accessTestForm.email" type="email" placeholder="learner@example.edu" maxlength="320" />
+            </label>
+            <div class="security-filter-check">
+              <span class="security-meta">Scope: {{ accessScope }}</span>
+            </div>
+          </div>
+          <button type="submit" class="btn btn--outline btn--sm" :disabled="accessTesting">
+            {{ accessTesting ? 'Checking...' : 'Check request' }}
+          </button>
+          <p
+            v-if="accessTestResult"
+            :class="['security-state', accessTestResult.allowed ? 'security-state--allowed' : 'security-state--error']"
+            role="status"
+          >
+            {{ accessTestResult.allowed ? 'Allowed' : 'Denied' }} —
+            {{ accessTestResult.reason }}
+            <span v-if="accessTestResult.rule_value" class="security-mono">
+              (rule {{ accessTestResult.rule_value }})
+            </span>
+          </p>
+        </form>
+      </div>
+    </template>
+
     <template v-else>
       <div
         id="security-panel-matrix"
@@ -704,6 +860,7 @@ const tabs = [
   { key: 'break-glass', label: 'Break-glass' },
   { key: 'services', label: 'Service identities' },
   { key: 'roles', label: 'Roles' },
+  { key: 'network', label: 'Access rules' },
   { key: 'matrix', label: 'Access matrix' },
 ]
 const activeView = ref('events')
@@ -741,6 +898,20 @@ const newServiceToken = ref('')
 const filters = reactive({ category: '', severity: '', search: '' })
 const grantForm = reactive({ permission: 'dna.view.private', reason: '', reference: '', minutes: 60, user_id: null })
 const serviceForm = reactive({ name: '', days: 90, scopes: [] })
+const accessScope = ref('access')
+const accessRules = ref([])
+const accessLoading = ref(false)
+const accessSaving = ref(false)
+const accessTesting = ref(false)
+const accessError = ref('')
+const accessTestResult = ref(null)
+const accessForm = reactive({ kind: 'ip', action: 'deny', value: '', note: '', expires_at: '' })
+const accessTestForm = reactive({ ip_address: '', email: '' })
+const accessValuePlaceholder = computed(() => {
+  if (accessForm.kind === 'ip') return '203.0.113.10'
+  if (accessForm.kind === 'network') return '203.0.113.0/24'
+  return 'example.edu'
+})
 const eligiblePermissions = [
   'dna.view.private',
   'gps.view.private',
@@ -888,6 +1059,84 @@ function formatTime(value) {
   if (!value) return '-'
   const date = new Date(value)
   return Number.isNaN(date.getTime()) ? value : date.toLocaleString()
+}
+
+async function loadAccessRules() {
+  accessLoading.value = true
+  accessError.value = ''
+  accessTestResult.value = null
+  try {
+    const { data } = await axios.get('/admin/security/access-rules', {
+      params: { scope: accessScope.value },
+    })
+    accessRules.value = data.rules || []
+  } catch (e) {
+    accessError.value = e.response?.data?.detail || 'Could not load the access rules.'
+  } finally {
+    accessLoading.value = false
+  }
+}
+
+async function createAccessRule() {
+  if (accessSaving.value) return
+  accessSaving.value = true
+  accessError.value = ''
+  try {
+    const payload = {
+      scope: accessScope.value,
+      kind: accessForm.kind,
+      action: accessForm.action,
+      value: accessForm.value,
+      note: accessForm.note || null,
+    }
+    if (accessForm.expires_at) {
+      payload.expires_at = new Date(accessForm.expires_at).toISOString()
+    }
+    await axios.post('/admin/security/access-rules', payload)
+    accessForm.value = ''
+    accessForm.note = ''
+    accessForm.expires_at = ''
+    accessTestResult.value = null
+    await loadAccessRules()
+    showToast('Access rule added.', 'success')
+  } catch (e) {
+    const detail = e.response?.data?.detail
+    accessError.value = detail?.message || detail || 'Could not add the access rule.'
+    showToast(accessError.value, 'error')
+  } finally {
+    accessSaving.value = false
+  }
+}
+
+async function deleteAccessRule(row) {
+  if (!window.confirm(`Remove the ${row.action} rule for ${row.value}?`)) return
+  try {
+    await axios.delete(`/admin/security/access-rules/${row.id}`)
+    await loadAccessRules()
+    showToast('Access rule removed.', 'success')
+  } catch (e) {
+    const detail = e.response?.data?.detail
+    showToast(detail?.message || detail || 'Could not remove the access rule.', 'error')
+  }
+}
+
+async function testAccessRule() {
+  if (accessTesting.value) return
+  accessTesting.value = true
+  accessTestResult.value = null
+  try {
+    const { data } = await axios.post('/admin/security/access-rules/test', {
+      scope: accessScope.value,
+      ip_address: accessTestForm.ip_address || null,
+      email: accessTestForm.email || null,
+    })
+    accessTestResult.value = data
+  } catch (e) {
+    const detail = e.response?.data?.detail
+    showToast(detail?.message || detail || 'Could not evaluate the request.', 'error')
+  } finally {
+    accessTesting.value = false
+  }
 }
 
 async function loadEvents() {
@@ -1081,7 +1330,7 @@ async function loadMatrix() {
 
 async function refreshAll() {
   try {
-    await Promise.all([loadEvents(), loadGrants(), loadServices(), loadRoles(), loadPermissions(), loadMatrix()])
+    await Promise.all([loadEvents(), loadGrants(), loadServices(), loadRoles(), loadPermissions(), loadMatrix(), loadAccessRules()])
   } catch (e) {
     error.value = e.response?.data?.detail || 'Could not refresh the security center.'
   }
@@ -1171,6 +1420,10 @@ async function revokeService(row) {
 }
 
 watch(activeView, (view) => {
+  if (view === 'network') {
+    loadAccessRules()
+    return
+  }
   if (view !== 'roles') return
   if (!permissionCatalog.value.length) loadPermissions()
   if (!macUsers.value.length) loadMacUsers()
@@ -1207,8 +1460,11 @@ onMounted(refreshAll)
 .security-badge--notice, .security-badge--active, .security-badge--low { background: var(--accent-bg); color: var(--accent-text); }
 .security-badge--readonly { background: var(--bg-tertiary); color: var(--text-secondary); }
 .security-badge--breakglass { background: var(--danger-bg); color: var(--danger); border: 1px solid var(--danger); }
+.security-badge--deny { background: var(--danger-bg); color: var(--danger); }
+.security-badge--allow { background: var(--success-bg); color: var(--success); }
 .security-state { color: var(--text-muted); }
 .security-state--error { color: var(--danger); }
+.security-state--allowed { color: var(--success); }
 .security-actions { display: flex; flex-wrap: wrap; gap: 0.35rem; }
 .security-token { background: var(--bg-primary); border: 1px dashed var(--border-color); padding: 0.75rem; border-radius: 10px; }
 .security-token code { display: block; margin-top: 0.35rem; word-break: break-all; color: var(--text-primary); }

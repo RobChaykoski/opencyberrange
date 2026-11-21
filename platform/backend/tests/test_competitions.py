@@ -69,6 +69,12 @@ def _window():
 def test_competition_join_score_and_privacy(
     client, db_session, auth_headers, test_user, test_lab, test_flag, instructor_auth
 ):
+    # Competition leaderboards only include opted-in learners. The test needs
+    # to see its own entry, so opt this learner in before joining.
+    test_user.show_on_scoreboard = True
+    test_user.scoreboard_name_mode = "real_name"
+    db_session.commit()
+
     start_at, end_at = _window()
     created = client.post(
         "/api/competitions",
@@ -223,6 +229,8 @@ def test_new_user_signup_marks_competition_registration(
             "email": f"devfest_student_{suffix}@example.invalid",
             "password": TEST_PASSWORD,
             "competition_id": competition_id,
+            "age_band": "18_plus",
+            "privacy_acknowledged": True,
         },
     )
     assert registered.status_code == 200, registered.text

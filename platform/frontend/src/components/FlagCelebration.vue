@@ -9,7 +9,14 @@
         aria-labelledby="fc-title"
         @click.self="$emit('close')"
       >
-        <div class="fc-confetti" aria-hidden="true">
+        <canvas
+          v-if="showCanvas"
+          ref="canvasEl"
+          class="fc-canvas"
+          aria-hidden="true"
+        ></canvas>
+
+        <div v-if="effect === 'confetti'" class="fc-confetti" aria-hidden="true">
           <span
             v-for="piece in confetti"
             :key="piece.id"
@@ -79,7 +86,7 @@
 </template>
 
 <script setup>
-import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import FlagIcon from './icons/FlagIcon.vue'
 import AchievementMedallion from './AchievementMedallion.vue'
 
@@ -92,19 +99,42 @@ const props = defineProps({
   hintsUsed: { type: Number, default: 0 },
   nextLabel: { type: String, default: 'Next objective' },
   newAchievements: { type: Array, default: () => [] },
+  // fireworks | matrix | confetti | off. The profile preference chooses this.
+  effect: { type: String, default: 'fireworks' },
 })
 
 const emit = defineEmits(['close', 'next'])
 
 const primaryButton = ref(null)
 const confetti = ref([])
+const canvasEl = ref(null)
+const reducedMotion = ref(false)
 
 const COLORS = ['#22c55e', '#3b82f6', '#f59e0b', '#a78bfa', '#06b6d4', '#f472b6']
+const FIREWORK_COLORS = ['#22c55e', '#38bdf8', '#f59e0b', '#a78bfa', '#f472b6', '#facc15']
+const MATRIX_GLYPHS = '01ABCDEF#$%&@*+=-<>{}[]'
+
+const prefersReducedMotion = () =>
+  typeof window !== 'undefined' &&
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+const showCanvas = computed(
+  () =>
+    props.show &&
+    !reducedMotion.value &&
+    (props.effect === 'fireworks' || props.effect === 'matrix')
+)
+
+let ctx = null
+let rafId = 0
+let canvasWidth = 0
+let canvasHeight = 0
+let particles = []
+let matrixDrops = []
+let lastBurstAt = 0
 
 const makeConfetti = () => {
-  if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    return []
-  }
+  if (prefersReducedMotion()) return []
   return Array.from({ length: 48 }, (_, index) => {
     const size = 5 + Math.random() * 6
     return {
@@ -123,6 +153,123 @@ const makeConfetti = () => {
   })
 }
 
+function resizeCanvas() {
+  const canvas = canvasEl.value
+  if (!canvas) return
+  const dpr = Math.min(window.devicePixelRatio || 1, 2)
+  canvasWidth = canvas.clientWidth || window.innerWidth
+  canvasHeight = canvas.clientHeight || window.innerHeight
+  canvas.width = Math.floor(canvasWidth * dpr)
+  canvas.height = Math.floor(canvasHeight * dpr)
+  ctx = canvas.getContext('2d')
+  if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+}
+
+function burst(x, y, count = 56) {
+  for (let index = 0; index < count; index += 1) {
+    const angle = Math.random() * Math.PI * 2
+    const speed = 1.6 + Math.random() * 4.2
+    particles.push({
+      x,
+      y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      life: 1,
+      decay: 0.008 + Math.random() * 0.012,
+      size: 1.4 + Math.random() * 2.1,
+      color: FIREWORK_COLORS[Math.floor(Math.random() * FIREWORK_COLORS.length)],
+    })
+  }
+}
+
+function drawFireworks(now) {
+  if (!ctx) return
+  ctx.clearRect(0, 0, canvasWidth, canvasHeight)
+  ctx.globalCompositeOperation = 'lighter'
+  if (now - lastBurstAt > 520) {
+    burst(
+      canvasWidth * (0.15 + Math.random() * 0.7),
+      canvasHeight * (0.12 + Math.random() * 0.5)
+    )
+    lastBurstAt = now
+  }
+  particles = particles.filter((particle) => {
+    particle.x += particle.vx
+    particle.y += particle.vy
+    particle.vy += 0.035
+    particle.vx *= 0.992
+    particle.vy *= 0.992
+    particle.life -= particle.decay
+    if (particle.life <= 0) return false
+    ctx.globalAlpha = Math.max(particle.life, 0)
+    ctx.fillStyle = particle.color
+    ctx.beginPath()
+    ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2)
+    ctx.fill()
+    return true
+  })
+  ctx.globalAlpha = 1
+  ctx.globalCompositeOperation = 'source-over'
+  rafId = window.requestAnimationFrame(drawFireworks)
+}
+
+function initMatrix() {
+  const columnWidth = 16
+  const columns = Math.max(1, Math.ceil(canvasWidth / columnWidth))
+  matrixDrops = Array.from({ length: columns }, () => ({
+    y: Math.random() * canvasHeight,
+    speed: 1.2 + Math.random() * 3.4,
+  }))
+}
+
+function drawMatrix() {
+  if (!ctx) return
+  ctx.fillStyle = 'rgba(2, 6, 23, 0.14)'
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight)
+  ctx.font = '15px "JetBrains Mono", ui-monospace, monospace'
+  matrixDrops.forEach((drop, index) => {
+    const glyph = MATRIX_GLYPHS[Math.floor(Math.random() * MATRIX_GLYPHS.length)]
+    ctx.fillStyle = Math.random() > 0.965 ? '#d1fae5' : '#22c55e'
+    ctx.fillText(glyph, index * 16 + 4, drop.y)
+    drop.y += drop.speed
+    if (drop.y > canvasHeight && Math.random() > 0.975) {
+      drop.y = 0
+      drop.speed = 1.2 + Math.random() * 3.4
+    }
+  })
+  rafId = window.requestAnimationFrame(drawMatrix)
+}
+
+function stopEffect() {
+  if (rafId) window.cancelAnimationFrame(rafId)
+  rafId = 0
+  particles = []
+  matrixDrops = []
+  if (ctx) ctx.clearRect(0, 0, canvasWidth, canvasHeight)
+}
+
+function startEffect() {
+  stopEffect()
+  if (!showCanvas.value) return
+  resizeCanvas()
+  if (!ctx) return
+  lastBurstAt = 0
+  if (props.effect === 'fireworks') {
+    burst(canvasWidth * 0.3, canvasHeight * 0.28)
+    burst(canvasWidth * 0.72, canvasHeight * 0.36)
+    rafId = window.requestAnimationFrame(drawFireworks)
+  } else if (props.effect === 'matrix') {
+    initMatrix()
+    rafId = window.requestAnimationFrame(drawMatrix)
+  }
+}
+
+function onResize() {
+  if (!showCanvas.value) return
+  resizeCanvas()
+  if (props.effect === 'matrix') initMatrix()
+}
+
 const formatDuration = (seconds) => {
   if (!seconds || seconds < 0) return '—'
   const total = Math.round(seconds)
@@ -137,25 +284,33 @@ const onKeydown = (event) => {
 }
 
 watch(
-  () => props.show,
-  async (visible) => {
+  [() => props.show, () => props.effect],
+  async ([visible]) => {
     if (typeof document !== 'undefined') {
       document.body.style.overflow = visible ? 'hidden' : ''
     }
+    reducedMotion.value = prefersReducedMotion()
     if (visible) {
-      confetti.value = makeConfetti()
+      confetti.value = props.effect === 'confetti' ? makeConfetti() : []
       await nextTick()
+      startEffect()
       primaryButton.value?.focus()
     } else {
+      stopEffect()
       confetti.value = []
     }
   }
 )
 
-onMounted(() => window.addEventListener('keydown', onKeydown))
+onMounted(() => {
+  window.addEventListener('keydown', onKeydown)
+  window.addEventListener('resize', onResize)
+})
 
 onBeforeUnmount(() => {
   window.removeEventListener('keydown', onKeydown)
+  window.removeEventListener('resize', onResize)
+  stopEffect()
   if (typeof document !== 'undefined') document.body.style.overflow = ''
 })
 </script>
@@ -172,8 +327,19 @@ onBeforeUnmount(() => {
   backdrop-filter: blur(6px);
 }
 
+.fc-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
 .fc-card {
   position: relative;
+  z-index: 2;
   width: min(560px, 100%);
   max-height: calc(100vh - 2.5rem);
   overflow-y: auto;
@@ -322,6 +488,7 @@ onBeforeUnmount(() => {
 .fc-confetti {
   position: absolute;
   inset: 0;
+  z-index: 1;
   overflow: hidden;
   pointer-events: none;
 }
@@ -372,6 +539,7 @@ onBeforeUnmount(() => {
 
 @media (prefers-reduced-motion: reduce) {
   .fc-confetti,
+  .fc-canvas,
   .fc-flag__cloth {
     display: none;
   }

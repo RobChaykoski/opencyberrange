@@ -4,7 +4,7 @@
       "sha256": "ff442fa83f123d460e1116ed4ddc1b79bd7ff1f739e3cd18cd3c431a0435cb7f"
     },
     ".github/workflows/ci.yml": {
-      "sha256": "a2d0e072e309f23b0bd250802bf51c8ce7e9bc80d8ad6144ed374d6371600ded"
+      "sha256": "c6869acc1b4d20fa2e88c99653772a4b5fbb9028e214fc8ce4efd64c51c67272"
     },
     ".github/workflows/codeql.yml": {
       "sha256": "528819da40419208ef852227581745b47d55b666c5fc6726eb5f47b2a9a4dcc5"
@@ -28,7 +28,7 @@
       "sha256": "4dd4d773bf74b9bf0cb86038ff443ad028c59176e1aa377fe37dfb544c5e6a9e"
     },
     ".trivyignore.yaml": {
-      "sha256": "a95238a63e8bb0514ac76ecbd7cb89259babce4c466adf73c815f8bf0f42a1ad"
+      "sha256": "5fc1cdffada725d1dabd6a2d55d9b53e9821390175544bdf86807eb5b1ec37dd"
     },
     "db/bootstrap-db-roles.sql": {
       "sha256": "0ddd3fb65983a4f54913ddaa6472686692791971868df0d600c2d0c7a63eb3a7"
@@ -61,7 +61,7 @@
       "sha256": "b4e5cc77a8408624fcdd3b95e22773d1ce59fd5ea755e4100e1bae7c47648460"
     },
     "platform/backend/app/data/competency-contracts.yaml": {
-      "sha256": "42c31d5242956e4e2c0b04c3ff0ac6c5e14fabfc758026f309275e5a121a20c7"
+      "sha256": "af33e632fbc3331ce5618b6c4185c60c5b02aaad663eb56d9e1a4d527a871de3"
     },
     "platform/backend/app/data/competency-mapping.yaml": {
       "sha256": "23cd82a50b8c2c23970cdc5a9eb77afcc0e5a96b018bcd5fa791e5b306fc0c32"
@@ -160,7 +160,7 @@
       "sha256": "d073d2202db1e15c9b259640ea31cde86fc10329b3918c9fdc18fab906fd4d4d"
     },
     "platform/backend/app/data/lab-outcomes.yaml": {
-      "sha256": "5f145f33bf046d8c19a6b3c48b31b100f9573992e1f2f106ff676678d16c25b1"
+      "sha256": "20ed5d4f5b0874617e5fbc61300cac31c739a72add30df84802537568b6db422"
     },
     "platform/backend/app/data/malware-samples.yaml": {
       "sha256": "4e6a00ce7febc54336c44fe167b45180fbc8ae8cbb4343f772b2ad0554cc77be"
@@ -172,7 +172,7 @@
       "sha256": "a67628fe072235c02aeecb19b468f5c71fd4e5d66163f6a3a2c4c3c19caa3fc4"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "ad9892d133ffd379efeb69f89cf3b4ea117e3ffd7fd8f364fb69276662568674"
+      "sha256": "8a7d7cccc8692fb15c1eaf2d487f3efefb322d378752b121ec531353ac350c35"
     },
     "platform/backend/app/security/permissions.yaml": {
       "sha256": "8df4a537d137d826dbad3e333c09a02ac87a8ec281cf40c1dc3767b418ca0404"
@@ -187,10 +187,10 @@
       "sha256": "18f211d07b779cb88dbb4e5c71c6ae4d62f4f6e38c71104b901ede93df31f6bd"
     },
     "platform/backend/app/version.py": {
-      "sha256": "81c647614c05c6f09d3c898b2651434cb1a5925f62fadf0a973cf296630bbe5f"
+      "sha256": "5fec0edcf6b47276f208a82a94f5be8e53bbf2ebeccb052f8b682fc7e6900b23"
     },
     "platform/backend/lab_metadata.schema.json": {
-      "sha256": "00f133f45f20d1ad4fd2911cfa6e6384f5102d6f7d4502a18885d3f83333353d"
+      "sha256": "7590d5bf2a3a9ea2ecf275ba18c82394dfec252b0a39fe0846d18e57d746c36c"
     },
     "platform/backend/pyproject.toml": {
       "sha256": "b6722dd013e620bc829bbeba74ce77a8a3fdac42f75d6f9804d74dc91f75196f"
@@ -220,16 +220,16 @@
       "sha256": "5e773728234f776d387017e7fe46368a308fc80167c64ffdd6d2a46e86cf4b9e"
     },
     "platform/frontend/nginx-ssl.conf": {
-      "sha256": "4591c514e2ce29af354de410a011a13b99afbb5b6fc10f36513d7ebc3cb76325"
+      "sha256": "cffe57d7daa4c01de0bd3f0ee9939547042a0ec4991485fa4b89a2821246b3c4"
     },
     "platform/frontend/nginx.conf": {
-      "sha256": "72398d6ae7a0ef3c4975c740ccb3efeff631df8bb335c66d5e55ab013974bad7"
+      "sha256": "64356742080033bf0b94e1857a398a1b75120e93a9bca3ea36c12d88b2a65205"
     },
     "platform/frontend/package-lock.json": {
-      "sha256": "76c7afdcd9855159ff433060072ddd3e6917f78c48a452a6b8df815a85b4849e"
+      "sha256": "a3abcaea56b9523047e2ece2ac8544b4c326b78204d76fc19e4f3715575c44d0"
     },
     "platform/frontend/package.json": {
-      "sha256": "ad3b29316b741671a2b2576952bb75a29342dfa888c91df1be0470a8584b3126"
+      "sha256": "6b5bad97fa47a2cd7781a4aba3ab0edf58ba6584166112c8587046df1c6944e2"
     },
     "platform/frontend/security-headers.conf": {
       "sha256": "5261428bf94b02a5585f466e1de692bf8c6aba8890d222fcf014e94788fbafb6"
@@ -367,7 +367,7 @@
       "sha256": "f08f563a56860357a3c246993e4fd3da16cf1df35cce49f9890c0b09eb1ab769"
     },
     "versions.yaml": {
-      "sha256": "69ebc44855cbb520601837f73ddda6c2cceef88c7f02f7fc2fa04ec171f1bf01"
+      "sha256": "5f2fca94ca6a7d9b643c20b64266ef03fed61c93225e0e8b7f48fa14296a39ac"
     }
   },
   "generator": "scripts/supply_chain.py",
@@ -1080,7 +1080,7 @@
       ]
     },
     "ot-3-1-ics-pcap-forensics": {
-      "content_hash": "af24bd7682467bca4114c848fd152f327b1714cfdfeae16c9a090a11086ca85b",
+      "content_hash": "4500f03a5657856f597b72dba41906ba8f654ae9a98e61dedaf465f4ad62f1a9",
       "services": [
         "analyst",
         "guide"
@@ -1654,6 +1654,6 @@
       ]
     }
   },
-  "release": "5.28.6",
+  "release": "5.29.0",
   "schema": 1
 }

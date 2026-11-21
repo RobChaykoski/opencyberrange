@@ -3,7 +3,7 @@
 import re
 from app.schemas.lab import LabSessionResponse
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Literal, Optional
 
 from pydantic import (
     BaseModel,
@@ -64,6 +64,10 @@ class UserAdminResponse(BaseModel):
     last_login_at: Optional[datetime] = None
     equipped_title: Optional[str] = None
     password_login_disabled: Optional[bool] = False
+    is_minor: Optional[bool] = False
+    age_band: Optional[str] = None
+    parental_consent_reference: Optional[str] = None
+    parental_consent_recorded_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True
@@ -119,6 +123,10 @@ class UserDetailResponse(BaseModel):
     last_login_at: Optional[datetime] = None
     equipped_title: Optional[str] = None
     password_login_disabled: Optional[bool] = False
+    is_minor: Optional[bool] = False
+    age_band: Optional[str] = None
+    parental_consent_reference: Optional[str] = None
+    parental_consent_recorded_at: Optional[datetime] = None
 
     # Statistics
     total_labs_completed: int = 0
@@ -167,10 +175,15 @@ class CreateUserRequest(SafeTextModel):
     is_admin: bool = False
     role: Optional[str] = "student"
     institution_id: Optional[str] = Field(None, max_length=64)
+    # Privacy-preserving age band. Under-13 accounts require an institution
+    # parental/guardian consent reference; exact dates of birth are not stored.
+    age_band: Optional[Literal["under_13", "13_15", "16_17", "18_plus"]] = None
+    parental_consent_reference: Optional[str] = Field(None, max_length=255)
 
     __safe_text_fields__ = {
         "first_name": "short",
         "last_name": "short",
+        "parental_consent_reference": "short",
     }
 
     @field_validator('password')
@@ -206,11 +219,14 @@ class UpdateUserRequest(SafeTextModel):
     is_admin: Optional[bool] = None
     role: Optional[str] = None
     must_change_password: Optional[bool] = None
+    age_band: Optional[Literal["under_13", "13_15", "16_17", "18_plus"]] = None
+    parental_consent_reference: Optional[str] = Field(None, max_length=255)
 
     __safe_text_fields__ = {
         "first_name": "short",
         "last_name": "short",
         "organization": "short",
+        "parental_consent_reference": "short",
     }
 
     @field_validator('role')

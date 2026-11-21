@@ -10,6 +10,7 @@ import io
 import os
 import re
 import shutil
+import stat
 import zipfile
 from typing import Optional
 
@@ -18,6 +19,10 @@ import yaml
 
 MAX_ZIP_SIZE = 100 * 1024 * 1024       # 100 MB compressed
 MAX_EXTRACTED_SIZE = 500 * 1024 * 1024  # 500 MB uncompressed
+MAX_ZIP_ENTRIES = 2000
+MAX_ENTRY_UNCOMPRESSED_SIZE = 200 * 1024 * 1024  # 200 MB per file
+MAX_COMPRESSION_RATIO = 100
+MAX_METADATA_FILE_SIZE = 5 * 1024 * 1024
 REQUIRED_FILES = ["lab.yaml", "docker-compose.yml"]
 VALID_DIFFICULTIES = {"beginner", "intermediate", "advanced"}
 
@@ -60,6 +65,41 @@ def _safe_target_dir(target_dir: str) -> str:
 class ZipValidationError(Exception):
     """Raised when ZIP validation fails."""
     pass
+
+
+def _validate_zip_entry(info: zipfile.ZipInfo) -> str:
+    """Reject unsafe entry metadata and return its normalised name."""
+    name = info.filename
+    if "\x00" in name:
+        raise ZipValidationError("ZIP entry contains a NUL byte.")
+    if info.flag_bits & 0x1:
+        raise ZipValidationError("Encrypted ZIP entries are not supported.")
+    if stat.S_ISLNK(info.external_attr >> 16):
+        raise ZipValidationError("Symbolic links are not allowed in lab ZIPs.")
+    if "\\" in name:
+        raise ZipValidationError(f"Backslash path in ZIP: {name}")
+    if name.startswith("/") or re.match(r"^[A-Za-z]:", name):
+        raise ZipValidationError(f"Absolute path in ZIP: {name}")
+
+    parts = [part for part in name.split("/") if part]
+    if not parts or any(part in (".", "..") for part in parts):
+        raise ZipValidationError(f"Unsafe path in ZIP: {name}")
+    return "/".join(parts)
+
+
+def _read_text_member(zf: zipfile.ZipFile, name: str) -> str:
+    """Read a small text member without letting it exhaust memory."""
+    try:
+        with zf.open(name) as fh:
+            data = fh.read(MAX_METADATA_FILE_SIZE + 1)
+    except KeyError as exc:
+        raise ZipValidationError(f"Missing required file: {name}") from exc
+    if len(data) > MAX_METADATA_FILE_SIZE:
+        raise ZipValidationError(f"{name} is too large.")
+    try:
+        return data.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise ZipValidationError(f"{name} must be UTF-8 text.") from exc
 
 
 def _slugify(text: str) -> str:
@@ -240,18 +280,41 @@ def validate_and_extract_lab_zip(contents: bytes, target_dir: str) -> dict:
     except zipfile.BadZipFile:
         raise ZipValidationError("File is not a valid ZIP archive.")
 
-    # --- Zip bomb check ---
-    total_uncompressed = sum(info.file_size for info in zf.infolist())
+    # --- Entry metadata and zip-bomb checks ---
+    infos = zf.infolist()
+    if len(infos) > MAX_ZIP_ENTRIES:
+        raise ZipValidationError(
+            f"ZIP has too many entries ({len(infos)}). Maximum is {MAX_ZIP_ENTRIES}."
+        )
+
+    total_uncompressed = 0
+    total_compressed = 0
+    seen_files: set[str] = set()
+    for info in infos:
+        normalized = _validate_zip_entry(info)
+        if info.is_dir():
+            continue
+        if info.file_size > MAX_ENTRY_UNCOMPRESSED_SIZE:
+            raise ZipValidationError(
+                f"ZIP entry '{info.filename}' is too large "
+                f"(limit {MAX_ENTRY_UNCOMPRESSED_SIZE // (1024*1024)} MB)."
+            )
+        total_uncompressed += info.file_size
+        total_compressed += max(info.compress_size, 1)
+        if normalized in seen_files:
+            raise ZipValidationError(f"Duplicate path in ZIP: {normalized}")
+        seen_files.add(normalized)
+
     if total_uncompressed > MAX_EXTRACTED_SIZE:
         raise ZipValidationError(
             f"Uncompressed size too large ({total_uncompressed // (1024*1024)} MB). "
             f"Maximum is {MAX_EXTRACTED_SIZE // (1024*1024)} MB."
         )
-
-    # --- Path traversal check (pre-extraction) ---
-    for name in zf.namelist():
-        if ".." in name or name.startswith("/"):
-            raise ZipValidationError(f"Unsafe path in ZIP: {name}")
+    if total_uncompressed > total_compressed * MAX_COMPRESSION_RATIO:
+        raise ZipValidationError(
+            "ZIP compression ratio is too high. Rebuild the archive without "
+            "extreme compression."
+        )
 
     # --- Filter out macOS resource forks ---
     entries = [n for n in zf.namelist() if not n.startswith("__MACOSX/")]
@@ -295,7 +358,7 @@ def validate_and_extract_lab_zip(contents: bytes, target_dir: str) -> dict:
         )
 
     # --- Parse lab.yaml ---
-    yaml_raw = zf.read(strip_prefix + "lab.yaml").decode("utf-8")
+    yaml_raw = _read_text_member(zf, strip_prefix + "lab.yaml")
     try:
         lab_data = yaml.safe_load(yaml_raw) or {}
     except yaml.YAMLError as e:
@@ -347,7 +410,7 @@ def validate_and_extract_lab_zip(contents: bytes, target_dir: str) -> dict:
         lab_data["difficulty"] = "beginner"
 
     # --- Parse docker-compose.yml ---
-    compose_raw = zf.read(strip_prefix + "docker-compose.yml").decode("utf-8")
+    compose_raw = _read_text_member(zf, strip_prefix + "docker-compose.yml")
     try:
         compose_data = yaml.safe_load(compose_raw) or {}
     except yaml.YAMLError as e:
@@ -388,6 +451,7 @@ def validate_and_extract_lab_zip(contents: bytes, target_dir: str) -> dict:
 
     os.makedirs(target_dir, mode=0o755)
     file_count = 0
+    total_written = 0
 
     try:
         for info in zf.infolist():
@@ -398,6 +462,7 @@ def validate_and_extract_lab_zip(contents: bytes, target_dir: str) -> dict:
             relative = info.filename[len(strip_prefix):]
             if not relative:
                 continue
+            _validate_zip_entry(info)
 
             # Rebuild the relative path from single path components. The
             # basename call is an explicit sanitizer for every component, so a
@@ -421,14 +486,32 @@ def validate_and_extract_lab_zip(contents: bytes, target_dir: str) -> dict:
             if not inside_root:
                 raise ZipValidationError(f"Path traversal detected: {relative}")
 
-            if relative.endswith("/"):
+            if info.is_dir():
                 os.makedirs(target_path, mode=0o755, exist_ok=True)
             else:
                 parent = os.path.dirname(target_path)
                 if parent and not os.path.exists(parent):
                     os.makedirs(parent, mode=0o755, exist_ok=True)
-                with open(target_path, "wb") as f:
-                    f.write(zf.read(info.filename))
+                # Stream the entry so a lying header cannot force a large
+                # allocation. The declared size is checked earlier; these
+                # counters catch an archive whose actual data is larger.
+                written = 0
+                with zf.open(info) as src, open(target_path, "wb") as dst:
+                    while True:
+                        chunk = src.read(1024 * 1024)
+                        if not chunk:
+                            break
+                        written += len(chunk)
+                        total_written += len(chunk)
+                        if written > MAX_ENTRY_UNCOMPRESSED_SIZE:
+                            raise ZipValidationError(
+                                f"ZIP entry '{info.filename}' is too large."
+                            )
+                        if total_written > MAX_EXTRACTED_SIZE:
+                            raise ZipValidationError(
+                                "Uncompressed size too large."
+                            )
+                        dst.write(chunk)
                 # Make scripts/entrypoints executable
                 if relative.endswith((".sh", ".py")):
                     os.chmod(target_path, 0o755)

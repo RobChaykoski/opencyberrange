@@ -23,6 +23,8 @@ def _register_payload(**overrides):
         "email": f"unicode_{suffix}@example.org",
         "password": PASSWORD,
         "send_registration_email": False,
+        "privacy_acknowledged": True,
+        "age_band": "18_plus",
     }
     payload.update(overrides)
     return payload

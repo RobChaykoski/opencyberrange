@@ -41,6 +41,7 @@ from app.crypto import encrypt_private_key, decrypt_private_key, is_encrypted
 from app.services.activity import log_activity, EventTypes
 from app.services import settings_service
 from app.services import accommodations
+from app.services import lab_preflight
 
 
 def _accommodation_percent(db, user: User | None = None) -> int:
@@ -299,6 +300,28 @@ async def spawn_lab(
                 detail="This exercise is still being prepared (its environment is "
                        "building in the background). Try again in a few minutes.")
 
+    # Production disables on-demand builds: the deploy pipeline prebuilds every
+    # image and a student launch must never start one. Refuse before creating a
+    # session when a build-backed image is missing, and record the exact
+    # prebuild command for the admin health panel. A Docker check that cannot
+    # complete fails open so an inspection problem never blocks a valid launch.
+    if not lab_preflight.on_demand_build_allowed():
+        missing_services = await asyncio.get_running_loop().run_in_executor(
+            None,
+            lab_preflight.missing_built_services,
+            lab_slug,
+            lab.compose_file or "",
+            docker_manager.client,
+        )
+        if missing_services:
+            lab_preflight.record_prebuild_required(
+                db, lab, current_user.id, _client_ip(request)
+            )
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=lab_preflight.STUDENT_PREBUILDING_MESSAGE,
+            )
+
     # Shared-VM labs need /dev/kvm on the host; refuse to spawn a lab whose
     # Windows target cannot exist rather than hand out a broken session
     if getattr(lab, 'requires_kvm', False):
@@ -544,11 +567,32 @@ async def get_spawn_status(
 
     lab = db.query(Lab).filter(Lab.id == session.lab_id).first()
 
+    # If a launch failed because the image was not prebuilt, give the waiting
+    # student the same plain-language message the spawn pre-flight uses instead
+    # of the generic "environment hit an error" banner. Only inspect Docker for
+    # a session that actually errored, so normal polling stays cheap.
+    error_detail = None
+    if (
+        session.status == "error"
+        and lab is not None
+        and not lab_preflight.on_demand_build_allowed()
+    ):
+        missing = await asyncio.get_running_loop().run_in_executor(
+            None,
+            lab_preflight.missing_built_services,
+            lab.slug,
+            lab.compose_file or "",
+            docker_manager.client,
+        )
+        if missing:
+            error_detail = lab_preflight.STUDENT_PREBUILDING_MESSAGE
+
     return {
         "session_id": session.id,
         "lab_id": session.lab_id,
         "lab_slug": lab.slug if lab else None,
         "status": session.status,
+        "error": error_detail,
         "network_id": session.network_id,
         "network_subnet": session.network_subnet,
         "rangebox_enabled": session.rangebox_enabled,

@@ -753,7 +753,7 @@ def build_level_certificate(
     verify_path = f"/verify/certificate/{certificate_id}"
     verify_url = (base_url + verify_path) if base_url else verify_path
     public_verification = bool(
-        getattr(current_user, "certificates_public", True)
+        getattr(current_user, "certificates_public", False)
     )
     if not public_verification:
         verify_url = None
@@ -1345,7 +1345,7 @@ async def verify_certificate(
             user = db.query(User).filter(User.id == user_id).first()
             if not user:
                 continue
-            if not getattr(user, "certificates_public", True):
+            if not getattr(user, "certificates_public", False):
                 return invalid
 
             accessible = get_accessible_exclusive_lab_ids(db, user_id)

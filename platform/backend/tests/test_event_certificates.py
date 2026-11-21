@@ -90,6 +90,9 @@ def _cleanup(db, competition_id, user_id):
 def test_event_participation_placement_and_trophy_certificates(
     client, db_session, auth_headers, test_user
 ):
+    # Public verification is opt-in now; this test exercises the opted-in path.
+    test_user.certificates_public = True
+    db_session.commit()
     competition = _ended_event(db_session, test_user, badges=("ch", "fb", "cs", "pr"))
     try:
         listed = client.get(
@@ -204,7 +207,7 @@ def test_event_participation_placement_and_trophy_certificates(
         assert private.json()["verify_url"] is None
         assert private.json()["qr_code"] is None
     finally:
-        test_user.certificates_public = True
+        test_user.certificates_public = False
         db_session.commit()
         _cleanup(db_session, competition.id, test_user.id)
 

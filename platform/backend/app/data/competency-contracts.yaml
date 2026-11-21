@@ -923,7 +923,7 @@ labs:
     expected_duration_minutes: 25
     prerequisites:
     - high-school-11-1-rangebox-log-detective
-    workbook: wiki/range/high-school/CH_HS12_Grade_12_Applied_Cybersecurity/01_Community Dev Day_Community_Portal/
+    workbook: wiki/range/high-school/CH_HS12_Grade_12_Applied_Cybersecurity/01_DevFest_Community_Portal/
     competency_ids:
     - id: PROF-001
       weight: 0.4
@@ -6626,6 +6626,62 @@ labs:
     test_steps: 2
     flag_required: true
     content_version: 2.7.0
+    usage_rank: null
+    usage_completions: null
+    usage_source: null
+    review_status: baseline_derived
+    reviewed_at: null
+  ot-3-1-ics-pcap-forensics:
+    lab_id: ot-3-1-ics-pcap-forensics
+    track: OT
+    difficulty: advanced
+    expected_duration_minutes: 120
+    prerequisites: []
+    workbook: ''
+    competency_ids:
+    - id: OT-001
+      weight: 0.4
+    - id: OT-002
+      weight: 0.3
+    - id: OT-006
+      weight: 0.2
+    - id: OT-010
+      weight: 0.1
+    evidence:
+    - type: flag
+      weight: 0.35
+      source: lab.flag
+      validation: exact_match
+    - type: validation_step
+      weight: 0.35
+      source: platform/tester/manifests/ot-3-1-ics-pcap-forensics.yaml
+      validation: all_steps_pass
+    - type: analyst_answer
+      weight: 0.2
+      source: workbook.analysis_questions
+      validation: rubric
+    - type: artifact
+      weight: 0.1
+      source: submitted_artifact
+      validation: rubric
+    prohibited_collection:
+    - keystrokes
+    - mouse_movement
+    - exhaustive_terminal_history
+    assessment_reliability:
+      level: medium
+      score: 0.65
+      evidence_completeness: medium
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Baseline contract derived from the reviewed competency mapping. The evidence types and weights are explicit; live harness evidence and analyst-answer moderation are required before marking reviewed.
+    assessment_criteria:
+    - Submit the correct flag.
+    - Submit a short analyst finding (what happened, evidence, confidence, next step), not only the flag.
+    - Record the tshark filters and counts used to support each finding.
+    test_steps: 7
+    flag_required: true
+    content_version: 2.5.3
     usage_rank: null
     usage_completions: null
     usage_source: null

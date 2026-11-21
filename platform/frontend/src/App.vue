@@ -13,6 +13,13 @@
     <!-- Impersonation Banner -->
     <ImpersonationBanner />
     <ReauthDialog />
+    <PrivacyAcknowledgement
+      :show="privacyAckRequired"
+      :saving="privacyAckSaving"
+      :error="privacyAckError"
+      @acknowledge="acknowledgePrivacy"
+      @decline="logout"
+    />
 
     <!-- Theme Toggle (global): dark -> light -> high contrast -->
     <button
@@ -157,6 +164,7 @@ import AppSidebar from './components/AppSidebar.vue'
 import GuidedTour from './components/GuidedTour.vue'
 import ImpersonationBanner from './components/ImpersonationBanner.vue'
 import ReauthDialog from './components/ReauthDialog.vue'
+import PrivacyAcknowledgement from './components/PrivacyAcknowledgement.vue'
 import MobileTabBar from './components/MobileTabBar.vue'
 import ToolPanel from './components/ToolPanel.vue'
 import { useTheme } from './composables/useTheme'
@@ -182,6 +190,10 @@ const mobileNavOpen = ref(false)
 const mobileMenuButton = ref(null)
 const appVersion = ref('')
 const appRelease = ref('')
+const privacyAckRequired = ref(false)
+const privacyAckSaving = ref(false)
+const privacyAckError = ref('')
+let privacyCheckedForToken = null
 
 const openMobileNav = () => {
   mobileNavOpen.value = true
@@ -281,7 +293,7 @@ const loadPublicConfig = async () => {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   storageListener = () => { updateAuthState(); refreshWikiAuthCookie() }
   window.addEventListener('storage', storageListener)
   window.addEventListener('keydown', onGlobalKeydown)
@@ -297,7 +309,8 @@ onMounted(() => {
   // Fetch module status if authenticated
   if (authState.value.token) {
     fetchModules()
-    maybeStartTour()
+    await checkPrivacyAcknowledgement()
+    if (!privacyAckRequired.value) maybeStartTour()
   }
 })
 
@@ -365,6 +378,33 @@ async function settingsOnServer() {
   }
 }
 
+async function checkPrivacyAcknowledgement() {
+  if (isBareRoute.value || !authState.value.token) return
+  if (privacyCheckedForToken === authState.value.token) return
+  privacyCheckedForToken = authState.value.token
+  const settings = await settingsOnServer()
+  if (settings) {
+    privacyAckRequired.value = !settings.privacy_acknowledged_at
+    if (privacyAckRequired.value) privacyAckError.value = ''
+  }
+}
+
+async function acknowledgePrivacy() {
+  if (privacyAckSaving.value) return
+  privacyAckSaving.value = true
+  privacyAckError.value = ''
+  try {
+    await api.put('/auth/settings', { privacy_acknowledged: true })
+    privacyAckRequired.value = false
+    maybeStartTour()
+  } catch (error) {
+    privacyAckError.value =
+      error.response?.data?.detail || 'Could not save your acknowledgement. Please try again.'
+  } finally {
+    privacyAckSaving.value = false
+  }
+}
+
 async function persistTourSeenOnServer() {
   try {
     const { data } = await api.get('/auth/settings')
@@ -428,7 +468,17 @@ function onTourFinish() {
 }
 function startTour() { showTour.value = true }
 provide('startTour', startTour)
-watch(() => authState.value.token, (t, old) => { if (t && !old) maybeStartTour() })
+watch(() => authState.value.token, async (t, old) => {
+  if (!t) {
+    privacyAckRequired.value = false
+    privacyAckError.value = ''
+    privacyCheckedForToken = null
+    return
+  }
+  if (old) return
+  await checkPrivacyAcknowledgement()
+  if (!privacyAckRequired.value) maybeStartTour()
+})
 
 const logout = async () => {
   let postLogoutUrl = null

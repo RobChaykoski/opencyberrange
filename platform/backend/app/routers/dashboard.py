@@ -1755,7 +1755,7 @@ async def celebration_wall(
             row.achievement_type, custom_defs, competition_defs
         )
         user = row.user
-        name_mode = (getattr(user, "scoreboard_name_mode", None) or "real_name") if user else "real_name"
+        name_mode = (getattr(user, "scoreboard_name_mode", None) or "anonymous") if user else "real_name"
         # Anonymous and minor accounts never publish a stable user id, a
         # username, or a photo on the wall.
         anonymous = bool(
@@ -1808,7 +1808,7 @@ async def celebration_wall(
         user = row.user
         if user is None:
             continue
-        name_mode = getattr(user, "scoreboard_name_mode", None) or "real_name"
+        name_mode = getattr(user, "scoreboard_name_mode", None) or "anonymous"
         anonymous = name_mode == "anonymous" or bool(
             getattr(user, "is_minor", False)
         )
@@ -1959,7 +1959,7 @@ async def celebration_wall(
     )
     listed = bool(
         can_list
-        and getattr(current_user, "show_on_scoreboard", True)
+        and getattr(current_user, "show_on_scoreboard", False)
     )
     my_celebrations_received = (
         db.query(func.count(AchievementCelebration.id))
@@ -1998,7 +1998,7 @@ async def celebration_wall(
             "username": current_user.username,
             "display_name": current_user.display_name,
             "scoreboard_name": current_user.scoreboard_name,
-            "name_mode": getattr(current_user, "scoreboard_name_mode", None) or "real_name",
+            "name_mode": getattr(current_user, "scoreboard_name_mode", None) or "anonymous",
             "avatar_data": getattr(current_user, "avatar_data", None),
             "avatar_border_style": getattr(current_user, "avatar_border_style", None) or "solid",
             "avatar_border_color": getattr(current_user, "avatar_border_color", None) or "blue",

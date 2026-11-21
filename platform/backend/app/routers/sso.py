@@ -17,7 +17,7 @@ from starlette.concurrency import run_in_threadpool
 from app.database import get_db
 from app.models import IdentityProvider, SsoLoginState, User
 from app.ratelimit import create_limiter
-from app.services import ldap_auth, oidc, saml_auth, sso_flow
+from app.services import ldap_auth, network_access, oidc, saml_auth, sso_flow
 from app.services.external_identity import SSOError, provision_or_link_external_user
 from app.services.settings_service import get_setting_fresh
 
@@ -84,6 +84,31 @@ def _login_unavailable() -> RedirectResponse:
         f"{sso_flow.frontend_base_url()}/login?sso_error=unavailable",
         status_code=302,
     )
+
+
+def _network_access_denied(
+    db: Session, user: User, client_ip: str | None, request: Request
+) -> bool:
+    """Return True when the sign-in allow/deny policy rejects this identity."""
+    decision = network_access.check(
+        db,
+        "access",
+        ip_address=client_ip,
+        email=getattr(user, "email", None),
+    )
+    if decision.allowed:
+        return False
+    network_access.record_denial(
+        "access",
+        decision,
+        ip_address=client_ip,
+        email=getattr(user, "email", None),
+        username=getattr(user, "username", None),
+        path=request.url.path,
+        user_agent=request.headers.get("user-agent"),
+        request_id=request.headers.get("x-request-id"),
+    )
+    return True
 
 
 @router.get("/providers")
@@ -189,6 +214,8 @@ async def oidc_callback(
             raise oidc.OIDCError("The local account is disabled.")
         if not user.is_approved:
             return _frontend_error("pending_approval")
+        if _network_access_denied(db, user, client_ip, request):
+            return _frontend_error("access_denied")
         sso_flow.record_login(db, user, client_ip)
         try:
             oidc.create_sso_session(
@@ -290,6 +317,8 @@ async def saml_acs(
             raise SSOError("The local account is disabled.")
         if not user.is_approved:
             return _frontend_error("pending_approval")
+        if _network_access_denied(db, user, client_ip, request):
+            return _frontend_error("access_denied")
         sso_flow.record_login(db, user, client_ip)
         ticket = sso_flow.create_login_ticket(
             db, user=user, provider=provider, return_to=state_row.return_to
@@ -359,6 +388,11 @@ async def ldap_login(
     if not user.is_approved:
         raise HTTPException(
             status_code=403, detail="Account is awaiting administrator approval"
+        )
+    if _network_access_denied(db, user, client_ip, request):
+        raise HTTPException(
+            status_code=403,
+            detail="Access from this network or email domain is not permitted on this deployment.",
         )
 
     sso_flow.record_login(db, user, client_ip)

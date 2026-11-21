@@ -11,17 +11,24 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from app.auth import get_current_active_user
 from app.database import get_db
-from app.models import BreakGlassGrant, RbacRole, User
+from app.models import BreakGlassGrant, NetworkAccessRule, RbacRole, User
 from app.security.dependencies import require_permission
 from app.security.permissions import PolicyDecision
-from app.services import authorization, rbac, security_events, service_identities
+from app.services import (
+    authorization,
+    network_access,
+    rbac,
+    security_events,
+    service_identities,
+)
 from app.services import reauth as reauth_service
+from app.services.audit import AuditActions, log_admin_action
 
 router = APIRouter()
 
@@ -67,6 +74,21 @@ class ServiceIdentityCreate(BaseModel):
     scopes: list[str] = Field(default_factory=list)
     days: int = Field(90, ge=1, le=365)
     institution_id: Optional[str] = Field(None, max_length=64)
+
+
+class AccessRuleCreate(BaseModel):
+    scope: str = Field(..., max_length=16)
+    kind: str = Field(..., max_length=16)
+    value: str = Field(..., min_length=1, max_length=255)
+    action: str = Field(..., max_length=8)
+    note: Optional[str] = Field(None, max_length=255)
+    expires_at: Optional[datetime] = None
+
+
+class AccessRuleTest(BaseModel):
+    scope: str = Field(..., max_length=16)
+    ip_address: Optional[str] = Field(None, max_length=64)
+    email: Optional[str] = Field(None, max_length=320)
 
 
 def _event_payload(row) -> dict:
@@ -119,6 +141,20 @@ def _grant_payload(db: Session, row: BreakGlassGrant) -> dict:
         "review_status": row.review_status,
         "reviewed_at": row.reviewed_at.isoformat() if row.reviewed_at else None,
         "review_note": row.review_note,
+    }
+
+
+def _access_rule_payload(row: NetworkAccessRule) -> dict:
+    return {
+        "id": row.id,
+        "scope": row.scope,
+        "kind": row.kind,
+        "value": row.value,
+        "action": row.action,
+        "note": row.note,
+        "created_by_id": row.created_by_id,
+        "created_at": row.created_at.isoformat() if row.created_at else None,
+        "expires_at": row.expires_at.isoformat() if row.expires_at else None,
     }
 
 
@@ -421,6 +457,191 @@ async def revoke_service_identity(
     if not service_identities.revoke_credential(db, actor, credential_id):
         raise HTTPException(status_code=404, detail="Service credential not found.")
     return {"revoked": True, "credential_id": credential_id}
+
+
+# --- Network and registration access rules ---------------------------------
+
+
+@router.get(
+    "/access-rules",
+    summary="List sign-in and registration allow/deny rules",
+)
+async def list_access_rules(
+    scope: Optional[str] = Query(None),
+    db: Session = Depends(get_db),
+    _decision: PolicyDecision = Depends(require_permission("rbac.manage")),
+):
+    query = db.query(NetworkAccessRule)
+    if scope:
+        try:
+            scope = network_access.normalize_scope(scope)
+        except ValueError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+        query = query.filter(NetworkAccessRule.scope == scope)
+    rows = (
+        query.order_by(
+            NetworkAccessRule.scope,
+            NetworkAccessRule.action,
+            NetworkAccessRule.kind,
+            NetworkAccessRule.value,
+        )
+        .limit(1000)
+        .all()
+    )
+    return {
+        "rules": [_access_rule_payload(row) for row in rows],
+        "scopes": list(network_access.SCOPES),
+        "kinds": list(network_access.KINDS),
+        "actions": list(network_access.ACTIONS),
+    }
+
+
+@router.post(
+    "/access-rules",
+    status_code=201,
+    summary="Add a sign-in or registration allow/deny rule",
+)
+async def create_access_rule(
+    payload: AccessRuleCreate,
+    request: Request,
+    db: Session = Depends(get_db),
+    actor: User = Depends(get_current_active_user),
+    _decision: PolicyDecision = Depends(require_permission("rbac.manage")),
+    _reauth: object = Depends(
+        reauth_service.require_recent_reauth("network access rule change")
+    ),
+):
+    try:
+        scope = network_access.normalize_scope(payload.scope)
+        kind = network_access.normalize_kind(payload.kind)
+        action = network_access.normalize_action(payload.action)
+        value = network_access.normalize_value(kind, payload.value)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    expires_at = payload.expires_at
+    if expires_at is not None:
+        if expires_at.tzinfo is not None:
+            expires_at = expires_at.astimezone(timezone.utc).replace(tzinfo=None)
+        if expires_at <= datetime.now(timezone.utc).replace(tzinfo=None):
+            raise HTTPException(
+                status_code=422, detail="expires_at must be in the future."
+            )
+
+    duplicate = (
+        db.query(NetworkAccessRule)
+        .filter(
+            NetworkAccessRule.scope == scope,
+            NetworkAccessRule.kind == kind,
+            NetworkAccessRule.value == value,
+            NetworkAccessRule.action == action,
+        )
+        .first()
+    )
+    if duplicate is not None:
+        raise HTTPException(
+            status_code=409,
+            detail="An identical rule already exists for this scope.",
+        )
+
+    row = NetworkAccessRule(
+        scope=scope,
+        kind=kind,
+        value=value,
+        action=action,
+        note=(payload.note or "").strip()[:255] or None,
+        created_by_id=actor.id,
+        expires_at=expires_at,
+    )
+    db.add(row)
+    db.commit()
+    db.refresh(row)
+
+    log_admin_action(
+        action=AuditActions.ACCESS_RULE_CREATED,
+        admin_user_id=actor.id,
+        admin_username=actor.username,
+        target_type="network_access_rule",
+        target_id=row.id,
+        target_identifier=f"{scope}:{action}:{value}",
+        details={
+            "scope": scope,
+            "kind": kind,
+            "value": value,
+            "action": action,
+            "note": row.note,
+            "expires_at": row.expires_at.isoformat() if row.expires_at else None,
+        },
+        ip_address=request.client.host if request.client else None,
+    )
+    return _access_rule_payload(row)
+
+
+@router.delete(
+    "/access-rules/{rule_id}",
+    summary="Remove a sign-in or registration allow/deny rule",
+)
+async def delete_access_rule(
+    rule_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+    actor: User = Depends(get_current_active_user),
+    _decision: PolicyDecision = Depends(require_permission("rbac.manage")),
+    _reauth: object = Depends(
+        reauth_service.require_recent_reauth("network access rule change")
+    ),
+):
+    row = db.query(NetworkAccessRule).filter(NetworkAccessRule.id == rule_id).first()
+    if row is None:
+        raise HTTPException(status_code=404, detail="Access rule not found.")
+    details = {
+        "scope": row.scope,
+        "kind": row.kind,
+        "value": row.value,
+        "action": row.action,
+    }
+    identifier = f"{row.scope}:{row.action}:{row.value}"
+    db.delete(row)
+    db.commit()
+    log_admin_action(
+        action=AuditActions.ACCESS_RULE_DELETED,
+        admin_user_id=actor.id,
+        admin_username=actor.username,
+        target_type="network_access_rule",
+        target_id=rule_id,
+        target_identifier=identifier,
+        details=details,
+        ip_address=request.client.host if request.client else None,
+    )
+    return {"deleted": True, "rule_id": rule_id}
+
+
+@router.post(
+    "/access-rules/test",
+    summary="Explain how the current rules evaluate one request",
+)
+async def test_access_rule(
+    payload: AccessRuleTest,
+    db: Session = Depends(get_db),
+    _decision: PolicyDecision = Depends(require_permission("rbac.manage")),
+):
+    try:
+        scope = network_access.normalize_scope(payload.scope)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    decision = network_access.check(
+        db,
+        scope,
+        ip_address=payload.ip_address,
+        email=payload.email,
+    )
+    return {
+        "scope": scope,
+        "allowed": decision.allowed,
+        "reason": decision.reason or "allowed",
+        "rule_id": decision.rule_id,
+        "rule_value": decision.rule_value,
+    }
 
 
 # --- Break-glass -----------------------------------------------------------

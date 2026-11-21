@@ -89,6 +89,40 @@
 
       <CompetencyRadar v-if="competency" :data="competency" />
 
+      <section
+        v-if="completionRows.length"
+        class="completion-chart"
+        aria-labelledby="completion-chart-title"
+      >
+        <div class="analytics-section-head">
+          <div>
+            <h3 id="completion-chart-title">Completion by exercise</h3>
+            <p>
+              The {{ completionRows.length }} lowest-completion assigned exercises.
+              Suppressed exercises are omitted.
+            </p>
+          </div>
+          <span class="analytics-muted">Percentage of enrolled learners</span>
+        </div>
+        <EChart
+          :option="completionOption"
+          :height="completionHeight"
+          :aria-label="completionAriaLabel"
+        />
+        <table class="sr-only">
+          <caption>Completion rate by assigned exercise</caption>
+          <thead>
+            <tr><th scope="col">Exercise</th><th scope="col">Completion</th></tr>
+          </thead>
+          <tbody>
+            <tr v-for="row in completionRows" :key="`completion-${row.lab_id}`">
+              <th scope="row">{{ row.lab_name }}</th>
+              <td>{{ row.completion_rate }}%</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
       <ExerciseHeatmap :exercises="exercises" />
 
       <div class="analytics-section-head">
@@ -192,6 +226,14 @@ import { computed, onMounted, ref } from 'vue'
 import axios from '../api/axios'
 import CompetencyRadar from './CompetencyRadar.vue'
 import ExerciseHeatmap from './ExerciseHeatmap.vue'
+import EChart from './EChart.vue'
+import {
+  ECHART_COLORS,
+  categoryAxis,
+  chartGrid,
+  tooltipStyle,
+  valueAxis,
+} from './charts/echartsTheme'
 
 const props = defineProps({
   courseId: { type: [Number, String], required: true },
@@ -255,6 +297,93 @@ const teachingSignals = computed(() => {
   return signals
 })
 
+const allCompletionRows = computed(() =>
+  exercises.value
+    .filter(
+      (row) =>
+        row.cohort_state === 'available' &&
+        row.completion_rate !== null &&
+        row.completion_rate !== undefined
+    )
+    .sort((a, b) => a.completion_rate - b.completion_rate)
+)
+
+// A course can assign dozens of exercises. The chart is an action prompt, so
+// show the lowest-completion rows and leave the full table below for detail.
+const completionRows = computed(() => allCompletionRows.value.slice(0, 20))
+
+const completionHeight = computed(
+  () => `${Math.min(560, Math.max(200, completionRows.value.length * 26 + 24))}px`
+)
+
+const completionColor = (value) =>
+  value >= 80
+    ? ECHART_COLORS.success
+    : value >= 50
+      ? ECHART_COLORS.warning
+      : ECHART_COLORS.danger
+
+const completionOption = computed(() => {
+  // ECharts puts the first category at the bottom. Reverse the ascending list
+  // so the lowest-completion exercise appears at the top of the chart.
+  const rows = [...completionRows.value].reverse()
+  return {
+    animation: false,
+    tooltip: {
+      ...tooltipStyle,
+      trigger: 'axis',
+      axisPointer: { type: 'shadow' },
+      valueFormatter: (value) => `${value}%`,
+    },
+    grid: { ...chartGrid, top: 8, right: 48, bottom: 8, left: 8 },
+    xAxis: {
+      ...valueAxis,
+      max: 100,
+      axisLabel: { ...valueAxis.axisLabel, formatter: '{value}%' },
+    },
+    yAxis: {
+      ...categoryAxis,
+      type: 'category',
+      data: rows.map((row) => row.lab_name),
+      axisLabel: {
+        ...categoryAxis.axisLabel,
+        width: 220,
+        overflow: 'truncate',
+      },
+    },
+    series: [
+      {
+        name: 'Completion',
+        type: 'bar',
+        barMaxWidth: 18,
+        data: rows.map((row) => ({
+          value: row.completion_rate,
+          itemStyle: {
+            color: completionColor(row.completion_rate),
+            borderRadius: [0, 4, 4, 0],
+          },
+        })),
+        label: {
+          show: true,
+          position: 'right',
+          color: ECHART_COLORS.text,
+          formatter: '{c}%',
+        },
+      },
+    ],
+  }
+})
+
+const completionAriaLabel = computed(() => {
+  if (!completionRows.value.length) {
+    return 'Completion by exercise: no data available.'
+  }
+  const summary = completionRows.value
+    .map((row) => `${row.lab_name}: ${row.completion_rate} percent`)
+    .join('; ')
+  return `Completion by exercise, lowest first. ${summary}.`
+})
+
 const load = async () => {
   loading.value = true
   error.value = ''
@@ -286,6 +415,13 @@ onMounted(load)
 
 .course-analytics__error {
   color: var(--danger);
+}
+
+.completion-chart {
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-secondary);
 }
 
 .analytics-suppressed {

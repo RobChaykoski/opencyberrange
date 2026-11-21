@@ -330,8 +330,13 @@
         Aggregate activity for the courses you teach. This chart does not rank learners
         or expose an individual growth score.
       </p>
-      <div class="chart-container" aria-hidden="true">
-        <Line v-if="pulseData.labels.length" :data="pulseData" :options="chartOptions" />
+      <div class="chart-container">
+        <EChart
+          v-if="pulseData.labels.length"
+          :option="pulseOption"
+          height="280px"
+          :aria-label="pulseAriaLabel"
+        />
         <div v-else class="chart-empty">No activity data yet</div>
       </div>
       <table v-if="pulseData.labels.length" class="sr-only">
@@ -434,26 +439,22 @@
 import { ref, onMounted, computed, watch } from 'vue'
 import MobileEfficiencyNotice from '../components/MobileEfficiencyNotice.vue'
 import { useRouter } from 'vue-router'
-import { Line } from 'vue-chartjs'
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Filler,
-  Tooltip,
-  Legend
-} from 'chart.js'
 import axios from '../api/axios'
+import EChart from '../components/EChart.vue'
 import ProgrammeOverview from '../components/ProgrammeOverview.vue'
 import InstructorReadinessPanel from '../components/InstructorReadinessPanel.vue'
 import PrivacyText from '../components/PrivacyText.vue'
 import { usePoll } from '../composables/usePoll'
 import { isAdmin } from '../utils/roles'
 import { downloadBlob, filenameFromDisposition } from '../utils/download'
-
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Filler, Tooltip, Legend)
+import {
+  ECHART_COLORS,
+  categoryAxis,
+  chartGrid,
+  legendStyle,
+  tooltipStyle,
+  valueAxis,
+} from '../components/charts/echartsTheme'
 
 const router = useRouter()
 const showHealthCard = isAdmin()
@@ -673,38 +674,59 @@ const pulseData = computed(() => {
   }
 })
 
-const chartOptions = {
-  responsive: true,
-  maintainAspectRatio: false,
-  // No animation on data refresh: the 15s auto-refresh replaces the dataset,
-  // and animating every swap makes the whole chart flash (the dashboard flicker).
-  animation: false,
-  interaction: { mode: 'index', intersect: false },
-  plugins: {
-    legend: {
-      position: 'top',
-      labels: { color: '#94a3b8', usePointStyle: true, pointStyle: 'circle', padding: 20 },
+const pulseOption = computed(() => {
+  const labels = pulseData.value.labels
+  const sessions = pulseData.value.datasets?.[0]?.data || []
+  const flags = pulseData.value.datasets?.[1]?.data || []
+
+  return {
+    // The dashboard refreshes every 15s. Animating a full dataset swap makes
+    // the panel flash, so updates are intentionally instant.
+    animation: false,
+    color: [ECHART_COLORS.accent, ECHART_COLORS.success],
+    tooltip: { ...tooltipStyle, trigger: 'axis' },
+    legend: { ...legendStyle, data: ['Exercise Sessions', 'Flags Submitted'] },
+    grid: chartGrid,
+    xAxis: {
+      ...categoryAxis,
+      data: labels,
+      axisLabel: { ...categoryAxis.axisLabel, hideOverlap: true },
     },
-    tooltip: {
-      backgroundColor: '#1e293b',
-      titleColor: '#f1f5f9',
-      bodyColor: '#cbd5e1',
-      borderColor: '#334155',
-      borderWidth: 1,
-    },
-  },
-  scales: {
-    x: {
-      grid: { color: '#334155', drawBorder: false },
-      ticks: { color: '#64748b', maxTicksLimit: 12 },
-    },
-    y: {
-      grid: { color: '#334155', drawBorder: false },
-      ticks: { color: '#64748b', precision: 0 },
-      beginAtZero: true,
-    },
-  },
-}
+    yAxis: valueAxis,
+    series: [
+      {
+        name: 'Exercise Sessions',
+        type: 'line',
+        smooth: true,
+        showSymbol: false,
+        symbolSize: 6,
+        data: sessions,
+        lineStyle: { width: 2 },
+        areaStyle: { opacity: 0.12 },
+      },
+      {
+        name: 'Flags Submitted',
+        type: 'line',
+        smooth: true,
+        showSymbol: false,
+        symbolSize: 6,
+        data: flags,
+        lineStyle: { width: 2 },
+        areaStyle: { opacity: 0.12 },
+      },
+    ],
+  }
+})
+
+const pulseAriaLabel = computed(() => {
+  const labels = pulseData.value.labels
+  if (!labels.length) return 'The Pulse: no activity data yet.'
+  const sessions = pulseData.value.datasets?.[0]?.data || []
+  const flags = pulseData.value.datasets?.[1]?.data || []
+  const totalSessions = sessions.reduce((sum, value) => sum + (Number(value) || 0), 0)
+  const totalFlags = flags.reduce((sum, value) => sum + (Number(value) || 0), 0)
+  return `The Pulse over ${labels.length} time buckets: ${totalSessions} exercise sessions and ${totalFlags} flags submitted.`
+})
 
 const dashboardHealthClass = computed(() =>
   dashboardHealthStatus.value === 'ok' ? 'healthy' : dashboardHealthStatus.value

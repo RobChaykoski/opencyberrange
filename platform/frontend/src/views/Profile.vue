@@ -993,6 +993,37 @@
           </div>
         </div>
 
+        <div class="profile-section">
+          <h2 class="section-title">Celebration effects</h2>
+          <p class="help-text" style="margin: -0.5rem 0 1rem;">
+            Choose the animation shown when you capture a flag. The success summary
+            is always shown; the animation can be turned off, and motion is skipped
+            automatically when your device asks for reduced motion.
+          </p>
+          <div class="form-group">
+            <label for="flag-celebration-effect">Flag captured effect</label>
+            <select
+              id="flag-celebration-effect"
+              v-model="celebrationChoice"
+              class="form-input"
+              :disabled="celebrationSaving"
+              @change="saveCelebrationChoice"
+            >
+              <option v-for="option in celebrationOptions" :key="option.value" :value="option.value">
+                {{ option.label }}
+              </option>
+            </select>
+            <p class="help-text">{{ celebrationChoiceDescription }}</p>
+          </div>
+          <p
+            v-if="celebrationMessage"
+            :class="celebrationError ? 'error-message' : 'success-message'"
+            role="status"
+          >
+            {{ celebrationMessage }}
+          </p>
+        </div>
+
         <!-- Exercise Studio LLM connections (instructor/admin, editions that ship Studio) -->
         <div class="profile-section" v-if="isInstructor && exerciseAuthoring">
           <h2 class="section-title">Exercise Studio</h2>
@@ -1340,12 +1371,26 @@ import ChevronIcon from '../components/icons/ChevronIcon.vue'
 import XIcon from '../components/icons/XIcon.vue'
 import { getUserTimeZone } from '../utils/timezone'
 import { useCareerGoal } from '../composables/useCareerGoal'
+import { useCelebration } from '../composables/useCelebration'
 import { CERTIFICATION_PATHS } from '../data/certificationPaths'
 
 const route = useRoute()
 const router = useRouter()
 const { exerciseAuthoring, fetchModules } = useModules()
 const { selectedRole, setGoal } = useCareerGoal()
+const {
+  effect: celebrationEffect,
+  saving: celebrationSaving,
+  options: celebrationOptions,
+  load: loadCelebrationEffect,
+  setEffect: setCelebrationEffect,
+} = useCelebration()
+const celebrationChoice = ref('fireworks')
+const celebrationMessage = ref('')
+const celebrationError = ref(false)
+const celebrationChoiceDescription = computed(
+  () => celebrationOptions.find((option) => option.value === celebrationChoice.value)?.description || ''
+)
 const user = ref(null)
 const { fetchVpnStatus, isVpnRegistered } = useVpnStatus()
 
@@ -1845,6 +1890,22 @@ async function toggleHiddenAchievements() {
     await fetchSummary()
   } finally {
     hiddenAchievementsSaving.value = false
+  }
+}
+
+async function saveCelebrationChoice() {
+  celebrationMessage.value = ''
+  celebrationError.value = false
+  try {
+    await setCelebrationEffect(celebrationChoice.value)
+    celebrationMessage.value = 'Celebration effect saved.'
+  } catch (error) {
+    celebrationError.value = true
+    celebrationMessage.value = responseMessage(
+      error,
+      'Could not save your celebration effect.'
+    )
+    celebrationChoice.value = celebrationEffect.value
   }
 }
 const otherAchievements = computed(
@@ -2649,6 +2710,9 @@ onMounted(() => {
   fetchSummary()
   fetchBadges()
   fetchEnrolledCourses()
+  loadCelebrationEffect().then((value) => {
+    celebrationChoice.value = value || celebrationEffect.value
+  })
   nextTick(() => {
     document.getElementById(`profile-tab-${activeTab.value}`)?.scrollIntoView({
       inline: 'nearest',

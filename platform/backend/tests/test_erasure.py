@@ -85,6 +85,11 @@ def test_erasure_preserves_other_students_achievements_and_competition(
     instructor = _user(db_session, role="instructor", password_hash=test_password, suffix=f"i{suffix}")
     alice = _user(db_session, password_hash=test_password, suffix=f"a{suffix}")
     bob = _user(db_session, password_hash=test_password, suffix=f"b{suffix}")
+    # Bob has to be visible on the public wall and competition leaderboard;
+    # those surfaces exclude learners who have not opted in.
+    bob.show_on_scoreboard = True
+    bob.scoreboard_name_mode = "real_name"
+    db_session.commit()
     course = _course(db_session, instructor, suffix)
     now = datetime.now(timezone.utc)
     alice_id, alice_username = alice.id, alice.username

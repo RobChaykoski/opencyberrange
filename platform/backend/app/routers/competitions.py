@@ -393,7 +393,7 @@ def _leaderboard(
 
         user = participant.user
         display_name = (
-            user.scoreboard_name if getattr(user, "show_on_scoreboard", True)
+            user.scoreboard_name if getattr(user, "show_on_scoreboard", False)
             else "Anonymous participant"
         )
         anonymous = display_name == "Anonymous participant"

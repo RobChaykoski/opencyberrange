@@ -79,6 +79,7 @@ from app.services.export_labels import csv_with_labels
 from app.services.activity import log_activity, EventTypes
 from app.services.achievements import resolve_achievement_label
 from app.services.backups import backup_directory, create_database_backup
+from app.services.backup_sql import UnsafeBackupError, validate_sql_dump
 from app.services.erasure import erase_user, ErasureBlocked
 from app.services.password_breach import enforce_password_breach_check
 from app.services.file_lock import open_locked
@@ -708,6 +709,18 @@ async def create_user(
 
     await enforce_password_breach_check(db, user_data.password)
 
+    age_band = user_data.age_band
+    consent_reference = (user_data.parental_consent_reference or "").strip() or None
+    if age_band == "under_13" and not consent_reference:
+        raise HTTPException(
+            status_code=422,
+            detail=(
+                "An institution parental or guardian consent reference is "
+                "required to create an under-13 account."
+            ),
+        )
+    is_minor = age_band in {"under_13", "13_15", "16_17"}
+
     user = User(
         username=user_data.username,
         email=user_data.email,
@@ -719,6 +732,18 @@ async def create_user(
         is_admin=is_admin,
         role=role,
         institution_id=(user_data.institution_id or admin.institution_id or "default"),
+        age_band=age_band,
+        is_minor=is_minor,
+        # Every new account starts private. Public scoreboards and certificate
+        # verification require an explicit opt-in by the account holder.
+        show_on_scoreboard=False,
+        scoreboard_name_mode="anonymous",
+        certificates_public=False,
+        email_notifications=False,
+        parental_consent_reference=consent_reference,
+        parental_consent_recorded_at=(
+            datetime.now(timezone.utc) if consent_reference else None
+        ),
     )
     user.password_rehashed_at = datetime.now(timezone.utc)
     db.add(user)
@@ -733,7 +758,15 @@ async def create_user(
         target_type="user",
         target_id=user.id,
         target_identifier=user.username,
-        details={"email": user.email, "is_admin": user.is_admin, "role": user.role, "is_approved": user.is_approved},
+        details={
+            "email": user.email,
+            "is_admin": user.is_admin,
+            "role": user.role,
+            "is_approved": user.is_approved,
+            "age_band": user.age_band,
+            "is_minor": user.is_minor,
+            "parental_consent_recorded": bool(user.parental_consent_recorded_at),
+        },
         ip_address=request.client.host if request.client else None
     )
     
@@ -873,7 +906,47 @@ async def update_user(
         except AttributeError:
             # Column doesn't exist yet - skip this update
             logger.warning("must_change_password column does not exist in database. Migration required.")
-    
+
+    # Privacy and age band. Under-13 accounts must retain a consent reference.
+    # model_fields_set distinguishes "field omitted" from an explicit null used
+    # to clear an age band back to "not stated".
+    reference_provided = "parental_consent_reference" in user_request.model_fields_set
+    age_band_provided = "age_band" in user_request.model_fields_set
+    new_reference = (
+        (user_request.parental_consent_reference or "").strip() or None
+        if reference_provided
+        else user.parental_consent_reference
+    )
+    new_age_band = user_request.age_band if age_band_provided else user.age_band
+    if new_age_band == "under_13" and not new_reference:
+        raise HTTPException(
+            status_code=422,
+            detail=(
+                "An institution parental or guardian consent reference is "
+                "required for an under-13 account."
+            ),
+        )
+    if reference_provided:
+        changes["parental_consent_reference"] = {
+            "old": bool(user.parental_consent_reference),
+            "new": bool(new_reference),
+        }
+        user.parental_consent_reference = new_reference
+        user.parental_consent_recorded_at = (
+            datetime.now(timezone.utc) if new_reference else None
+        )
+    if age_band_provided:
+        old_age_band = user.age_band
+        old_is_minor = bool(user.is_minor)
+        changes["age_band"] = {"old": old_age_band, "new": new_age_band}
+        user.age_band = new_age_band
+        user.is_minor = new_age_band in {"under_13", "13_15", "16_17"}
+        changes["is_minor"] = {"old": old_is_minor, "new": bool(user.is_minor)}
+        if user.is_minor:
+            user.show_on_scoreboard = False
+            user.scoreboard_name_mode = "anonymous"
+            user.certificates_public = False
+
     if any(
         key in changes
         for key in ("role", "institution_id", "is_active", "is_approved", "is_admin")
@@ -4107,6 +4180,20 @@ def _restore_database_from_path(
     import subprocess
     from urllib.parse import urlparse
 
+    # Validate before the safety snapshot: a rejected upload should not cause
+    # any database work at all.
+    try:
+        validate_sql_dump(path)
+    except UnsafeBackupError as exc:
+        logger.warning("Rejected unsafe database restore %s: %s", filename, exc)
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "This backup contains SQL that is not allowed in a restore. "
+                "It was not applied."
+            ),
+        )
+
     # A restore replaces every account and record. Keep a safety snapshot of
     # the current database first; if that fails, do not overwrite it.
     try:
@@ -4119,7 +4206,10 @@ def _restore_database_from_path(
             detail="Could not create a safety snapshot before the restore.",
         )
 
-    db_url = settings.DATABASE_URL
+    # Restores run as the schema owner, never the request-time role and never a
+    # superuser. The fallback keeps single-role development installs working;
+    # production sets MIGRATOR_DATABASE_URL.
+    db_url = (settings.MIGRATOR_DATABASE_URL or "").strip() or settings.DATABASE_URL
     parsed = urlparse(db_url)
 
     env = os.environ.copy()
@@ -4129,6 +4219,8 @@ def _restore_database_from_path(
         result = subprocess.run(
             [
                 "psql",
+                "-X",
+                "--no-psqlrc",
                 "-h", parsed.hostname or "db",
                 "-p", str(parsed.port or 5432),
                 "-U", parsed.username or "labuser",
@@ -4304,8 +4396,11 @@ def system_status(
 
     items = []
 
-    def add(name, status, detail):
-        items.append({"name": name, "status": status, "detail": detail})
+    def add(name, status, detail, commands=None):
+        item = {"name": name, "status": status, "detail": detail}
+        if commands:
+            item["commands"] = list(commands)
+        items.append(item)
 
     # 1. Platform + 2. Database (single DB round-trip)
     try:
@@ -4339,7 +4434,24 @@ def system_status(
     except Exception:
         add("Active sessions", "warning", "Could not read active sessions.")
 
-    # 5. Backups -- same dir the backup writer and the Backups tab use.
+    # 5. Prebuilt lab images. When on-demand builds are disabled, a student who
+    #    opens an unbuilt lab is refused; this surfaces the exact command an
+    #    operator must run for each lab a student recently tried to launch.
+    try:
+        from app.services import lab_preflight
+
+        item = lab_preflight.prebuild_health(db, docker_manager.client)
+        if item:
+            add(
+                item["name"],
+                item["status"],
+                item["detail"],
+                commands=item.get("commands"),
+            )
+    except Exception:
+        add("Lab images", "warning", "Could not check prebuilt lab images.")
+
+    # 6. Backups -- same dir the backup writer and the Backups tab use.
     try:
         import os
         bdir = backup_directory()
@@ -4360,7 +4472,7 @@ def system_status(
     except Exception:
         add("Backups", "warning", "Could not check backups.")
 
-    # 6. Data-integrity ledger (live summary; full chain and quality checks run
+    # 7. Data-integrity ledger (live summary; full chain and quality checks run
     #    from the host schedule).
     try:
         from app.services.db_integrity import ledger_summary
@@ -4371,7 +4483,7 @@ def system_status(
     except Exception:
         add("Data integrity", "warning", "Could not read the integrity ledger.")
 
-    # 7. Core secrets (rolled up; VPN/operator items live in Advanced)
+    # 8. Core secrets (rolled up; VPN/operator items live in Advanced)
     try:
         jwt = settings.JWT_SECRET or ""
         db_url = settings.DATABASE_URL or ""
@@ -5215,7 +5327,10 @@ def _retention_counts(db, course_id: int) -> dict:
         "exercise_quiz_attempts",
         "achievements",
     )
-    return {key: int(value or 0) for key, value in zip(keys, row)}
+    return {
+        key: int(value or 0)
+        for key, value in zip(keys, row, strict=False)
+    }
 
 
 @router.get("/retention/due")

@@ -110,6 +110,10 @@ services:
       WG_NETWORK_BASE: ${WG_NETWORK_BASE:-10.100}
       WG_CLIENT_BASE: ${WG_CLIENT_BASE:-10.255}
       LABS_HOST_PATH: ${LABS_HOST_PATH}
+      # Prebuild every lab image in production. When false, a missing image
+      # produces a friendly student message and an admin health action instead
+      # of a slow build during a spawn.
+      LAB_ALLOW_ON_DEMAND_BUILD: ${LAB_ALLOW_ON_DEMAND_BUILD:-true}
       SERVER_PUBLIC_HOST: ${SERVER_PUBLIC_HOST:-localhost}
       WIKI_COOKIE_DOMAIN: ${WIKI_COOKIE_DOMAIN:-}
       # Stable external origin used to build SSO callback URLs. Leave blank to

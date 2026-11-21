@@ -2,7 +2,7 @@
 
 from datetime import datetime, timezone
 
-from app.services.community_events import parse_ics
+from app.services.community_events import SWOCTS_CALENDAR_URL, parse_ics
 
 
 SAMPLE = """BEGIN:VCALENDAR
@@ -84,6 +84,53 @@ END:VCALENDAR
 """
     events = parse_ics(feed, now=datetime(2026, 12, 1, tzinfo=timezone.utc))
     assert [event["title"] for event in events] == ["Valid event"]
+
+
+def test_parse_ics_uses_location_url_and_strips_tracking():
+    feed = """BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART:20261208T180000Z
+DTEND:20261208T190000Z
+UID:location-url-1
+SUMMARY:Cyber Hive meetup
+LOCATION:https://www.eventbrite.ca/e/cyber-hive-tickets-123?utm_source=calendar&aff=email
+END:VEVENT
+END:VCALENDAR
+"""
+    events = parse_ics(feed, now=datetime(2026, 12, 1, tzinfo=timezone.utc))
+    assert events[0]["url"] == "https://www.eventbrite.ca/e/cyber-hive-tickets-123"
+
+
+def test_parse_ics_prefers_event_platform_link_from_description():
+    feed = """BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART:20261208T180000Z
+DTEND:20261208T190000Z
+UID:description-url-1
+SUMMARY:Workshop
+DESCRIPTION:<p><a href="https://tracker.example.com/pixel">Register</a></p><p>https://www.eventbrite.ca/e/workshop-tickets-456</p>
+END:VEVENT
+END:VCALENDAR
+"""
+    events = parse_ics(feed, now=datetime(2026, 12, 1, tzinfo=timezone.utc))
+    assert events[0]["url"] == "https://www.eventbrite.ca/e/workshop-tickets-456"
+
+
+def test_parse_ics_rejects_unsafe_event_links():
+    feed = """BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART:20261208T180000Z
+DTEND:20261208T190000Z
+UID:unsafe-url-1
+SUMMARY:Unsafe link
+URL:javascript:alert(1)
+LOCATION:http://127.0.0.1/admin
+DESCRIPTION:https://user:pass@example.com/private
+END:VEVENT
+END:VCALENDAR
+"""
+    events = parse_ics(feed, now=datetime(2026, 12, 1, tzinfo=timezone.utc))
+    assert events[0]["url"] == SWOCTS_CALENDAR_URL
 
 
 def test_community_events_endpoint(client, monkeypatch):

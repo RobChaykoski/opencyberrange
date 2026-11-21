@@ -24,6 +24,13 @@ def celebration_data(db_session, test_user):
     suffix = uuid.uuid4().hex[:8]
     now = datetime.now(timezone.utc)
 
+    # The wall only projects learners who opted in to a scoreboard name. The
+    # personal "my award" corner still needs this opt-in so the first-blood
+    # entry is not filtered out before the test can see it.
+    test_user.show_on_scoreboard = True
+    test_user.scoreboard_name_mode = "real_name"
+    db_session.commit()
+
     instructor = User(
         username=f"celebration_instructor_{suffix}",
         email=f"celebration_instructor_{suffix}@university.edu",
@@ -58,6 +65,7 @@ def celebration_data(db_session, test_user):
         role="student",
         is_approved=True,
         show_on_scoreboard=True,
+        scoreboard_name_mode="real_name",
         avatar_data="data:image/png;base64,cHl0ZXN0LWF2YXRhcg==",
         avatar_border_style="glow",
         avatar_border_color="gold",
