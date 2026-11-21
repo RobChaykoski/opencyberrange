@@ -10,6 +10,7 @@ import logging
 import os
 import shutil
 import subprocess
+import tempfile
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 from urllib.parse import urlparse
@@ -125,6 +126,45 @@ def _backup_database_url() -> str:
     )
 
 
+# The PostgreSQL 17 pg_dump client emits this setting even when it dumps a
+# PostgreSQL 15 server. PG15 rejects the parameter, so a restore with
+# ON_ERROR_STOP aborts on the first few lines. Strip it while the dump is
+# written; the supported server line is PostgreSQL 15.
+_PG17_ONLY_DUMP_SETTINGS = (b"SET transaction_timeout = 0;",)
+
+
+def strip_unsupported_dump_settings(path: str) -> bool:
+    """Remove PG17-only SET lines from a plain SQL dump.
+
+    Returns ``True`` when the file changed. The replacement is atomic and keeps
+    the dump at mode 600, so a failed rewrite cannot leave a partial backup.
+    """
+    directory = os.path.dirname(path) or "."
+    fd, tmp_path = tempfile.mkstemp(
+        prefix=".ocr-backup-", suffix=".tmp", dir=directory
+    )
+    changed = False
+    try:
+        with open(path, "rb") as src, os.fdopen(fd, "wb") as dst:
+            for line in src:
+                if line.strip() in _PG17_ONLY_DUMP_SETTINGS:
+                    changed = True
+                    continue
+                dst.write(line)
+        if changed:
+            os.chmod(tmp_path, 0o600)
+            os.replace(tmp_path, path)
+        else:
+            os.unlink(tmp_path)
+    except Exception:
+        try:
+            os.unlink(tmp_path)
+        except OSError:
+            pass
+        raise
+    return changed
+
+
 def create_database_backup(timestamp: Optional[str] = None) -> dict:
     """Run pg_dump into the shared snapshot directory.
 
@@ -170,6 +210,8 @@ def create_database_backup(timestamp: Optional[str] = None) -> dict:
         except OSError:
             pass
         raise RuntimeError(result.stderr or "pg_dump failed")
+
+    strip_unsupported_dump_settings(backup_file)
 
     ledger_source = os.environ.get(
         "ERASURE_LEDGER_PATH", "/workbook/erasure-ledger.jsonl"
