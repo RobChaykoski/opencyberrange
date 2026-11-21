@@ -4376,8 +4376,11 @@ def system_status(
 
     items = []
 
-    def add(name, status, detail):
-        items.append({"name": name, "status": status, "detail": detail})
+    def add(name, status, detail, commands=None):
+        item = {"name": name, "status": status, "detail": detail}
+        if commands:
+            item["commands"] = list(commands)
+        items.append(item)
 
     # 1. Platform + 2. Database (single DB round-trip)
     try:
@@ -4411,7 +4414,24 @@ def system_status(
     except Exception:
         add("Active sessions", "warning", "Could not read active sessions.")
 
-    # 5. Backups -- same dir the backup writer and the Backups tab use.
+    # 5. Prebuilt lab images. When on-demand builds are disabled, a student who
+    #    opens an unbuilt lab is refused; this surfaces the exact command an
+    #    operator must run for each lab a student recently tried to launch.
+    try:
+        from app.services import lab_preflight
+
+        item = lab_preflight.prebuild_health(db, docker_manager.client)
+        if item:
+            add(
+                item["name"],
+                item["status"],
+                item["detail"],
+                commands=item.get("commands"),
+            )
+    except Exception:
+        add("Lab images", "warning", "Could not check prebuilt lab images.")
+
+    # 6. Backups -- same dir the backup writer and the Backups tab use.
     try:
         import os
         bdir = backup_directory()
@@ -4432,7 +4452,7 @@ def system_status(
     except Exception:
         add("Backups", "warning", "Could not check backups.")
 
-    # 6. Data-integrity ledger (live summary; full chain and quality checks run
+    # 7. Data-integrity ledger (live summary; full chain and quality checks run
     #    from the host schedule).
     try:
         from app.services.db_integrity import ledger_summary
@@ -4443,7 +4463,7 @@ def system_status(
     except Exception:
         add("Data integrity", "warning", "Could not read the integrity ledger.")
 
-    # 7. Core secrets (rolled up; VPN/operator items live in Advanced)
+    # 8. Core secrets (rolled up; VPN/operator items live in Advanced)
     try:
         jwt = settings.JWT_SECRET or ""
         db_url = settings.DATABASE_URL or ""

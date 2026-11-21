@@ -16,6 +16,7 @@ class EventTypes:
     LAB_PAUSED = "lab_paused"
     LAB_RESUMED = "lab_resumed"
     LAB_COMPLETED = "lab_completed"
+    LAB_PREBUILD_REQUIRED = "lab_prebuild_required"
     FLAG_CORRECT = "flag_correct"
     FLAG_INCORRECT = "flag_incorrect"
     HINT_USED = "hint_used"
@@ -56,6 +57,7 @@ EVENT_LABELS = {
     EventTypes.LAB_PAUSED: "Paused Lab Clock",
     EventTypes.LAB_RESUMED: "Resumed Lab Clock",
     EventTypes.LAB_COMPLETED: "Completed Lab",
+    EventTypes.LAB_PREBUILD_REQUIRED: "Lab Needs Prebuild",
     EventTypes.FLAG_CORRECT: "Solved",
     EventTypes.FLAG_INCORRECT: "Wrong Flag",
     EventTypes.HINT_USED: "Used Hint",

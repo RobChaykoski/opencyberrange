@@ -2652,6 +2652,9 @@
                     <span class="security-check-name">{{ item.name }}</span>
                   </div>
                   <div class="security-check-detail">{{ item.detail }}</div>
+                  <div v-if="item.commands && item.commands.length" class="security-check-commands">
+                    <code v-for="cmd in item.commands" :key="cmd">{{ cmd }}</code>
+                  </div>
                   <button
                     v-if="item.name === 'Data integrity'"
                     type="button"
@@ -14514,6 +14517,26 @@ watch(activeTab, (tab) => {
   font-size: 0.8125rem;
   color: var(--text-secondary);
   line-height: 1.4;
+}
+
+.security-check-commands {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-top: 0.6rem;
+}
+
+.security-check-commands code {
+  display: block;
+  padding: 0.4rem 0.55rem;
+  border: 1px solid var(--border-color, #334155);
+  border-radius: 0.35rem;
+  background: var(--bg-primary, #0f172a);
+  color: var(--text-primary);
+  font-size: 0.75rem;
+  line-height: 1.35;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .security-check-action {

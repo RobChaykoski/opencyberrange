@@ -195,6 +195,21 @@ class RangeBoxImageUnavailableError(Exception):
         )
 
 
+class LabImageNotPreparedError(Exception):
+    """Raised when a lab image is missing and on-demand builds are disabled.
+
+    The message is learner-facing. The operator-facing command is logged by
+    the caller and recorded for the admin health panel.
+    """
+
+    def __init__(self, lab_slug: str):
+        self.lab_slug = lab_slug
+        self.command = f"scripts/prebuild-labs.sh --lab {lab_slug}"
+        super().__init__(
+            "This lab environment is still being prepared by your instructor."
+        )
+
+
 _host_kvm_available: Optional[bool] = None
 
 
@@ -2146,14 +2161,19 @@ fi
                     # should have run scripts/prebuild-labs.sh.
                     if not self.ALLOW_ON_DEMAND_BUILD:
                         missing = result.stderr or result.stdout or "image missing"
-                        error_msg = (
-                            f"Lab {lab_slug} is not prepared on this server. "
-                            f"Run scripts/prebuild-labs.sh --lab {lab_slug} "
-                            f"(on-demand builds are disabled). Details: {missing}"
+                        # The student sees a plain "still being prepared" message
+                        # from the raised error. The exact operator command and
+                        # the Compose output stay in the server log.
+                        logger.error(
+                            "Lab %s is not prepared; on-demand builds are disabled. "
+                            "Run on the server: scripts/prebuild-labs.sh --lab %s. "
+                            "Compose output: %s",
+                            lab_slug,
+                            lab_slug,
+                            missing,
                         )
-                        logger.error(error_msg)
                         self._cleanup_failed_spawn(user_id, lab_slug, override_path)
-                        raise Exception(error_msg)
+                        raise LabImageNotPreparedError(lab_slug)
                     # Images not pre-built - fall back to build+start (slow path)
                     logger.warning(f"Pre-built images not found for {lab_slug}, building on-demand (this may be slow)")
                     result = subprocess.run(

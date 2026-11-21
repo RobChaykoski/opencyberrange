@@ -448,9 +448,32 @@
           </div>
         </div>
 
+        <!-- Still preparing: the instructor has not pushed the lab image yet.
+             This is not a student error, so show a calm status banner with no
+             "relaunch" action that cannot help. -->
+        <div
+          v-if="labPreparing"
+          class="panel-banner panel-banner--preparing"
+          role="status"
+        >
+          <div class="panel-banner__text">
+            <strong>This lab is still being prepared by your instructor.</strong>
+            Try again in a few minutes. There is nothing you need to fix; your
+            instructor is finishing the environment setup.
+          </div>
+          <div class="panel-banner__actions">
+            <button
+              class="btn btn--secondary btn--sm"
+              @click="labPreparing = false; spawnError = ''"
+            >
+              Dismiss
+            </button>
+          </div>
+        </div>
+
         <!-- Errored session recovery: shown when a launch fails or the session errored -->
         <div
-          v-if="spawnError || activeLab.session?.status === 'error'"
+          v-if="!labPreparing && (spawnError || activeLab.session?.status === 'error')"
           class="panel-banner panel-banner--error"
           role="alert"
         >
@@ -1280,6 +1303,14 @@ const activeCourseId = ref(null)
 // Session expiry + spawn feedback state
 const sessionExpired = ref(false)
 const spawnError = ref('')
+// A missing prebuilt image is an instructor-side setup task, not a launch
+// error. Tracking it separately lets the panel show a calm "still preparing"
+// banner instead of the red error/recovery card.
+const labPreparing = ref(false)
+const setSpawnFailure = (message) => {
+  spawnError.value = message || 'Failed to start the lab environment.'
+  labPreparing.value = spawnError.value.includes('still being prepared by your instructor')
+}
 const panelNotice = ref('')
 const spawning = ref(false)
 const spawnElapsed = ref(0)
@@ -1343,6 +1374,7 @@ const relaunchExpiredSession = () => {
 
 const retryLaunch = async () => {
   spawnError.value = ''
+  labPreparing.value = false
   // Actually clear the blocking session before relaunching. This used to just
   // re-call launch, so when the spawn was refused *because* a session was
   // already active ("You already have an active lab session"), every click
@@ -1870,6 +1902,7 @@ const openActiveLab = async (lab) => {
     if (data.session && (data.session.time_remaining_seconds === undefined || data.session.time_remaining_seconds > 0)) {
       sessionExpired.value = false
       spawnError.value = ''
+      labPreparing.value = false
     }
 
   } catch (error) {
@@ -1923,6 +1956,7 @@ const closeActiveLab = () => {
   reviewMessage.value = ''
   sessionExpired.value = false
   spawnError.value = ''
+  labPreparing.value = false
   panelNotice.value = ''
   reaction.value = null
   reactionMessage.value = ''
@@ -2027,6 +2061,7 @@ const launchLab = async (lab) => {
   }
   loading.value = true
   spawnError.value = ''
+  labPreparing.value = false
   sessionExpired.value = false
   startSpawnTimer()
   try {
@@ -2056,7 +2091,7 @@ const launchLab = async (lab) => {
   } catch (error) {
     console.error('Failed to launch lab:', error)
     stopSpawnTimer()
-    spawnError.value = error.response?.data?.detail || error.message || 'Failed to start the lab environment.'
+    setSpawnFailure(error.response?.data?.detail || error.message)
     // Surface the error in the panel banner; open the panel if it was not
     // already showing so the recovery actions are visible
     if (!activeLab.value) {
@@ -2081,6 +2116,7 @@ const launchWithImage = async (image) => {
   launchingLab.value = true
   launchingImage.value = image
   spawnError.value = ''
+  labPreparing.value = false
   sessionExpired.value = false
   startSpawnTimer()
   try {
@@ -2098,7 +2134,7 @@ const launchWithImage = async (image) => {
     }
   } catch (error) {
     console.error('Failed to launch lab:', error)
-    spawnError.value = error.response?.data?.detail || error.message || 'Failed to start the lab environment.'
+    setSpawnFailure(error.response?.data?.detail || error.message)
   } finally {
     stopSpawnTimer()
     launchingLab.value = false
@@ -5005,12 +5041,14 @@ watch(timeRemaining, (val) => {
   flex-shrink: 0;
 }
 
-.panel-banner--expired {
+.panel-banner--expired,
+.panel-banner--preparing {
   background: rgba(245, 158, 11, 0.1);
   border-left: 4px solid var(--warning, #f59e0b);
 }
 
-.panel-banner--expired strong {
+.panel-banner--expired strong,
+.panel-banner--preparing strong {
   color: var(--warning, #f59e0b);
 }
 
