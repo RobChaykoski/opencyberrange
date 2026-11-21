@@ -22,3 +22,19 @@ def test_backup_url_falls_back_to_runtime_for_single_role_dev(monkeypatch):
     monkeypatch.setattr(backups.settings, "MIGRATOR_DATABASE_URL", "")
     monkeypatch.setattr(backups.settings, "DATABASE_URL", "postgresql://labuser:pw@db/labdb")
     assert backups._backup_database_url() == "postgresql://labuser:pw@db/labdb"
+
+
+def test_strip_pg17_transaction_timeout_from_dump(tmp_path):
+    path = tmp_path / "dump.sql"
+    path.write_bytes(
+        b"-- header\n"
+        b"SET transaction_timeout = 0;\n"
+        b"SET statement_timeout = 0;\n"
+    )
+
+    assert backups.strip_unsupported_dump_settings(str(path)) is True
+
+    data = path.read_bytes()
+    assert b"transaction_timeout" not in data
+    assert b"SET statement_timeout = 0;" in data
+    assert backups.strip_unsupported_dump_settings(str(path)) is False

@@ -2,6 +2,16 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.29.1] - 2026-11-21
+
+### Backup compatibility
+
+- Plain SQL backups now remove the PostgreSQL 17-only
+  `SET transaction_timeout = 0;` line emitted by the newer pg_dump client.
+  PostgreSQL 15 rejects that setting, so a restore with `ON_ERROR_STOP` could
+  abort before loading any data. Existing backups remain readable; the rewrite
+  is applied to new dumps.
+
 ## [5.29.0] - 2026-11-21
 
 ### Lab launch preflight
