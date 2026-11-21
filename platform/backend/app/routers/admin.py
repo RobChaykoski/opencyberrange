@@ -79,6 +79,7 @@ from app.services.export_labels import csv_with_labels
 from app.services.activity import log_activity, EventTypes
 from app.services.achievements import resolve_achievement_label
 from app.services.backups import backup_directory, create_database_backup
+from app.services.backup_sql import UnsafeBackupError, validate_sql_dump
 from app.services.erasure import erase_user, ErasureBlocked
 from app.services.password_breach import enforce_password_breach_check
 from app.services.file_lock import open_locked
@@ -4179,6 +4180,20 @@ def _restore_database_from_path(
     import subprocess
     from urllib.parse import urlparse
 
+    # Validate before the safety snapshot: a rejected upload should not cause
+    # any database work at all.
+    try:
+        validate_sql_dump(path)
+    except UnsafeBackupError as exc:
+        logger.warning("Rejected unsafe database restore %s: %s", filename, exc)
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "This backup contains SQL that is not allowed in a restore. "
+                "It was not applied."
+            ),
+        )
+
     # A restore replaces every account and record. Keep a safety snapshot of
     # the current database first; if that fails, do not overwrite it.
     try:
@@ -4191,7 +4206,10 @@ def _restore_database_from_path(
             detail="Could not create a safety snapshot before the restore.",
         )
 
-    db_url = settings.DATABASE_URL
+    # Restores run as the schema owner, never the request-time role and never a
+    # superuser. The fallback keeps single-role development installs working;
+    # production sets MIGRATOR_DATABASE_URL.
+    db_url = (settings.MIGRATOR_DATABASE_URL or "").strip() or settings.DATABASE_URL
     parsed = urlparse(db_url)
 
     env = os.environ.copy()
@@ -4201,6 +4219,8 @@ def _restore_database_from_path(
         result = subprocess.run(
             [
                 "psql",
+                "-X",
+                "--no-psqlrc",
                 "-h", parsed.hostname or "db",
                 "-p", str(parsed.port or 5432),
                 "-U", parsed.username or "labuser",
