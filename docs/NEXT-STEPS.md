@@ -1,6 +1,7 @@
 # Next steps
 
-Status: **Release 5.17.2 is deployed to development and production, and
+Status: **Release 5.30.0 is cut and signed (`v5.30.0`). Development and
+production still run 5.29.1 until the deployment runbook is executed;
 production is cut over (`deployment_mode=production`). Cyber DNA v3 Phase 1 is
 enabled on development only.** The platform runs Python 3.13, the
 security hardening wave is live, the OT track has three exercises plus an
@@ -10,6 +11,11 @@ This page tracks what is left; the deployment record is
 
 ## Recently completed
 
+- **Release 5.30.0.** Self-service password reset, pilot workspace and
+  RangeBox fixes, workbook cards that open the learner's current exercise, a
+  career-target switcher, the sidebar tools drawer, privacy-first account
+  defaults with age bands, LTI instructor-role mapping, and the post-pilot
+  infrastructure cleanup. See the [changelog](../CHANGELOG.md).
 - **Cyber DNA v3 Phase 1.** The event-driven DNA context, evidence ledger,
   behavior/interest/affinity derivation, snapshot API, gated `30/3/100`
   affinity, backfill adapter, and erasure hook are implemented and enabled on

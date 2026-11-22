@@ -280,6 +280,7 @@ owner-only unless an explicit share or break-glass grant exists.
 | `POST` | `/api/auth/delete-request` | Request Account Deletion | OAuth2PasswordBearer |
 | `GET` | `/api/auth/export` | Export User Data | OAuth2PasswordBearer |
 | `GET` | `/api/auth/export-status` | Export Status | OAuth2PasswordBearer |
+| `POST` | `/api/auth/forgot-password` | Forgot Password | Public |
 | `POST` | `/api/auth/forgot-username` | Forgot Username | Public |
 | `POST` | `/api/auth/impersonate` | Start Impersonation | OAuth2PasswordBearer |
 | `POST` | `/api/auth/impersonate/exit` | Exit Impersonation | OAuth2PasswordBearer |
@@ -295,6 +296,7 @@ owner-only unless an explicit share or break-glass grant exists.
 | `POST` | `/api/auth/reauth` | Reauthenticate | OAuth2PasswordBearer |
 | `POST` | `/api/auth/refresh` | Refresh Access Token | Public |
 | `POST` | `/api/auth/register` | Register | Public |
+| `POST` | `/api/auth/reset-password` | Reset Password | Public |
 | `GET` | `/api/auth/sessions` | List Sessions | OAuth2PasswordBearer |
 | `POST` | `/api/auth/sessions/revoke-all` | Revoke All Sessions | OAuth2PasswordBearer |
 | `DELETE` | `/api/auth/sessions/{session_id}` | Revoke One Session | OAuth2PasswordBearer |
@@ -3053,6 +3055,27 @@ Return when the account last downloaded a copy of its data.
 
 - `200`: Successful Response
 
+### `POST /api/auth/forgot-password`
+
+**Forgot Password**
+
+Send a one-time reset link to an eligible local account.  The response never reveals whether the address exists. Accounts created only through SSO, inactive accounts, and unapproved accounts receive no message because they cannot use the local password form.
+
+**Authentication:** Public
+
+**Request body** (`application/json`)
+
+**Schema:** `PasswordResetRequest`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `email` | string | yes |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
 ### `POST /api/auth/forgot-username`
 
 **Forgot Username**
@@ -3330,6 +3353,29 @@ Register a new user.  Per-IP limits are strict normally (5/minute; 30/hour; 100/
 **Responses**
 
 - `200`: Successful Response — `UserResponse`
+- `422`: Validation Error — `HTTPValidationError`
+
+### `POST /api/auth/reset-password`
+
+**Reset Password**
+
+Consume a reset link and set the new password.  The link is bound to the current password hash, so a successful reset (or any other password change) invalidates it immediately. Every existing session is revoked after the reset.
+
+**Authentication:** Public
+
+**Request body** (`application/json`)
+
+**Schema:** `PasswordResetConfirm`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `token` | string | yes |  |
+| `new_password` | string | yes |  |
+| `confirm_password` | string | yes |  |
+
+**Responses**
+
+- `200`: Successful Response
 - `422`: Validation Error — `HTTPValidationError`
 
 ### `GET /api/auth/sessions`
