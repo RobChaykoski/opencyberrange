@@ -9427,7 +9427,7 @@ Check if first-run setup has been completed. No auth required.
 
 **Exchange Ticket**
 
-Exchange the one-time callback ticket for the platform JWT.
+Exchange the one-time callback ticket for the platform JWT.  The ticket is single-use, short-lived, and only issued after a completed authentication flow, so it stays exchangeable when the SSO switch is off. Turning SSO off must stop new provider logins, not strand a ticket that was already issued. LTI launches also use this exchange, and they must not depend on the institution SSO setting.
 
 **Authentication:** Public
 

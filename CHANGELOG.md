@@ -2,6 +2,16 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.30.1] - 2026-11-22
+
+### LTI launches no longer depend on the SSO switch
+
+- The one-time ticket exchange accepts a ticket that was already issued when
+  the deployment-wide SSO switch is off. Disabling SSO still hides the provider
+  list and rejects new provider logins, but it no longer blocks LTI launches,
+  which use the same exchange. This removes the pilot-only requirement to leave
+  `sso_enabled=true` on a local-login deployment.
+
 ## [5.30.0] - 2026-11-22
 
 ### Pilot feedback fixes

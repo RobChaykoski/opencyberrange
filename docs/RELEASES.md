@@ -7,7 +7,8 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.30.0` | SWOCTS Cyber Range Release 5.30.0 | Current feature release (signed annotated tag): self-service password reset, pilot workspace and RangeBox fixes, a career-target switcher, the tools drawer, privacy-first account defaults with age bands, and LTI instructor-role mapping |
+| `v5.30.1` | SWOCTS Cyber Range Release 5.30.1 | Current patch release (signed annotated tag): LTI launches no longer depend on the deployment-wide SSO switch |
+| `v5.30.0` | SWOCTS Cyber Range Release 5.30.0 | Previous feature release (signed annotated tag): self-service password reset, pilot workspace and RangeBox fixes, a career-target switcher, the tools drawer, privacy-first account defaults with age bands, and LTI instructor-role mapping |
 | `v5.29.1` | SWOCTS Cyber Range Release 5.29.1 | Previous patch release (signed annotated tag): strip the PostgreSQL 17-only `transaction_timeout` setting from plain SQL backups so restores work on the supported PostgreSQL 15 line |
 | `v5.29.0` | SWOCTS Cyber Range Release 5.29.0 | Previous feature release (signed annotated tag): lab preflight and admin health action, ECharts instructor analytics, restore and ZIP upload hardening, 211-lab content refresh |
 | `v5.28.6` | SWOCTS Cyber Range Release 5.28.6 | Previous patch release (signed annotated tag): accessible admin dialogs, labelled copy controls, honest dismiss/badge affordances |

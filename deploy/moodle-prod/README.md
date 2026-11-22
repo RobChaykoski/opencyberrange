@@ -173,20 +173,20 @@ It prints the `client_id` and `deployment_id` to register in the production
 OpenCyberRange. Do not relax Moodle's cURL security for the public HTTPS
 endpoint.
 
-## Pilot-only LTI networking
+## LTI networking
 
 The production host resolves `ctfd.swocts.com` to the private NPM address
-`172.16.16.11`. Two pilot-only settings make the LTI tool JWKS and AGS calls
-work:
+`172.16.16.11`.
 
-- `sso_enabled=true` in OpenCyberRange, so the LTI ticket exchange is allowed.
-  No public SSO provider is configured yet.
-- Moodle's `curlsecurityblockedhosts` omits `172.16.0.0/12`, so Moodle can fetch
-  the tool JWKS from the private NPM address. This is broader than a normal
-  production allow-list.
+OpenCyberRange 5.30.1 removed the ticket-exchange dependency on
+`sso_enabled`, so a local-login deployment can leave SSO off and LTI launches
+still work. No public SSO provider is configured.
 
-Replace these with a public JWKS/AGS path or a narrower proxy design after the
-event. Record the exception in the pilot review.
+One pilot-only exception remains: Moodle's `curlsecurityblockedhosts` omits
+`172.16.0.0/12`, so Moodle can fetch the tool JWKS from the private NPM
+address. This is broader than a normal production allow-list. Before the next
+cohort, replace it with a public JWKS path or a narrower proxy and restore the
+default blocked-host ranges. Record the change in the pilot review.
 
 ## HSTS
 

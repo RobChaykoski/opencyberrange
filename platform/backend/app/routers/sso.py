@@ -423,8 +423,14 @@ async def exchange_ticket(
     payload: SsoExchangeRequest,
     db: Session = Depends(get_db),
 ):
-    """Exchange the one-time callback ticket for the platform JWT."""
-    _require_sso_enabled(db)
+    """Exchange the one-time callback ticket for the platform JWT.
+
+    The ticket is single-use, short-lived, and only issued after a completed
+    authentication flow, so it stays exchangeable when the SSO switch is off.
+    Turning SSO off must stop new provider logins, not strand a ticket that was
+    already issued. LTI launches also use this exchange, and they must not
+    depend on the institution SSO setting.
+    """
     try:
         ticket = sso_flow.consume_login_ticket(db, payload.ticket)
     except SSOError as exc:
