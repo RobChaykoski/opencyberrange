@@ -14,6 +14,7 @@ import ssl
 from email.message import EmailMessage
 from email.utils import formataddr, parseaddr
 from typing import Optional
+from urllib.parse import quote
 
 from sqlalchemy.orm import Session
 
@@ -77,6 +78,19 @@ TEMPLATE_DEFAULTS = {
             "Powered by OpenCyberRange."
         ),
     },
+    "password_reset": {
+        "subject": "Reset your {platform_name} password",
+        "body": (
+            "Hi {display_name},\n\n"
+            "We received a request to reset the password for the {platform_name} "
+            "account registered to this email address.\n\n"
+            "Choose a new password here (valid for {expires_minutes} minutes):\n"
+            "{reset_url}\n\n"
+            "If you did not ask for this, you can ignore this message. Your password "
+            "will not change.\n\n"
+            "Powered by OpenCyberRange."
+        ),
+    },
 }
 
 TEMPLATE_SETTING_PREFIX = "mail_template_"
@@ -86,6 +100,7 @@ NOTIFICATION_SETTINGS = {
     "account_approved": "notify_account_approved",
     "account_rejected": "notify_account_rejected",
     "username_reminder": "notify_username_reminder",
+    "password_reset": "notify_password_reset",
 }
 
 
@@ -222,6 +237,8 @@ def render_template(
         "login_url": context.get("login_url", ""),
         "support_email": context.get("support_email", ""),
         "usernames": context.get("usernames", ""),
+        "reset_url": context.get("reset_url", ""),
+        "expires_minutes": str(context.get("expires_minutes", "30")),
     }
     subject_value = _setting(
         db,
@@ -603,6 +620,64 @@ def send_username_reminder_email(
         )
     except Exception as exc:
         logger.warning("Username reminder for %s failed: %s", to_email, exc)
+        return False
+    finally:
+        if db is not None:
+            db.close()
+
+
+def send_password_reset_email(
+    *,
+    to_email: str,
+    token: str,
+    username: str = "",
+    display_name: str = "",
+    request_base: str = "",
+    expires_minutes: int = 30,
+) -> bool:
+    """Background-task entry point for a self-service password reset link.
+
+    The caller has already matched the address to an eligible local account.
+    Delivery stays best effort so an unavailable relay never changes the
+    generic response, and the token is never logged.
+    """
+    from app.database import SessionLocal
+    from app.config import settings
+
+    db = None
+    try:
+        db = SessionLocal()
+        if not notification_enabled(db, "password_reset"):
+            logger.debug("Password reset email skipped by notification preference")
+            return False
+        support_email = getattr(settings, "PRIVACY_CONTACT_EMAIL", "") or ""
+        base = public_base_url(db, request_base)
+        reset_url = (
+            f"{base}/reset-password?token={quote(token, safe='')}" if base else ""
+        )
+        if not reset_url:
+            logger.warning("Password reset email skipped: no public URL configured")
+            return False
+        subject, text_body, html_body = render_template(
+            db,
+            "password_reset",
+            to_email=to_email,
+            username=username,
+            display_name=display_name,
+            reset_url=reset_url,
+            expires_minutes=expires_minutes,
+            support_email=support_email,
+        )
+        return send_email(
+            db,
+            to_email=to_email,
+            subject=subject,
+            text_body=text_body,
+            html_body=html_body,
+            fresh_settings=True,
+        )
+    except Exception as exc:
+        logger.warning("Password reset email for %s failed: %s", to_email, exc)
         return False
     finally:
         if db is not None:

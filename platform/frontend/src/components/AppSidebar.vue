@@ -183,7 +183,7 @@
           aria-label="CyberChef (opens in a panel)"
           title="CyberChef — decode and inspect data"
           class="nav-item nav-item--button"
-          @click="openTool('cyberchef')"
+          @click="toggleTool('cyberchef')"
         >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon" aria-hidden="true">
             <path d="M4 7h16"/>
@@ -199,7 +199,7 @@
           aria-label="OT scan assistant (opens in a panel)"
           title="OT scan assistant - safe nmap for Modbus, S7, EtherNet/IP, DNP3"
           class="nav-item nav-item--button"
-          @click="openTool('otscan')"
+          @click="toggleTool('otscan')"
         >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon" aria-hidden="true">
             <circle cx="12" cy="12" r="9"/>
@@ -216,7 +216,7 @@
           aria-label="MITRE ATT&CK Navigator (opens in a panel)"
           title="MITRE ATT&CK Navigator — technique coverage and layers"
           class="nav-item nav-item--button"
-          @click="openTool('attacknavigator')"
+          @click="toggleTool('attacknavigator')"
         >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon" aria-hidden="true">
             <rect x="3" y="3" width="7" height="7" rx="1"/>
@@ -393,7 +393,7 @@ defineEmits(['toggle', 'logout', 'close'])
 
 const route = useRoute()
 const { privacyMode, togglePrivacy } = usePrivacy()
-const { openTool } = useToolPanel()
+const { toggleTool } = useToolPanel()
 const manualUrl = computed(() => wikiUrl('/wiki/reference/manual/'))
 const startTour = inject('startTour', null)
 const replayTour = () => { if (startTour) startTour() }

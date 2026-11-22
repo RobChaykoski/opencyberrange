@@ -102,6 +102,7 @@
     </header>
 
     <CyberDnaBand v-if="profile" :profile="profile" :settings="settings" />
+    <TargetRoleSwitcher variant="band" />
 
     <!-- Next objective, VPN, rank / milestone -->
     <div class="dashboard-grid">
@@ -369,6 +370,7 @@ import axios from '../api/axios'
 import { getTrackIcon } from '../components/icons/trackIcons.js'
 import AchievementMedallion from '../components/AchievementMedallion.vue'
 import CyberDnaBand from '../components/CyberDnaBand.vue'
+import TargetRoleSwitcher from '../components/TargetRoleSwitcher.vue'
 import LearningAnalytics from '../components/LearningAnalytics.vue'
 import AvailableSurveys from '../components/AvailableSurveys.vue'
 import TargetIcon from '../components/icons/TargetIcon.vue'

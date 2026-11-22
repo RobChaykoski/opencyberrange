@@ -109,6 +109,22 @@ The following operations require a recent reauthentication and return `403` with
 
 The frontend opens a reauthentication dialog on the `X-Reauth-Required` header.
 
+## Self-service password reset
+
+`POST /api/auth/forgot-password` accepts an email address and always returns the
+same message. If the address belongs to an active, approved local account, the
+platform emails a one-time link from the configurable
+`mail_template_password_reset_*` template. SSO-only accounts, unapproved
+accounts, and inactive accounts receive nothing.
+
+The link is a 30-minute JWT scoped to `password_reset`, not an access token. It
+carries a fingerprint of the current password hash, so it is effectively
+single-use: any password change replaces the hash and invalidates the link.
+`POST /api/auth/reset-password` applies the normal password policy (including
+the stricter instructor/admin policy and breach check), unlocks the account,
+clears a forced password change, and revokes every existing session. Both
+endpoints are rate-limited (3/minute and 5/minute per IP).
+
 ## Argon2id parameters and recurring rehash
 
 New passwords use Argon2id with explicit parameters:
@@ -133,8 +149,9 @@ On successful login:
 4. `users.password_rehashed_at` is stamped and an `auth.password_rehashed`
    event records the parameter set.
 
-All password writes (registration, admin create/reset, change password, setup,
-SSO provisioning, service identities) stamp the policy timestamp.
+All password writes (registration, admin create/reset, change password,
+self-service reset, setup, SSO provisioning, service identities) stamp the
+policy timestamp.
 
 ## Rate limits and event windows
 

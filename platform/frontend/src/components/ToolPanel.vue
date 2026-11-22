@@ -37,12 +37,14 @@
               type="button"
               class="tool-panel__close"
               :aria-label="`Close ${activeTool.title} panel`"
+              aria-keyshortcuts="Escape"
               @click="closeTool"
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <path d="M18 6 6 18" />
                 <path d="m6 6 12 12" />
               </svg>
+              <span>Close</span>
             </button>
           </div>
         </header>
@@ -85,7 +87,7 @@
 
         <footer class="tool-panel__foot">
           <span>{{ activeTool.attribution }}</span>
-          <span>Downloads and clipboard use the external tool, not the platform.</span>
+          <span>Press Esc or select Close to return to the platform.</span>
         </footer>
       </section>
     </transition>
@@ -94,10 +96,12 @@
 
 <script setup>
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { useToolPanel } from '../composables/useToolPanel'
 import { safeHttpUrl } from '../utils/url'
 
 const { activeTool, isOpen, closeTool } = useToolPanel()
+const route = useRoute()
 
 const toolUrl = computed(() => safeHttpUrl(activeTool.value?.url))
 
@@ -173,6 +177,13 @@ watch(isOpen, async (open) => {
     }
     returnFocus = null
   }
+})
+
+// Leaving the page or opening another route is an escape hatch even when the
+// cross-origin iframe has captured the keyboard (Escape inside a cross-origin
+// frame is delivered to the frame, not to this document).
+watch(() => route.fullPath, () => {
+  if (isOpen.value) closeTool()
 })
 
 onMounted(() => {
@@ -264,14 +275,17 @@ onUnmounted(() => {
 }
 
 .tool-panel__close {
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 32px;
+  padding: 0 0.6rem;
   border: 1px solid var(--border-color);
   border-radius: 8px;
   background: var(--bg-tertiary);
   color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 600;
   cursor: pointer;
 }
 

@@ -345,6 +345,8 @@
           </div>
         </div>
 
+        <TargetRoleSwitcher variant="inline" />
+
         <div class="profile-tabs-wrap">
           <nav class="profile-tabs" role="tablist" aria-label="Profile sections">
             <button
@@ -556,17 +558,6 @@
           role="tabpanel"
           aria-labelledby="profile-tab-portfolio"
         >
-          <div v-if="careerRoles.length" class="career-target">
-            <label>
-              <span>Target role</span>
-              <select v-model="selectedRole" @change="setGoal(selectedRole)">
-                <option v-for="role in careerRoles" :key="role.id" :value="role.id">
-                  {{ role.title }}{{ role.flagship ? ' · flagship' : '' }}
-                </option>
-              </select>
-            </label>
-            <p>This role drives the readiness score, skills gap, and aligned evidence below.</p>
-          </div>
           <p class="help-text portfolio-intro">
             Your evidence, readiness, and career direction. Open a section when
             you need the detail; nothing here changes your progress.
@@ -1360,6 +1351,7 @@ import MomentumPanel from '../components/MomentumPanel.vue'
 import CareerAtlas from '../components/CareerAtlas.vue'
 import PortfolioPanel from '../components/PortfolioPanel.vue'
 import RoleReadinessPanel from '../components/RoleReadinessPanel.vue'
+import TargetRoleSwitcher from '../components/TargetRoleSwitcher.vue'
 import CareerGps from '../components/CareerGps.vue'
 import CareerAssessmentPanel from '../components/CareerAssessmentPanel.vue'
 import CompetencyTaxonomy from '../components/CompetencyTaxonomy.vue'
@@ -1377,7 +1369,7 @@ import { CERTIFICATION_PATHS } from '../data/certificationPaths'
 const route = useRoute()
 const router = useRouter()
 const { exerciseAuthoring, fetchModules } = useModules()
-const { selectedRole, setGoal } = useCareerGoal()
+const { setGoal } = useCareerGoal()
 const {
   effect: celebrationEffect,
   saving: celebrationSaving,

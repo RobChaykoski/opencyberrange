@@ -47,6 +47,7 @@ from app.auth import (
 )
 from app.services import mail
 from app.services import network_access
+from app.services import password_reset
 from app.services import totp as totp_service
 from app.services import mfa as mfa_service
 from app.services import auth_sessions
@@ -229,6 +230,178 @@ async def forgot_username(
         "message": (
             "If that email is registered, we have sent the username to it."
         )
+    }
+
+
+class PasswordResetRequest(BaseModel):
+    """Email address for the self-service password reset flow."""
+
+    email: str = Field(..., min_length=3, max_length=254)
+
+    @field_validator("email")
+    @classmethod
+    def email_valid(cls, value: str) -> str:
+        email = value.strip().lower()
+        if not re.match(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", email):
+            raise ValueError("Invalid email format")
+        return email
+
+
+class PasswordResetConfirm(BaseModel):
+    """Token and replacement password from the reset link."""
+
+    token: str = Field(..., min_length=10, max_length=4096)
+    new_password: str = Field(..., min_length=8, max_length=128)
+    confirm_password: str = Field(..., min_length=8, max_length=128)
+
+
+@router.post("/forgot-password")
+@limiter.limit("3/minute")
+async def forgot_password(
+    request: Request,
+    payload: PasswordResetRequest,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
+):
+    """Send a one-time reset link to an eligible local account.
+
+    The response never reveals whether the address exists. Accounts created
+    only through SSO, inactive accounts, and unapproved accounts receive no
+    message because they cannot use the local password form.
+    """
+    email = payload.email
+    user = (
+        db.query(User)
+        .filter(
+            func.lower(User.email) == email,
+            User.is_active.is_(True),
+            User.is_approved.is_(True),
+            func.coalesce(User.password_login_disabled, False).is_(False),
+        )
+        .order_by(User.id.asc())
+        .first()
+    )
+    if user is not None:
+        try:
+            token = password_reset.create_reset_token(user)
+        except Exception:
+            logger.exception("Could not mint a password reset token")
+        else:
+            background_tasks.add_task(
+                mail.send_password_reset_email,
+                to_email=email,
+                token=token,
+                username=user.username,
+                display_name=user.display_name,
+                request_base=str(request.base_url),
+                expires_minutes=password_reset.RESET_TOKEN_TTL_MINUTES,
+            )
+    return {
+        "message": (
+            "If that email is registered, we have sent a password reset link "
+            "to it. The link expires in 30 minutes."
+        )
+    }
+
+
+@router.post("/reset-password")
+@limiter.limit("5/minute")
+async def reset_password(
+    request: Request,
+    payload: PasswordResetConfirm,
+    db: Session = Depends(get_db),
+):
+    """Consume a reset link and set the new password.
+
+    The link is bound to the current password hash, so a successful reset (or
+    any other password change) invalidates it immediately. Every existing
+    session is revoked after the reset.
+    """
+    invalid = HTTPException(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        detail="This password reset link is invalid or has expired. Request a new one.",
+    )
+    try:
+        claims = password_reset.decode_reset_token(payload.token)
+    except password_reset.InvalidResetToken:
+        raise invalid
+
+    user_id = password_reset.user_id_from_payload(claims)
+    if user_id is None:
+        raise invalid
+    user = db.query(User).filter(User.id == user_id).first()
+    if (
+        user is None
+        or not user.is_active
+        or not user.is_approved
+        or getattr(user, "password_login_disabled", False)
+    ):
+        raise invalid
+    if not password_reset.token_matches_user(claims, user):
+        raise invalid
+
+    if payload.new_password != payload.confirm_password:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="New password and confirmation do not match",
+        )
+    if verify_password(payload.new_password, user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Choose a password you have not used before.",
+        )
+
+    basic_policy_error = _password_policy_error(
+        payload.new_password,
+        username=user.username,
+        email=user.email,
+        first_name=user.first_name,
+        last_name=user.last_name,
+    )
+    if basic_policy_error:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=basic_policy_error,
+        )
+    if user.role in ("instructor", "admin"):
+        policy_error = validate_privileged_password(payload.new_password)
+        if policy_error:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=policy_error,
+            )
+
+    await enforce_password_breach_check(db, payload.new_password)
+
+    set_user_password(user, payload.new_password)
+    if getattr(user, "must_change_password", False):
+        user.must_change_password = False
+    # A completed reset is also a recovery path for a locked account.
+    user.is_locked = False
+    user.failed_attempts = 0
+    user.locked_at = None
+    db.commit()
+
+    revoke_all_user_tokens(user.username)
+
+    from app.services import security_events
+
+    security_events.record(
+        "auth.password_reset",
+        actor=user,
+        target_type="user",
+        target_id=user.id,
+        target_label=user.username,
+        ip_address=request.client.host if request.client else None,
+        user_agent=request.headers.get("user-agent"),
+        request_id=request.headers.get("x-request-id"),
+        detail={"sessions_revoked": True, "self_service": True},
+    )
+    security_events.mark_request_recorded()
+
+    return {
+        "message": "Password reset. Sign in with your new password.",
+        "reauth_required": True,
     }
 
 

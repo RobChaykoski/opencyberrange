@@ -343,7 +343,7 @@
               type="button"
               class="btn btn--secondary btn--sm"
               title="Open CyberChef in a panel for encoding and decoding practice"
-              @click="openTool('cyberchef')"
+              @click="toggleTool('cyberchef')"
             >
               CyberChef
             </button>
@@ -351,7 +351,7 @@
               type="button"
               class="btn btn--secondary btn--sm"
               title="Build a slow, scoped nmap command for this lab network"
-              @click="openTool('otscan')"
+              @click="toggleTool('otscan')"
             >
               OT Scan
             </button>
@@ -359,7 +359,7 @@
               type="button"
               class="btn btn--secondary btn--sm"
               title="Open MITRE ATT&CK Navigator for technique coverage"
-              @click="openTool('attacknavigator')"
+              @click="toggleTool('attacknavigator')"
             >
               ATT&amp;CK
             </button>
@@ -1214,7 +1214,7 @@ import { CERTIFICATION_ROADMAP_URL, CISO_MINDMAP_URL, SWOCTS_RESOURCES_URL, getC
 const route = useRoute()
 const router = useRouter()
 const { isMobile } = useMobileView()
-const { openTool } = useToolPanel()
+const { toggleTool } = useToolPanel()
 const { effect: celebrationEffect, load: loadCelebrationEffect } = useCelebration()
 
 const scrollToLabSection = (id) => {

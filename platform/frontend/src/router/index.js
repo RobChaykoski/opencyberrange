@@ -66,6 +66,18 @@ const routes = [
     meta: { guest: true }
   },
   {
+    path: '/forgot-password',
+    name: 'ForgotPassword',
+    component: () => import('../views/ForgotPassword.vue'),
+    meta: { guest: true, allowAuthed: true }
+  },
+  {
+    path: '/reset-password',
+    name: 'ResetPassword',
+    component: () => import('../views/ResetPassword.vue'),
+    meta: { guest: true, allowAuthed: true }
+  },
+  {
     path: '/dashboard',
     name: 'Dashboard',
     component: () => import('../views/DashboardRouter.vue'),
@@ -294,7 +306,7 @@ router.beforeEach(async (to, from, next) => {
 
   if (to.meta.requiresAuth && !token) {
     next('/login')
-  } else if (to.meta.guest && token && !to.meta.ssoCallback) {
+  } else if (to.meta.guest && token && !to.meta.ssoCallback && !to.meta.allowAuthed) {
     next('/dashboard')
   } else if (
     to.path === '/dashboard'
@@ -316,7 +328,13 @@ router.beforeEach(async (to, from, next) => {
     // Skip during impersonation — impersonated users don't change passwords
     const user = JSON.parse(localStorage.getItem('user') || '{}')
     const imp = sessionStorage.getItem('ocr_impersonating') === 'true'
-    if (token && user.must_change_password && !imp && to.path !== '/change-password') {
+    if (
+      token
+      && user.must_change_password
+      && !imp
+      && to.path !== '/change-password'
+      && !to.meta.allowAuthed
+    ) {
       next('/change-password')
     } else {
       next()

@@ -95,6 +95,8 @@ DEFAULT_SETTINGS = [
      "description": "Email a learner when an administrator rejects a pending account. The message never includes an internal reason."},
     {"key": "notify_username_reminder", "value": "true", "category": "notifications",
      "description": "Send the self-service username reminder email. Security and service messages may still be sent when other preferences are off."},
+    {"key": "notify_password_reset", "value": "true", "category": "notifications",
+     "description": "Send the self-service password reset email when someone requests a reset link for an eligible local account."},
 
     # --- Email templates ---
     {"key": "mail_template_registration_received_subject",
@@ -132,6 +134,13 @@ DEFAULT_SETTINGS = [
      "value": "You asked us to remind you of the username for the {platform_name} account registered to this email address.\n\n{usernames}\n\nSign in at {login_url}.\n\nFor your security, this message does not include your password. If you did not ask for this reminder, you can ignore it.\n\nPowered by OpenCyberRange.",
      "category": "email-templates",
      "description": "Body for the username reminder email. Placeholder {usernames} is the formatted list. Blank uses the built-in default."},
+    {"key": "mail_template_password_reset_subject",
+     "value": "Reset your {platform_name} password", "category": "email-templates",
+     "description": "Subject for the self-service password reset email. Placeholders: {platform_name}, {display_name}, {reset_url}, {expires_minutes}. Blank uses the built-in default."},
+    {"key": "mail_template_password_reset_body",
+     "value": "Hi {display_name},\n\nWe received a request to reset the password for the {platform_name} account registered to this email address.\n\nChoose a new password here (valid for {expires_minutes} minutes):\n{reset_url}\n\nIf you did not ask for this, you can ignore this message. Your password will not change.\n\nPowered by OpenCyberRange.",
+     "category": "email-templates",
+     "description": "Body for the self-service password reset email. Placeholder {reset_url} is the one-time link. Do not add extra links. Blank uses the built-in default."},
 
     # --- Security ---
     {"key": "jwt_expiration_hours", "value": "24", "category": "security",

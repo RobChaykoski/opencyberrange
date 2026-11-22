@@ -244,6 +244,9 @@
               <p id="password-help" class="field-help">
                 Use a unique password you do not use on another site. Never share it.
               </p>
+              <router-link to="/forgot-password" class="forgot-password-link">
+                Forgot password?
+              </router-link>
             </div>
 
             <div v-if="mfaRequired" class="form-group">
@@ -924,6 +927,25 @@ const handleLogin = async () => {
   color: var(--text-secondary);
   font-size: 0.78rem;
   line-height: 1.45;
+}
+
+.forgot-password-link {
+  display: inline-block;
+  margin-top: 0.35rem;
+  color: var(--accent-text);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.forgot-password-link:hover {
+  text-decoration: underline;
+}
+
+.forgot-password-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 .sso-panel {

@@ -111,7 +111,8 @@ certification list.
 3. **Career goal selection at the top.** The target-role select exists in
    `RoleReadinessPanel.vue`, but it is buried inside the collapsed **Career
    readiness** section on the Portfolio tab. Put the target role and career
-   family at the top of the career area.
+   family at the top of the career area. *Delivered: the target-role switcher
+   now appears on the student dashboard and above the profile tabs.*
 4. **Filters on the Learning record.** Show "in progress", "complete", and
    "not started" tracks; default to progress-bearing tracks and collapse the
    rest. The certificate cards themselves are good and should stay prominent.

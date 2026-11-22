@@ -46,6 +46,32 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
+### Self-service password reset
+
+- Added `POST /api/auth/forgot-password` and `POST /api/auth/reset-password`.
+  The emailed link is a 30-minute, purpose-scoped token bound to the current
+  password hash, so it stops working after any password change. Requests are
+  rate-limited, the response never reveals whether an address exists, and SSO-only
+  accounts are skipped.
+- Reset mail is a configurable template (`mail_template_password_reset_*`) with
+  its own notification preference. A successful reset unlocks the account,
+  clears a forced change, and revokes every existing session.
+- The login form now has a **Forgot password?** link with dedicated request and
+  new-password pages.
+
+### Tools drawer
+
+- The ATT&CK Navigator and other tools now toggle from the sidebar, show a
+  labelled **Close** action, and close automatically when the route changes. The
+  panel footer explains the exit, which matters because Escape inside a
+  cross-origin iframe is delivered to the frame rather than the platform.
+
+### Career target
+
+- Added a target-role switcher to the student dashboard and the profile header so
+  learners can change their career goal without opening the portfolio tab. The
+  choice still drives readiness, gap analysis, and aligned evidence.
+
 ### Privacy and age defaults
 
 - New accounts now start private: public scoreboards, public certificate

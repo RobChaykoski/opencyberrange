@@ -47,4 +47,8 @@ to the hosted tool and does not copy its source into this repository.
   taken from a route, query string, or learner input.
 - The iframe uses the explicit origin in the Content-Security-Policy.
 - The panel keeps the existing **Open in new tab** fallback and timeout state.
+- The sidebar button toggles the panel, and the header has a labelled **Close**
+  action. Selecting a route also closes the panel. Escape still works while
+  focus is in the platform, but a cross-origin iframe receives Escape itself, so
+  the visible Close action is the reliable exit.
 - No platform session, learner record, or secret is passed to the tool.
