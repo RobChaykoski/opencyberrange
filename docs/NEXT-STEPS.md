@@ -1,7 +1,7 @@
 # Next steps
 
-Status: **Release 5.30.0 is deployed to development and production
-(`deployment_mode=production`). Cyber DNA v3 Phase 1 is
+Status: **Release 5.30.1 is deployed to development and production
+(`deployment_mode=production`, `sso_enabled=false`). Cyber DNA v3 Phase 1 is
 enabled on development only.** The platform runs Python 3.13, the
 security hardening wave is live, the OT track has three exercises plus an
 offline scan assistant, and the user manual reflects the current UI.
@@ -10,6 +10,9 @@ This page tracks what is left; the deployment record is
 
 ## Recently completed
 
+- **Release 5.30.1.** LTI launches no longer depend on the SSO switch, so
+  production runs with `sso_enabled=false`. Remaining pilot exception: Moodle's
+  relaxed cURL blocked-host list for the private NPM JWKS path.
 - **Release 5.30.0.** Self-service password reset, pilot workspace and
   RangeBox fixes, workbook cards that open the learner's current exercise, a
   career-target switcher, the sidebar tools drawer, privacy-first account

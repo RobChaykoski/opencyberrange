@@ -10,14 +10,15 @@ another document disagrees, this page and the signed tag win.
 | Item | Value |
 |---|---|
 | Edition | **Community / Academic** (`lite` entitlement, single-host) |
-| Release | **5.30.0** |
-| Signed tag | **`v5.30.0`** |
-| Runtime code commit | `298ef1e1` (signed tag `v5.30.0`) |
-| Previous release | `5.29.1` (signed tag `v5.29.1` at `29266761`) |
+| Release | **5.30.1** |
+| Signed tag | **`v5.30.1`** |
+| Runtime code commit | `b9c662ff` (signed tag `v5.30.1`) |
+| Previous release | `5.30.0` (signed tag `v5.30.0` at `298ef1e1`) |
 | Alembic revision | **`0050_child_privacy_defaults`** |
 | Development host | `172.16.16.44` |
 | Production host | `172.16.16.41` / `https://ctfd.swocts.com` |
 | Repository | `RobChaykoski/opencyberrange` (`main`) |
+| Pre-5.30.1 backup | `~/backups/ocr-backup-20261122-194312.dump` |
 | Pre-5.30.0 backup | `~/backups/ocr-backup-20261122-191455.dump` |
 | Pre-5.29.1 backup | `~/backups/ocr-backup-20261121-065211.dump` |
 | 5.29.0 pre-deploy backup | `~/backups/ocr-backup-20261121-064246.dump` |
@@ -50,7 +51,32 @@ another document disagrees, this page and the signed tag win.
 | 5.28.4 backup | `~/backups/ocr-backup-20261120-020748.dump` |
 | 5.28.5 backup | `~/backups/ocr-backup-20261120-025933.dump` |
 | 5.28.6 backup | `~/backups/ocr-backup-20261120-033403.dump` |
-| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 19 November deploy, 5.19.0, 5.20.0, 5.21.0, 5.22.0, 5.27.0, 5.27.1, 5.27.2, 5.27.3, 5.27.4, 5.27.5, 5.27.6, 5.27.7, 5.28.0, 5.28.1, 5.28.2, 5.28.3, 5.28.4, 5.28.5, 5.28.6, 5.29.0, 5.29.1, and 5.30.0) |
+| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 19 November deploy, 5.19.0, 5.20.0, 5.21.0, 5.22.0, 5.27.0, 5.27.1, 5.27.2, 5.27.3, 5.27.4, 5.27.5, 5.27.6, 5.27.7, 5.28.0, 5.28.1, 5.28.2, 5.28.3, 5.28.4, 5.28.5, 5.28.6, 5.29.0, 5.29.1, 5.30.0, and 5.30.1) |
+
+## 5.30.1 deployment verification
+
+Patch release: the LTI ticket exchange no longer depends on the deployment-wide
+SSO switch, so production now runs with `sso_enabled=false`. Deployed on
+22 November 2026 to development and production.
+
+| Check | Result |
+|---|---|
+| CI, Quality checks, CodeQL, Trivy, Security delta review, and OpenSSF Scorecard | **passed** |
+| `/api/version` | `5.30.1` on production and development |
+| Backend and frontend health | **healthy** |
+| Alembic | **`0050_child_privacy_defaults` (head)**; no new migration |
+| Registered labs | **211** |
+| `deployment_mode` | **`production`** |
+| SSO switch | **`sso_enabled=false`**; `/api/auth/sso/providers` returns an empty provider list |
+| LTI JWKS | **200** |
+| Pre-deploy backup | `~/backups/ocr-backup-20261122-194312.dump` |
+| Restore drill | **PASSED**, same counts as 5.30.0 (67 users, 211 labs, 2 courses, 64 enrollments, 134 completions, 497 achievements, 1,567 activity events) |
+| Rollback images | `ocr-backend:pre-5.30.1`, `ocr-frontend:pre-5.30.1` |
+
+A Moodle launch was not exercised after the switch change. The exchange
+endpoint is covered by `tests/test_sso_gate.py`, which proves an already-issued
+ticket is accepted with `sso_enabled=false`; provider login endpoints still
+reject new SSO logins.
 
 ## 5.30.0 deployment verification
 

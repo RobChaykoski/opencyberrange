@@ -208,10 +208,12 @@ Completed after the pilot session:
 
 Deferred deliberately:
 
-- `sso_enabled=true` and Moodle's relaxed `curlsecurityblockedhosts` remain in
-  place because the LTI tool still fetches JWKS/AGS through the private NPM
-  address. Removing them now would break LTI launches. Replace them with a
-  public JWKS/AGS path or a narrower proxy before the next production cohort.
+- Moodle's relaxed `curlsecurityblockedhosts` remains in place because the LTI
+  tool still fetches JWKS through the private NPM address. Replace it with a
+  public JWKS path or a narrower proxy before the next production cohort.
+  Release 5.30.1 removed the other half of this exception: the LTI ticket
+  exchange no longer depends on `sso_enabled`, and production now runs with
+  `sso_enabled=false`.
 - The Cloudflare DDNS token is left in place until it expires; no rotation is
   planned for this pilot. Replace it before the next production cohort.
 - Workbook cards now open the workbook page for the learner's current exercise
