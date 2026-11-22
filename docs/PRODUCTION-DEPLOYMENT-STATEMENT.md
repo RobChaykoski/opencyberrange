@@ -1,6 +1,6 @@
 # Production deployment statement
 
-**Statement date:** 20 November 2026
+**Statement date:** 22 November 2026
 
 This is the authoritative statement for the current production deployment. If
 another document disagrees, this page and the signed tag win.
@@ -10,14 +10,15 @@ another document disagrees, this page and the signed tag win.
 | Item | Value |
 |---|---|
 | Edition | **Community / Academic** (`lite` entitlement, single-host) |
-| Release | **5.29.1** |
-| Signed tag | **`v5.29.1`** |
-| Runtime code commit | `29266761` (signed tag `v5.29.1`) |
-| Previous release | `5.29.0` (signed tag `v5.29.0` at `cb2f7278`) |
+| Release | **5.30.0** |
+| Signed tag | **`v5.30.0`** |
+| Runtime code commit | `298ef1e1` (signed tag `v5.30.0`) |
+| Previous release | `5.29.1` (signed tag `v5.29.1` at `29266761`) |
 | Alembic revision | **`0050_child_privacy_defaults`** |
 | Development host | `172.16.16.44` |
 | Production host | `172.16.16.41` / `https://ctfd.swocts.com` |
 | Repository | `RobChaykoski/opencyberrange` (`main`) |
+| Pre-5.30.0 backup | `~/backups/ocr-backup-20261122-191455.dump` |
 | Pre-5.29.1 backup | `~/backups/ocr-backup-20261121-065211.dump` |
 | 5.29.0 pre-deploy backup | `~/backups/ocr-backup-20261121-064246.dump` |
 | Pre-cutover backup | `~/backups/ocr-backup-20261116-181526.dump` |
@@ -49,7 +50,37 @@ another document disagrees, this page and the signed tag win.
 | 5.28.4 backup | `~/backups/ocr-backup-20261120-020748.dump` |
 | 5.28.5 backup | `~/backups/ocr-backup-20261120-025933.dump` |
 | 5.28.6 backup | `~/backups/ocr-backup-20261120-033403.dump` |
-| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 19 November deploy, 5.19.0, 5.20.0, 5.21.0, 5.22.0, 5.27.0, 5.27.1, 5.27.2, 5.27.3, 5.27.4, 5.27.5, 5.27.6, 5.27.7, 5.28.0, 5.28.1, 5.28.2, 5.28.3, 5.28.4, 5.28.5, 5.28.6, 5.29.0, and 5.29.1) |
+| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 19 November deploy, 5.19.0, 5.20.0, 5.21.0, 5.22.0, 5.27.0, 5.27.1, 5.27.2, 5.27.3, 5.27.4, 5.27.5, 5.27.6, 5.27.7, 5.28.0, 5.28.1, 5.28.2, 5.28.3, 5.28.4, 5.28.5, 5.28.6, 5.29.0, 5.29.1, and 5.30.0) |
+
+## 5.30.0 deployment verification
+
+Post-pilot feature release: self-service password reset, pilot workspace and
+RangeBox fixes, workbook cards that open the learner's current exercise, the
+career-target switcher, the sidebar tools drawer, privacy-first account
+defaults with age bands, and LTI instructor-role mapping. Deployed on
+22 November 2026 to development and production.
+
+| Check | Result |
+|---|---|
+| CI, Quality checks, CodeQL, Trivy, Security delta review, and OpenSSF Scorecard | **passed** |
+| `/api/version` | `5.30.0` on production and development |
+| Backend and frontend health | **healthy** |
+| Alembic | **`0050_child_privacy_defaults` (head)**; no new migration |
+| Registered labs | **211** |
+| `deployment_mode` | **`production`** |
+| Workbook origin (8443) | **200** |
+| Pre-deploy backup | `~/backups/ocr-backup-20261122-191455.dump`, SHA-256 **OK** |
+| Restore drill | **PASSED**, `psql` exit 0 |
+| Restored counts | 67 users, 211 labs, 2 courses, 64 enrollments, 134 completions, 497 achievements, 1,567 activity events |
+| Rollback images | `ocr-backend:5.30.0`, `ocr-frontend:5.30.0`; `pre-5.29.1` tags retained |
+
+The local image store had already discarded the images used by the running
+containers (unreferenced images are garbage-collected under the containerd
+store), so new `pre-5.30.0` rollback tags could not be created from them.
+Rollback is by checking out `f3caa331` and rebuilding; the 5.30.0 release commit
+changes only version metadata, the About inventory, generated documentation, and
+the supply-chain lock relative to that tree. Tag the running images before the
+next release so the rollback tag exists.
 
 ## 5.29.1 deployment verification
 

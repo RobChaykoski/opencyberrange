@@ -1,8 +1,7 @@
 # Next steps
 
-Status: **Release 5.30.0 is cut and signed (`v5.30.0`). Development and
-production still run 5.29.1 until the deployment runbook is executed;
-production is cut over (`deployment_mode=production`). Cyber DNA v3 Phase 1 is
+Status: **Release 5.30.0 is deployed to development and production
+(`deployment_mode=production`). Cyber DNA v3 Phase 1 is
 enabled on development only.** The platform runs Python 3.13, the
 security hardening wave is live, the OT track has three exercises plus an
 offline scan assistant, and the user manual reflects the current UI.
