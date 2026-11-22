@@ -4,6 +4,14 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
+### Moodle LTI networking
+
+- Production Moodle's `curlsecurityblockedhosts` is narrowed from a blanket
+  `172.16.0.0/12` omission to the default private ranges plus a carve-out that
+  admits only the NPM address `172.16.16.11`. The tool JWKS fetch was verified
+  through Moodle's own cURL wrapper, and other private targets are rejected.
+  The dev-only seed path keeps its explicit private-URL relaxation.
+
 ### Deployment tooling
 
 - Added `scripts/tag-release-images.sh`, which tags the images used by running

@@ -205,20 +205,19 @@ Completed after the pilot session:
   SSO-managed (`password_login_disabled=true`) so future launches follow the
   `membership#Instructor` claim instead of the local role workaround.
 - Confirmed `ocr-pg-gateway` is restricted to `172.16.16.44/32`.
-
-Deferred deliberately:
-
-- Moodle's relaxed `curlsecurityblockedhosts` remains in place because the LTI
-  tool still fetches JWKS through the private NPM address. Replace it with a
-  public JWKS path or a narrower proxy before the next production cohort.
-  Release 5.30.1 removed the other half of this exception: the LTI ticket
-  exchange no longer depends on `sso_enabled`, and production now runs with
-  `sso_enabled=false`.
-- The Cloudflare DDNS token is left in place until it expires; no rotation is
-  planned for this pilot. Replace it before the next production cohort.
+- Release 5.30.1 removed the LTI ticket exchange's dependency on
+  `sso_enabled`, and production now runs with `sso_enabled=false`.
+- Narrowed Moodle's `curlsecurityblockedhosts` to the default private ranges
+  plus a carve-out for only the NPM address `172.16.16.11`. The JWKS fetch was
+  verified at `200` through Moodle's own cURL wrapper.
 - Workbook cards now open the workbook page for the learner's current exercise
   in that track (or the first exercise when they have not started), instead of
   the shared landing page.
+
+Deferred deliberately:
+
+- The Cloudflare DDNS token is left in place until it expires; no rotation is
+  planned for this pilot. Replace it before the next production cohort.
 
 ## Reproduction commands
 

@@ -182,11 +182,16 @@ OpenCyberRange 5.30.1 removed the ticket-exchange dependency on
 `sso_enabled`, so a local-login deployment can leave SSO off and LTI launches
 still work. No public SSO provider is configured.
 
-One pilot-only exception remains: Moodle's `curlsecurityblockedhosts` omits
-`172.16.0.0/12`, so Moodle can fetch the tool JWKS from the private NPM
-address. This is broader than a normal production allow-list. Before the next
-cohort, replace it with a public JWKS path or a narrower proxy and restore the
-default blocked-host ranges. Record the change in the pilot review.
+Moodle's `curlsecurityblockedhosts` is narrowed to the default private ranges
+plus a carve-out that admits only the NPM address `172.16.16.11`; every other
+address in `172.16.0.0/12` is blocked. The LTI JWKS fetch was verified at `200`
+through Moodle's own cURL wrapper, and private targets such as
+`172.16.16.41` and `10.0.0.1` are rejected. The pre-change value is kept on the
+production host at
+`~/moodle-prod/curlsecurityblockedhosts.pre-narrow.txt`.
+
+The dev-only seed path (`MOODLE_ALLOW_PRIVATE_LTI_URLS=1`) still relaxes the
+list for `host.docker.internal`; do not use it in production.
 
 ## HSTS
 

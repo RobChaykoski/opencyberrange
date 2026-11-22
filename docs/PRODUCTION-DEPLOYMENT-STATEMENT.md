@@ -69,14 +69,18 @@ SSO switch, so production now runs with `sso_enabled=false`. Deployed on
 | `deployment_mode` | **`production`** |
 | SSO switch | **`sso_enabled=false`**; `/api/auth/sso/providers` returns an empty provider list |
 | LTI JWKS | **200** |
+| Moodle cURL blocked hosts | **Narrowed** to the default ranges plus only `172.16.16.11` in `172.16.0.0/12`; JWKS fetch through Moodle's cURL wrapper **200**; `172.16.16.41` and `10.0.0.1` rejected |
 | Pre-deploy backup | `~/backups/ocr-backup-20261122-194312.dump` |
 | Restore drill | **PASSED**, same counts as 5.30.0 (67 users, 211 labs, 2 courses, 64 enrollments, 134 completions, 497 achievements, 1,567 activity events) |
 | Rollback images | `ocr-backend:pre-5.30.1`, `ocr-frontend:pre-5.30.1` |
 
-A Moodle launch was not exercised after the switch change. The exchange
-endpoint is covered by `tests/test_sso_gate.py`, which proves an already-issued
-ticket is accepted with `sso_enabled=false`; provider login endpoints still
-reject new SSO logins.
+A full interactive Moodle launch was not repeated after the switch change. The
+exchange endpoint is covered by `tests/test_sso_gate.py`, which proves an
+already-issued ticket is accepted with `sso_enabled=false`; provider login
+endpoints still reject new SSO logins. The JWKS path Moodle needs was exercised
+through Moodle's own cURL wrapper after the blocked-host narrowing and returned
+`200`. The pre-change blocked-host value is kept at
+`~/moodle-prod/curlsecurityblockedhosts.pre-narrow.txt`.
 
 ## 5.30.0 deployment verification
 
