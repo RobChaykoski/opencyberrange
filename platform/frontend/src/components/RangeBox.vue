@@ -415,6 +415,7 @@ const fetchTimeRemaining = async () => {
         : 'This desktop has been stopped.'
       kasmUrl.value = ''
       stopTimer()
+      sessionStatePoll.stop()
     }
   } catch {
     // Silently ignore — timer is a nice-to-have
@@ -512,12 +513,15 @@ const startSessionCountdown = () => {
   })
 }
 
+const sessionStatePoll = usePoll(fetchTimeRemaining, 30000, { auto: false })
+
 const onKasmLoad = () => {
   if (unmounted) return
   connectionState.value = 'connected'
   connectionMessage.value = ''
   reconnectAttempts = 0
   startSessionCountdown()
+  if (props.showTimer) sessionStatePoll.start()
 }
 
 const connectKasm = async () => {

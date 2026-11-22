@@ -1240,6 +1240,9 @@ const trackError = ref('')
 const expandedLevels = ref([])
 const activeLab = ref(null)
 const scenarioExpanded = ref(false)
+watch(activeLab, () => {
+  scenarioExpanded.value = false
+})
 const showStopConfirm = ref(false)
 const stoppingLab = ref(false)
 const stopError = ref('')
