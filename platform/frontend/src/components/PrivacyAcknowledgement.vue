@@ -123,6 +123,7 @@ onBeforeUnmount(() => {
   place-items: center;
   padding: 1.25rem;
   background: rgba(2, 6, 23, 0.78);
+  -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
 }
 

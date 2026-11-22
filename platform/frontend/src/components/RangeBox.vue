@@ -407,6 +407,15 @@ const fetchTimeRemaining = async () => {
     if (data.time_remaining !== undefined && data.time_remaining !== null) {
       timeRemaining.value = data.time_remaining
     }
+    const state = String(data.status || '').toLowerCase()
+    if (['stopped', 'exited', 'dead', 'not_found'].includes(state)) {
+      connectionState.value = 'disconnected'
+      connectionMessage.value = state === 'not_found'
+        ? 'This desktop is no longer running.'
+        : 'This desktop has been stopped.'
+      kasmUrl.value = ''
+      stopTimer()
+    }
   } catch {
     // Silently ignore — timer is a nice-to-have
   }

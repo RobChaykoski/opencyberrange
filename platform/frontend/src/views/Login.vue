@@ -761,6 +761,7 @@ const handleLogin = async () => {
   border-radius: 999px;
   background: rgba(15, 23, 42, 0.62);
   box-shadow: 0 6px 20px rgba(2, 6, 23, 0.28);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
 }
 
@@ -1438,6 +1439,7 @@ const handleLogin = async () => {
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.055);
+  -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
 }
 

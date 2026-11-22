@@ -327,6 +327,11 @@
     <!-- Active Lab Panel -->
     <transition name="slide-up">
       <div v-if="activeLab" class="active-lab-panel" :class="{ 'active-lab-panel--workspace': workspaceMode }">
+        <div v-if="stoppingLab" class="exercise-stopping" role="status" aria-live="assertive">
+          <span class="exercise-stopping__spinner" aria-hidden="true"></span>
+          <strong>Stopping the exercise…</strong>
+          <p>Closing the desktop and releasing the lab. This can take up to a minute.</p>
+        </div>
         <div class="active-lab-panel__header" :style="{ '--track-color': track?.color }">
           <div class="active-lab-panel__title-group">
             <h2>{{ activeLab.lab.name }}</h2>
@@ -723,27 +728,35 @@
                 Scenario
               </h3>
               <!-- security-delta: allow Vue v-html (DOMPurify.sanitize) -->
-              <div class="scenario-content" v-html="renderScenario(activeLab.lab.scenario)"></div>
+              <div class="scenario-content" :class="{ 'scenario-content--clamped': !scenarioExpanded }" v-html="renderScenario(activeLab.lab.scenario)"></div>
+              <button
+                type="button"
+                class="panel-disclosure__toggle"
+                :aria-expanded="scenarioExpanded ? 'true' : 'false'"
+                @click="scenarioExpanded = !scenarioExpanded"
+              >
+                {{ scenarioExpanded ? 'Show less' : 'Read full briefing' }}
+              </button>
             </div>
             <!-- Learning outcomes -->
-            <div class="panel-section">
-              <h3 class="section-title">
-                <TargetIcon />
-                By completion students will be able to:
-              </h3>
+            <details class="panel-disclosure">
+              <summary class="panel-disclosure__summary">
+                <span>By completion students will be able to</span>
+                <span class="panel-disclosure__count">{{ activeLab.lab.objectives?.length || 0 }}</span>
+              </summary>
               <ul class="objectives-list">
                 <li v-for="(obj, idx) in activeLab.lab.objectives" :key="idx">
                   {{ obj }}
                 </li>
               </ul>
-            </div>
+            </details>
 
             <!-- MITRE ATT&CK mapping -->
-            <div v-if="activeLab.lab.mitre_attack?.length" class="panel-section">
-              <h3 class="section-title">
-                <TargetIcon />
-                MITRE ATT&amp;CK
-              </h3>
+            <details v-if="activeLab.lab.mitre_attack?.length" class="panel-disclosure">
+              <summary class="panel-disclosure__summary">
+                <span>MITRE ATT&amp;CK</span>
+                <span class="panel-disclosure__count">{{ activeLab.lab.mitre_attack.length }}</span>
+              </summary>
               <div class="mitre-list">
                 <div
                   v-for="(mapping, idx) in activeLab.lab.mitre_attack"
@@ -761,14 +774,14 @@
                   </p>
                 </div>
               </div>
-            </div>
+            </details>
 
             <!-- ICS Techniques (ATT&CK for ICS) -->
-            <div v-if="activeLab.lab.ics_techniques && activeLab.lab.ics_techniques.length" class="panel-section">
-              <h3 class="section-title">
-                <TargetIcon />
-                ATT&amp;CK for ICS
-              </h3>
+            <details v-if="activeLab.lab.ics_techniques && activeLab.lab.ics_techniques.length" class="panel-disclosure">
+              <summary class="panel-disclosure__summary">
+                <span>ATT&amp;CK for ICS</span>
+                <span class="panel-disclosure__count">{{ activeLab.lab.ics_techniques.length }}</span>
+              </summary>
               <div class="ics-tech-list">
                 <span
                   v-for="(tech, idx) in activeLab.lab.ics_techniques"
@@ -784,7 +797,7 @@
                   </span>
                 </span>
               </div>
-            </div>
+            </details>
 
             <!-- Lab Network (only shown when exercise is running) -->
             <div v-if="activeLab.session" id="lab-targets" class="panel-section">
@@ -809,11 +822,11 @@
             </div>
 
             <!-- Hostnames -->
-            <div v-if="activeLab.hostnames && activeLab.hostnames.length > 0" class="panel-section">
-              <h3 class="section-title">
-                <ServerIcon />
-                Target Hostnames
-              </h3>
+            <details v-if="activeLab.hostnames && activeLab.hostnames.length > 0" class="panel-disclosure">
+              <summary class="panel-disclosure__summary">
+                <span>Target hostnames</span>
+                <span class="panel-disclosure__count">{{ activeLab.hostnames.length }}</span>
+              </summary>
               <div class="hostnames-list">
                 <div v-for="(hostname, idx) in activeLab.hostnames" :key="idx" class="hostname-item">
                   <div class="hostname-name">{{ hostname.hostname }}</div>
@@ -832,17 +845,13 @@
                 </p>
                 <pre class="hosts-file-content">{{ activeLab.hostnames.map(h => (h.ip || '<target_ip>') + '    ' + h.hostname).join('\n') }}</pre>
               </div>
-            </div>
+            </details>
 
             <!-- Workbook -->
-            <div v-if="activeLab.lab.workbook && !workspaceMode" class="panel-section">
-              <h3 class="section-title">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="section-icon">
-                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-                </svg>
-                Workbook
-              </h3>
+            <details v-if="activeLab.lab.workbook && !workspaceMode" class="panel-disclosure">
+              <summary class="panel-disclosure__summary">
+                <span>Workbook walkthrough</span>
+              </summary>
               <p class="workbook-hint">Step-by-step walkthrough for this exercise.</p>
               <p v-if="!workbookOpenable(activeLab?.lab?.workbook)" class="workbook-hint workbook-hint--unavailable">
                 This exercise's walkthrough lives in a course workbook. Open the
@@ -864,7 +873,7 @@
                   <line x1="10" y1="14" x2="21" y2="3"/>
                 </svg>
               </button>
-            </div>
+            </details>
 
             <!-- Flag Submission (hidden for in-app triage exercises, which are scored, not flag-based) -->
             <div class="panel-section panel-section--full flag-panel" id="lab-flag">
@@ -930,10 +939,13 @@
               <p v-if="flagSuccess && flagStoppedSession" class="flag-message flag-message--success">
                 Your lab environment is shutting down and this panel will close in a moment.
               </p>
-              <div class="review-request">
+              <details class="review-request panel-disclosure">
+                <summary class="panel-disclosure__summary">
+                  <span>Think the result is wrong?</span>
+                </summary>
                 <p class="review-request__note">
-                  Results are produced by deterministic flag matching. If you believe
-                  this result is wrong, ask an instructor to review it.
+                  Results are produced by deterministic flag matching. An instructor
+                  can review the attempt.
                 </p>
                 <div class="review-request__actions">
                   <button
@@ -950,7 +962,7 @@
                   </span>
                 </div>
                 <p v-if="reviewMessage" class="review-request__message">{{ reviewMessage }}</p>
-              </div>
+              </details>
             </div>
 
             <!-- Hints -->
@@ -1227,6 +1239,7 @@ const track = ref(null)
 const trackError = ref('')
 const expandedLevels = ref([])
 const activeLab = ref(null)
+const scenarioExpanded = ref(false)
 const showStopConfirm = ref(false)
 const stoppingLab = ref(false)
 const stopError = ref('')
@@ -1544,6 +1557,7 @@ const clearSplitBodyClass = () => {
 const onWorkspaceSplitMove = (event) => {
   const drag = splitDrag.value
   if (!drag) return
+  if (drag.pointerId != null && event.pointerId !== drag.pointerId) return
   if (drag.axis === 'vertical') {
     splitV.value = clampSplit(
       ((event.clientX - drag.rect.left) / drag.rect.width) * 100,
@@ -1559,22 +1573,57 @@ const onWorkspaceSplitMove = (event) => {
   }
 }
 
-const endWorkspaceSplit = () => {
-  if (!splitDrag.value) return
+const endWorkspaceSplit = (event) => {
+  const drag = splitDrag.value
+  if (!drag) return
+  if (
+    event
+    && event.pointerId != null
+    && drag.pointerId != null
+    && event.pointerId !== drag.pointerId
+  ) {
+    return
+  }
+  // Release capture before clearing state, otherwise a click on the window
+  // frame can leave the pointer captured by the splitter.
+  if (drag.target && drag.pointerId != null) {
+    try {
+      if (drag.target.hasPointerCapture?.(drag.pointerId)) {
+        drag.target.releasePointerCapture(drag.pointerId)
+      }
+    } catch {
+      // The element may already be gone after a route or layout change.
+    }
+  }
   splitDrag.value = null
   clearSplitBodyClass()
   window.removeEventListener('pointermove', onWorkspaceSplitMove)
   window.removeEventListener('pointerup', endWorkspaceSplit)
   window.removeEventListener('pointercancel', endWorkspaceSplit)
+  window.removeEventListener('blur', endWorkspaceSplit)
   persistWorkspaceSplit()
 }
 
 const startWorkspaceSplit = (axis, event) => {
   if (!wideWorkspace.value || !workspaceGrid.value) return
   if (axis === 'horizontal') workbookExpanded.value = false
+  // Pointer capture keeps move/up events on the splitter even when the cursor
+  // crosses the RangeBox iframe. Without it the iframe receives the pointerup,
+  // the document never sees the release, and the drag appears stuck.
+  const target = event.currentTarget
+  if (target?.setPointerCapture && event.pointerId != null) {
+    try {
+      target.setPointerCapture(event.pointerId)
+    } catch {
+      // Pointer capture is a best-effort enhancement; window listeners below
+      // still handle the normal path.
+    }
+  }
   splitDrag.value = {
     axis,
     rect: workspaceGrid.value.getBoundingClientRect(),
+    pointerId: event.pointerId ?? null,
+    target,
   }
   document.body.classList.add(
     axis === 'vertical'
@@ -1584,6 +1633,7 @@ const startWorkspaceSplit = (axis, event) => {
   window.addEventListener('pointermove', onWorkspaceSplitMove)
   window.addEventListener('pointerup', endWorkspaceSplit)
   window.addEventListener('pointercancel', endWorkspaceSplit)
+  window.addEventListener('blur', endWorkspaceSplit)
 }
 
 const adjustWorkspaceSplit = (axis, delta) => {
@@ -1608,6 +1658,7 @@ onUnmounted(() => {
   window.removeEventListener('pointermove', onWorkspaceSplitMove)
   window.removeEventListener('pointerup', endWorkspaceSplit)
   window.removeEventListener('pointercancel', endWorkspaceSplit)
+  window.removeEventListener('blur', endWorkspaceSplit)
 })
 
 onMounted(() => {
@@ -3642,6 +3693,54 @@ watch(timeRemaining, (val) => {
   overflow-y: auto;
 }
 
+.exercise-stopping {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1.5rem;
+  background: rgba(10, 12, 24, 0.82);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  color: #f8fafc;
+  text-align: center;
+}
+
+.exercise-stopping__spinner {
+  width: 34px;
+  height: 34px;
+  border: 3px solid rgba(248, 250, 252, 0.25);
+  border-top-color: #f8fafc;
+  border-radius: 50%;
+  animation: exercise-stopping-spin 0.8s linear infinite;
+}
+
+.exercise-stopping strong {
+  font-size: 1rem;
+}
+
+.exercise-stopping p {
+  max-width: 32rem;
+  margin: 0;
+  color: #cbd5e1;
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+@keyframes exercise-stopping-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .exercise-stopping__spinner {
+    animation: none;
+  }
+}
+
 .active-lab-panel__header {
   position: sticky;
   top: 0;
@@ -3821,6 +3920,7 @@ watch(timeRemaining, (val) => {
 .active-lab-panel--workspace {
   top: 0;
   bottom: 0;
+  height: 100vh;
   height: 100dvh;
   max-height: none;
   border-radius: 0;
@@ -4196,7 +4296,8 @@ watch(timeRemaining, (val) => {
   /* Leave the compact app top bar visible above the full-screen workspace. */
   .active-lab-panel.active-lab-panel--workspace {
     top: 56px;
-    height: calc(100dvh - 56px);
+    height: calc(100vh - 56px);
+  height: calc(100dvh - 56px);
   }
 }
 
@@ -4214,6 +4315,89 @@ watch(timeRemaining, (val) => {
 
 .panel-section--full {
   grid-column: 1 / -1;
+}
+
+/* Secondary exercise detail is collapsed by default so the working pane is
+   short: the flag form, network targets, and hints stay visible. */
+.panel-disclosure {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.6rem 0.85rem;
+}
+
+.panel-disclosure + .panel-disclosure {
+  margin-top: 0;
+}
+
+.panel-disclosure__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-height: 2rem;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+
+.panel-disclosure__summary::-webkit-details-marker {
+  display: none;
+}
+
+.panel-disclosure__summary::after {
+  content: '+';
+  margin-left: auto;
+  color: var(--text-muted);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.panel-disclosure[open] > .panel-disclosure__summary::after {
+  content: '−';
+}
+
+.panel-disclosure__summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.panel-disclosure__count {
+  margin-left: auto;
+  padding: 0.05rem 0.4rem;
+  border-radius: 999px;
+  background: var(--bg-tertiary);
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+
+.panel-disclosure__summary + * {
+  margin-top: 0.7rem;
+}
+
+.panel-disclosure__toggle {
+  margin-top: 0.5rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--accent-text);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.panel-disclosure__toggle:hover {
+  text-decoration: underline;
+}
+
+.panel-disclosure__toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 .section-title {
@@ -5096,6 +5280,7 @@ watch(timeRemaining, (val) => {
   position: fixed;
   inset: 0;
   background: rgba(3, 7, 18, 0.82);
+  -webkit-backdrop-filter: blur(3px);
   backdrop-filter: blur(3px);
   display: flex;
   align-items: center;

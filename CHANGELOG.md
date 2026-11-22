@@ -46,6 +46,28 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
+### Pilot feedback fixes
+
+- RangeBox clipboard now works across the embedded iframe: the SPA, LTI, and
+  KasmVNC responses allow `clipboard-read`/`clipboard-write`, and the existing
+  iframe `allow` attribute can take effect. Browsers still prompt for clipboard
+  access on first use.
+- Workspace splitters use pointer capture and release on blur, so dragging the
+  desktop/workbook dividers no longer sticks when the pointer crosses the
+  RangeBox iframe.
+- Stopping an exercise now shows a full-panel stopping state while the desktop
+  and lab are released. A stopped RangeBox reports "This desktop has been
+  stopped" instead of freezing silently.
+- The exercise details pane collapses objectives, ATT&CK mappings, hostnames,
+  the workbook link, and the review request behind disclosures, and clamps long
+  scenarios. The flag, network targets, and hints stay visible.
+- Wrong-flag feedback now points at look-alike characters (`0/o`, `1/l/i`,
+  `3/e`, `5/s`, `7/t`) when a near-miss would otherwise match, which addresses
+  the common manual-transcription failures seen in the pilot.
+- Added Safari-style fallbacks for `100dvh` and prefixed `backdrop-filter`.
+- Instructor stats aggregate assignment completions in one query instead of an
+  assignment × learner nested loop.
+
 ### Self-service password reset
 
 - Added `POST /api/auth/forgot-password` and `POST /api/auth/reset-password`.

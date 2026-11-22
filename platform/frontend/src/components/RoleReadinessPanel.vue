@@ -237,12 +237,13 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import axios from '../api/axios'
 import { useCareerGoal } from '../composables/useCareerGoal'
+import { useCareerRoles } from '../composables/useCareerRoles'
 
 defineProps({
   hideSelect: { type: Boolean, default: false },
 })
 const { selectedRole, setGoal } = useCareerGoal()
-const roles = ref([])
+const { roles, load: loadRoleCatalogue } = useCareerRoles()
 const data = ref(null)
 const loading = ref(true)
 const error = ref('')
@@ -258,8 +259,7 @@ watch(selectedRole, () => {
 
 async function loadRoles() {
   try {
-    const response = await axios.get('/profile/roles')
-    roles.value = response.data.roles || []
+    await loadRoleCatalogue()
     const preferred =
       roles.value.find((role) => role.id === selectedRole.value) ||
       roles.value.find((role) => role.id === 'soc-analyst') ||

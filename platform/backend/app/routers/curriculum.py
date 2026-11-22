@@ -401,14 +401,19 @@ def _wrong_flag_hint(submitted_flag: str, expected_hash: Optional[str]) -> str:
     """Build a format/case hint for an incorrect flag without leaking the answer.
 
     Hashes a few common mangles of the submission (case slips, missing OCR{...}
-    wrapper, stray quotes) against the expected hash so the hint can point at
-    the exact mistake. When none of the mangles match, a generic format
-    reminder comes back instead. Only the submitted string is ever echoed or
-    transformed; the correct flag never leaves the server.
+    wrapper, stray quotes, look-alike digits/letters) against the expected hash
+    so the hint can point at the exact mistake. When none of the mangles match,
+    a generic format reminder comes back instead. Only the submitted string is
+    ever echoed or transformed; the correct flag never leaves the server.
     """
     generic = (
         "Flags are case-sensitive and must match exactly. Check the format "
         "shown in the workbook, usually OCR{...}, with no extra spaces or quotes."
+    )
+    lookalike = (
+        "Check digits and look-alike characters. Flags often use 0 for o, 1 for "
+        "l or i, 3 for e, 5 for s, and 7 for t. Copy the flag from the desktop "
+        "instead of retyping it when possible."
     )
     if not expected_hash:
         return generic
@@ -425,6 +430,46 @@ def _wrong_flag_hint(submitted_flag: str, expected_hash: Optional[str]) -> str:
     unquoted = submitted_flag.strip("\"'")
     if unquoted != submitted_flag and _matches(unquoted):
         return "Drop the surrounding quotes and submit the bare flag."
+
+    # Leetspeak is the most common manual-submission mistake: a learner reads
+    # "1" as "l" or "i" (or the reverse) when copying from the workbook. Try a
+    # bounded set of one- and two-character substitutions and point at the
+    # ambiguity without revealing the answer.
+    confusables = {
+        "0": "o", "o": "0",
+        "1": "l", "l": "1",
+        "i": "1", "3": "e", "e": "3",
+        "5": "s", "s": "5",
+        "7": "t", "t": "7",
+    }
+    seen = {submitted_flag}
+    frontier = [submitted_flag]
+    for _depth in range(2):
+        next_frontier = []
+        for variant in frontier:
+            for index, char in enumerate(variant):
+                replacement = confusables.get(char.lower())
+                if not replacement:
+                    continue
+                candidate = (
+                    variant[:index]
+                    + (replacement.upper() if char.isupper() else replacement)
+                    + variant[index + 1:]
+                )
+                if candidate in seen:
+                    continue
+                if _matches(candidate):
+                    return lookalike
+                seen.add(candidate)
+                next_frontier.append(candidate)
+                if len(seen) >= 96:
+                    break
+            if len(seen) >= 96:
+                break
+        frontier = next_frontier
+        if len(seen) >= 96:
+            break
+
     return generic
 
 

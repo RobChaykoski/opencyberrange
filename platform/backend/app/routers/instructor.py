@@ -25,7 +25,7 @@ from fastapi import (
     UploadFile,
 )
 from pydantic import BaseModel
-from sqlalchemy import func
+from sqlalchemy import and_, func
 from sqlalchemy.orm import Session, joinedload
 
 import yaml
@@ -610,31 +610,40 @@ async def instructor_stats(
             User.is_minor == False,
         ).count()
 
-    # Completion rate across assigned labs
+    # Completion rate across assigned labs. Aggregate in SQL: the previous
+    # nested loop ran one enrollment query per assignment and one completion
+    # query per learner, which is thousands of round trips for an active class.
     total_assigned = 0
     total_completed = 0
     if course_ids:
-        assignments = db.query(CourseLabAssignment).filter(
+        total_assigned = db.query(func.count(CourseLabAssignment.id)).filter(
             CourseLabAssignment.course_id.in_(course_ids)
-        ).all()
-        total_assigned = len(assignments)
+        ).scalar() or 0
 
-        for assignment in assignments:
-            enrollments = db.query(CourseEnrollment).join(
-                User, User.id == CourseEnrollment.user_id,
-            ).filter(
-                CourseEnrollment.course_id == assignment.course_id,
+        total_completed = (
+            db.query(func.count(LabCompletion.id))
+            .select_from(LabCompletion)
+            .join(
+                CourseEnrollment,
+                CourseEnrollment.user_id == LabCompletion.user_id,
+            )
+            .join(
+                CourseLabAssignment,
+                and_(
+                    CourseLabAssignment.course_id == CourseEnrollment.course_id,
+                    CourseLabAssignment.lab_id == LabCompletion.lab_id,
+                ),
+            )
+            .join(User, User.id == LabCompletion.user_id)
+            .filter(
+                CourseLabAssignment.course_id.in_(course_ids),
                 User.is_minor == False,
-            ).all()
-            for enrollment in enrollments:
-                completion = db.query(LabCompletion).filter(
-                    LabCompletion.user_id == enrollment.user_id,
-                    LabCompletion.lab_id == assignment.lab_id,
-                    LabCompletion.flag_submitted.isnot(None),
-                    LabCompletion.flag_submitted != "",
-                ).first()
-                if completion:
-                    total_completed += 1
+                LabCompletion.flag_submitted.isnot(None),
+                LabCompletion.flag_submitted != "",
+            )
+            .scalar()
+            or 0
+        )
 
     return {
         "total_courses": total_courses,

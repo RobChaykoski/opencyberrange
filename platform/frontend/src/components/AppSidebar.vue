@@ -862,7 +862,8 @@ const userInitial = computed(() => {
     top: 0;
     width: min(86vw, 320px);
     min-width: min(86vw, 320px);
-    height: 100dvh;
+    height: 100vh;
+  height: 100dvh;
     transform: translateX(-100%);
     transition: transform 0.2s ease;
     z-index: 300;

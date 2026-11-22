@@ -35,11 +35,11 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
-import axios from '../api/axios'
+import { computed, onMounted } from 'vue'
 import { useCareerGoal } from '../composables/useCareerGoal'
+import { useCareerRoles } from '../composables/useCareerRoles'
 
-const props = defineProps({
+defineProps({
   variant: {
     type: String,
     default: 'band',
@@ -48,7 +48,7 @@ const props = defineProps({
 })
 
 const { selectedRole, setGoal } = useCareerGoal()
-const roles = ref([])
+const { roles, load } = useCareerRoles()
 
 const selectedTitle = computed(
   () => roles.value.find((role) => role.id === selectedRole.value)?.title || 'your target role'
@@ -65,8 +65,7 @@ function choosePreferredRole() {
 
 onMounted(async () => {
   try {
-    const { data } = await axios.get('/profile/roles')
-    roles.value = Array.isArray(data?.roles) ? data.roles : []
+    await load()
     choosePreferredRole()
   } catch {
     // The pathway catalogue is optional. Hide the switcher rather than show a

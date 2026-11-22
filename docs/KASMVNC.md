@@ -92,9 +92,13 @@ re-checking the `/kasm/` CSP.
 - **Control bar**: KasmVNC's own control bar provides clipboard, Ctrl+Alt+Del,
   quality/stream settings, and fullscreen. The platform hides its noVNC-only
   quality, clipboard, and Ctrl+Alt+Del controls for KasmVNC sessions.
-- **Flag capture**: the desktop-to-browser clipboard event used to populate the
-  flag field is not available inside the iframe. Copy the flag in the desktop,
-  then use the existing "Paste and clean the flag from your clipboard" button.
+- **Clipboard**: the platform sends `Permissions-Policy: clipboard-read=(self),
+  clipboard-write=(self)` on the SPA, LTI embed, and `/kasm/` responses, and the
+  iframe uses `allow="clipboard-read; clipboard-write"`. Browsers still prompt
+  for read access on first paste, and Safari requires the KasmVNC control-bar
+  clipboard panel. The desktop-to-browser clipboard event used to populate the
+  flag field is still not available inside the iframe; copy the flag in the
+  desktop, then use the "Paste and clean the flag from your clipboard" button.
 - **Reconnect**: the iframe uses a single-use WebSocket ticket, so automatic
   reconnect is disabled. Use **Reload desktop**; it mints a fresh ticket.
 - **File transfer**: the open-source KasmVNC client does not add a file-transfer
@@ -124,3 +128,6 @@ re-checking the `/kasm/` CSP.
 - End-to-end: launch a RangeBox, confirm the iframe connects, type into a
   terminal, resize the browser window, and verify the desktop dimensions track
   the viewport. Admin "View As" must remain read-only.
+- Clipboard: copy text inside the desktop and paste it into a host field, then
+  copy on the host and paste inside the desktop. Confirm the browser prompt
+  appears once and that Safari falls back to the control-bar clipboard panel.
