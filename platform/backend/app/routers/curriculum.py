@@ -510,16 +510,91 @@ async def list_workbooks(
         e["roots"][root] = e["roots"].get(root, 0) + int(n)
         e["total"] += int(n)
 
+    # Where each card should open: the workbook page for the exercise the
+    # learner is currently on in that track, or the first exercise when they
+    # have not started. A running session wins over the sequential pointer so
+    # the card returns to the desktop the learner actually has open.
+    completed_ids = get_user_completions(db, current_user.id)
+    accessible_course_lab_ids = get_accessible_exclusive_lab_ids(db, current_user.id)
+    track_ids = list(by_track)
+    tracks = (
+        db.query(Track)
+        .options(joinedload(Track.levels).joinedload(Level.labs))
+        .filter(Track.id.in_(track_ids))
+        .all()
+    ) if track_ids else []
+    tracks_by_id = {track.id: track for track in tracks}
+
+    running_by_track = {}
+    if track_ids:
+        running_rows = (
+            db.query(LabSession.lab_id, Level.track_id)
+            .join(Lab, Lab.id == LabSession.lab_id)
+            .join(Level, Level.id == Lab.level_id)
+            .filter(
+                LabSession.user_id == current_user.id,
+                LabSession.status.in_(["running", "starting"]),
+            )
+            .order_by(LabSession.started_at.desc())
+            .all()
+        )
+        for lab_id, track_id in running_rows:
+            running_by_track.setdefault(track_id, lab_id)
+
     out = []
     for e in sorted(by_track.values(), key=lambda x: (x["sort_order"], x["name"])):
         if not e["roots"]:
             continue
         best = max(e["roots"].items(), key=lambda kv: kv[1])[0]
+        track = tracks_by_id.get(e["id"])
+        start_url = "/" + best + "/"
+        start_label = ""
+        started = False
+
+        if track is not None:
+            visible_labs = [
+                lab
+                for level in sorted(track.levels, key=lambda l: l.level_number)
+                for lab in sorted(level.labs, key=lab_order_key)
+                if _is_lab_visible(lab, current_user, accessible_course_lab_ids)
+            ]
+            lab_choices = {lab.id: lab for lab in visible_labs}
+            started = any(lab.id in completed_ids for lab in visible_labs)
+            current_lab_id = running_by_track.get(track.id)
+            if current_lab_id is not None:
+                started = True
+            if current_lab_id not in lab_choices:
+                current_lab_id = get_current_lab(
+                    db,
+                    current_user.id,
+                    track,
+                    completed_ids,
+                    {lab.id for lab in visible_labs},
+                )
+            current_lab = lab_choices.get(current_lab_id)
+            if current_lab is None and visible_labs:
+                # Every exercise is complete: return to the last one so the
+                # card still lands on a real workbook page.
+                current_lab = visible_labs[-1]
+            if current_lab is not None and current_lab.workbook:
+                start_url = "/" + current_lab.workbook.lstrip("/")
+                start_label = current_lab.name
+            elif visible_labs:
+                fallback = next(
+                    (lab for lab in visible_labs if lab.workbook), None
+                )
+                if fallback is not None:
+                    start_url = "/" + fallback.workbook.lstrip("/")
+                    start_label = fallback.name
+
         out.append({
             "id": e["id"],
             "name": e["name"],
             "slug": e["slug"],
             "url": "/" + best + "/",
+            "start_url": start_url,
+            "start_label": start_label,
+            "started": started,
             "type": "course" if "/course/" in best else "range",
             "exercises": e["total"],
         })

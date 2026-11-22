@@ -33,6 +33,9 @@
         </div>
         <div class="wb-card__name">{{ wb.name }}</div>
         <div class="wb-card__meta">{{ wb.exercises }} {{ wb.exercises === 1 ? 'exercise' : 'exercises' }}</div>
+        <div v-if="wb.start_label" class="wb-card__next">
+          {{ wb.started ? 'Continue with' : 'Start with' }} <strong>{{ wb.start_label }}</strong>
+        </div>
         <div class="wb-card__open">
           Open workbook
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="wb-card__arrow">
@@ -67,7 +70,7 @@ const canReorder = (() => {
 
 
 async function open(wb) {
-  const url = wikiUrl(wb.url)
+  const url = wikiUrl(wb.start_url || wb.url)
   if (!url) return
   // Open synchronously from the click. Awaiting the cookie call first lets
   // browsers treat the later window.open as a popup and block it.
@@ -235,6 +238,15 @@ onUnmounted(() => { if (sortable) { sortable.destroy(); sortable = null } })
 .wb-card__meta {
   font-size: 0.83rem;
   color: var(--text-muted);
+}
+.wb-card__next {
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+.wb-card__next strong {
+  color: var(--text-primary);
+  font-weight: 600;
 }
 .wb-card__open {
   margin-top: auto;

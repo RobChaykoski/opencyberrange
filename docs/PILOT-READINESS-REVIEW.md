@@ -212,11 +212,11 @@ Deferred deliberately:
   place because the LTI tool still fetches JWKS/AGS through the private NPM
   address. Removing them now would break LTI launches. Replace them with a
   public JWKS/AGS path or a narrower proxy before the next production cohort.
-- The Cloudflare DDNS token still needs rotation in the Cloudflare dashboard.
-  Replace `CLOUDFLARE_API_TOKEN` in `~/cloudflare-ddns/.env`, then
-  `docker compose up -d`; this review cannot mint the replacement token.
-- Workbook cards still open each track's shared landing page. Decide whether
-  they should open the first exercise before the next content release.
+- The Cloudflare DDNS token is left in place until it expires; no rotation is
+  planned for this pilot. Replace it before the next production cohort.
+- Workbook cards now open the workbook page for the learner's current exercise
+  in that track (or the first exercise when they have not started), instead of
+  the shared landing page.
 
 ## Reproduction commands
 

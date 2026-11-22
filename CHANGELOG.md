@@ -67,6 +67,9 @@ All notable changes to OpenCyberRange are recorded here.
 - Added Safari-style fallbacks for `100dvh` and prefixed `backdrop-filter`.
 - Instructor stats aggregate assignment completions in one query instead of an
   assignment × learner nested loop.
+- Workbook cards now open the workbook page for the exercise the learner is
+  currently on in that track (a running session wins), or the first exercise
+  when they have not started.
 
 ### Self-service password reset
 
