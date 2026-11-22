@@ -2,6 +2,15 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [Unreleased]
+
+### Deployment tooling
+
+- Added `scripts/tag-release-images.sh`, which tags the images used by running
+  platform containers before a rebuild. Docker's containerd image store can
+  collect the replaced image during a build even while its container is
+  running, which left the 5.30.0 deployment without a pre-release rollback tag.
+
 ## [5.30.1] - 2026-11-22
 
 ### LTI launches no longer depend on the SSO switch

@@ -43,6 +43,22 @@ git pull --ff-only origin main
 
 ## Backend and frontend
 
+### Rollback images
+
+Tag the images used by the running containers before a rebuild:
+
+```bash
+cd ~/opencyberrange
+bash scripts/tag-release-images.sh pre-<next-version>
+```
+
+The script reads each container's configured image reference and writes a
+`pre-<next-version>` tag for it (`opencyberrange-backend:pre-…`,
+`ocr-frontend:pre-…`). It fails if the image is no longer in the local store;
+rebuild the deployed commit in that case. Docker's containerd image store can
+collect the replaced image during a build even while its container is running,
+so tag first. Run it before every production build.
+
 Production compose files:
 
 ```bash

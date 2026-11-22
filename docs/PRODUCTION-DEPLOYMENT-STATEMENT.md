@@ -105,8 +105,9 @@ containers (unreferenced images are garbage-collected under the containerd
 store), so new `pre-5.30.0` rollback tags could not be created from them.
 Rollback is by checking out `f3caa331` and rebuilding; the 5.30.0 release commit
 changes only version metadata, the About inventory, generated documentation, and
-the supply-chain lock relative to that tree. Tag the running images before the
-next release so the rollback tag exists.
+the supply-chain lock relative to that tree. `scripts/tag-release-images.sh`
+now tags the running images before a build; it is part of the deployment
+runbook.
 
 ## 5.29.1 deployment verification
 
