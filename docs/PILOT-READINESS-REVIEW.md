@@ -190,6 +190,34 @@ directory`. Ownership was restored to `daemon:daemon`, the cache was purged as
 the `daemon` user, and login returned to `200`. Run Moodle CLI commands as
 `daemon` (`docker exec -u daemon …`), never as root.
 
+## Post-event cleanup — 2026-11-22
+
+Completed after the pilot session:
+
+- Took fresh OpenCyberRange and Moodle backups
+  (`~/backups/ocr-backup-20261122-010738.dump`,
+  `~/moodle-prod/backups/moodle-db-20261122-010738.sql.gz`).
+- Rebuilt all workbook wikis, including the restored high-school pages.
+- Narrowed `wiki_frame_ancestor` from the raw-IP list to
+  `https://ctfd.swocts.com https://moodle.swocts.com`; the platform still frames
+  only its own origin and the LMS.
+- Deployed the LTI instructor-role mapping and marked `pilot-instructor` as
+  SSO-managed (`password_login_disabled=true`) so future launches follow the
+  `membership#Instructor` claim instead of the local role workaround.
+- Confirmed `ocr-pg-gateway` is restricted to `172.16.16.44/32`.
+
+Deferred deliberately:
+
+- `sso_enabled=true` and Moodle's relaxed `curlsecurityblockedhosts` remain in
+  place because the LTI tool still fetches JWKS/AGS through the private NPM
+  address. Removing them now would break LTI launches. Replace them with a
+  public JWKS/AGS path or a narrower proxy before the next production cohort.
+- The Cloudflare DDNS token still needs rotation in the Cloudflare dashboard.
+  Replace `CLOUDFLARE_API_TOKEN` in `~/cloudflare-ddns/.env`, then
+  `docker compose up -d`; this review cannot mint the replacement token.
+- Workbook cards still open each track's shared landing page. Decide whether
+  they should open the first exercise before the next content release.
+
 ## Reproduction commands
 
 The audit scripts used for this review were temporary, but the durable checks
