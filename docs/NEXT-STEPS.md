@@ -59,9 +59,12 @@ This page tracks what is left; the deployment record is
 
 ## Open queue
 
-1. **Cyber DNA v3 rollout.** Development is enabled and backfilled. Next: add
-   the learner UI, tune behavior weights after a term of evidence, then deploy
-   to production with the flag still off and enable it after validation. See
+1. **Cyber DNA v3 rollout.** Development is enabled and backfilled. Production
+   already has `cyber_dna_v3_enabled=true` but only 3 evidence rows and no
+   snapshots, so the backfill and gate check have not run there. Reconcile that
+   before Phase 2: either backfill after a dry run and validate with a real
+   learner, or turn the flag off until the learner UI ships. Then tune the
+   behavior weights after a term of evidence. See
    [`CYBER-DNA-V3.md`](CYBER-DNA-V3.md). Affinity only; employer access is out
    of scope.
 2. **Python 3.15** when it reaches GA. Three interpreter CVEs are fixed only on

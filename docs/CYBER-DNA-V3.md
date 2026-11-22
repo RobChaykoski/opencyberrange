@@ -1,9 +1,13 @@
 # Cyber DNA v3 — talent discovery graph
 
-Status: **Phase 1 implemented and enabled on development.** Production remains
-on `v5.16.0` with the feature gated off. Development applied migration `0032`,
-backfilled 740 evidence rows for 53 learners, and enabled
+Status: **Phase 1 implemented and enabled on development.** Development applied
+migration `0032`, backfilled 740 evidence rows for 53 learners, and enabled
 `cyber_dna_v3_enabled`; the affinity gate was verified in both directions.
+
+Production runs 5.30.1. Its flag is currently on, but the production backfill
+has not run: on 22 November 2026 the tables held 3 evidence rows and no
+snapshots. Phase 2 (the learner UI) is not shipped. See
+[Production state](#production-state---2026-11-22).
 
 Owner: OpenCyberRange curriculum and platform
 Target: Release 5.17 line (phased)
@@ -353,6 +357,19 @@ Example affinity payload when the gate is met:
   observations) with 13 pathways; a low-evidence learner correctly returned
   `available: false` at 4 labs, 1 domain, 16 observations.
 - A behavior snapshot was recorded, read back, and removed after the test.
+
+### Production state - 2026-11-22
+
+- `cyber_dna_v3_enabled=true` and `advanced_dna_insights_enabled=true` on
+  production, although both settings default to false.
+- `dna_evidence_records` holds 3 rows and `dna_snapshots` holds 0 rows; the
+  production completion backfill has not been run.
+- The Phase 2 learner UI is not shipped, so the enabled read APIs have no
+  learner-facing surface yet.
+- Before the next rollout step, reconcile the flag: either run
+  `scripts/backfill-evidence.py` on production after a dry run and verify the
+  gate with a real learner, or set `cyber_dna_v3_enabled=false` until Phase 2
+  ships. Record the decision here.
 
 ## 10.1 Consent and revocation
 
