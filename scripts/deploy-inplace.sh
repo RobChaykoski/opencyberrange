@@ -90,6 +90,20 @@ if [[ "$DRY_RUN" == "0" ]]; then
     git -C "$REPO_DIR" checkout --detach "$TAG"
 fi
 
+# The backend runs as UID 10001 and reads the mounted lab tree directly. Lab
+# builds can leave root-owned files behind, so use the Docker group to restore
+# read/traverse permissions before the integrity check runs.
+if [[ "$DRY_RUN" == "0" ]]; then
+    log "Making platform/labs readable by the backend user"
+    if command -v docker >/dev/null 2>&1; then
+        docker run --rm -v "$REPO_DIR/platform/labs:/labs" alpine:3.20 \
+            chmod -R a+rX /labs >/dev/null 2>&1 || \
+            chmod -R a+rX "$REPO_DIR/platform/labs" 2>/dev/null || true
+    else
+        chmod -R a+rX "$REPO_DIR/platform/labs" 2>/dev/null || true
+    fi
+fi
+
 log "Verifying the supply-chain lock"
 (cd "$REPO_DIR" && python3 scripts/supply_chain.py --check \
     --signature supply-chain.lock.json.asc \
