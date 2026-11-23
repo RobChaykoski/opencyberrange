@@ -2,6 +2,18 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.37.1] - 2026-11-23
+
+### Deployment integrity
+
+- Normalized `platform/labs` permissions during in-place deployment so the
+  backend user (UID 10001) can read every lab file. Lab builds can leave
+  root-owned or group-only files behind; the deploy script now runs
+  `chmod -R a+rX` through the Docker group before rebuilding.
+- Fixed the production software-integrity check reporting 208 of 214 labs as
+  mismatches when the files were present but unreadable. The deployed content
+  was unchanged; the backend could not read it.
+
 ## [5.37.0] - 2026-11-23
 
 ### Release 6 foundation

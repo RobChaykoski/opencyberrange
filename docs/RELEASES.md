@@ -3,6 +3,12 @@
 This page maps the tags in the repository to the release they actually
 represent. It exists because the history contains several naming eras.
 
+## Release 5.37.1
+
+| Tag | Release | Status |
+|---|---|---|
+| `v5.37.1` | SWOCTS Cyber Range Release 5.37.1 | Patch: normalize lab permissions during in-place deployment and fix the runtime integrity check for unreadable lab trees. |
+
 ## Release 5.37.0
 
 | Tag | Release | Status |
