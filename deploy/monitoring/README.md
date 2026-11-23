@@ -79,6 +79,15 @@ curl -fsS http://127.0.0.1:9093/-/ready
 
 Grafana is at `http://127.0.0.1:3000` until NPM publishes it.
 
+The Prometheus and Grafana containers run as non-root users. On hosts with a
+shared umask, make the read-only config trees world-readable:
+
+```bash
+chmod -R a+rX prometheus alertmanager blackbox grafana
+```
+
+Do not make `.env` world-readable.
+
 If NPM runs on another host, set `GRAFANA_BIND` to the monitoring host's private
 address (or `0.0.0.0` behind a firewall that allows only NPM). Keep
 `127.0.0.1` when NPM is on the same host.
