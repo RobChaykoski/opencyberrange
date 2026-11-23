@@ -52,6 +52,8 @@ services:
     secrets:
       - source: smtp_password
         target: smtp_password
+        uid: "65534"
+        gid: "65534"
         mode: 0444
     ports:
       - "127.0.0.1:9093:9093"
