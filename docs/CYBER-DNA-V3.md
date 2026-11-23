@@ -378,6 +378,10 @@ Example affinity payload when the gate is met:
   that applies `consent_allows_processing` per learner, and a regression test
   proves a revoked learner's surviving completion cannot recreate evidence
   after the purge.
+- HTTP verification after the fix: the four `/api/dna/v3/*` read endpoints
+  return `200` for a consenting student, with the affinity gate reporting
+  `available: false` (1/30 labs, 2/3 domains, 3/100 observations). A revoked
+  learner receives `403 ConsentRequired` from the consent middleware.
 - The Phase 2 learner UI is not shipped, so the enabled read APIs have no
   learner-facing surface yet. Keep the flag on for API readiness; the consent
   middleware returns `403` for a revoked learner and the gate hides affinity

@@ -102,6 +102,7 @@ as the live completion path. Deployed on 22 November 2026 (23 November UTC).
 | Remaining evidence | **44 rows** for 3 consenting learners (13, 1, 194), 11 activities, 3 domains |
 | Backfill re-run | **0 new rows**, 117 completions blocked by consent, 3 consenting learners |
 | Affinity gate | **not met** by any consenting learner yet (learner 13: 38 observations, 3 domains, 11 activities) |
+| HTTP consent/RBAC | consenting student: four `/api/dna/v3/*` reads **200**, `available: false` (1/30 labs, 2/3 domains, 3/100 observations); revoked learner: **403 `ConsentRequired`** |
 | Pre-deploy backup | `~/backups/ocr-backup-20261123-004045.dump` |
 | Restore drill | **PASSED** (67 users, 211 labs, 2 courses, 64 enrollments, 134 completions, 497 achievements, 1,567 activity events) |
 | Rollback images | `opencyberrange-backend:pre-5.30.2`, `ocr-frontend:pre-5.30.2` (created before the build) |
