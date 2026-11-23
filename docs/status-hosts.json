@@ -10,7 +10,7 @@
     "label": "OCR dev",
     "role": "development",
     "url": "https://<dev-host-ip>",
-    "expected_version": "5.35.0",
+    "expected_version": "5.36.0",
     "line": "OCR development deployment"
   }
 ]

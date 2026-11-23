@@ -3,17 +3,17 @@
 This page maps the tags in the repository to the release they actually
 represent. It exists because the history contains several naming eras.
 
-## Release 5.36.0 (prepared, not tagged)
+## Release 5.36.0
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.36.0` (planned) | SWOCTS Cyber Range Release 5.36.0 | Release candidate: signed-update gate, backup and monitoring hardening, lab freshness/canary, dynamic reporting periods and forecasts, admin bundle split, and i18n/API-error groundwork. Not tagged or deployed until the staging matrix passes. |
+| `v5.36.0` | SWOCTS Cyber Range Release 5.36.0 | Signed annotated tag: signed-update gate, backup and monitoring hardening, lab freshness/canary, dynamic reporting periods and forecasts, admin bundle split, and i18n/API-error groundwork. Deployed to `ocr-dev`; production deployment pending the deployment window. |
 
 ## Current supported release
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.35.0` | SWOCTS Cyber Range Release 5.35.0 | Current feature release (signed annotated tag): production Authentik SSO, the AI02 multi-agent capstone, the metadata/DLP context service, DFIR-13 Velociraptor, and the publication metadata audit |
+| `v5.35.0` | SWOCTS Cyber Range Release 5.35.0 | Previous feature release (signed annotated tag): production Authentik SSO, the AI02 multi-agent capstone, the metadata/DLP context service, DFIR-13 Velociraptor, and the publication metadata audit. Still running on production until 5.36.0 is applied. |
 | `v5.34.0` | SWOCTS Cyber Range Release 5.34.0 | Previous feature release (signed annotated tag): the Trailline non-human identity lab and leaked `svc-trailguard-bot` token exercise |
 | `v5.33.0` | SWOCTS Cyber Range Release 5.33.0 | Previous feature release (signed annotated tag): the Trailline Security & GRC universe, a reframed AI01 stream, and the agent-hijacking lab `ai-2-1` |
 | `v5.32.1` | SWOCTS Cyber Range Release 5.32.1 | Previous patch release (signed annotated tag): serve the admin QR generator from a non-static API path |
