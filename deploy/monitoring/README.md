@@ -79,6 +79,10 @@ curl -fsS http://127.0.0.1:9093/-/ready
 
 Grafana is at `http://127.0.0.1:3000` until NPM publishes it.
 
+If NPM runs on another host, set `GRAFANA_BIND` to the monitoring host's private
+address (or `0.0.0.0` behind a firewall that allows only NPM). Keep
+`127.0.0.1` when NPM is on the same host.
+
 ## Add hosts
 
 On each Linux host, run the agent in [`agent/`](agent/README.md). It exposes
