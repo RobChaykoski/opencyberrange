@@ -7,7 +7,7 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.37.0` | SWOCTS Cyber Range Release 5.37.0 | Signed annotated tag: Admin competency quality tab, review queue and packets, versioned rubrics, the separate `health.swocts.com` monitoring stack, Authentik OIDC, email alerts, and the in-place production deploy script. |
+| `v5.37.0` | SWOCTS Cyber Range Release 5.37.0 | Signed annotated tag: Admin competency quality tab, review queue and packets, versioned rubrics, the separate `health.swocts.com` monitoring stack, Authentik OIDC, email alerts, and the in-place production deploy script. Deployed to development and production. |
 
 ## Release 5.36.0
 

@@ -16,7 +16,7 @@ Last reviewed: **2026-11-23**.
 | `versions.yaml` `release.version` | `5.37.0` | Last released line |
 | `versions.yaml` `development.version` | `5.38.0` | Next planned line |
 | `platform/frontend/package.json` | `5.37.0` | Frontend build metadata |
-| Signed tag | `v5.37.0` (pending) | Release evidence |
+| Signed tag | `v5.37.0` | Release evidence |
 
 Do not hand-maintain a second major line in these files. If a value disagrees,
 fix it before a release and run:
