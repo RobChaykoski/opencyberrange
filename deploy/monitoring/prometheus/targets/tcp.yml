@@ -1,0 +1,19 @@
+# TCP checks for services without an HTTP health endpoint.
+# Reach these only over a private management network. Do not publish database
+# or cache ports to the monitoring host over the public internet.
+#
+# - targets:
+#     - <prod-host>:5432
+#   labels:
+#     environment: production
+#     service: postgres
+#     owner: data
+#
+# - targets:
+#     - <prod-host>:51820
+#   labels:
+#     environment: production
+#     service: wireguard
+#     owner: network
+
+[]

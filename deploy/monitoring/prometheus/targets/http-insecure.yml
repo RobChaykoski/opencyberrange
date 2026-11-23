@@ -1,0 +1,11 @@
+# HTTPS checks for self-signed or internal certificate endpoints.
+# Keep this file empty until a deployment genuinely needs it.
+#
+# - targets:
+#     - https://<dev-host>
+#   labels:
+#     environment: development
+#     service: ocr
+#     owner: platform
+
+[]

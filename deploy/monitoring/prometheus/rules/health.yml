@@ -1,0 +1,69 @@
+groups:
+  - name: availability
+    rules:
+      - alert: TargetDown
+        expr: probe_success == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Probe failed for {{ $labels.instance }}"
+          description: "Blackbox probe has failed for at least two minutes."
+
+      - alert: ScrapeTargetDown
+        expr: up == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Prometheus cannot scrape {{ $labels.instance }}"
+          description: "The target has been unreachable for at least two minutes."
+
+      - alert: SSLCertificateExpiring
+        expr: probe_ssl_earliest_cert_expiry > 0 and (probe_ssl_earliest_cert_expiry - time()) < 14 * 24 * 3600
+        for: 1h
+        labels:
+          severity: warning
+        annotations:
+          summary: "TLS certificate expires soon for {{ $labels.instance }}"
+          description: "The certificate expires in less than 14 days."
+
+  - name: host
+    rules:
+      - alert: HostDiskFilling
+        expr: (node_filesystem_avail_bytes{mountpoint="/",fstype!~"tmpfs|overlay"} / node_filesystem_size_bytes{mountpoint="/",fstype!~"tmpfs|overlay"}) < 0.15
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Disk below 15% on {{ $labels.instance }}"
+          description: "Free space on the root filesystem is below 15%."
+
+      - alert: HostMemoryHigh
+        expr: (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) > 0.90
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Memory above 90% on {{ $labels.instance }}"
+          description: "Available memory has been below 10% for 15 minutes."
+
+  - name: operations
+    rules:
+      - alert: BackupStale
+        expr: time() - ocr_backup_last_success_timestamp_seconds > 26 * 3600
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Backup is older than 26 hours"
+          description: "Push ocr_backup_last_success_timestamp_seconds after a successful backup and restore drill."
+
+      - alert: MonitoringHeartbeatMissing
+        expr: time() - ocr_monitor_heartbeat_timestamp_seconds > 15 * 60
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Local monitor heartbeat is missing"
+          description: "The local monitor has not pushed a heartbeat for 15 minutes."

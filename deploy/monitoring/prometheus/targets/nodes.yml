@@ -1,0 +1,31 @@
+# node_exporter endpoints. Add every platform, NPM, identity, and lab host.
+#
+# The port should be reachable only from the monitoring host (firewall or
+# private management network). Do not publish 9100 publicly.
+#
+# To monitor the monitoring host itself, enable the optional service:
+#   docker compose --profile self up -d
+# and add:
+#
+# - targets:
+#     - node-exporter:9100
+#   labels:
+#     environment: monitoring
+#     host: monitoring
+#     owner: operations
+#
+# - targets:
+#     - <npm-host>:9100
+#   labels:
+#     environment: edge
+#     host: npm
+#     owner: network
+#
+# - targets:
+#     - <prod-host>:9100
+#   labels:
+#     environment: production
+#     host: production
+#     owner: platform
+
+[]

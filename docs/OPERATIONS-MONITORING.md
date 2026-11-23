@@ -26,6 +26,22 @@ external dead-man switch <---  scripts/monitor-deployment.sh (every 5 min)
 - The **local monitor** owns the deep checks that need host access: containers,
   disk, certificate expiry, backup age, offsite backup age.
 
+## Central dashboard (`health.swocts.com`)
+
+The planned central dashboard is a separate monitoring instance in
+[`deploy/monitoring/`](../deploy/monitoring/README.md). It publishes Grafana at
+`health.swocts.com`, collects Prometheus/Blackbox checks and host metrics, and
+routes alerts to the operations channel.
+
+It is a convenience and correlation layer, not a replacement for this page:
+
+- The dashboard must run on a host independent of the systems it monitors.
+- The external uptime check and dead-man switch still run outside that host.
+- The dashboard must never be the only thing that notices a stopped monitor.
+
+See [Host health dashboard plan](HEALTH-DASHBOARD-PLAN.md) for scope, security,
+rollout, and acceptance criteria.
+
 ## External checks to create
 
 | Check | Target | Interval | Alert after |

@@ -121,6 +121,7 @@ capstones and analytics, scale, federation, then the AI mentor.
 - [MinIO object storage design note](MINIO-OBJECT-STORAGE.md)
 - [Simulated cloud range](SIMULATED-CLOUD.md)
 - [Deployment status](status-dashboard.md)
+- [Host health dashboard plan](HEALTH-DASHBOARD-PLAN.md) and [monitoring instance](../deploy/monitoring/README.md)
 - [Community events calendar](COMMUNITY-EVENTS-CALENDAR.md)
 - [2027 curriculum tracks](CURRICULUM-TRACKS-2027.md)
 - [NICE Framework ingestion](NICE-FRAMEWORK-INGESTION.md)

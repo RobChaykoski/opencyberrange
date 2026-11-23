@@ -1,0 +1,23 @@
+# Replace the webhook with the institution's alert relay. Alertmanager does not
+# expand environment variables in this file; keep the URL out of the repository.
+#
+# For a chat provider, use its incoming webhook. For email, add smtp_* fields.
+route:
+  receiver: default
+  group_by: [alertname, instance]
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 4h
+
+receivers:
+  - name: default
+    webhook_configs:
+      - url: https://hooks.example.com/services/replace-me
+        send_resolved: true
+
+inhibit_rules:
+  - source_matchers:
+      - severity="critical"
+    target_matchers:
+      - severity="warning"
+    equal: [instance]

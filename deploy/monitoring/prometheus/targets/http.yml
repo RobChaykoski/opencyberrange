@@ -1,0 +1,20 @@
+# Public HTTPS checks. Add every production service that has a stable URL.
+# Keep labels low-cardinality and free of secrets, IPs, or learner data.
+#
+# Examples (replace the placeholder hosts):
+#
+# - targets:
+#     - https://<ctfd-host>
+#   labels:
+#     environment: production
+#     service: ctfd
+#     owner: platform
+#
+# - targets:
+#     - https://<auth-host>
+#   labels:
+#     environment: production
+#     service: authentik
+#     owner: identity
+
+[]
