@@ -93,6 +93,18 @@ represent. It exists because the history contains several naming eras.
 `68A817762C831475F00DB54E775050A4C4921814`. The public key is
 `docs/release-signing-key.asc`.
 
+## Release 5.30.2 tag record
+
+| Item | Value |
+|---|---|
+| Tag | `v5.30.2` (signed annotated tag) |
+| Commit | `50dde8c1` |
+| Signature | **Good**, key `68A817762C831475F00DB54E775050A4C4921814` |
+| Released | 22 November 2026 |
+| CI | CI, Quality checks, CodeQL, Trivy, Security delta review, and OpenSSF Scorecard passed |
+| Deployed | Dev and production on `5.30.2`, Alembic `0050_child_privacy_defaults` |
+| Cleanup | Cyber DNA backfill now applies the consent gate; 230 rows for 12 non-consenting learners were purged |
+
 ## Release 5.30.1 tag record
 
 | Item | Value |

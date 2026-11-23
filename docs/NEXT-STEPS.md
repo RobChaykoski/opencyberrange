@@ -1,6 +1,6 @@
 # Next steps
 
-Status: **Release 5.30.1 is deployed to development and production
+Status: **Release 5.30.2 is deployed to development and production
 (`deployment_mode=production`, `sso_enabled=false`). Cyber DNA v3 Phase 1 is
 enabled on development only.** The platform runs Python 3.13, the
 security hardening wave is live, the OT track has three exercises plus an
