@@ -28,10 +28,11 @@ external dead-man switch <---  scripts/monitor-deployment.sh (every 5 min)
 
 ## Central dashboard (`health.swocts.com`)
 
-The planned central dashboard is a separate monitoring instance in
-[`deploy/monitoring/`](../deploy/monitoring/README.md). It publishes Grafana at
-`health.swocts.com`, collects Prometheus/Blackbox checks and host metrics, and
-routes alerts to the operations channel.
+The central dashboard is running for testing at
+`https://health.swocts.com` on the development host. It uses the separate stack
+in [`deploy/monitoring/`](../deploy/monitoring/README.md), publishes Grafana
+through NPM with Authentik OIDC, and collects Prometheus/Blackbox checks and
+host metrics.
 
 It is a convenience and correlation layer, not a replacement for this page:
 

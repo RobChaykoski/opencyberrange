@@ -1,6 +1,8 @@
 # Host health dashboard plan (`health.swocts.com`)
 
-**Status:** scaffolded in `deploy/monitoring/`; deploy on an independent host and publish after the Release 6.2 scale work.
+**Status:** running for testing at `https://health.swocts.com` on the development
+host; OIDC verified with a temporary platform-admin account. Production should
+still move it to an independent monitoring host.
 **Hostname:** `health.swocts.com`.
 **Owner:** platform operations.
 **Release:** supports Release 6.2 (scale and availability). The dashboard is not a
@@ -59,8 +61,10 @@ is found by a person. The dashboard should answer:
 
 It was brought up locally and verified: Prometheus ready, Grafana 12.1 healthy,
 Alertmanager ready, dashboard provisioned, and the blackbox probe path returning
-success against local test targets. It has not been deployed to the monitoring
-host yet.
+success against local test targets. It is now running on the development host at
+`https://health.swocts.com` with Authentik OIDC, public probes, and production/
+development API, wiki, and host targets. It has not moved to an independent
+monitoring host yet.
 
 ## Architecture
 
