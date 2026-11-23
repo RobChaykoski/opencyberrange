@@ -169,6 +169,10 @@ UID; change it on hosts that use another UID.
 `alertmanager.local.yml` and `smtp_password` are gitignored. Do not put the
 SMTP password in the tracked `alertmanager.yml`.
 
+The current test deployment uses the platform's existing SMTP settings, with a
+private config and password file on the monitoring host. Alertmanager runs as
+the deploy UID so it can read the private config and write `alertmanager/data/`.
+
 ## External watchdog
 
 The dashboard cannot detect its own host failure. Configure an external uptime
