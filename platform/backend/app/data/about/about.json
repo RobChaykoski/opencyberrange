@@ -1,9 +1,9 @@
 {
-  "generated_for_release": "5.35.0",
-  "release_date": "2026-11-22",
+  "generated_for_release": "5.36.0",
+  "release_date": "2026-11-23",
   "platform": {
     "name": "SWOCTS Cyber Range",
-    "version": "5.35.0",
+    "version": "5.36.0",
     "status": "release",
     "edition": "Community / Academic",
     "python": "3.13",
@@ -237,12 +237,6 @@
       {
         "name": "vue",
         "version": "3.5.45",
-        "licence": "MIT",
-        "scope": "frontend runtime"
-      },
-      {
-        "name": "vue-eslint-parser",
-        "version": "10.4.2",
         "licence": "MIT",
         "scope": "frontend runtime"
       },

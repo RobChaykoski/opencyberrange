@@ -98,18 +98,20 @@
         @drop.prevent="rejectFileDrop"
       ></textarea>
       <p class="rangebox__clipboard-note">
-        Text only. Files cannot leave or enter the RangeBox.
+        Text only. Paste into desktop sends this text to the RangeBox; Copy from
+        desktop brings the desktop clipboard here. Files cannot leave or enter the
+        RangeBox.
       </p>
       <p v-if="clipboardNotice" class="rangebox__clipboard-warning">{{ clipboardNotice }}</p>
       <div class="rangebox__clipboard-actions">
         <button @click="sendClipboard" class="rangebox__btn rangebox__btn--primary" :disabled="!clipboardText">
-          Send to RangeBox
+          Paste into desktop
         </button>
         <button @click="readClipboardIntoPanel" class="rangebox__btn" title="Read text from your browser clipboard">
-          Read clipboard
+          Read browser clipboard
         </button>
-        <button @click="receiveClipboard" class="rangebox__btn">
-          Get from RangeBox
+        <button @click="receiveClipboard" class="rangebox__btn" title="Copy the desktop clipboard into this panel">
+          Copy from desktop
         </button>
         <button
           v-if="labContext"
@@ -154,14 +156,23 @@
         <span v-if="labContext.network_subnet" class="rangebox__lab-network">
           Network <code>{{ labContext.network_subnet }}</code>
         </span>
-        <span
+        <span v-if="labContext.target_ips?.length" class="rangebox__lab-hint">
+          This desktop is your workstation and is already on the lab network. The targets are separate.
+        </span>
+        <button
           v-for="target in labContext.target_ips"
           :key="target.id || target.ip"
+          type="button"
           class="rangebox__ip-chip"
-          :title="target.label"
+          :title="`Copy ${target.ip} to the clipboard`"
+          @click="copyTarget(target)"
         >
           {{ target.label }} <code>{{ target.ip }}</code>
-        </span>
+          <span
+            v-if="copiedTargetId === (target.id || target.ip)"
+            class="rangebox__ip-copied"
+          >Copied</span>
+        </button>
         <span v-if="labCompleted" class="rangebox__flag-accepted">Flag accepted</span>
       </div>
 
@@ -249,6 +260,8 @@ const isCollapsed = ref(false)
 const showClipboard = ref(false)
 const clipboardText = ref('')
 const clipboardNotice = ref('')
+const copiedTargetId = ref(null)
+let copiedTargetTimer = null
 const qualityPreset = ref(localStorage.getItem('ocr.rangebox.quality') || 'balanced')
 // noVNC is the fallback; the backend probes the running image and reports
 // "kasm" when the container serves KasmVNC's own browser client.
@@ -704,6 +717,37 @@ const sendCtrlAltDel = () => {
   focusRfb()
 }
 
+async function copyTarget(target) {
+  const text = String(target?.ip || '')
+  if (!text) return
+  let copied
+  try {
+    await navigator.clipboard.writeText(text)
+    copied = true
+  } catch {
+    const area = document.createElement('textarea')
+    area.value = text
+    area.style.position = 'fixed'
+    area.style.opacity = '0'
+    document.body.appendChild(area)
+    area.select()
+    try {
+      copied = document.execCommand('copy')
+    } catch {
+      copied = false
+    } finally {
+      area.remove()
+    }
+  }
+  if (!copied) return
+  copiedTargetId.value = target.id || target.ip
+  if (copiedTargetTimer) clearTimeout(copiedTargetTimer)
+  copiedTargetTimer = setTimeout(() => {
+    copiedTargetId.value = null
+    copiedTargetTimer = null
+  }, 1600)
+}
+
 async function readClipboardIntoPanel() {
   try {
     clipboardText.value = await navigator.clipboard.readText()
@@ -1096,6 +1140,18 @@ watch(() => props.sessionId, (newVal, oldVal) => {
   cursor: not-allowed;
 }
 
+/* Touch and narrow screens: keep the toolbar reachable without a mouse. */
+@media (pointer: coarse), (max-width: 640px) {
+  .rangebox__btn,
+  .rangebox__select {
+    min-height: 44px;
+  }
+
+  .rangebox__btn {
+    padding: 0.45rem 0.7rem;
+  }
+}
+
 /* Clipboard panel */
 .rangebox__clipboard {
   padding: 0.5rem 0.75rem;
@@ -1193,11 +1249,38 @@ watch(() => props.sessionId, (newVal, oldVal) => {
   white-space: nowrap;
 }
 
+.rangebox__lab-hint {
+  color: #8f8fb0;
+  font-size: 0.68rem;
+  font-style: italic;
+}
+
 .rangebox__ip-chip {
   padding: 0.12rem 0.45rem;
   border: 1px solid rgba(100, 100, 255, 0.28);
   border-radius: 999px;
   background: rgba(100, 100, 255, 0.1);
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+.rangebox__ip-chip:hover {
+  border-color: rgba(100, 100, 255, 0.55);
+  background: rgba(100, 100, 255, 0.18);
+}
+
+.rangebox__ip-chip:focus-visible {
+  outline: 2px solid #8b9cff;
+  outline-offset: 2px;
+}
+
+.rangebox__ip-copied {
+  margin-left: 0.2rem;
+  color: #5cb85c;
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
 .rangebox__lab-network code,

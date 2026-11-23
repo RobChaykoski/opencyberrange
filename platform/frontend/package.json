@@ -1,6 +1,6 @@
 {
   "name": "opencyberrange-frontend",
-  "version": "3.0.0",
+  "version": "5.36.0",
   "private": true,
   "license": "SEE LICENSE IN LICENSE",
   "scripts": {
@@ -10,7 +10,9 @@
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "check:bundle": "node scripts/check-bundle-size.mjs",
+    "check:i18n": "node scripts/check-ui-strings.mjs"
   },
   "dependencies": {
     "@novnc/novnc": "^1.7.0",
@@ -19,8 +21,7 @@
     "echarts": "^6.1.0",
     "marked": "^18.1.2",
     "sortablejs": "^1.15.7",
-    "vue": "^3.3.4",
-    "vue-eslint-parser": "^10.4.2",
+    "vue": "^3.5.0",
     "vue-router": "^5.4.0"
   },
   "devDependencies": {
@@ -32,7 +33,8 @@
     "globals": "^17.13.0",
     "jsdom": "^26.1.0",
     "vite": "^8.3.5",
-    "vitest": "^4.1.12"
+    "vitest": "^4.1.12",
+    "vue-eslint-parser": "^10.4.2"
   },
   "overrides": {
     "glob": "^14.0.6",

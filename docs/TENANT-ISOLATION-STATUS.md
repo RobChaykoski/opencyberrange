@@ -9,6 +9,51 @@ single-host): it runs with one `default` institution, so the RLS backstop is
 transparent to normal use. The backstop is edition-agnostic; multi-tenant
 Enterprise operation remains deferred past Release 5.
 
+## Threat-model boundaries
+
+Student-vs-student isolation is the guarantee this page describes. It is not a
+claim that every actor is contained.
+
+### Instructor as author is a trusted boundary
+
+Instructors can author lab compose files, workbook markdown, and exercises,
+including services with `NET_ADMIN` and inline scripts. A compromised instructor
+account is therefore equivalent to a trusted content author, not a contained
+student. Student tenant isolation does not limit it.
+
+Controls and expectations:
+
+- Instructor onboarding is a trusted appointment; the role is not self-service.
+- Every authored lab still passes the compose validator, the lab isolation
+  audit, the metadata validator, and the release review. Those gates stop a
+  mistaken lab, not a determined malicious author with merge rights.
+- Lab containers do not receive the Docker socket, host network, host mounts, or
+  privileged mode. The backend, not the instructor, is the only trusted
+  orchestrator.
+- Authoring changes are audited and reviewed like code. A compromised
+  instructor must be disabled and their recent content reviewed.
+- If instructor-vs-instructor containment is required, it is a separate product
+  boundary and must be designed as one. Do not infer it from student RLS.
+
+### RangeBox streaming is a per-session proxy
+
+- The browser never connects directly to a VNC port. noVNC and KasmVNC traffic
+  is proxied through the authenticated `/api/rangebox/.../vnc` WebSocket.
+- The proxy accepts a short-lived, single-use ticket (preferred) or a JWT. It
+  requires the session id to belong to the authenticated user and the session to
+  be running. Impersonation is read-only.
+- A RangeBox is attached only to its own session bridge. It does not share a
+  network with another learner's RangeBox or lab.
+- nginx rate-limits the RangeBox handshake and the Kasm client is served under
+  the dedicated `kasm-headers.conf` policy. Headers do not rate limit; the nginx
+  zone does.
+- Residual: a stolen live ticket or a compromised browser can drive that one
+  session until the ticket is rejected or the session ends. Tickets are
+  single-use and short-lived by design.
+
+The lab container boundary and its negative tests are in
+[Lab container isolation audit](reviews/LAB-ISOLATION-AUDIT.md).
+
 ## Enforced with tenant columns, derivation triggers, and forced RLS
 
 `platform/backend/app/services/tenant_rls.py`, applied by migrations

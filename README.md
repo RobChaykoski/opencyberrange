@@ -1,6 +1,6 @@
 # SWOCTS Cyber Range
 
-> **Release 5 is the current release line (latest signed `v5.35.0`).**
+> **Release 5 is the current release line (latest signed `v5.35.0`; `v5.36.0` is in staging).**
 >
 > **Edition: Community / Academic** (single-host, `lite` entitlement). The
 > Professional and Enterprise profiles are separate licence tiers built from the
@@ -35,7 +35,7 @@
 [![Platform](https://img.shields.io/badge/platform-Release%205-8b5cf6)](RELEASE_NOTES.md)
 [![Maintenance](https://img.shields.io/badge/community-1.1.3%20maintenance-blue)](docs/SUPPORTED-VERSIONS.md)
 [![Labs](https://img.shields.io/badge/labs-214-blue)](platform/labs/)
-[![Tracks](https://img.shields.io/badge/tracks-12-green)](platform/labs/)
+[![Tracks](https://img.shields.io/badge/tracks-13-green)](platform/labs/)
 [![Platform](https://img.shields.io/badge/platform-Docker%20%2B%20WireGuard-orange)](Manual-Lite/00_Server_Deployment/06_Architecture.md)
 [![License](https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-blue)](LICENSE)
 [![AI-assisted](https://img.shields.io/badge/AI-assisted%20build-8b5cf6)](#ai-assistance-disclosure)
@@ -316,6 +316,23 @@ source offers, and notice-sensitive components are in
 
 This is a compliance inventory, not legal advice.
 
+### Microsoft products
+
+**Microsoft products referenced by this project are not included.**
+
+Users are responsible for ensuring they possess the necessary Microsoft
+licenses for all deployed software.
+
+OpenCyberRange does not distribute, resell, sublicense, or provide Microsoft
+software, activation keys, or licenses. It may deploy, automate, configure,
+destroy, and assess Windows. It does not distribute Windows, include Windows
+images or licenses, provide activation keys, or circumvent activation.
+
+Institutions supply Microsoft evaluation media or licensed media from their own
+private artifact store. The repository contains deployment code only. See the
+[Microsoft legal notice](docs/MICROSOFT-LEGAL-NOTICE.md) and
+[Windows artifact policy](docs/WINDOWS-ARTIFACT-POLICY.md).
+
 ## What it looks like
 
 **Exercise catalogue.** Tracks group exercises into levels; a level unlocks as
@@ -438,6 +455,10 @@ Regenerate with `python scripts/generate-curriculum-docs.py`; CI can use
 | `linpt` | Linux Fundamentals | Intermediate learners building Linux enumeration, SSH access, privilege escalation, and detection skills. | intermediate | WIN09 | 30 | 38h 45m | published |
 
 **Total:** 204 workbook-mapped exercises across 13 tracks.
+The table above is generated from `curriculum-manifest.yaml` and currently lists
+the 12 published manifest tracks; the Metasploit track is counted in
+`Workbook/COVERAGE.md` until the manifest is reconciled. See
+[Lab and content counts](docs/COUNTS.md) for the manifest caveat.
 
 Recommended pathway:
 

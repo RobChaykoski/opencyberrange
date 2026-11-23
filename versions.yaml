@@ -9,9 +9,9 @@
 # docs/decisions/0004-single-platform-release-version.md.
 platform:
   name: "SWOCTS Cyber Range"
-  version: "5.35.0"
+  version: "5.36.0"
   status: "release"
-  date: "2026-11-22"
+  date: "2026-11-23"
 
 editions:
   community_academic:
@@ -41,17 +41,17 @@ maintenance_lines:
     note: "Existing single-host teaching installs; new installs use the Release 5 tree with the Community / Academic profile."
 
 release:
-  version: "5.17.7"
+  version: "5.36.0"
   status: "release"
-  date: "2026-11-17"
+  date: "2026-11-23"
 
 development:
-  version: "5.17.7"
-  focus: "Post-5.17 patch: course enrollment navigation, exercise review status, settings-ticket UX, pathway workbook questions, and pathway completion badges"
+  version: "5.37.0"
+  focus: "Cloudflare DDNS in platform settings, curriculum-manifest reconciliation, and post-5.36 hardening"
 
 policy:
   name: latest-supported-ga
-  reviewed: "2026-11-07"
+  reviewed: "2026-11-23"
   platform_only: true
   rules:
     - no_alpha_beta_rc_or_nightly_for_platform_services
@@ -127,11 +127,10 @@ backend:
 
 frontend:
   declared:
-    vue: "^3.3.4"
+    vue: "^3.5.0"
     vue-router: "^5.4.0"
     axios: "^1.21.0"
-    chart.js: "^4.4.7"
-    vue-chartjs: "^5.3.4"
+    echarts: "^6.1.0"
     marked: "^18.1.2"
     dompurify: "^3.4.17"
     "@novnc/novnc": "^1.7.0"
@@ -147,8 +146,7 @@ frontend:
     vue: "3.5.45"
     vue-router: "5.4.0"
     axios: "1.21.0"
-    chart.js: "4.6.1"
-    vue-chartjs: "5.3.4"
+    echarts: "6.1.0"
     marked: "18.1.3"
     dompurify: "3.4.17"
     "@novnc/novnc": "1.7.0"
@@ -162,9 +160,9 @@ frontend:
     globals: "17.14.0"
 
 infrastructure:
-  backend_base: "python:3.11-slim"
-  frontend_builder: "node:22-alpine"
-  frontend_server: "nginx:alpine@sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11"
+  backend_base: "python:3.13-slim@sha256:e48f59cdba69a3cbd9ed2cf0f348d90d45a8d350d98134cf1070bc106ee9ed90"
+  frontend_builder: "node:22-alpine@sha256:1314fb30ec37592d5845e5a160d522c0e680972aa534549940b8d73bde88481a"
+  frontend_server: "nginx:alpine@sha256:fed7e14be83cbd2661a75cdc5b872d936cf155d46c327084d30b8df19ae88d72"
   postgres_image: "postgres:15-alpine"
   valkey_image: "valkey/valkey:9.1.3-alpine"
   dex_image: "ghcr.io/dexidp/dex:v2.42.0"

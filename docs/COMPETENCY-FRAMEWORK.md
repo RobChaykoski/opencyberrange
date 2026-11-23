@@ -13,7 +13,7 @@ not ready for Release 6.
 | Piece | Release 5 state |
 |---|---|
 | Taxonomy | 212 competencies across domains and categories (`app/data/competency-taxonomy.yaml`) |
-| Lab contracts | 210 labs mapped; **25 reviewed**, **185 baseline derived** (`app/data/competency-contracts.yaml`) |
+| Lab contracts | 214 labs mapped; **25 reviewed**, **189 baseline derived** (`app/data/competency-contracts.yaml`) |
 | Scoring | Five dimensions: knowledge 20%, execution 30%, troubleshooting 20%, documentation 15%, communication 15% |
 | Pathways | 13 curriculum roles with critical competencies and capstone briefs (`app/data/curriculum-roles.yaml`) |
 | Mapping | Chapter, track, category, and primary-axis mapping (`app/data/competency-mapping.yaml`) |
@@ -157,7 +157,7 @@ subject-matter review:
 
 ## Acceptance criteria
 
-- 210 of 210 labs have a reviewed contract, or a documented exception with an
+- 214 of 214 labs have a reviewed contract, or a documented exception with an
   owner and a date.
 - 100% of workbooks, quizzes, assessments, capstones, and badges have a mapping.
 - A read API exposes the taxonomy and mappings with a version and a change log.

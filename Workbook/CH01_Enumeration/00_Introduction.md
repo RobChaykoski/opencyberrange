@@ -114,6 +114,20 @@ VPN-connected Kali VM**. They do not run in the OpenCyberRange web page, on the
 platform server, or on the target itself. The RangeBox is your workstation; the
 target is a separate, disposable lab container.
 
+![How you reach the lab](../assets/lab-access-paths.svg)
+
+**Which path should I use?**
+
+| Path | Use it when | What it means |
+|---|---|---|
+| **RangeBox** | You want to start immediately | A browser desktop that is already attached to the lab network |
+| **VPN** | You have your own Kali or Ubuntu VM | Your VM joins the same lab network through the tunnel |
+| **Range shell** (some labs) | The lab quick start names a shell URL | A lightweight browser terminal that runs inside the lab network |
+
+Both paths reach the same targets. The devices in the lab network are the only
+systems in scope. The platform page is not a target, and typing a command into
+it does nothing.
+
 ### Estimated time
 
 Plan for roughly **2–3 hours for the five exercises**, or about 20–40 minutes

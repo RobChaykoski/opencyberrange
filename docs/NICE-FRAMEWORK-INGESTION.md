@@ -66,7 +66,7 @@ returns a useful error and leaves the existing version in place.
 ## Existing lab coverage
 
 The repository includes `platform/backend/app/data/nice/lab-mappings.yaml`, a
-provisional mapping for all 210 labs. It is generated from each lab's competency
+provisional mapping for all 214 labs. It is generated from each lab's competency
 keys and category:
 
 ```bash

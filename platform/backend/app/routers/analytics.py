@@ -7,7 +7,7 @@ the course instructor or an administrator.
 from __future__ import annotations
 
 from collections import Counter
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from statistics import median, quantiles
 from typing import Literal, Optional
 import io
@@ -27,6 +27,8 @@ from app.services.activity import EventTypes, log_activity
 from app.services.audit import log_admin_action, AuditActions
 from app.services import settings_service
 from app.services.curriculum_manifest import chapter_label
+from app.services.forecast import linear_forecast
+from app.services.period import parse_window
 from app.services.competency_radar import build_cohort_radar, build_individual_radar
 from app.services.competency_taxonomy import build_cohort_competency_summary
 from app.services.curriculum_demand import build_curriculum_demand
@@ -1667,6 +1669,190 @@ async def reports_overview(
     }
 
 
+@router.get("/reports/activity")
+async def reports_activity(
+    start: Optional[str] = None,
+    end: Optional[str] = None,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_instructor_user),
+):
+    """Period-scoped aggregate activity across the visible courses.
+
+    This is separate from the all-time catalog snapshot. It answers "what
+    happened in this window?" and never names or ranks a learner. Small cohorts
+    are suppressed using the same minimum as the course analytics.
+    """
+    try:
+        window = parse_window(start, end, default_days=7)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    query = db.query(Course).filter(Course.is_active == True)
+    if current_user.role != "admin":
+        query = query.filter(Course.instructor_id == current_user.id)
+    courses = query.order_by(Course.name).all()
+    course_ids = [course.id for course in courses]
+
+    learner_ids: set[int] = set()
+    if course_ids:
+        learner_ids = {
+            row[0]
+            for row in db.query(CourseEnrollment.user_id).join(
+                User, User.id == CourseEnrollment.user_id
+            ).filter(
+                CourseEnrollment.course_id.in_(course_ids),
+                User.is_minor == False,
+            ).distinct().all()
+        }
+
+    minimum = _minimum_cohort_size(db)
+    if len(learner_ids) < minimum:
+        return {
+            "cohort_state": "suppressed" if learner_ids else "no_evidence",
+            "suppression": {
+                "minimum_cohort_size": minimum,
+                "sample_size": len(learner_ids),
+                "reason": (
+                    f"Activity is hidden until at least {minimum} learners are in scope."
+                    if learner_ids
+                    else "No learners are enrolled in the visible courses yet."
+                ),
+            },
+            "learners_in_scope": len(learner_ids),
+            "course_count": len(courses),
+            "window_start": window.start.isoformat(),
+            "window_end": window.end.isoformat(),
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+        }
+
+    session_rows = db.query(
+        LabSession.user_id,
+        LabSession.lab_id,
+        LabSession.started_at,
+    ).filter(
+        LabSession.user_id.in_(learner_ids),
+        LabSession.started_at >= window.start,
+        LabSession.started_at <= window.end,
+        LabSession.is_diagnostic.isnot(True),
+    ).all()
+
+    completion_rows = db.query(
+        LabCompletion.user_id,
+        LabCompletion.lab_id,
+        LabCompletion.attempts,
+        LabCompletion.hints_used,
+        LabCompletion.time_spent_minutes,
+        LabCompletion.completed_at,
+    ).filter(
+        LabCompletion.user_id.in_(learner_ids),
+        LabCompletion.completed_at >= window.start,
+        LabCompletion.completed_at <= window.end,
+    ).all()
+
+    attempt_rows = db.query(
+        FlagAttempt.user_id,
+        FlagAttempt.attempted_at,
+    ).filter(
+        FlagAttempt.user_id.in_(learner_ids),
+        FlagAttempt.attempted_at >= window.start,
+        FlagAttempt.attempted_at <= window.end,
+    ).all()
+
+    active_ids = (
+        {row.user_id for row in session_rows}
+        | {row.user_id for row in completion_rows}
+        | {row.user_id for row in attempt_rows}
+    )
+
+    started_pairs = {(row.user_id, row.lab_id) for row in session_rows}
+    completion_pairs = {(row.user_id, row.lab_id) for row in completion_rows}
+    completed_started = len(completion_pairs & started_pairs)
+    completion_rate = (
+        round(completed_started / len(started_pairs) * 100, 1)
+        if started_pairs else None
+    )
+
+    scores: list[int] = []
+    check_in: set[int] = set()
+    learning_minutes = 0.0
+    for row in completion_rows:
+        retries = max(0, (row.attempts or 1) - 1)
+        score = max(0, min(100, 100 - retries * 10 - min(25, (row.hints_used or 0) * 5)))
+        scores.append(score)
+        if score < 70 or (row.attempts or 1) >= 3:
+            check_in.add(row.user_id)
+        if row.time_spent_minutes:
+            learning_minutes += row.time_spent_minutes
+
+    for user_id, lab_id in started_pairs:
+        if (user_id, lab_id) not in completion_pairs:
+            check_in.add(user_id)
+
+    session_counts = Counter(
+        row.started_at.date() for row in session_rows if row.started_at
+    )
+    completion_counts = Counter(
+        row.completed_at.date() for row in completion_rows if row.completed_at
+    )
+    day_count = max(1, int((window.end - window.start).days) + 1)
+    trend = []
+    for offset in range(day_count):
+        day = (window.start + timedelta(days=offset)).date()
+        trend.append(
+            {
+                "date": day.isoformat(),
+                "sessions": session_counts.get(day, 0),
+                "completions": completion_counts.get(day, 0),
+            }
+        )
+
+    session_forecast = linear_forecast(
+        [point["sessions"] for point in trend], 7
+    )
+    completion_forecast = linear_forecast(
+        [point["completions"] for point in trend], 7
+    )
+    forecast = []
+    if session_forecast and completion_forecast:
+        last_day = datetime.fromisoformat(trend[-1]["date"]).date()
+        for index, (session_value, completion_value) in enumerate(
+            zip(session_forecast, completion_forecast, strict=False), start=1
+        ):
+            forecast.append(
+                {
+                    "date": (last_day + timedelta(days=index)).isoformat(),
+                    "sessions": session_value,
+                    "completions": completion_value,
+                }
+            )
+
+    return {
+        "cohort_state": "available",
+        "suppression": None,
+        "course_count": len(courses),
+        "learners_in_scope": len(learner_ids),
+        "active_learners": len(active_ids),
+        "completions": len(completion_rows),
+        "started_pairs": len(started_pairs),
+        "completion_rate": completion_rate,
+        "practice_score": round(sum(scores) / len(scores), 1) if scores else None,
+        "learning_hours": round(learning_minutes / 60, 1),
+        "check_in_students": len(check_in),
+        "trend": trend,
+        "forecast": forecast,
+        "forecast_method": "linear_trend_last_14_buckets" if forecast else None,
+        "forecast_note": (
+            "The dashed projection is a naive trend from the selected window. "
+            "It is a planning aid, not a prediction of learner outcomes."
+            if forecast
+            else "Not enough history for a projection in this window."
+        ),
+        "window_start": window.start.isoformat(),
+        "window_end": window.end.isoformat(),
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+    }
+
+
 @router.get("/reports/curriculum-demand")
 async def curriculum_demand(
     db: Session = Depends(get_db),
@@ -1775,6 +1961,9 @@ async def audit_report_export(
 @router.get("/reports/export.pdf")
 async def reports_export_pdf(
     request: Request,
+    range_label: Optional[str] = None,
+    start: Optional[str] = None,
+    end: Optional[str] = None,
     reason: str = Depends(require_export_reason),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_instructor_user),
@@ -1783,6 +1972,11 @@ async def reports_export_pdf(
     from app.services.analytics_report import generate_reports_pdf
 
     payload = await reports_overview(db, current_user)
+    payload["export_period"] = {
+        "label": range_label or "All-time snapshot",
+        "start": start,
+        "end": end,
+    }
     pdf_bytes = await run_in_threadpool(generate_reports_pdf, payload)
     log_admin_action(
         action=AuditActions.REPORT_EXPORTED,
@@ -1792,6 +1986,9 @@ async def reports_export_pdf(
         details={
             "format": "pdf",
             "reason": reason,
+            "period": range_label or "All-time snapshot",
+            "period_start": start,
+            "period_end": end,
             "scope": (
                 "all_active_courses"
                 if current_user.role == "admin"
@@ -1801,11 +1998,14 @@ async def reports_export_pdf(
         },
         ip_address=request.client.host if request.client else None,
     )
+    filename = "learning-reports.pdf"
+    if start and end:
+        filename = f"learning-reports-{start[:10]}-to-{end[:10]}.pdf"
     return StreamingResponse(
         io.BytesIO(pdf_bytes),
         media_type="application/pdf",
         headers={
-            "Content-Disposition": 'attachment; filename="learning-reports.pdf"',
+            "Content-Disposition": f'attachment; filename="{filename}"',
             "Cache-Control": "no-store",
         },
     )

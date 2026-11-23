@@ -36,10 +36,102 @@
       </div>
     </header>
 
+    <div class="reports-period">
+      <PeriodFilter
+        :preset="periodPreset"
+        :custom-start="periodCustomStart"
+        :custom-end="periodCustomEnd"
+        @update:preset="changePeriod"
+        @update:custom-start="changePeriodStart"
+        @update:custom-end="changePeriodEnd"
+      />
+      <span class="reports-period__label">{{ periodLabel }}</span>
+      <span v-if="periodIsShort" class="reports-period__note">
+        Short window: counts are operational, not a learning trend.
+      </span>
+    </div>
+
     <p v-if="loading" class="reports-state">Loading course reports...</p>
     <p v-else-if="error" class="reports-state reports-state--error" role="alert">{{ error }}</p>
 
     <template v-else>
+      <section class="reports-activity" aria-labelledby="reports-activity-title">
+        <div class="reports-activity__head">
+          <div>
+            <p class="reports-head__eyebrow">Activity in this period</p>
+            <h2 id="reports-activity-title">{{ periodLabel }}</h2>
+            <p>
+              Aggregate activity for the courses you can see. This is a teaching
+              view, not a ranking of learners.
+            </p>
+          </div>
+          <span v-if="activityLoading" class="reports-activity__state">Updating...</span>
+        </div>
+
+        <p v-if="activityError" class="reports-state reports-state--error" role="alert">
+          {{ activityError }}
+          <button type="button" class="btn btn--outline btn--sm" @click="loadActivity">Retry</button>
+        </p>
+        <p
+          v-else-if="activity?.cohort_state === 'suppressed'"
+          class="reports-cohort-note"
+        >
+          <strong>Activity is suppressed for this window.</strong>
+          {{ activity.suppression?.reason }}
+        </p>
+        <p
+          v-else-if="activity?.cohort_state === 'no_evidence'"
+          class="reports-state"
+        >
+          No learners are enrolled in the visible courses yet.
+        </p>
+        <template v-else-if="activity">
+          <div class="reports-summary reports-summary--activity">
+            <article class="reports-stat">
+              <span>Active learners</span>
+              <strong>{{ activity.active_learners }}<small>/{{ activity.learners_in_scope }}</small></strong>
+            </article>
+            <article class="reports-stat">
+              <span>Completions</span>
+              <strong>{{ activity.completions }}</strong>
+            </article>
+            <article class="reports-stat">
+              <span>Completion rate</span>
+              <strong>{{ activity.completion_rate ?? '—' }}<small v-if="activity.completion_rate !== null">%</small></strong>
+              <small class="reports-stat__detail">of {{ activity.started_pairs }} started pairs</small>
+            </article>
+            <article class="reports-stat">
+              <span>Learning hours</span>
+              <strong>{{ activity.learning_hours }}</strong>
+            </article>
+            <article class="reports-stat">
+              <span>Practice score</span>
+              <strong>{{ activity.practice_score ?? '—' }}<small v-if="activity.practice_score !== null">%</small></strong>
+              <small class="reports-stat__detail">retries and hints adjusted; not a grade</small>
+            </article>
+            <article class="reports-stat">
+              <span>Check-in signals</span>
+              <strong>{{ activity.check_in_students }}</strong>
+              <small class="reports-stat__detail">support signals, not learner labels</small>
+            </article>
+          </div>
+
+          <div class="reports-activity__chart">
+            <EChart
+              v-if="activityTrend.labels.length"
+              :option="activityOption"
+              height="220px"
+              :aria-label="activityAriaLabel"
+            />
+            <p v-if="activity.forecast?.length" class="reports-activity__note">
+              {{ activity.forecast_note }}
+            </p>
+          </div>
+        </template>
+      </section>
+
+      <h2 class="reports-section-title">All-time snapshot</h2>
+
       <div class="reports-summary">
         <article class="reports-stat">
           <span>Courses</span>
@@ -342,6 +434,17 @@
 import { computed, onMounted, ref } from 'vue'
 import axios from '../api/axios'
 import CurriculumDemand from '../components/CurriculumDemand.vue'
+import EChart from '../components/EChart.vue'
+import PeriodFilter from '../components/PeriodFilter.vue'
+import { usePeriodFilter } from '../composables/usePeriod'
+import {
+  ECHART_COLORS,
+  categoryAxis,
+  chartGrid,
+  legendStyle,
+  tooltipStyle,
+  valueAxis,
+} from '../components/charts/echartsTheme'
 import { csvRow } from '../utils/csv'
 import { downloadBlob, filenameFromDisposition } from '../utils/download'
 
@@ -350,6 +453,23 @@ const loading = ref(true)
 const error = ref('')
 const exportingPdf = ref(false)
 const exportReason = ref('')
+
+const {
+  preset: periodPreset,
+  customStart: periodCustomStart,
+  customEnd: periodCustomEnd,
+  range: periodRange,
+  label: periodLabel,
+  isShort: periodIsShort,
+  setPreset: setPeriodPreset,
+  setCustomStart: setPeriodCustomStart,
+  setCustomEnd: setPeriodCustomEnd,
+  refresh: refreshPeriod,
+} = usePeriodFilter('7d')
+
+const activity = ref(null)
+const activityLoading = ref(false)
+const activityError = ref('')
 
 const rows = computed(() => data.value?.courses || [])
 const totals = computed(() => data.value?.totals || {})
@@ -474,6 +594,136 @@ const skillMix = (tree, field) =>
     .join('; ')
 
 
+const loadActivity = async () => {
+  activityLoading.value = true
+  activityError.value = ''
+  try {
+    const response = await axios.get('/analytics/reports/activity', {
+      params: {
+        start: periodRange.value.startIso,
+        end: periodRange.value.endIso,
+      },
+    })
+    activity.value = response.data
+  } catch (e) {
+    activityError.value =
+      e.response?.data?.detail || 'Could not load activity for this period.'
+  } finally {
+    activityLoading.value = false
+  }
+}
+
+const changePeriod = (next) => {
+  setPeriodPreset(next)
+  refreshPeriod()
+  loadActivity()
+}
+
+const changePeriodStart = (value) => {
+  setPeriodCustomStart(value)
+  loadActivity()
+}
+
+const changePeriodEnd = (value) => {
+  setPeriodCustomEnd(value)
+  loadActivity()
+}
+
+const activityTrend = computed(() => {
+  const history = activity.value?.trend || []
+  const forecast = activity.value?.forecast || []
+  const labels = [...history, ...forecast].map((point) =>
+    new Date(`${point.date}T00:00:00`).toLocaleDateString([], {
+      month: 'short',
+      day: 'numeric',
+    })
+  )
+  const sessions = history.map((point) => point.sessions)
+  const completions = history.map((point) => point.completions)
+  const padHistory = Array(forecast.length).fill(null)
+  const padForecast = Array(history.length).fill(null)
+  return {
+    labels,
+    historyLength: history.length,
+    datasets: [
+      {
+        name: 'Sessions',
+        data: [...sessions, ...padHistory],
+        color: ECHART_COLORS.accent,
+        fill: true,
+      },
+      {
+        name: 'Completions',
+        data: [...completions, ...padHistory],
+        color: ECHART_COLORS.success,
+        fill: true,
+      },
+      {
+        name: 'Sessions forecast',
+        data: [...padForecast, ...forecast.map((point) => point.sessions)],
+        color: ECHART_COLORS.accent,
+        dashed: true,
+      },
+      {
+        name: 'Completions forecast',
+        data: [...padForecast, ...forecast.map((point) => point.completions)],
+        color: ECHART_COLORS.success,
+        dashed: true,
+      },
+    ],
+  }
+})
+
+const activityOption = computed(() => {
+  const trend = activityTrend.value
+  return {
+    animation: false,
+    color: [ECHART_COLORS.accent, ECHART_COLORS.success],
+    tooltip: { ...tooltipStyle, trigger: 'axis' },
+    legend: {
+      ...legendStyle,
+      data: ['Sessions', 'Completions', 'Sessions forecast', 'Completions forecast'],
+    },
+    grid: chartGrid,
+    xAxis: {
+      ...categoryAxis,
+      data: trend.labels,
+      axisLabel: { ...categoryAxis.axisLabel, hideOverlap: true },
+    },
+    yAxis: valueAxis,
+    series: trend.datasets.map((dataset, index) => ({
+      name: dataset.name,
+      type: 'line',
+      smooth: true,
+      showSymbol: false,
+      data: dataset.data,
+      lineStyle: dataset.dashed
+        ? { type: 'dashed', width: 2, opacity: 0.65, color: dataset.color }
+        : { width: 2, color: dataset.color },
+      itemStyle: { color: dataset.color },
+      areaStyle: dataset.fill ? { opacity: 0.12, color: dataset.color } : undefined,
+      markLine:
+        index === 0 && trend.historyLength && trend.labels[trend.historyLength - 1]
+          ? {
+              symbol: 'none',
+              label: { formatter: 'forecast', color: '#94a3b8' },
+              lineStyle: { color: '#94a3b8', type: 'dashed' },
+              data: [{ xAxis: trend.labels[trend.historyLength - 1] }],
+            }
+          : undefined,
+    })),
+  }
+})
+
+const activityAriaLabel = computed(() => {
+  const history = activityTrend.value
+  if (!history.labels.length) return 'Activity in the selected period: no data.'
+  const forecast = activity.value?.forecast?.length || 0
+  return `Activity in the selected period: ${history.historyLength} days of sessions and completions${
+    forecast ? `, plus a ${forecast}-day dashed projection` : ''
+  }.`
+})
+
 const load = async () => {
   loading.value = true
   error.value = ''
@@ -501,11 +751,14 @@ const exportCsv = async () => {
     return
   }
 
-  const header = ['Course code', 'Course', 'RAG', 'Cohort state', 'Learners', 'Learning hours', 'Completion %', 'Abandonment %', 'Learning reported', 'Likes', 'Dislikes', 'Positive feedback %', 'Confidence gain', 'Pulse responses', 'Skill tree assigned %', 'Skill tree completed %']
+  const header = ['Period', 'Period start', 'Period end', 'Course code', 'Course', 'RAG', 'Cohort state', 'Learners', 'Learning hours', 'Completion %', 'Abandonment %', 'Learning reported', 'Likes', 'Dislikes', 'Positive feedback %', 'Confidence gain', 'Pulse responses', 'Skill tree assigned %', 'Skill tree completed %']
   const lines = rows.value.map((row) => {
     const available = row.cohort_state === 'available'
     const metric = (value, fallback = '') => available ? (value ?? fallback) : ''
     return [
+      periodLabel.value,
+      periodRange.value.startIso,
+      periodRange.value.endIso,
       row.course.code,
       row.course.name,
       ragLabel(row.summary.rag),
@@ -528,7 +781,9 @@ const exportCsv = async () => {
     .map((line) => csvRow(line))
     .join('\n')
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' })
-  downloadBlob(blob, `learning-reports-${new Date().toISOString().slice(0, 10)}.csv`)
+  const startDate = periodRange.value.start.toISOString().slice(0, 10)
+  const endDate = periodRange.value.end.toISOString().slice(0, 10)
+  downloadBlob(blob, `learning-reports-${startDate}-to-${endDate}.csv`)
   exportReason.value = ''
 }
 
@@ -542,13 +797,20 @@ const exportPdf = async () => {
   exportingPdf.value = true
   try {
     const response = await axios.get('/analytics/reports/export.pdf', {
-      params: { reason },
+      params: {
+        reason,
+        range_label: periodLabel.value,
+        start: periodRange.value.startIso,
+        end: periodRange.value.endIso,
+      },
       responseType: 'blob',
     })
     const blob = new Blob([response.data], { type: 'application/pdf' })
+    const startDate = periodRange.value.start.toISOString().slice(0, 10)
+    const endDate = periodRange.value.end.toISOString().slice(0, 10)
     const filename = filenameFromDisposition(
       response.headers?.['content-disposition'],
-      `learning-reports-${new Date().toISOString().slice(0, 10)}.pdf`
+      `learning-reports-${startDate}-to-${endDate}.pdf`
     )
     downloadBlob(blob, filename)
     exportReason.value = ''
@@ -559,7 +821,10 @@ const exportPdf = async () => {
   }
 }
 
-onMounted(load)
+onMounted(() => {
+  load()
+  loadActivity()
+})
 </script>
 
 <style scoped>
@@ -645,6 +910,95 @@ onMounted(load)
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 0.6rem;
   margin-bottom: 1rem;
+}
+
+.reports-period {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.9rem;
+  margin-bottom: 1rem;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-secondary);
+}
+
+.reports-period__label {
+  color: var(--text-primary);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.reports-period__note {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+
+.reports-section-title {
+  margin: 1.5rem 0 0.6rem;
+  color: var(--text-primary);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.reports-activity {
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  background: var(--bg-secondary);
+}
+
+.reports-activity__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.reports-activity__head h2 {
+  margin: 0.1rem 0 0.25rem;
+  color: var(--text-primary);
+  font-size: 1.15rem;
+}
+
+.reports-activity__head p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.reports-activity__state {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-style: italic;
+}
+
+.reports-activity__chart {
+  margin-top: 0.75rem;
+}
+
+.reports-activity__note {
+  margin: 0.35rem 0 0;
+  padding-left: 0.55rem;
+  border-left: 2px solid var(--accent);
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.reports-summary--activity {
+  margin-bottom: 0;
+}
+
+.reports-stat__detail {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--text-muted);
+  font-size: 0.64rem;
+  line-height: 1.35;
 }
 
 .rag-legend {

@@ -33,6 +33,7 @@ import uuid as _uuid
 from pydantic import BaseModel, Field
 
 from app.ratelimit import create_limiter
+from app.api_errors import api_error
 
 from app.database import engine, get_db
 from app.models import (
@@ -664,15 +665,15 @@ async def create_user(
     
     if existing:
         if existing.username == user_data.username:
-            raise HTTPException(status_code=400, detail="Username already exists")
+            raise api_error(400, "username_taken", "Username already exists")
         if existing.email == user_data.email:
-            raise HTTPException(status_code=400, detail="Email already exists")
+            raise api_error(400, "email_taken", "Email already exists")
     
     # Check student_id separately only if provided (allow multiple NULL values)
     if user_data.student_id:
         existing_student = db.query(User).filter(User.student_id == user_data.student_id).first()
         if existing_student:
-            raise HTTPException(status_code=400, detail="Student ID already exists")
+            raise api_error(400, "student_id_taken", "Student ID already exists")
     
     # Determine role and is_admin with backward compatibility
     if getattr(user_data, 'role', None) is not None:
@@ -823,7 +824,7 @@ async def update_user(
             User.id != user_id
         ).first()
         if existing_username:
-            raise HTTPException(status_code=400, detail="Username already exists")
+            raise api_error(400, "username_taken", "Username already exists")
         changes['username'] = {'old': user.username, 'new': user_request.username}
         user.username = user_request.username
     
@@ -835,7 +836,7 @@ async def update_user(
             User.id != user_id
         ).first()
         if existing_email:
-            raise HTTPException(status_code=400, detail="Email already exists")
+            raise api_error(400, "email_taken", "Email already exists")
         changes['email'] = {'old': user.email, 'new': user_request.email}
         user.email = user_request.email
     
@@ -3109,7 +3110,7 @@ async def create_lab(
 
     existing = db.query(Lab).filter(Lab.slug == slug).first()
     if existing:
-        raise HTTPException(status_code=400, detail="Lab slug already exists")
+        raise api_error(400, "lab_slug_taken", "Lab slug already exists")
 
     description = payload.description or lab_data.get('description')
     scenario = payload.scenario or lab_data.get('scenario')
@@ -4104,7 +4105,8 @@ async def download_backup(
     filename: str,
     request: Request,
     reason: str = Depends(require_export_reason),
-    admin: User = Depends(get_current_admin_user)
+    admin: User = Depends(get_current_admin_user),
+    _reauth: object = Depends(reauth_service.require_recent_reauth("backup download")),
 ):
     """Download a specific backup file."""
     import os
@@ -4132,7 +4134,10 @@ async def download_backup(
         path,
         media_type="application/sql",
         filename=filename,
-        headers={"Cache-Control": "no-store"},
+        headers={
+            "Cache-Control": "no-store",
+            "X-Content-Type-Options": "nosniff",
+        },
     )
 
 
@@ -4142,7 +4147,8 @@ def delete_backup(
     filename: str,
     request: Request,
     db: Session = Depends(get_db),
-    admin: User = Depends(get_current_admin_user)
+    admin: User = Depends(get_current_admin_user),
+    _reauth: object = Depends(reauth_service.require_recent_reauth("backup deletion")),
 ):
     """Delete a specific backup file."""
     import os

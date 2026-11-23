@@ -11,7 +11,7 @@
 
 ## Scenario
 
-Halcyon Industrial Controls added a second process line with a Siemens-style
+Trailline Industrial Controls added a second process line with a Siemens-style
 controller. The vendor left the engineering port open on the control network,
 and the process data block holds more than setpoints.
 

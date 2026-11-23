@@ -809,6 +809,11 @@
                 <span class="network-label">Subnet:</span>
                 <span class="network-value">{{ activeLab.session.network_subnet }}</span>
               </div>
+              <LabAccessDiagram
+                :session="activeLab.session"
+                :targets="activeLab.target_ips || []"
+                :devices="activeLab.lab.devices || []"
+              />
               <div v-if="activeLab.target_ips && activeLab.target_ips.length > 0" class="target-ips">
                 <div class="target-ips-heading">Your targets:</div>
                 <ul class="target-ip-list">
@@ -1219,6 +1224,7 @@ import ArrowLeftIcon from '../components/icons/ArrowLeftIcon.vue'
 import FlagCelebration from '../components/FlagCelebration.vue'
 import PulseSurveyModal from '../components/PulseSurveyModal.vue'
 import RangeBox from '../components/RangeBox.vue'
+import LabAccessDiagram from '../components/LabAccessDiagram.vue'
 import { useCelebration } from '../composables/useCelebration'
 import { CERTIFICATION_ROADMAP_URL, CISO_MINDMAP_URL, SWOCTS_RESOURCES_URL, getCertificationPath } from '../data/certificationPaths'
 // RangeBox opens in a dedicated /rangebox tab (not embedded)

@@ -74,11 +74,16 @@
 
       <div v-if="trend.length" class="trend-block">
         <div class="growth-head">
-          <h3>30 / 60 / 90 days</h3>
+          <h3>7 / 30 / 60 / 90 days</h3>
           <span>Your completed exercises in each window</span>
         </div>
         <div class="trend-chart">
-          <div v-for="point in trend" :key="point.days" class="trend-chart__item">
+          <div
+            v-for="point in trend"
+            :key="point.days"
+            class="trend-chart__item"
+            :class="{ 'trend-chart__item--current': point.days === 7 }"
+          >
             <strong class="trend-chart__value">{{ point.completions }}</strong>
             <span class="trend-chart__bar" :style="{ height: barHeight(point.completions) }"></span>
             <span class="trend-chart__label">{{ point.days }} days</span>
@@ -87,6 +92,10 @@
         <p class="trend-note">
           Counts, not percentages. Percentages appear after three completions.
           <span v-if="confidence">Current confidence: {{ confidence.label }}.</span>
+        </p>
+        <p v-if="weekIsEarly" class="trend-note trend-note--caution">
+          The 7-day bar is an early signal, not a trend. Use 30 or 90 days for a
+          steadier view; a single week can be noisy.
         </p>
       </div>
 
@@ -203,6 +212,8 @@ const loading = ref(true)
 const error = ref('')
 
 const trend = computed(() => props.growth?.trend || [])
+const weekPoint = computed(() => trend.value.find((point) => point.days === 7) || null)
+const weekIsEarly = computed(() => (weekPoint.value?.completions ?? 0) < 3)
 const confidence = computed(() => props.growth?.confidence || null)
 const opportunity = computed(() => props.growth?.opportunities?.[0] || null)
 const trendMax = computed(() => Math.max(1, ...trend.value.map((point) => point.completions)))
@@ -655,6 +666,15 @@ onMounted(load)
   color: var(--text-muted);
   font-size: 0.68rem;
   line-height: 1.45;
+}
+
+.trend-note--caution {
+  color: var(--warning);
+}
+
+.trend-chart__item--current .trend-chart__label {
+  color: var(--accent-text);
+  font-weight: 700;
 }
 .opportunity-card {
   display: flex;

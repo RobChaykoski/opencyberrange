@@ -456,6 +456,7 @@ def _rangebox_lab_context(db: Session, session: LabSession, current_user: User) 
             target_ips.append({
                 "id": node.get("id", ""),
                 "label": node.get("label") or node.get("id") or "Target",
+                "type": node.get("type", "server"),
                 "ip": f"{base}.{offset}",
             })
 

@@ -32,7 +32,7 @@ Ranked by recorded completions in the production database on 2026-11-16.
 |---:|---:|---|---|---|---:|---|---|
 | 1 | 7 | `windows-1-1-basic-port-scan` | Windows | beginner | 120 | `WIN-020` 0.35, `NET-033` 0.35, `NET-031` 0.30 | high (0.85) |
 | 2 | 6 | `linux-1-1-ssh-service-detection` | Linux | beginner | 120 | `NET-031` 0.35, `LIN-008` 0.35, `LIN-021` 0.30 | high (0.95) |
-| 3 | 5 | `windows-1-2-multiple-port-discovery` | Windows | beginner | 120 | `WIN-020` 0.40, `NET-033` 0.35, `NET-031` 0.25 | high (0.85) |
+| 3 | 5 | `windows-1-2-multiple-port-discovery` | Windows | beginner | 35 | `WIN-020` 0.40, `NET-033` 0.35, `NET-031` 0.25 | high (0.85) |
 | 4 | 5 | `windows-1-3-windows-service-version-detection` | Windows | beginner | 120 | `NET-031` 0.40, `WIN-003` 0.30, `WIN-020` 0.30 | high (0.85) |
 | 5 | 5 | `windows-1-4-windows-os-detection` | Windows | beginner | 120 | `NET-031` 0.35, `WIN-001` 0.35, `WIN-020` 0.30 | high (0.85) |
 | 6 | 3 | `windows-1-5-comprehensive-windows-enumeration` | Windows | beginner | 120 | `WIN-020` 0.35, `NET-033` 0.35, `PROF-001` 0.30 | high (0.85) |
@@ -52,7 +52,7 @@ Ranked by recorded completions in the production database on 2026-11-16.
 | 20 | 2 | `linux-1-4-non-standard-port-discovery` | Linux | beginner | 120 | `NET-033` 0.40, `LIN-008` 0.30, `NET-031` 0.30 | high (0.85) |
 | 21 | 2 | `linux-1-5-nse-script-enumeration` | Linux | intermediate | 120 | `NET-033` 0.40, `LIN-011` 0.30, `PROF-001` 0.30 | high (0.85) |
 | 22 | 2 | `linux-1-6-version-vulnerability-identification` | Linux | intermediate | 120 | `NET-031` 0.40, `PROF-003` 0.30, `LIN-019` 0.30 | high (0.85) |
-| 23 | 2 | `network-0-1-ping-basics` | Network | beginner | 20 | `NET-001` 0.35, `NET-011` 0.35, `NET-033` 0.30 | high (0.85) |
+| 23 | 2 | `network-0-1-ping-basics` | Network | beginner | 15 | `NET-001` 0.35, `NET-011` 0.35, `NET-033` 0.30 | high (0.85) |
 | 24 | 2 | `network-0-2-dns-basics` | Network | beginner | 25 | `NET-021` 0.50, `NET-011` 0.25, `NET-033` 0.25 | high (0.85) |
 | 25 | 2 | `web-1-1-basic-directory-enumeration` | Web | beginner | 120 | `WEB-005` 0.35, `WEB-009` 0.35, `NET-033` 0.30 | high (0.85) |
 

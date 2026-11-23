@@ -1,4 +1,4 @@
-title: Halcyon Industrial - Setpoint Tampering
+title: Trailline Industrial - Setpoint Tampering
 category: ot
 difficulty: beginner
 estimated_time: 45
@@ -35,7 +35,7 @@ tools:
   - mbpoll
 
 scenario: |
-  Halcyon Industrial Controls runs the same HIC-2400 controller you triaged in
+  Trailline Industrial Controls runs the same TIC-2400 controller you triaged in
   exercise 1.1. This time the controller is wired to a simulated process line:
   holding register 10 is the temperature setpoint, register 11 reports the
   measured temperature, and coils 0 and 1 drive the pump and the alarm.
@@ -58,12 +58,12 @@ workbook: "wiki/range/ot/CH_OT01_Modbus_Fundamentals/02_Modbus_Write_Setpoint/"
 hostnames:
   - ip_offset: "60"
     hostname: "plc"
-    description: "HIC-2400 process controller (Modbus TCP)"
+    description: "TIC-2400 process controller (Modbus TCP)"
 
 topology:
   nodes:
     - id: "plc"
-      label: "HIC-2400 PLC"
+      label: "TIC-2400 PLC"
       type: "server"
       ip_offset: "60"
       ports: [502]

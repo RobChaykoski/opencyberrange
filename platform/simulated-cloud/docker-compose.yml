@@ -196,7 +196,7 @@ services:
 
   # AWS-like control plane. Optional; enable with --profile aws.
   localstack:
-    image: localstack/localstack:4
+    image: localstack/localstack:4.14.0
     container_name: ocr-cloud-localstack
     profiles: ["aws"]
     environment:

@@ -11,7 +11,7 @@ Signals (last 30 days versus the 30 days before that):
 - challenge stretch: average difficulty of the labs completed;
 - consistency: distinct active days and weeks with at least one completion.
 
-The same measures are also exposed as 30/60/90-day windows for trend charts.
+The same measures are also exposed as 7/30/60/90-day windows for trend charts.
 
 Privacy and anti-gaming rules:
 
@@ -36,7 +36,7 @@ from sqlalchemy.orm import Session, joinedload
 from app.models import LabCompletion
 
 WINDOW_DAYS = 30
-TREND_WINDOWS = (30, 60, 90)
+TREND_WINDOWS = (7, 30, 60, 90)
 GROWTH_VERSION = "2026.1"
 DIFFICULTY_WEIGHT = {
     "beginner": 1.0,
@@ -250,7 +250,7 @@ def _opportunities(
 
 
 def build_growth_velocity(db: Session, user) -> dict:
-    """Return the four growth signals, 30/60/90 trends, and next opportunities."""
+    """Return the four growth signals, 7/30/60/90 trends, and next opportunities."""
     now = _naive_utc_now()
     current_start = now - timedelta(days=WINDOW_DAYS)
     prior_start = current_start - timedelta(days=WINDOW_DAYS)

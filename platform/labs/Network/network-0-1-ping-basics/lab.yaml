@@ -1,7 +1,7 @@
 title: Can You Reach It? Ping Fundamentals
 category: network
 difficulty: beginner
-estimated_time: 20
+estimated_time: 15
 prerequisites: []
 # By completion students will be able to:
 learning_outcomes:
@@ -21,9 +21,9 @@ mitre_attack:
     detection: Monitor host-discovery and ICMP sweep patterns.
 
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.3"
-reviewed_at: "2026-11-08"
-review_status: "automated static proof; live walkthrough pending"
+content_version: "2.6.0"
+reviewed_at: "2026-11-23"
+review_status: "scaffolded after low completion; live walkthrough pending"
 description: "A help-desk ticket says the internal portal is down. Use ICMP echo requests to test reachability, read latency and packet loss, and learn why a reply does not prove the service is working."
 visibility: public
 
@@ -32,22 +32,27 @@ scenario: |
   internal portal is "down." Your first check is simple: can your workstation
   reach the server at all?
 
-  The portal host is `{target.target}`. Ping it, read the reply, then open the
-  maintenance note at `http://{target.target}/` to confirm whether the web
-  service itself is running.
+  The portal host is `{target.target}`. Copy that address from **Active Lab
+  View** and replace `<target>` in the commands with it. Ping the host, read the
+  reply, then open the maintenance note at `http://<target>/` to confirm whether
+  the web service itself is running. The example `10.100.13.10` is only a
+  reference; do not use it if your panel shows a different address.
 
   A reply proves the host is reachable. It does not prove the service is up.
   Keep that distinction in mind when you write your answer.
 
-difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
-difficulty_evidence_source: "reviewer_walkthrough"
-difficulty_evidence_sample: 1
-difficulty_evidence_quality: "provisional"
-difficulty_evidence_reviewed_at: "2026-11-08"
+difficulty_evidence: "Test101 reported n=5 and 3.2% completion. The brief and starting state were reviewed, a five-minute quick start, warm-up prediction, and checkpoint were added, and the estimated time was reduced to 15 minutes. Live walkthrough pending."
+difficulty_evidence_source: "platform_analytics"
+difficulty_evidence_sample: 5
+difficulty_evidence_quality: "observed"
+difficulty_evidence_reviewed_at: "2026-11-23"
 hostnames:
   - ip_offset: "10"
     hostname: "intranet-portal"
     description: "Internal portal host and maintenance page"
+  - ip_offset: "11"
+    hostname: "shell.lab"
+    description: "Browser terminal with ping, curl, and nmap (HTTP 7681)"
 
 topology:
   nodes:
@@ -55,10 +60,37 @@ topology:
       label: "Intranet Portal"
       type: "server"
       ip_offset: "10"
+      ports: [80]
+      services: ["http"]
+      x: 1
+      y: 1
+    - id: "shell"
+      label: "Range shell"
+      type: "workstation"
+      ip_offset: "11"
+      ports: [7681]
+      services: ["http"]
+      x: 2
+      y: 1
 
 flag: "OCR{ping_pr0v3s_th3_h0st_n0t_th3_s3rv1c3}"
 
 hints:
+  - text: |
+      **Start here (2 minutes)**
+
+      Launch the lab, copy the target address from **Active Lab View**, and run:
+
+      ```bash
+      ping -c 4 <target>
+      curl -s http://<target>/ | grep -o 'OCR{[^}]*}'
+      ```
+
+      Replace `<target>` with the address from the panel. If ping replies and the
+      page loads, submit the flag. If ping fails, read the next hint before
+      assuming the host is down.
+    unlock_after_minutes: 0
+
   - text: |
       **What ping does**
 
@@ -77,7 +109,7 @@ hints:
 
       Read the summary line. It reports packets transmitted, packets received,
       packet loss, and round-trip time (min/avg/max).
-    unlock_after_minutes: 0
+    unlock_after_minutes: 2
 
   - text: |
       **Reading the output**
@@ -101,7 +133,7 @@ hints:
       A timeout, `Destination Host Unreachable`, or 100% packet loss means the
       reply did not come back. That could be the host, the network path, or a
       firewall blocking ICMP.
-    unlock_after_minutes: 4
+    unlock_after_minutes: 5
 
   - text: |
       **Host up is not service up**
@@ -131,7 +163,7 @@ hints:
 
       The ping proves the host is reachable. The page proves the web service is
       running. Neither one proves that every service on the host is healthy.
-    unlock_after_minutes: 12
+    unlock_after_minutes: 10
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
 defensive_takeaways: "Segment the network, deny unnecessary egress, and alert on scanning, credential failures, and unusual data flows."

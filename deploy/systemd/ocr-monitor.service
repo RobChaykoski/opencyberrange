@@ -1,0 +1,16 @@
+[Unit]
+Description=OpenCyberRange deployment health check
+Documentation=file:/home/ocr/opencyberrange/docs/OPERATIONS-MONITORING.md
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+EnvironmentFile=-/etc/opencyberrange/monitor.env
+# Change this path if the checkout is not /home/ocr/opencyberrange.
+ExecStart=/bin/bash /home/ocr/opencyberrange/scripts/monitor-deployment.sh
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
+TimeoutStartSec=10min

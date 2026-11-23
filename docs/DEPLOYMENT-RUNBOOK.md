@@ -7,6 +7,12 @@ Operational commands for the two deployed environments.
 > private deployment inventory, never from this repository. See
 > [`PUBLICATION-METADATA-POLICY.md`](PUBLICATION-METADATA-POLICY.md).
 
+> **Microsoft media and licences.** This repository does not contain Windows
+> media or activation material. The institution supplies Microsoft evaluation
+> or licensed media from a private artifact store. See
+> [`MICROSOFT-LEGAL-NOTICE.md`](MICROSOFT-LEGAL-NOTICE.md) and
+> [`WINDOWS-ARTIFACT-POLICY.md`](WINDOWS-ARTIFACT-POLICY.md).
+
 **Current release:** `5.30.2` (signed tag `v5.30.2`, Alembic
 `0050_child_privacy_defaults`). The admin **System → Health → Release status**
 panel compares the installed version with the latest GitHub release or tag.
@@ -31,12 +37,27 @@ as `canonical/main`; its `origin` remote points at the same repository.
 
 ## Pull the reviewed tree
 
-Production:
+Production updates go through the signed-tag gate:
 
 ```bash
 cd ~/opencyberrange
-git fetch canonical
-git pull --ff-only canonical main
+sudo bash scripts/deploy-updates.sh
+```
+
+The script fetches tags, checks the release public key against the pinned
+fingerprint, verifies the signed tag, checks it out, and only then runs the
+supply-chain check and applies the update. Do not `git pull` production
+directly; that bypasses the tag gate.
+
+To inspect the target manually without applying it:
+
+```bash
+cd ~/opencyberrange
+git fetch --tags canonical
+latest=$(git tag --list 'v*' --sort=-v:refname | head -1)
+echo "$latest"
+git verify-tag "$latest"
+git checkout --detach "$latest"
 ```
 
 Development:
@@ -45,6 +66,9 @@ Development:
 cd ~/opencyberrange
 git pull --ff-only origin main
 ```
+
+An unsigned `main` update is a development convenience. Production must use a
+verified tag.
 
 ## Backend and frontend
 
@@ -262,6 +286,12 @@ deploy user's crontab. It writes a validated custom-format dump
 (`ocr-backup-<stamp>.dump`), the erasure ledger, the platform `.env`, and a
 SHA-256 file to `~/backups`, pruning only its own files after 14 days.
 
+The local admin snapshot in `backups_data` is plaintext SQL. It contains
+password hashes, sessions, and PII, so the host and that volume must be
+encrypted at rest. The directory is mode `700`, snapshots are mode `600`, and
+the download/delete endpoints require a recent re-authentication. See
+[Backup security](BACKUP-SECURITY.md).
+
 The cron sets
 `BACKUP_REMOTE=ocr-offsite:/home/<dev-user>/backups/prod` and
 `BACKUP_GPG_RECIPIENT=1082980711C1246F3601434C84F6ACCD1A0E0CB0`. The
@@ -333,12 +363,23 @@ database and its backups together.
 
 ## Monitoring
 
-`scripts/monitor-deployment.sh` runs every 10 minutes from the deploy user's
-crontab and checks `/api/version`, the backend health probe, the 8443 workbook
-origin, container health, free disk, local and off-host backup age, and the TLS
-certificate's 30-day expiry window. It writes
-`~/.local/state/ocr-monitor/status.json` and logs to
-`~/.local/state/ocr-monitor/cron.log`.
+`scripts/monitor-deployment.sh` is the **local sensor**. It checks
+`/api/version`, the backend health probe, the 8443 workbook origin, container
+health, free disk, local and off-host backup age, and the TLS certificate's
+30-day expiry window. It writes `~/.local/state/ocr-monitor/status.json` and logs
+to `~/.local/state/ocr-monitor/cron.log`.
+
+**This is not sufficient on its own.** If the host dies or the disk fills, the
+script that would notice is on the same host. Production also needs:
+
+- an external uptime check for `https://<platform-host>/api/version`;
+- an external dead-man switch that alerts when this local monitor stops pinging;
+- `HEARTBEAT_URL` (and optionally `HEARTBEAT_FAIL_URL`) in
+  `~/.ocr-monitor.env` or `/etc/opencyberrange/monitor.env`;
+- the `ocr-monitor.timer` systemd unit (5 minutes) or the equivalent cron entry.
+
+See [Operations monitoring](OPERATIONS-MONITORING.md). The release gate is not
+met until a stopped host produces an external alert.
 
 Set `ALERT_WEBHOOK_URL` (Slack-compatible JSON `{"text": ...}`) and/or
 `ALERT_COMMAND` (an executable that receives the failure message as its first

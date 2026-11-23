@@ -8,9 +8,29 @@ question in network troubleshooting: **can this host be reached at all?**
 You will use `ping` to send ICMP echo requests, read the reply, and then compare
 host reachability with service availability.
 
-**Difficulty:** Beginner  
-**Estimated Time:** 15–20 minutes  
-**Focus:** Network fundamentals / help-desk troubleshooting
+| Field | Value |
+|---|---|
+| **Difficulty** | Beginner |
+| **Estimated Time** | 15 minutes |
+| **Focus** | Network fundamentals / help-desk troubleshooting |
+
+## Quick Start
+
+1. Launch the lab and wait for **Running**.
+2. Open the lightweight shell at `http://shell.lab:7681` (login `learner` /
+   `trailguard`), or use your VPN-connected terminal.
+3. Copy the target address from **Active Lab View**.
+4. Run:
+
+   ```bash
+   ping -c 4 <target>
+   curl -s http://<target>/ | grep -o 'OCR{[^}]*}'
+   ```
+
+5. Submit the flag.
+
+If ping replies but `curl` fails, check `http://` and the target address. If ping
+fails, confirm the lab is **Running** before assuming the host is down.
 
 ## Prerequisites
 

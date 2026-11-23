@@ -105,6 +105,24 @@ non-root user where the service does not need root, and add
     `10.50.0.0/16` blocked from the host management LAN (`<private-subnet>`);
   - inbound DROP rules present for the external interface (`ens18`).
 
+## RangeBox streaming boundary
+
+The browser desktop is not a direct VNC exposure:
+
+- noVNC and KasmVNC connect through the authenticated
+  `/api/rangebox/.../vnc` WebSocket proxy, not a published container port.
+- The proxy prefers a short-lived, single-use ticket. A JWT is the fallback. It
+  requires the session id to belong to the authenticated user and the session to
+  be running.
+- Impersonation is read-only: the relay drains browser input and never injects
+  it into the student's session.
+- Each RangeBox is attached only to its own session bridge, so one learner's
+  desktop cannot reach another's.
+- nginx rate-limits the handshake (`rangebox_handshake`); `kasm-headers.conf`
+  sets the static-client CSP and frame policy. Headers do not rate limit.
+- Residual: a stolen live ticket or a compromised browser can drive that one
+  session until the ticket is rejected or the session ends.
+
 ## Residual risk: egress
 
 The per-learner lab network is a normal Docker bridge. The host firewall blocks
@@ -142,6 +160,10 @@ A release may ship only when:
       risk with a reason. **v2.5.3: accepted risk, ADR 0005.**
 - [ ] A negative test from a student container to the host management address,
       the backend, the database, and another learner's subnet is blocked.
+- [ ] The RangeBox WebSocket verifies session ownership, rejects impersonation
+      input, and is handshake-rate-limited at nginx.
+- [ ] The instructor-authoring boundary is recorded as a trusted-author
+      boundary, not as student tenant isolation.
 
 ## Reproduce
 

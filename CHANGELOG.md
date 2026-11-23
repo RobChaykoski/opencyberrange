@@ -2,6 +2,68 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.36.0] - 2026-11-23
+
+### Security and deployment
+
+- Removed the deprecated `X-XSS-Protection` header, scoped `frame-src` to the
+  wiki origin, and added an nginx `rangebox_handshake` rate limit. The RangeBox
+  WebSocket handshake now has an explicit budget instead of relying on headers.
+- Scoped upload body limits to the routes that need them: lab import, workbook
+  upload, instructor lab upload, report verification, user import, and restore.
+  The default API limit is no longer lower than the backend's 10 MB default.
+- `deploy-updates.sh` now fetches tags, proves the release key matches the
+  pinned fingerprint, verifies the signed tag, checks out that tag, and only
+  then runs the supply-chain check and applies the update. It refuses an
+  unsigned `main` or ZIP update unless the development override is explicit.
+- Install and update paths verify the Docker Compose download's SHA-256 before
+  installing it. The host-script threat model and review checklist are in
+  `docs/HOST-SCRIPT-SECURITY.md`.
+- Backup snapshots are forced to directory mode `700` and file mode `600`;
+  download and delete require recent re-authentication. The local plaintext
+  decision, encrypted-volume requirement, and offsite GPG path are recorded in
+  `docs/BACKUP-SECURITY.md`.
+- `monitor-deployment.sh` supports an external dead-man switch and failure ping.
+  `deploy/systemd/ocr-monitor.service` and `.timer` run the deep host checks,
+  while `docs/OPERATIONS-MONITORING.md` defines the external uptime check and
+  the host-down test.
+
+### Labs and curriculum
+
+- Reworked the Ping, Multiple Port Discovery, and OT workbook pages with the
+  RangeBox/VPN access diagram, directional clipboard labels, target chips, and
+  device inventories. The fictional company is consistently **Trailline**.
+- Added `scripts/check-lab-freshness.py` and `scripts/select-lab-canary.py`.
+  Quality fails on missing or stale reviews, and the weekly harness now covers a
+  deterministic 20% canary so the whole fleet is exercised every five weeks.
+- Catalogue counts remain **214 labs**, **204 workbook-mapped**, and **13
+  tracks**. The generated manifest, contracts, outcomes, and coverage files were
+  regenerated. The Cloud IAM lab is deferred to 5.37.0; it is not part of this
+  release.
+
+### Instructor analytics and reporting
+
+- Added a shared period control with a dynamic default of **7 days** across the
+  instructor dashboard, My Exercises, Reports & Analytics, and Learning
+  Analytics.
+- Added projections to the learning, activity, and Pulse charts, a live
+  freshness/error state, per-period activity columns, and export metadata. A
+  slow or empty feed is now visible instead of silently rendering zero.
+
+### Admin, localization, and policy
+
+- Split the largest admin panels with `defineAsyncComponent`; the Admin chunk
+  dropped from roughly 396 KB to 286 KB. Added a 600 KB per-chunk / 200 KB entry
+  bundle gate.
+- Added the Vue bare-string budget gate at **4,943** strings, documented the
+  English-first release and the Release 6.5 localization wave, and added
+  `X-Error-Code` headers for migrated API errors.
+- Added the Windows artifact policy and legal notice: institutions supply
+  licensed media, and the repository ships no ISOs, images, or activation keys.
+- Cloudflare DDNS settings are deferred to **5.37.0**. The supported 5.36.0
+  path remains the firewall DDNS client or the `deploy/cloudflare-ddns`
+  container.
+
 ## [5.35.0] - 2026-11-22
 
 ### Production identity

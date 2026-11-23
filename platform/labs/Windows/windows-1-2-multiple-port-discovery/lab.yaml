@@ -1,7 +1,7 @@
 title: Multiple Port Discovery
 category: reconnaissance
 difficulty: beginner
-estimated_time: 120
+estimated_time: 35
 prerequisites:
   - windows-1-1-basic-port-scan
 # By completion students will be able to:
@@ -21,27 +21,47 @@ mitre_attack:
     detection: Monitor IDS/flow logs for service and port scanning.
 
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.3"
-reviewed_at: "2026-11-08"
-review_status: "automated static proof; live walkthrough pending"
-description: Continuing your FinanceCorp assessment, expand your port scanning to discover all services running on the Windows server.
+content_version: "2.6.0"
+reviewed_at: "2026-11-23"
+review_status: "scaffolded after low completion; lightweight target image; live walkthrough pending"
+description: Continuing your FinanceCorp assessment, start with a focused scan of the exposed Windows service ports, retrieve the flag, then compare the focused result with a broader scan.
 scenario: |
-  Continuing your penetration test for FinanceCorp, your initial port scan revealed 
-  that the Windows server is running multiple services. James Mitchell wants a 
-  comprehensive inventory of all exposed services to understand the full attack surface.
-  
-  FinanceCorp's infrastructure appears to be more complex than initially thought. 
-  Multiple services on a single host increase the potential attack surface and require 
-  careful assessment of each service.
-  
-  Your objective: Perform a comprehensive port scan to identify all open ports and 
-  services on the Windows server. Document each service you discover, as this 
-  information will be critical for the next phases of your assessment.
+  Continuing your penetration test for FinanceCorp, your initial port scan revealed
+  that the Windows server is running multiple services. James Mitchell wants an
+  inventory of the exposed services, starting with the ports a Windows server
+  commonly exposes.
+
+  Start with the focused list so you get a result quickly:
+
+  ```bash
+  nmap -Pn -p 80,445,3389 <target>
+  curl http://<target>/flag.txt
+  ```
+
+  Replace `<target>` with the address in **Active Lab View**. The full-range scan
+  is an optional comparison after you have the flag; it is not required to finish
+  the exercise. The target is a deterministic service simulator: port 80 serves
+  the flag, while 445 and 3389 are open for discovery practice.
 
 
 flag: "OCR{mult1pl3_p0rts}"
 
 hints:
+  - text: |
+      **Start here (5 minutes)**
+
+      Launch the lab, copy the target from **Active Lab View**, then run:
+
+      ```bash
+      nmap -Pn -p 80,445,3389 <target>
+      curl http://<target>/flag.txt
+      ```
+
+      The focused scan returns quickly and shows the three exposed ports. The
+      flag is on the HTTP service. If the scan says the host is down, keep `-Pn`
+      and confirm the target is **Running**.
+    unlock_after_minutes: 0
+
   - text: |
       **Multi-port scanning** expands beyond single-port reconnaissance to discover all services running on a target system. Windows servers often run multiple services simultaneously, each on different ports.
 
@@ -54,8 +74,9 @@ hints:
       - Port 1433: MS-SQL (database)
       - Port 389/636: LDAP (directory services)
 
-      Your goal is to discover all open ports on the FinanceCorp Windows server to map the complete attack surface.
-    unlock_after_minutes: 0
+      Your goal is to discover the exposed ports on the FinanceCorp Windows
+      server and explain what each one represents.
+    unlock_after_minutes: 3
 
   - text: |
       **nmap port scanning strategies** vary based on thoroughness vs speed requirements:
@@ -66,8 +87,9 @@ hints:
       - **Full scan**: All 65535 ports (slow but comprehensive)
       - **Service-specific**: Target known Windows service ports
 
-      For Windows enumeration, focusing on common service ports (1-10000) provides good coverage without excessive scan time.
-    unlock_after_minutes: 5
+      For this lab, start with the focused list `80,445,3389`; the full range is
+      an optional comparison after you have the flag.
+    unlock_after_minutes: 6
 
   - text: |
       **nmap port specification flags** control which ports to scan:
@@ -84,7 +106,7 @@ hints:
       - `--top-ports 100`: Most common 100 ports
       - `-p U:161,T:80-443`: UDP and TCP ports
 
-      Example: `nmap -p 1-1000 target.com`
+      Example: `nmap -Pn -p 80,445,3389 <target>`
     unlock_after_minutes: 10
 
   - text: |
@@ -124,7 +146,7 @@ hints:
       For the fastest scan of just Windows services:
 
       ```bash
-      nmap -p 80,135,139,445,3389,5985,1433,389 <target>
+      nmap -Pn -p 80,135,139,445,3389,5985,1433,389 <target>
       ```
     unlock_after_minutes: 20
 
@@ -146,14 +168,55 @@ hints:
 
       **Count the open ports** - the flag relates to discovering multiple services. Each open port represents a potential attack vector. Document all discovered ports for the next assessment phase.
     unlock_after_minutes: 25
+
+  - text: |
+      **If you only have ten minutes**
+
+      Run the focused scan, then retrieve the flag:
+
+      ```bash
+      nmap -Pn -p 80,445,3389 <target>
+      curl http://<target>/flag.txt
+      ```
+
+      The full `nmap -p-` comparison is optional. It is useful for the analysis
+      questions, but it is not required to submit the flag.
+    unlock_after_minutes: 10
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
 defensive_takeaways: "Require MFA and least privilege on the exposed service, monitor authentication and lateral-movement events, and remove anonymous or default access."
-difficulty_evidence: "n=5 completions; avg attempts 2.2; avg hints 1.0; median time 84 min; quiz attempts 0 (avg None); declared difficulty 'beginner' reviewed against this evidence."
+difficulty_evidence: "Test101 reported n=6 and 9.7% completion. The brief was reordered around a focused 80,445,3389 scan, the estimated time was reduced from 120 to 35 minutes, the heavy Samba/xrdp/nginx image was replaced with a deterministic three-listener target, and the full-range scan was made optional."
 difficulty_evidence_source: "platform_analytics"
-difficulty_evidence_sample: 5
+difficulty_evidence_sample: 6
 difficulty_evidence_quality: "observed"
-difficulty_evidence_reviewed_at: "2026-11-08"
+difficulty_evidence_reviewed_at: "2026-11-23"
 workbook: "wiki/range/winpt/CH01_Enumeration/02_Multiple_Port_Discovery/"
+
+hostnames:
+  - ip_offset: "10"
+    hostname: "windows-target.lab"
+    description: "FinanceCorp service simulator (HTTP 80, SMB 445, RDP 3389)"
+  - ip_offset: "11"
+    hostname: "shell.lab"
+    description: "Browser terminal with nmap, curl, and ping (HTTP 7681)"
+
+topology:
+  nodes:
+    - id: "target"
+      label: "FinanceCorp Windows target"
+      type: "server"
+      ip_offset: "10"
+      ports: [80, 445, 3389]
+      services: ["http", "smb", "rdp"]
+      x: 1
+      y: 1
+    - id: "shell"
+      label: "Range shell"
+      type: "workstation"
+      ip_offset: "11"
+      ports: [7681]
+      services: ["http"]
+      x: 2
+      y: 1
 
 test:
   steps:

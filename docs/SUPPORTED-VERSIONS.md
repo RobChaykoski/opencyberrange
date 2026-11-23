@@ -4,17 +4,20 @@ This file records the platform baseline, the target for the latest-supported-GA
 upgrade, and the reason for every exception. It is the human-readable companion
 to `versions.yaml`.
 
-Last reviewed: **2026-11-13**. Current **platform release: 4**. **Community /
+Last reviewed: **2026-11-23**. Current **platform release: 5.36.0** (release
+candidate; tag after the staging matrix). Production remains on the last signed
+tag until cutover. **Community /
 Academic**, **Professional**, and **Enterprise** are edition profiles on that
 release, not separate platform version lines. **Community / Academic 1.1.3**
 remains a supported maintenance line for existing single-host installations. See
 [Editions](EDITIONS.md), [Release tags](RELEASES.md), and
-[ADR 0004](decisions/0004-single-platform-release-version.md).
+[ADR 0004](decisions/0004-single-platform-release-version.md). The execution
+order for majors is in [Upgrade waves](UPGRADE-WAVES.md).
 
 The separate HA control-plane repository has its own version and is described by
-compatibility with platform Release 4. Enterprise ships OIDC, SAML, and LDAP
-single sign-on in Release 4. Multi-tenancy, LTI, and the per-student
-accommodation engine are Release 5.
+compatibility with platform Release 5.36.0. Enterprise ships OIDC, SAML, and
+LDAP single sign-on; multi-tenancy, LTI, and the per-student accommodation
+engine remain post-5.36 candidates.
 
 Host baseline: **Ubuntu 24.04 LTS is certified.** See [OS-SUPPORT.md](OS-SUPPORT.md)
 and [V2-24.04-BUILD-OUT.md](V2-24.04-BUILD-OUT.md). Ubuntu 22.04 remains the
@@ -56,13 +59,13 @@ started unless `--profile sso` is requested.
 | Component | Current | Target | Status | Notes |
 |---|---|---|---|---|
 | Host OS | Community / Academic profile: Ubuntu 22.04 and 24.04 LTS; Professional and Enterprise profiles: Ubuntu 24.04 LTS | 24.04 for Professional/Enterprise profiles | Validation in progress | Community / Academic supports both LTS releases; the Professional profile is deployed and KVM ready, with network/VPN and recovery gates remaining; Enterprise inherits the Professional baseline. See [Host OS support](OS-SUPPORT.md) and the [24.04 build-out plan](V2-24.04-BUILD-OUT.md) |
-| Python | 3.13 | 3.13 | Applied (runtime wave) | Re-evaluate 3.14 after wheels |
-| Node.js | 22 LTS | 24 LTS | Applied in Wave C | Re-evaluate 24 LTS next |
-| PostgreSQL | 15 | 17 | Planned major upgrade | Separate deployment, dump/restore |
+| Python | 3.13 | 3.14 | 3.13 current; 3.14 evaluation | Check wheel availability before the 3.13 security window |
+| Node.js | 22 LTS | 24 LTS | Compatibility testing | Build-only change; runtime stays on the pinned nginx digest |
+| PostgreSQL | 15 | 17 | Planned major upgrade | Separate deployment, dump/restore, RLS and trigger verification |
 | Valkey | 9.1.3 | 9.1.3 | Supported | Shared rate-limit counters; no persistence |
 | Backend base | `python:3.13-slim` (digest pinned) | 3.13 slim digest | Applied in Wave 1 | CI runs the same minor |
 | Frontend builder | `node:22-alpine` | Pin a digest | Applied in Wave C | Required by Vite 8 |
-| Frontend server | `nginx:alpine` | Pin a supported stable digest | Wave 1 | Verify nginx config compatibility |
+| Frontend server | `nginx:alpine` (digest pinned) | Pin a supported stable digest | Applied | Verify nginx config compatibility |
 
 ## Backend dependencies
 

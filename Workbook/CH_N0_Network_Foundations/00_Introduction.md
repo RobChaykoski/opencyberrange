@@ -86,4 +86,12 @@ For each lab:
 - The target address shown in each exercise
 - No previous networking knowledge
 
+![How you reach the lab](../assets/lab-access-paths.svg)
+
+You do not need to install anything on the platform host. Use the **RangeBox**
+desktop, your own **VPN-connected VM**, or the lightweight **Range shell** that
+some command-only labs provide. All three put your commands on the same isolated
+lab network. The platform page is where you launch and read the exercise; it is
+not a target.
+
 Let's start with the simplest possible question: can you reach the host?

@@ -68,7 +68,10 @@ onMounted(() => {
   }
 })
 
-watch(() => props.option, render, { deep: true })
+// Callers replace the whole option object on every data change (and notMerge
+// is used below), so a shallow watch has the same behaviour without walking a
+// large nested option tree on every refresh.
+watch(() => props.option, render)
 
 onBeforeUnmount(() => {
   observer?.disconnect()

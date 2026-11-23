@@ -10,7 +10,7 @@
 
 ## Scenario
 
-Halcyon Industrial Controls operates a small process line. An analyst captured
+Trailline Industrial Controls operates a small process line. An analyst captured
 a Modbus TCP conversation and noticed the controller's holding registers contain
 more than setpoints. The controller is online in the lab.
 

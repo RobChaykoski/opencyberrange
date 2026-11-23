@@ -40,6 +40,7 @@ RUN apk add --no-cache \
 # EtherNet/IP CIP, OPC-UA) can run from the tester sidecar. DNP3 labs use raw
 # sockets and need no extra package.
 RUN python3 -m pip install --no-cache-dir --break-system-packages \
+    awscli==1.46.3 \
     pymodbus==3.6.3 \
     pycomm3 \
     asyncua \

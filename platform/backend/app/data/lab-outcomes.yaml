@@ -4643,7 +4643,7 @@ labs:
   network-0-1-ping-basics:
     track: Network
     difficulty: beginner
-    expected_duration_minutes: 20
+    expected_duration_minutes: 15
     workbook: wiki/range/netfor/CH_N0_Network_Foundations/01_Ping_Basics/
     skills_earned:
     - id: NET-001
@@ -8052,7 +8052,7 @@ labs:
   windows-1-2-multiple-port-discovery:
     track: Windows
     difficulty: beginner
-    expected_duration_minutes: 120
+    expected_duration_minutes: 35
     workbook: wiki/range/winpt/CH01_Enumeration/02_Multiple_Port_Discovery/
     skills_earned:
     - id: WIN-020

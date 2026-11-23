@@ -1,4 +1,4 @@
-title: Halcyon Industrial - Modbus Gateway Bypass
+title: Trailline Industrial - Modbus Gateway Bypass
 category: ot
 difficulty: intermediate
 estimated_time: 50
@@ -35,8 +35,8 @@ tools:
   - mbpoll
 
 scenario: |
-  After the setpoint incident, Halcyon Industrial placed a Modbus gateway in
-  front of the HIC-2400 controller. The gateway is now the only reachable
+  After the setpoint incident, Trailline Industrial placed a Modbus gateway in
+  front of the TIC-2400 controller. The gateway is now the only reachable
   device: it proxies reads to the PLC and permits single-register writes only
   to the batch counter block (holding registers 20-29).
 

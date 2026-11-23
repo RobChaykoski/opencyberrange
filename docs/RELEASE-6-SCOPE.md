@@ -37,6 +37,30 @@ and bundles are versioned and signed.
 - **No forced migration.** The single-host Compose profile remains supported.
   HA and Kubernetes are an additional deployment profile, not a replacement.
 
+## Language and localization
+
+Release 5.36 ships **English-only UI chrome** with the backlog made visible and
+gated: a bare-string baseline in CI and stable `X-Error-Code` headers on
+migrated endpoints. It does not claim the UI is translated.
+
+Release 6 adds the localization wave:
+
+- **UI chrome:** extract Vue strings to namespaced locale catalogues, add
+  French, and resolve locale from stored preference -> `Accept-Language` -> `en`.
+- **Formatting:** use `Intl` date, number, and relative-time formatting with the
+  resolved locale.
+- **Email and PDF:** resolve the recipient's locale and translate the small
+  server-side catalogue. Keep `detail` human-readable; add `X-Error-Code` for
+  the client.
+- **Course content:** build one MkDocs locale at a time (`mkdocs-fr-*.yml`) into
+  separate wiki paths. Curriculum prose stays in the authored workbook, never in
+  UI locale JSON. `curriculum-glossary.yaml` is the terminology seed.
+- **RTL groundwork:** prefer CSS logical properties over `left`/`right` before a
+  right-to-left locale is requested.
+
+See [Language and localization](LANGUAGE-AND-LOCALIZATION.md) and
+[API error codes](API-ERROR-CODES.md).
+
 ## What already exists
 
 Release 6 builds on shipped pieces; it is not a blank page.
@@ -95,6 +119,7 @@ flowchart LR
 | 6.2 | Scale and availability | Kubernetes reference profile, HA PostgreSQL, Valkey, object storage, lab node pool, backup and disaster-recovery drills | Control plane survives a node loss; a lab host can drain without losing evidence; RPO and RTO met in a drill |
 | 6.3 | Federation | Signed competency, content, rubric, and capstone bundles; import preview and diff; trust registry | Two institutions exchange a competency bundle and a capstone template; no learner row crosses the boundary |
 | 6.4 | AI Mentor and academic validation | Grounded mentor, citations, evaluation harness, pilot study | Every recommendation cites evidence; no PII leaves the trust boundary; evaluation report published |
+| 6.5 | Language and localization | French UI chrome, localized email/PDF, per-locale MkDocs builds, RTL groundwork | No bare-string growth; every extracted key has a French value; a French recipient receives a French email and PDF; a `dir="rtl"` smoke page does not break layout |
 
 ## Academic value
 
@@ -129,6 +154,7 @@ Release 6 is designed for the questions an academic review actually asks.
 | HA control-plane availability in a drill | 99.9% target; no evidence loss on node loss |
 | Federation learner-data leakage | Zero rows; verified by a boundary test |
 | AI citations to real evidence | 100% of recommendations; no uncited claim |
+| Untranslated UI strings | No file grows beyond its baseline; the total does not increase between releases |
 
 ## Non-goals
 
@@ -174,4 +200,6 @@ Release 6 is designed for the questions an academic review actually asks.
 - [HA and Kubernetes](HA-AND-KUBERNETES.md)
 - [Federation](FEDERATION.md)
 - [AI Mentor](AI-MENTOR.md)
+- [Language and localization](LANGUAGE-AND-LOCALIZATION.md)
+- [API error codes](API-ERROR-CODES.md)
 - [ADR 0005: Release 6 is evidence-first](decisions/0005-release-6-evidence-first.md)

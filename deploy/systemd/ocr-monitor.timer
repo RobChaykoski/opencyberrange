@@ -1,0 +1,12 @@
+[Unit]
+Description=OpenCyberRange deployment health check every five minutes
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=5min
+RandomizedDelaySec=30s
+Persistent=true
+Unit=ocr-monitor.service
+
+[Install]
+WantedBy=timers.target

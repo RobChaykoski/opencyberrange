@@ -1,4 +1,4 @@
-title: Halcyon Industrial - S7comm Data Block Read
+title: Trailline Industrial - S7comm Data Block Read
 category: ot
 difficulty: intermediate
 estimated_time: 45
@@ -35,7 +35,7 @@ tools:
   - snap7
 
 scenario: |
-  Halcyon Industrial Controls added a second process line with a Siemens-style
+  Trailline Industrial Controls added a second process line with a Siemens-style
   controller. The vendor left the engineering port open on the control network
   and the process data block holds more than setpoints.
 
@@ -56,12 +56,12 @@ workbook: "wiki/range/ot/CH_OT02_S7comm_Data_Blocks/01_S7comm_Data_Block_Read/"
 hostnames:
   - ip_offset: "61"
     hostname: "plc"
-    description: "HIC-S7 process controller (S7comm on TCP 102)"
+    description: "TIC-S7 process controller (S7comm on TCP 102)"
 
 topology:
   nodes:
     - id: "plc"
-      label: "HIC-S7 PLC"
+      label: "TIC-S7 PLC"
       type: "server"
       ip_offset: "61"
       ports: [102]

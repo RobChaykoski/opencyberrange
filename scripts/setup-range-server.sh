@@ -136,10 +136,24 @@ install_compose_binary() {
         *) return 1 ;;
     esac
     mkdir -p /usr/local/lib/docker/cli-plugins
-    curl -fsSL \
-        "https://github.com/docker/compose/releases/latest/download/docker-compose-linux-${arch}" \
-        -o /usr/local/lib/docker/cli-plugins/docker-compose || return 1
-    chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
+    local base="https://github.com/docker/compose/releases/latest/download/docker-compose-linux-${arch}"
+    local tmp_bin tmp_sha expected actual
+    tmp_bin=$(mktemp)
+    tmp_sha=$(mktemp)
+    if ! curl -fsSL "$base" -o "$tmp_bin" \
+        || ! curl -fsSL "${base}.sha256" -o "$tmp_sha"; then
+        rm -f "$tmp_bin" "$tmp_sha"
+        return 1
+    fi
+    expected=$(tr -d '[:space:]' < "$tmp_sha")
+    actual=$(sha256sum "$tmp_bin" | awk '{print $1}')
+    if [ -z "$expected" ] || [ "$expected" != "$actual" ]; then
+        rm -f "$tmp_bin" "$tmp_sha"
+        err "Docker Compose download failed SHA-256 verification"
+        return 1
+    fi
+    install -m 0755 "$tmp_bin" /usr/local/lib/docker/cli-plugins/docker-compose
+    rm -f "$tmp_bin" "$tmp_sha"
     docker compose version >/dev/null 2>&1
 }
 

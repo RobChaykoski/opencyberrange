@@ -2,6 +2,14 @@
 
 Before you install SWOCTS Cyber Range you size the host, open the right ports, and confirm Docker is available. Read this page first, then follow either [Local Deployment](02_Local_Deployment.md) or [Cloud Deployment](03_Cloud_Deployment.md).
 
+> **Microsoft products are not included.** Users are responsible for ensuring
+> they possess the necessary Microsoft licenses for all deployed software.
+> OpenCyberRange does not distribute, resell, sublicense, or provide Microsoft
+> software, activation keys, or licenses. Institutions supply evaluation or
+> licensed media from a private artifact store. See the
+> [Microsoft legal notice](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/MICROSOFT-LEGAL-NOTICE.md)
+> and [Windows artifact policy](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/WINDOWS-ARTIFACT-POLICY.md).
+
 ## Operating system
 
 Use **Ubuntu 24.04 LTS** for a new 5.17.5 deployment. **Community / Academic profile** supports both Ubuntu 22.04 and 24.04 LTS, and **Ubuntu 22.04** remains an upgrade source. The setup script installs all dependencies through `apt`, so a clean server install is the simplest starting point. See [Host OS support](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/OS-SUPPORT.md) and the [24.04 migration plan](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/V2-UBUNTU-24.04-MIGRATION.md).

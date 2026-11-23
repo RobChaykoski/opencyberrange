@@ -15,3 +15,23 @@ services:
         reservations:
           cpus: '0.05'
           memory: 32M
+
+  shell:
+    mem_limit: 128m
+    cpus: 0.25
+    build:
+      context: ../../_shared/shell
+      dockerfile: Dockerfile
+    hostname: shell
+    labels:
+      ip_offset: "11"
+    cap_add:
+      - NET_RAW
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped

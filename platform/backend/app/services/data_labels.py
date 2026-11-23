@@ -302,6 +302,9 @@ def evaluate_export(
 
 
 def resolve_request_user(request: Request, db: Session) -> User | None:
+    existing = getattr(request.state, "user", None)
+    if existing is not None:
+        return existing
     header = request.headers.get("authorization") or ""
     scheme, _, token = header.partition(" ")
     if scheme.lower() != "bearer" or not token.strip():
@@ -312,7 +315,9 @@ def resolve_request_user(request: Request, db: Session) -> User | None:
             from app.services.service_identities import resolve_token
 
             return resolve_token(db, token)
-        payload = _decode_token(token, db)
+        payload = getattr(request.state, "auth_payload", None)
+        if payload is None:
+            payload = _decode_token(token, db)
     except HTTPException:
         return None
     user = get_user_by_username(db, username=payload.get("sub"))

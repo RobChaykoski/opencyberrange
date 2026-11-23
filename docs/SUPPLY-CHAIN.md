@@ -112,7 +112,10 @@ installed, the signature check fails.
 
 - **CI:** the Quality workflow runs `--check` on every push and pull request.
 - **Deploy/update:** `install-platform.sh` and `deploy-updates.sh` verify the
-  lock before copying files or rebuilding. A mismatch stops the deployment.
+  lock before copying files or rebuilding. `deploy-updates.sh` also verifies a
+  signed release tag before it checks out the tree, so the verifier, key, and
+  lock are not trusted merely because they were pulled. A mismatch stops the
+  deployment.
 - **Prebuild:** `prebuild-labs.sh` refuses to build lab sources that have
   drifted from the reviewed lock. Set `ALLOW_LAB_DRIFT=1` only for an
   intentional local working tree.

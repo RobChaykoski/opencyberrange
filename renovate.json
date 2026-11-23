@@ -38,6 +38,22 @@
       "labels": ["dependencies", "major"]
     },
     {
+      "matchPackageNames": ["postgres"],
+      "labels": ["wave:postgres"]
+    },
+    {
+      "matchPackageNames": ["python"],
+      "labels": ["wave:python"]
+    },
+    {
+      "matchPackageNames": ["apscheduler"],
+      "labels": ["wave:apscheduler"]
+    },
+    {
+      "matchPackageNames": ["/^@?vue/", "vue-router", "vite", "@vitejs/plugin-vue", "echarts"],
+      "labels": ["wave:frontend"]
+    },
+    {
       "matchPackageNames": ["/^mkdocs/", "/^mkdocs-material/", "/^pymdown-extensions/"],
       "groupName": "docs toolchain",
       "labels": ["dependencies", "docs"]

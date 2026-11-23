@@ -118,6 +118,10 @@ jobs:
         working-directory: platform/frontend
         run: npm run lint
 
+      - name: Check untranslated UI strings
+        working-directory: platform/frontend
+        run: npm run check:i18n
+
       - name: Test
         working-directory: platform/frontend
         run: npm test
@@ -125,6 +129,10 @@ jobs:
       - name: Build
         working-directory: platform/frontend
         run: npm run build
+
+      - name: Check bundle size
+        working-directory: platform/frontend
+        run: npm run check:bundle
 
   regression:
     name: docs and security regression

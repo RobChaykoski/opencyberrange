@@ -22,6 +22,11 @@ records. OpenIAM is fetched separately as its own compose stack.
 | **OpenDetectionEngine / OpenDLP** | Data discovery, classification, and protection | Data sources, classifiers, DLP policy, discovery evidence, classification reports |
 | **DefectDojo** | Vulnerability and finding management | Finding ingestion, cross-scanner deduplication, exploitability ranking, SLA and remediation tracking |
 | **Steampipe / Powerpipe** | Read-only cloud and SaaS inventory | Scheduled SQL collection, benchmark results, configuration evidence snapshots |
+| **Prowler** | Cloud security assessment | Multi-cloud posture checks, compliance-framework evidence, prioritized findings, OCSF/SARIF export |
+| **Cloudsplaining** | AWS IAM least-privilege analysis | Wildcard and resource-exposure findings, privilege-escalation paths, risk-prioritized report, exclusions |
+| **OpenSearch / OpenSearch Dashboards** | Log search and analytics | Indexed security events, dashboards, saved searches, detection and audit evidence |
+| **TruffleHog** | Secret discovery | Verified and unverified secret findings, filesystem and repository scans, JSON/JSONL evidence |
+| **OWASP Threat Dragon** | Threat modeling | STRIDE and LINDDUN diagrams, trust boundaries, data flows, versioned threat-model files |
 | **Cloud Custodian** | Cloud guardrails and remediation | Policy-as-code filters/actions, lab-account TTL, tag enforcement, public-exposure remediation, dry-run evidence |
 | **Sigstore / Cosign** | Supply-chain trust | Keyless artifact signing, provenance attestations, transparency-log evidence, release verification |
 | **OpenMetadata** | Metadata authority | Classification, ownership, lineage, jurisdiction, retention, controls, policy context |
@@ -52,11 +57,45 @@ records. OpenIAM is fetched separately as its own compose stack.
 | Data classification/DLP | OpenDLP, OpenMetadata | Privacy labels and export classification | Privacy/control evidence | Core classification and DLP | PHI classification and DLP evidence |
 | Vulnerability management | DefectDojo, OpenVAS, Trivy, Grype | Vulnerability labs and remediation exercises | Risk, control, and SLA evidence | Scanner findings and exposure context | Clinical application and vendor vulnerability evidence |
 | Cloud/SaaS configuration evidence | Steampipe, Powerpipe | Cloud and SaaS security labs | Benchmark and control evidence snapshots | Cloud data-source and exposure context | Cloud-hosted PHI configuration evidence |
+| Cloud security assessment | Prowler (primary), ScoutSuite (optional comparison) | Cloud assessment labs; sandbox scan and triage | Benchmark, ThreatScore, and framework evidence | Cloud exposure evidence | Cloud-hosted PHI posture evidence |
+| Cloud IAM least-privilege analysis | Cloudsplaining, Policy Sentry | IAM policy labs and privilege-escalation review | IAM risk evidence and exceptions | Identity exposure context | Clinical role and access-key evidence |
+| Secrets discovery | TruffleHog, Gitleaks | Secret-scanning labs and release checks | Secret exposure evidence and rotation tickets | Collector and policy-bundle secret checks | PHI credential and key exposure evidence |
+| Threat modeling | OWASP Threat Dragon | Design review and secure-architecture labs | Threat-model evidence linked to controls | Data-flow and trust-boundary review | PHI data-flow and access-path models |
+| Log search and analytics | OpenSearch, OpenSearch Dashboards, Wazuh | Detection, triage, and hunting labs | Audit-log search and evidence packs | Event search and DLP correlation | PHI access-log search |
 | Endpoint DFIR and hunting | Velociraptor, Wazuh, Fleet | DFIR labs, VQL hunts, artifact collection | Forensic evidence and control testing | Endpoint evidence for data exposure | Clinical endpoint DFIR |
 | Cloud guardrails and remediation | Cloud Custodian, OPA | Cloud lab guardrails, TTL, and cleanup | Cloud control evidence and exceptions | Cloud data-source protection context | Cloud-hosted PHI guardrails |
 | Supply-chain trust | Sigstore, Cosign, Syft | Release signing and verification labs | Build and release control evidence | Collector and policy-bundle verification | Vendor artifact and image verification |
 | Metadata and policy context | OpenMetadata, OPA, Authentik | Learner and lab metadata context | Decision evidence and policy version | Classification and policy context | PHI policy context and access decisions |
 | Privacy and reporting | Shared role model | Privacy office and auditor dashboards | Evidence requests and audit packs | Classification and discovery reports | PHI access and retention evidence |
+
+### Cloud assessment selection
+
+Use **Prowler** as the default cloud posture assessor. It is Apache-2.0, actively
+maintained, covers AWS, Azure, GCP, Kubernetes, M365, and GitHub, and exports
+OCSF, JSON, SARIF, and HTML. Run the CLI against a sandbox account. Do not deploy
+the local server (Django, PostgreSQL, Valkey, Neo4j) on the teaching host; it is
+heavier than the assessment itself.
+
+**ScoutSuite** is a useful point-in-time comparison and a clear teaching report,
+but it is GPL-2.0. Keep it as an optional lab container, not a platform
+dependency, and provide source if the image is distributed. Do not run it and
+Prowler as competing authorities in the same workflow.
+
+**Cloudsplaining** is the IAM specialist. Use it for every AWS IAM lab and for
+the privilege-escalation review. It is BSD-3-Clause and its report is evidence,
+not a control.
+
+**OpenSearch** is the search and analytics layer. Reuse the Wazuh indexer rather
+than adding a second cluster; a single-node development cluster needs roughly
+2 GB of heap. It indexes evidence but does not own retention or authorization.
+
+**TruffleHog** is the secret-discovery specialist. Run it with
+`--no-verification` in an offline lab, or with verification only against a
+sandbox account. It reports; it does not rotate. Route findings to DefectDojo
+and rotate the credential.
+
+**OWASP Threat Dragon** is design-time evidence. Keep the threat model with the
+change or finding it supports; it does not enforce anything at runtime.
 
 ## Enforcement boundaries
 
@@ -67,6 +106,8 @@ never becomes a scanner.
 | Layer | Tools | Allowed role | Not allowed |
 |---|---|---|---|
 | Observe | Steampipe, Powerpipe, OpenMetadata, Ralph, NetBox, Fleet, Wazuh, Velociraptor, OpenDLP | Scheduled read-only collection and evidence snapshots | Synchronous request-path dependency or system of record |
+| Assess | Prowler, Cloudsplaining, ScoutSuite | Read-only posture and IAM assessment; findings exported with evidence | Continuous system of record, authorization, or remediation |
+| Search and analyze | OpenSearch, OpenSearch Dashboards | Indexed evidence, dashboards, saved searches, detection queries | Authorizing access, mutating resources, or replacing OpenGRC and DefectDojo |
 | Decide | OPA, Authentik, OpenCyberRange context service | Application and data authorization, identity, policy decisions | Mutating cloud resources |
 | Enforce cloud | Cloud Custodian | Scoped remediation in lab or sandbox accounts after dry-run and approval | Production remediation without approval, change window, and audit record |
 | Track findings | DefectDojo | Deduplicate, rank, assign, SLA, retest | Owning control, risk, or exception decisions |
@@ -104,6 +145,21 @@ Sigstore ──────> verify release artifacts, SBOMs, and policy bundles
    on a schedule and serve the last reviewed snapshot.
 7. **Every automated action is attributable.** Actor, policy version, target,
    before/after, approval, and evidence hash are mandatory.
+8. **Prowler assesses; Steampipe observes.** Prowler runs a point-in-time,
+   read-only scan against a sandbox account and exports findings. Steampipe
+   remains the queryable inventory. Neither mutates a resource.
+9. **Cloudsplaining is IAM analysis, not an IAM control.** Its report is
+   evidence for DefectDojo and OpenGRC; it never edits a policy. Remediation is
+   a reviewed change, and Cloud Custodian is the only automated mutator.
+10. **OpenSearch is the analytics layer, not the authority.** Wazuh or another
+    collector owns ingestion and retention; OpenSearch indexes and queries the
+    evidence. Do not make a learner request depend on a live OpenSearch query.
+11. **TruffleHog finds secrets; it does not rotate them.** A finding goes to
+    DefectDojo, the owner rotates or revokes the credential, and the scan is
+    repeated. Never print a live secret in a report.
+12. **Threat Dragon is design-time evidence.** A threat model supports a
+    change, control, or finding; it is not runtime authorization and it does
+    not replace a scanner.
 
 ## Identity architecture
 

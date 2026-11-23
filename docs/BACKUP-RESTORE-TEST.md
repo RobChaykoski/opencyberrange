@@ -54,6 +54,15 @@ database superuser. Never point the snapshot path at the runtime role on a
 database with forced RLS: `pg_dump` fails on tables such as
 `accommodation_events`.
 
+## Data at rest
+
+The local `backups_data` volume holds plaintext SQL, including password hashes,
+sessions, and PII. It is protected by the host/volume encryption decision, mode
+`700/600`, admin-only download with recent re-authentication, and the audit log.
+The off-host path is GPG-encrypted. Read
+[Backup security](BACKUP-SECURITY.md) before enabling downloads or moving the
+volume.
+
 ## What the drill proves
 
 - the dump is readable by `pg_restore`;

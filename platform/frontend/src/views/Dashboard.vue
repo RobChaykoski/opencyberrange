@@ -95,6 +95,8 @@
               VPN access is turned off for this platform. Launch a RangeBox to reach your labs from the browser instead.
             </p>
           </div>
+
+          <LabAccessDiagram />
         </div>
 
       </div>
@@ -411,6 +413,7 @@ import { usePoll } from '../composables/usePoll'
 import { useClipboard } from '../composables/useClipboard'
 import Toast, { showToast } from '../components/Toast.vue'
 import { downloadBlob } from '../utils/download'
+import LabAccessDiagram from '../components/LabAccessDiagram.vue'
 
 // The composable's getters are connected-aware: "Connected" needs a live
 // WireGuard handshake (vpn_connected), while "Registered (tunnel down)"

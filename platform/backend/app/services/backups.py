@@ -168,6 +168,11 @@ def strip_unsupported_dump_settings(path: str) -> bool:
 def create_database_backup(timestamp: Optional[str] = None) -> dict:
     """Run pg_dump into the shared snapshot directory.
 
+    Snapshots are plaintext SQL on the ``backups_data`` volume. They contain
+    password hashes, sessions, and PII. The volume must live on encrypted host
+    storage, and the directory is forced to mode 700 with files at mode 600.
+    See docs/BACKUP-SECURITY.md for the threat model and the offsite GPG path.
+
     Raises RuntimeError with the pg_dump stderr on failure so callers can put a
     useful message in front of an administrator.
     """
@@ -175,6 +180,10 @@ def create_database_backup(timestamp: Optional[str] = None) -> dict:
     parsed = urlparse(db_url)
     directory = backup_directory()
     os.makedirs(directory, exist_ok=True)
+    try:
+        os.chmod(directory, 0o700)
+    except OSError:
+        pass
 
     stamp = timestamp or datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
     backup_file = os.path.join(directory, f"ocr_backup_{stamp}.sql")
@@ -212,6 +221,10 @@ def create_database_backup(timestamp: Optional[str] = None) -> dict:
         raise RuntimeError(result.stderr or "pg_dump failed")
 
     strip_unsupported_dump_settings(backup_file)
+    try:
+        os.chmod(backup_file, 0o600)
+    except OSError:
+        pass
 
     ledger_source = os.environ.get(
         "ERASURE_LEDGER_PATH", "/workbook/erasure-ledger.jsonl"

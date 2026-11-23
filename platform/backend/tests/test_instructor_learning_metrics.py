@@ -86,6 +86,7 @@ def test_instructor_learning_metrics_summarize_the_cohort(db_session):
 
     metrics = _instructor_learning_metrics(
         db_session,
+        NOW - timedelta(days=7),
         NOW,
         admin_ids=set(),
         student_ids={student.id for student in students},
@@ -96,17 +97,25 @@ def test_instructor_learning_metrics_summarize_the_cohort(db_session):
     assert metrics["average_score"] == 85.0
     # Student 2 used 2 hints and 3 attempts; student 3 never completed.
     assert metrics["struggling_students"] == 2
+    assert metrics["check_in_students"] == 2
+    assert metrics["students_in_scope"] == 3
     assert metrics["metrics_window_days"] == 7
 
 
 def test_instructor_learning_metrics_empty_scope_is_zero(db_session):
     metrics = _instructor_learning_metrics(
-        db_session, NOW, admin_ids=set(), student_ids=set(),
+        db_session,
+        NOW - timedelta(days=7),
+        NOW,
+        admin_ids=set(),
+        student_ids=set(),
     )
     assert metrics == {
         "students_active": 0,
         "labs_completed": 0,
         "average_score": None,
         "struggling_students": 0,
+        "check_in_students": 0,
+        "students_in_scope": 0,
         "metrics_window_days": 7,
     }

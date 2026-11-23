@@ -9,7 +9,7 @@
 
 ## Scenario
 
-Halcyon Industrial Controls runs the HIC-2400 controller you triaged in
+Trailline Industrial Controls runs the TIC-2400 controller you triaged in
 exercise 1.1. This time it is wired to a simulated process line:
 
 | Register | Meaning |

@@ -20,6 +20,7 @@ from fastapi import (
     File,
     Form,
     HTTPException,
+    Query,
     Request,
     Response,
     UploadFile,
@@ -36,6 +37,7 @@ from app.models import (
     Course,
     CourseEnrollment,
     CourseLabAssignment,
+    FlagAttempt,
     Lab,
     LabCompletion,
     LabSession,
@@ -45,6 +47,7 @@ from app.models import (
 )
 from app.auth import get_current_instructor_user
 from app.services.audit import log_admin_action, AuditActions
+from app.services.period import parse_window
 from app.services import exercise_transfer
 from app.services.docker_manager import get_track_directory_name
 # Lab ZIP upload is an optional authoring capability; absent from editions
@@ -468,13 +471,16 @@ async def list_enrollable_users(
 
 @router.get("/labs")
 async def list_available_labs(
+    start: Optional[str] = Query(None, description="ISO 8601 start datetime for activity"),
+    end: Optional[str] = Query(None, description="ISO 8601 end datetime for activity"),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_instructor_user),
 ):
     """List labs available for course assignment.
 
     Returns public and course-visible labs, plus any labs created by this instructor.
-    Admins see all labs.
+    Admins see all labs. When ``start`` or ``end`` is supplied, each lab also
+    carries activity counts for the instructor's visible students in that window.
     """
     query = db.query(Lab).filter(Lab.is_active == True)
     if current_user.role != 'admin':
@@ -488,6 +494,89 @@ async def list_available_labs(
         )
 
     labs = query.order_by(Lab.name).all()
+
+    # Period activity is optional. Without a window the endpoint stays the
+    # same catalog lookup used by course assignment; with a window it adds
+    # per-exercise activity for the students this instructor can see.
+    activity: dict[int, dict] = {}
+    activity_window = None
+    if start or end:
+        try:
+            window = parse_window(start, end, default_days=7)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+        activity_window = {
+            "start": window.start.isoformat(),
+            "end": window.end.isoformat(),
+            "days": window.days,
+        }
+
+        if current_user.role == "admin":
+            student_ids = {
+                row[0]
+                for row in db.query(User.id).filter(
+                    User.role == "student",
+                    User.is_minor == False,
+                ).all()
+            }
+        else:
+            student_ids = {
+                row[0]
+                for row in db.query(CourseEnrollment.user_id).join(
+                    Course, Course.id == CourseEnrollment.course_id
+                ).filter(
+                    Course.instructor_id == current_user.id,
+                    Course.is_active == True,
+                ).distinct().all()
+            }
+
+        if student_ids:
+            def bump(lab_id: int, user_id: int, field: str) -> None:
+                row = activity.setdefault(
+                    lab_id,
+                    {"starts": 0, "completions": 0, "attempts": 0, "learners": set()},
+                )
+                row[field] += 1
+                row["learners"].add(user_id)
+
+            for lab_id, user_id in db.query(
+                LabSession.lab_id, LabSession.user_id
+            ).filter(
+                LabSession.user_id.in_(student_ids),
+                LabSession.started_at >= window.start,
+                LabSession.started_at <= window.end,
+            ).all():
+                bump(lab_id, user_id, "starts")
+
+            for lab_id, user_id in db.query(
+                LabCompletion.lab_id, LabCompletion.user_id
+            ).filter(
+                LabCompletion.user_id.in_(student_ids),
+                LabCompletion.completed_at >= window.start,
+                LabCompletion.completed_at <= window.end,
+            ).all():
+                bump(lab_id, user_id, "completions")
+
+            for lab_id, user_id in db.query(
+                FlagAttempt.lab_id, FlagAttempt.user_id
+            ).filter(
+                FlagAttempt.user_id.in_(student_ids),
+                FlagAttempt.attempted_at >= window.start,
+                FlagAttempt.attempted_at <= window.end,
+            ).all():
+                bump(lab_id, user_id, "attempts")
+
+    def activity_for(lab_id: int) -> dict:
+        row = activity.get(lab_id)
+        if not row:
+            return {"starts": 0, "completions": 0, "attempts": 0, "learners": 0}
+        return {
+            "starts": row["starts"],
+            "completions": row["completions"],
+            "attempts": row["attempts"],
+            "learners": len(row["learners"]),
+        }
 
     # Build labs list with track metadata
     lab_list = []
@@ -519,6 +608,7 @@ async def list_available_labs(
             "level_name": lab.level.name if lab.level else ("Assessments" if is_assessment else "Uncategorized"),
             "level_number": lab.level.level_number if lab.level else 999,
             "sort_order": lab.sort_order if hasattr(lab, 'sort_order') else 0,
+            "activity": activity_for(lab.id),
         })
 
     # Build tracks summary (only tracks that have visible labs)
@@ -549,6 +639,7 @@ async def list_available_labs(
     return {
         "tracks": tracks_summary,
         "labs": lab_list,
+        "activity_window": activity_window,
     }
 
 

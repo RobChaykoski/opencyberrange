@@ -17,6 +17,39 @@ Welcome to the SWOCTS Cyber Range student workbook. Each exercise walkthrough gu
     substitute your address in every command. Workbook examples are static and
     may not reflect later changes to the address range.
 
+## How you reach a lab
+
+<figure markdown>
+
+![How you reach the lab](assets/lab-access-paths.svg)
+
+<figcaption>RangeBox and the VPN both join the same isolated lab network. The platform page is where you launch the exercise; it is not a target.</figcaption>
+</figure>
+
+There are three ways your commands can reach a lab:
+
+| Path | What it is | Use it when |
+|---|---|---|
+| **RangeBox** | A browser desktop that is already attached to the lab network | You want to start immediately and do not need your own VM |
+| **VPN** | Your own Kali or Ubuntu VM connected with WireGuard | You prefer your own tools, terminal, or notes |
+| **Range shell** | A lightweight browser terminal inside the lab network | A command-only lab gives you a shell URL |
+
+The **Exercise Network** panel in the platform lists the actual devices for the
+running lab. A lab may contain a server, a workstation, a router, a firewall, a
+database, or a sensor. Only the devices shown by the platform are in scope.
+
+| Device in the lab | What it is | Do I run commands there? |
+|---|---|---|
+| Platform | The web application that launches and grades the lab | No. It is the control plane, not a target |
+| RangeBox | Your browser workstation | Yes, from its terminal |
+| VPN VM | Your own workstation on the lab network | Yes, from its terminal |
+| Target server | The machine the exercise asks you to test | Only as the exercise directs |
+| Router or firewall | A network device on the path | Only through the exercise's documented interface |
+
+If you are ever unsure which machine you are on, run `hostname` and `ip addr`
+(or `ipconfig` on Windows) in the terminal. The RangeBox and VPN VM have their
+own addresses; the target is a different address shown in the panel.
+
 ## Your learning evidence
 
 The workbook is the guided practice; the platform records what you did with it.

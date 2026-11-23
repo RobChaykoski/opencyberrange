@@ -34,12 +34,87 @@
       <span v-else class="health-bar__label">Checking...</span>
     </div>
 
-    <!-- Learning metrics (last 7 days) -->
+    <!-- Reporting window and scope. This governs Learning, The Pulse, and the
+         activity feed. The live snapshot below is deliberately separate. -->
+    <div class="filter-bar">
+      <PeriodFilter
+        :preset="activePreset"
+        :custom-start="customStart"
+        :custom-end="customEnd"
+        @update:preset="changePreset"
+        @update:custom-start="changeCustomStart"
+        @update:custom-end="changeCustomEnd"
+      />
+      <div class="filter-bar__dropdowns">
+        <select
+          v-model="selectedCourse"
+          class="filter-select"
+          aria-label="Filter by course"
+          @change="onCourseChange"
+        >
+          <option :value="null">All Courses</option>
+          <option v-for="c in filterCourses" :key="c.id" :value="c.id">
+            {{ c.code }}
+          </option>
+        </select>
+        <select
+          v-model="selectedUser"
+          class="filter-select"
+          aria-label="Filter by student"
+          @change="onUserChange"
+        >
+          <option :value="null">All Students</option>
+          <option v-for="s in filterStudents" :key="s.id" :value="s.id">
+            {{ s.username }}
+          </option>
+        </select>
+      </div>
+      <div class="filter-bar__export">
+        <input
+          v-model="exportReason"
+          class="filter-select filter-select--compact"
+          type="text"
+          maxlength="500"
+          placeholder="Reason (required)"
+          aria-label="Reason for export"
+        />
+        <select v-model="exportFormat" class="filter-select filter-select--compact" title="Report format">
+          <option value="pdf">PDF</option>
+          <option value="csv">CSV</option>
+        </select>
+        <button
+          class="export-btn"
+          :disabled="exportLoading || exportReason.trim().length < 5"
+          @click="downloadReport"
+          :title="`Download filtered view as ${exportFormat.toUpperCase()}`"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          {{ exportLoading ? 'Generating...' : 'Download Report' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Learning metrics for the selected period -->
     <div class="learning-metrics">
       <div class="learning-metrics__head">
-        <h2 class="panel__title">Learning this week</h2>
-        <span class="panel__subtitle">Last {{ stats.metrics_window_days || 7 }} days</span>
+        <h2 class="panel__title">Learning</h2>
+        <span class="panel__subtitle">
+          {{ periodLabel }}<template v-if="scopeLabel"> · {{ scopeLabel }}</template>
+          · {{ learning?.students_in_scope ?? 0 }} students in scope
+        </span>
+        <span v-if="learningLoading" class="period-loading">Updating…</span>
       </div>
+      <p v-if="learningError" class="period-error" role="alert">
+        {{ learningError }}
+        <button type="button" class="btn btn--outline btn--sm" @click="fetchLearning">Retry</button>
+      </p>
+      <p v-if="periodIsShort" class="period-note">
+        Short window. These counts are operational; use 7 days or more for a learning view.
+      </p>
       <div class="stats-grid learning-grid">
         <div class="rich-card">
           <div class="rich-card__header">
@@ -49,13 +124,15 @@
               <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
               <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
             </svg>
-            <span class="rich-card__label">Students Active</span>
+            <span class="rich-card__label">Active students</span>
           </div>
           <div class="rich-card__body">
-            <span class="rich-card__value">{{ stats.students_active ?? 0 }}</span>
+            <span class="rich-card__value">{{ learning?.students_active ?? 0 }}</span>
           </div>
           <div class="rich-card__footer">
-            <span class="rich-card__detail rich-card__detail--muted">sessions, submissions, or completions</span>
+            <span class="rich-card__detail rich-card__detail--muted">
+              of {{ learning?.students_in_scope ?? 0 }} students in scope
+            </span>
           </div>
         </div>
 
@@ -65,13 +142,13 @@
               <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
               <line x1="4" y1="22" x2="4" y2="15"/>
             </svg>
-            <span class="rich-card__label">Labs Completed</span>
+            <span class="rich-card__label">Exercise completions</span>
           </div>
           <div class="rich-card__body">
-            <span class="rich-card__value">{{ stats.labs_completed ?? 0 }}</span>
+            <span class="rich-card__value">{{ learning?.labs_completed ?? 0 }}</span>
           </div>
           <div class="rich-card__footer">
-            <span class="rich-card__detail rich-card__detail--muted">passing completions</span>
+            <span class="rich-card__detail rich-card__detail--muted">passing completions in this period</span>
           </div>
         </div>
 
@@ -81,38 +158,43 @@
               <path d="M3 3v18h18"/>
               <path d="m7 14 4-4 4 4 5-6"/>
             </svg>
-            <span class="rich-card__label">Average Score</span>
+            <span class="rich-card__label">Practice score</span>
           </div>
           <div class="rich-card__body">
-            <span class="rich-card__value">{{ stats.average_score != null ? stats.average_score + '%' : '-' }}</span>
+            <span class="rich-card__value">{{ learning?.average_score != null ? learning.average_score + '%' : '-' }}</span>
           </div>
           <div class="rich-card__footer">
-            <span class="rich-card__detail rich-card__detail--muted">first-attempt and hint adjusted</span>
+            <span class="rich-card__detail rich-card__detail--muted">0–100, retries and hints adjusted; not a grade</span>
           </div>
         </div>
 
-        <div class="rich-card" :class="{ 'rich-card--attention': stats.struggling_students > 0 }">
+        <div class="rich-card" :class="{ 'rich-card--attention': (learning?.check_in_students ?? 0) > 0 }">
           <div class="rich-card__header">
             <svg class="rich-card__icon rich-card__icon--warning" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
               <line x1="12" y1="9" x2="12" y2="13"/>
               <line x1="12" y1="17" x2="12.01" y2="17"/>
             </svg>
-            <span class="rich-card__label">Struggling Students</span>
+            <span class="rich-card__label">Check-in signals</span>
           </div>
           <div class="rich-card__body">
-            <span class="rich-card__value">{{ stats.struggling_students ?? 0 }}</span>
+            <span class="rich-card__value">{{ learning?.check_in_students ?? 0 }}</span>
           </div>
           <div class="rich-card__footer">
-            <span v-if="stats.struggling_students" class="rich-card__detail">review Teaching focus and recent wins</span>
-            <span v-else class="rich-card__detail rich-card__detail--muted">no risk signals this week</span>
+            <span v-if="learning?.check_in_students" class="rich-card__detail">review Teaching focus; this is a support signal, not a learner label</span>
+            <span v-else class="rich-card__detail rich-card__detail--muted">no support signals in this period</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Stat Cards -->
-    <div class="stats-grid">
+    <!-- Live snapshot: today and right now, independent of the period -->
+    <div class="learning-metrics learning-metrics--live">
+      <div class="learning-metrics__head">
+        <h2 class="panel__title">Live snapshot</h2>
+        <span class="panel__subtitle">Today and right now; not affected by the period</span>
+      </div>
+      <div class="stats-grid">
       <!-- Flags Today -->
       <div class="rich-card">
         <div class="rich-card__header">
@@ -184,92 +266,6 @@
       </div>
     </div>
 
-    <!-- Date Range Filter -->
-    <div class="filter-bar">
-      <div class="filter-bar__presets">
-        <button
-          v-for="preset in [
-            { key: '1h', label: '1h' },
-            { key: '6h', label: '6h' },
-            { key: '24h', label: '24h' },
-            { key: '7d', label: '7d' },
-            { key: '30d', label: '30d' },
-            { key: '60d', label: '60d' },
-            { key: '90d', label: '90d' },
-            { key: 'custom', label: 'Custom' },
-          ]"
-          :key="preset.key"
-          class="filter-pill"
-          :class="{ 'filter-pill--active': activePreset === preset.key }"
-          @click="selectPreset(preset.key)"
-        >
-          {{ preset.label }}
-        </button>
-      </div>
-      <div class="filter-bar__dropdowns">
-        <select
-          v-model="selectedCourse"
-          class="filter-select"
-          aria-label="Filter by course"
-          @change="onCourseChange"
-        >
-          <option :value="null">All Courses</option>
-          <option v-for="c in filterCourses" :key="c.id" :value="c.id">
-            {{ c.code }}
-          </option>
-        </select>
-        <select
-          v-model="selectedUser"
-          class="filter-select"
-          aria-label="Filter by student"
-          @change="onUserChange"
-        >
-          <option :value="null">All Students</option>
-          <option v-for="s in filterStudents" :key="s.id" :value="s.id">
-            {{ s.username }}
-          </option>
-        </select>
-      </div>
-      <div v-if="activePreset === 'custom'" class="filter-bar__custom">
-        <input
-          type="datetime-local"
-          v-model="customStart"
-          class="filter-datetime"
-        />
-        <span class="filter-separator">to</span>
-        <input
-          type="datetime-local"
-          v-model="customEnd"
-          class="filter-datetime"
-        />
-      </div>
-      <div class="filter-bar__export">
-        <input
-          v-model="exportReason"
-          class="filter-select filter-select--compact"
-          type="text"
-          maxlength="500"
-          placeholder="Reason (required)"
-          aria-label="Reason for export"
-        />
-        <select v-model="exportFormat" class="filter-select filter-select--compact" title="Report format">
-          <option value="pdf">PDF</option>
-          <option value="csv">CSV</option>
-        </select>
-        <button
-          class="export-btn"
-          :disabled="exportLoading || exportReason.trim().length < 5"
-          @click="downloadReport"
-          :title="`Download filtered view as ${exportFormat.toUpperCase()}`"
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-            <polyline points="7 10 12 15 17 10"/>
-            <line x1="12" y1="15" x2="12" y2="3"/>
-          </svg>
-          {{ exportLoading ? 'Generating...' : 'Download Report' }}
-        </button>
-      </div>
     </div>
 
     <!-- Teaching focus: a short list of actions, not another dashboard of counts -->
@@ -324,7 +320,9 @@
     <div class="panel">
       <div class="panel__header">
         <h2 class="panel__title">The Pulse</h2>
-        <span class="panel__subtitle">{{ filterSubtitle }}</span>
+        <span class="panel__subtitle">
+          {{ periodLabel }}<template v-if="scopeLabel"> · {{ scopeLabel }}</template>
+        </span>
       </div>
       <p class="pulse-note">
         Aggregate activity for the courses you teach. This chart does not rank learners
@@ -339,16 +337,19 @@
         />
         <div v-else class="chart-empty">No activity data yet</div>
       </div>
-      <table v-if="pulseData.labels.length" class="sr-only">
-        <caption>The Pulse: exercise sessions and flags submitted by time bucket</caption>
+      <p v-if="pulseForecast.length" class="pulse-note pulse-note--forecast">
+        {{ pulseForecastNote }}
+      </p>
+      <table v-if="pulseRaw.length" class="sr-only">
+        <caption>The Pulse: exercise sessions and flags submitted by historical time bucket. The projection is excluded from this table.</caption>
         <thead>
           <tr><th scope="col">Time</th><th scope="col">Exercise sessions</th><th scope="col">Flags submitted</th></tr>
         </thead>
         <tbody>
-          <tr v-for="(label, index) in pulseData.labels" :key="label + index">
-            <th scope="row">{{ label }}</th>
-            <td>{{ pulseData.datasets[0]?.data[index] ?? 0 }}</td>
-            <td>{{ pulseData.datasets[1]?.data[index] ?? 0 }}</td>
+          <tr v-for="(point, index) in pulseRaw" :key="point.hour + index">
+            <th scope="row">{{ pulseLabel(point) }}</th>
+            <td>{{ point.concurrent_labs ?? 0 }}</td>
+            <td>{{ point.flags_submitted ?? 0 }}</td>
           </tr>
         </tbody>
       </table>
@@ -358,14 +359,30 @@
     <div class="panel">
       <div class="panel__header">
         <h2 class="panel__title">Live Operations Feed</h2>
-        <span class="panel__subtitle feed-count">{{ studentFeed.length }} events</span>
-        <button @click="fetchFeed('refresh')" class="refresh-btn" title="Refresh">
+        <span class="panel__subtitle feed-count">
+          {{ periodLabel }}<template v-if="scopeLabel"> · {{ scopeLabel }}</template>
+          · {{ studentFeed.length }} shown
+        </span>
+        <span v-if="feedLastUpdated" class="feed-freshness">
+          Updated {{ formatTime(feedLastUpdated.toISOString()) }}
+        </span>
+        <button
+          @click="fetchFeed('refresh')"
+          class="refresh-btn"
+          title="Refresh now. Auto-refreshes every 30 seconds."
+          aria-label="Refresh activity feed"
+        >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" :class="{ 'spin': feedLoading }">
             <polyline points="23 4 23 10 17 10"/>
             <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
           </svg>
         </button>
       </div>
+      <p class="feed-note">Newest first. This is an activity log, not a ranking.</p>
+      <p v-if="feedError" class="period-error" role="alert">
+        {{ feedError }}
+        <button type="button" class="btn btn--outline btn--sm" @click="fetchFeed('refresh')">Retry</button>
+      </p>
       <div class="feed-table-wrapper" role="region" aria-label="Recent learner activity table" tabindex="0">
         <table class="data-table">
           <thead>
@@ -377,8 +394,14 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-if="studentFeed.length === 0 && !feedLoading">
-              <td colspan="4" class="empty-row">No activity events yet</td>
+            <tr v-if="feedLoading && studentFeed.length === 0">
+              <td colspan="4" class="empty-row">Loading activity...</td>
+            </tr>
+            <tr v-else-if="feedError">
+              <td colspan="4" class="empty-row">Could not load activity for this period.</td>
+            </tr>
+            <tr v-else-if="studentFeed.length === 0">
+              <td colspan="4" class="empty-row">No activity in this period. Try a wider range.</td>
             </tr>
             <tr v-for="event in studentFeed" :key="event.id">
               <td class="user-cell"><PrivacyText v-if="event.actor_username" :value="event.actor_username" /><span v-else>System</span></td>
@@ -388,7 +411,7 @@
                 </span>
               </td>
               <td class="target-cell">{{ event.target_label || '-' }}</td>
-              <td class="time-cell">{{ formatTime(event.created_at) }}</td>
+              <td class="time-cell" :title="event.created_at ? new Date(event.created_at).toLocaleString() : ''">{{ formatTime(event.created_at) }}</td>
             </tr>
           </tbody>
         </table>
@@ -436,15 +459,17 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import MobileEfficiencyNotice from '../components/MobileEfficiencyNotice.vue'
 import { useRouter } from 'vue-router'
 import axios from '../api/axios'
 import EChart from '../components/EChart.vue'
+import PeriodFilter from '../components/PeriodFilter.vue'
 import ProgrammeOverview from '../components/ProgrammeOverview.vue'
 import InstructorReadinessPanel from '../components/InstructorReadinessPanel.vue'
 import PrivacyText from '../components/PrivacyText.vue'
 import { usePoll } from '../composables/usePoll'
+import { usePeriodFilter } from '../composables/usePeriod'
 import { isAdmin } from '../utils/roles'
 import { downloadBlob, filenameFromDisposition } from '../utils/download'
 import {
@@ -501,18 +526,6 @@ const formatAgo = (value) => {
   return `${days} days ago`
 }
 
-const flagsTrend = computed(() => {
-  const today = stats.value.flags_today || 0
-  const yesterday = stats.value.flags_yesterday
-  if (yesterday == null || yesterday === 0) {
-    return { text: '', cls: '' }
-  }
-  const diff = today - yesterday
-  if (diff > 0) return { text: `+${diff} vs yesterday`, cls: 'trend--up' }
-  if (diff < 0) return { text: `${diff} vs yesterday`, cls: 'trend--down' }
-  return { text: 'same as yesterday', cls: 'trend--flat' }
-})
-
 const avgTimeColor = computed(() => {
   const today = stats.value.avg_completion_min
   const typical = stats.value.avg_completion_typical
@@ -540,6 +553,8 @@ const feedLoading = ref(false)
 const feedOffset = ref(0)
 const feedHasMore = ref(true)
 const feedLoadingMore = ref(false)
+const feedError = ref('')
+const feedLastUpdated = ref(null)
 const feedPageSize = 50
 const showDiagnosticLog = ref(false)
 
@@ -551,11 +566,28 @@ const pulseRaw = ref([])
 const dashboardHealthStatus = ref('')
 const dashboardHealthLoaded = ref(false)
 
-// Date range filter state
-const activePreset = ref('24h')
-const customStart = ref('')
-const customEnd = ref('')
+// Reporting window and scope
+const {
+  preset: activePreset,
+  customStart,
+  customEnd,
+  range: filterRange,
+  label: periodLabel,
+  isShort: periodIsShort,
+  setPreset,
+  setCustomStart,
+  setCustomEnd,
+  refresh: refreshPeriod,
+} = usePeriodFilter('7d')
+
 const pulseGranularity = ref('hour')
+const pulseForecast = ref([])
+const pulseForecastNote = ref('')
+
+const learning = ref(null)
+const learningLoading = ref(false)
+const learningError = ref('')
+let learningRequestId = 0
 
 // Course / user filter state
 const selectedCourse = ref(null)
@@ -567,93 +599,44 @@ const exportFormat = ref('pdf')
 const exportReason = ref('')
 const exportLoading = ref(false)
 
-const filterRange = computed(() => {
-  const now = new Date()
-  let start
-
-  switch (activePreset.value) {
-    case '1h':
-      start = new Date(now.getTime() - 60 * 60 * 1000)
-      break
-    case '6h':
-      start = new Date(now.getTime() - 6 * 60 * 60 * 1000)
-      break
-    case '24h':
-      start = new Date(now.getTime() - 24 * 60 * 60 * 1000)
-      break
-    case '7d':
-      start = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
-      break
-    case '30d':
-      start = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
-      break
-    case '60d':
-      start = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000)
-      break
-    case '90d':
-      start = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000)
-      break
-    case 'custom': {
-      const s = customStart.value ? new Date(customStart.value) : null
-      const e = customEnd.value ? new Date(customEnd.value) : null
-      return {
-        start: s ? s.toISOString() : null,
-        end: e ? e.toISOString() : null,
-      }
-    }
-    default:
-      start = new Date(now.getTime() - 24 * 60 * 60 * 1000)
-  }
-
-  return { start: start.toISOString(), end: now.toISOString() }
-})
-
-const filterSubtitle = computed(() => {
-  let base
-  switch (activePreset.value) {
-    case '1h': base = 'Last 1 hour'; break
-    case '6h': base = 'Last 6 hours'; break
-    case '24h': base = 'Last 24 hours'; break
-    case '7d': base = 'Last 7 days'; break
-    case '30d': base = 'Last 30 days'; break
-    case '60d': base = 'Last 60 days'; break
-    case '90d': base = 'Last 90 days'; break
-    case 'custom': {
-      const s = customStart.value ? new Date(customStart.value).toLocaleDateString() : '...'
-      const e = customEnd.value ? new Date(customEnd.value).toLocaleDateString() : 'now'
-      base = `${s} - ${e}`
-      break
-    }
-    default: base = 'Last 24 hours'
-  }
-  const parts = [base]
+const scopeLabel = computed(() => {
+  const parts = []
   if (selectedCourse.value) {
-    const c = filterCourses.value.find(x => x.id === selectedCourse.value)
-    if (c) parts.push(c.code)
+    const course = filterCourses.value.find((item) => item.id === selectedCourse.value)
+    if (course) parts.push(course.code)
   }
   if (selectedUser.value) {
-    const s = filterStudents.value.find(x => x.id === selectedUser.value)
-    if (s) parts.push(s.username)
+    const student = filterStudents.value.find((item) => item.id === selectedUser.value)
+    if (student) parts.push(student.username)
   }
   return parts.join(' / ')
 })
 
+const pulseLabel = (point) => {
+  const date = new Date(point.hour)
+  if (pulseGranularity.value === 'day') {
+    return date.toLocaleDateString([], { month: 'short', day: 'numeric' })
+  }
+  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+}
+
 const pulseData = computed(() => {
-  if (!pulseRaw.value.length) return { labels: [], datasets: [] }
+  const history = pulseRaw.value
+  const forecast = pulseForecast.value
+  const labels = [...history.map(pulseLabel), ...forecast.map(pulseLabel)]
+  const sessions = history.map((point) => point.concurrent_labs)
+  const flags = history.map((point) => point.flags_submitted)
+  const padHistory = Array(forecast.length).fill(null)
+  const padForecast = Array(history.length).fill(null)
 
   return {
-    labels: pulseRaw.value.map(p => {
-      const d = new Date(p.hour)
-      if (pulseGranularity.value === 'day') {
-        return d.toLocaleDateString([], { month: 'short', day: 'numeric' })
-      }
-      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    }),
+    labels,
+    historyLength: history.length,
     datasets: [
       {
         label: 'Exercise Sessions',
-        data: pulseRaw.value.map(p => p.concurrent_labs),
-        borderColor: '#3b82f6',
+        data: [...sessions, ...padHistory],
+        borderColor: ECHART_COLORS.accent,
         backgroundColor: 'rgba(59, 130, 246, 0.1)',
         fill: true,
         tension: 0.4,
@@ -662,13 +645,35 @@ const pulseData = computed(() => {
       },
       {
         label: 'Flags Submitted',
-        data: pulseRaw.value.map(p => p.flags_submitted),
-        borderColor: '#22c55e',
+        data: [...flags, ...padHistory],
+        borderColor: ECHART_COLORS.success,
         backgroundColor: 'rgba(34, 197, 94, 0.1)',
         fill: true,
         tension: 0.4,
         pointRadius: 0,
         pointHoverRadius: 4,
+      },
+      {
+        label: 'Sessions forecast',
+        data: [...padForecast, ...forecast.map((point) => point.concurrent_labs)],
+        borderColor: ECHART_COLORS.accent,
+        backgroundColor: 'transparent',
+        fill: false,
+        tension: 0.4,
+        pointRadius: 0,
+        pointHoverRadius: 4,
+        lineStyle: { type: 'dashed', width: 2, opacity: 0.65 },
+      },
+      {
+        label: 'Flags forecast',
+        data: [...padForecast, ...forecast.map((point) => point.flags_submitted)],
+        borderColor: ECHART_COLORS.success,
+        backgroundColor: 'transparent',
+        fill: false,
+        tension: 0.4,
+        pointRadius: 0,
+        pointHoverRadius: 4,
+        lineStyle: { type: 'dashed', width: 2, opacity: 0.65 },
       },
     ],
   }
@@ -676,16 +681,19 @@ const pulseData = computed(() => {
 
 const pulseOption = computed(() => {
   const labels = pulseData.value.labels
-  const sessions = pulseData.value.datasets?.[0]?.data || []
-  const flags = pulseData.value.datasets?.[1]?.data || []
+  const datasets = pulseData.value.datasets
+  const boundary = pulseData.value.historyLength
 
   return {
-    // The dashboard refreshes every 15s. Animating a full dataset swap makes
+    // The dashboard refreshes every 30s. Animating a full dataset swap makes
     // the panel flash, so updates are intentionally instant.
     animation: false,
     color: [ECHART_COLORS.accent, ECHART_COLORS.success],
     tooltip: { ...tooltipStyle, trigger: 'axis' },
-    legend: { ...legendStyle, data: ['Exercise Sessions', 'Flags Submitted'] },
+    legend: {
+      ...legendStyle,
+      data: ['Exercise Sessions', 'Flags Submitted', 'Sessions forecast', 'Flags forecast'],
+    },
     grid: chartGrid,
     xAxis: {
       ...categoryAxis,
@@ -693,39 +701,37 @@ const pulseOption = computed(() => {
       axisLabel: { ...categoryAxis.axisLabel, hideOverlap: true },
     },
     yAxis: valueAxis,
-    series: [
-      {
-        name: 'Exercise Sessions',
-        type: 'line',
-        smooth: true,
-        showSymbol: false,
-        symbolSize: 6,
-        data: sessions,
-        lineStyle: { width: 2 },
-        areaStyle: { opacity: 0.12 },
-      },
-      {
-        name: 'Flags Submitted',
-        type: 'line',
-        smooth: true,
-        showSymbol: false,
-        symbolSize: 6,
-        data: flags,
-        lineStyle: { width: 2 },
-        areaStyle: { opacity: 0.12 },
-      },
-    ],
+    series: datasets.map((dataset, index) => ({
+      name: dataset.label,
+      type: 'line',
+      smooth: true,
+      showSymbol: false,
+      symbolSize: 6,
+      data: dataset.data,
+      lineStyle: dataset.lineStyle || { width: 2 },
+      areaStyle: dataset.fill ? { opacity: 0.12 } : undefined,
+      markLine: index === 0 && boundary && labels[boundary - 1]
+        ? {
+            symbol: 'none',
+            label: { formatter: 'forecast', color: '#94a3b8' },
+            lineStyle: { color: '#94a3b8', type: 'dashed' },
+            data: [{ xAxis: labels[boundary - 1] }],
+          }
+        : undefined,
+    })),
   }
 })
 
 const pulseAriaLabel = computed(() => {
-  const labels = pulseData.value.labels
-  if (!labels.length) return 'The Pulse: no activity data yet.'
-  const sessions = pulseData.value.datasets?.[0]?.data || []
-  const flags = pulseData.value.datasets?.[1]?.data || []
-  const totalSessions = sessions.reduce((sum, value) => sum + (Number(value) || 0), 0)
-  const totalFlags = flags.reduce((sum, value) => sum + (Number(value) || 0), 0)
-  return `The Pulse over ${labels.length} time buckets: ${totalSessions} exercise sessions and ${totalFlags} flags submitted.`
+  const history = pulseRaw.value
+  if (!history.length) return 'The Pulse: no activity data yet.'
+  const sessions = history.reduce((sum, point) => sum + (Number(point.concurrent_labs) || 0), 0)
+  const flags = history.reduce((sum, point) => sum + (Number(point.flags_submitted) || 0), 0)
+  const forecast = pulseForecast.value
+  const projection = forecast.length
+    ? ` The dashed projection covers ${forecast.length} future buckets.`
+    : ''
+  return `The Pulse over ${history.length} time buckets: ${sessions} exercise sessions and ${flags} flags submitted.${projection}`
 })
 
 const dashboardHealthClass = computed(() =>
@@ -765,15 +771,45 @@ const _scopeParams = () => {
   return p
 }
 
+const fetchLearning = async () => {
+  const requestId = ++learningRequestId
+  learningLoading.value = true
+  learningError.value = ''
+  try {
+    const range = filterRange.value
+    const res = await axios.get('/dashboard/instructor/learning', {
+      params: {
+        ..._scopeParams(),
+        start: range.startIso,
+        end: range.endIso,
+      },
+    })
+    if (requestId === learningRequestId) {
+      learning.value = res.data
+    }
+  } catch (e) {
+    if (requestId === learningRequestId) {
+      learningError.value =
+        e.response?.data?.detail || 'Could not load learning metrics for this period.'
+    }
+  } finally {
+    if (requestId === learningRequestId) {
+      learningLoading.value = false
+    }
+  }
+}
+
 const fetchPulse = async () => {
   try {
     const params = { ..._scopeParams() }
     const range = filterRange.value
-    if (range.start) params.start = range.start
-    if (range.end) params.end = range.end
+    params.start = range.startIso
+    params.end = range.endIso
     const res = await axios.get('/dashboard/instructor/pulse', { params })
     pulseRaw.value = res.data.data || []
     pulseGranularity.value = res.data.granularity || 'hour'
+    pulseForecast.value = res.data.forecast || []
+    pulseForecastNote.value = res.data.forecast_note || ''
   } catch (e) {
     console.error('Failed to fetch pulse:', e)
   }
@@ -799,15 +835,20 @@ const fetchFeed = async (mode = 'reset', { silent = false } = {}) => {
     feedOffset.value = 0
     feedHasMore.value = true
   }
+  feedError.value = ''
   try {
     const range = filterRange.value
     const scope = _scopeParams()
 
     if (mode === 'refresh' && feedOffset.value > feedPageSize) {
       // Re-fetch everything up to current offset to preserve expanded state
-      const params = { limit: feedOffset.value, offset: 0, ...scope }
-      if (range.start) params.start = range.start
-      if (range.end) params.end = range.end
+      const params = {
+        limit: feedOffset.value,
+        offset: 0,
+        ...scope,
+        start: range.startIso,
+        end: range.endIso,
+      }
       const res = await axios.get('/dashboard/instructor/feed', { params })
       const events = res.data.events || []
       if (_feedSignature(events) !== _feedSignature(feed.value)) {
@@ -816,9 +857,13 @@ const fetchFeed = async (mode = 'reset', { silent = false } = {}) => {
       feedHasMore.value = events.length >= feedOffset.value
     } else {
       const offset = mode === 'append' ? feedOffset.value : 0
-      const params = { limit: feedPageSize, offset, ...scope }
-      if (range.start) params.start = range.start
-      if (range.end) params.end = range.end
+      const params = {
+        limit: feedPageSize,
+        offset,
+        ...scope,
+        start: range.startIso,
+        end: range.endIso,
+      }
       const res = await axios.get('/dashboard/instructor/feed', { params })
       const events = res.data.events || []
       if (mode === 'append') {
@@ -829,8 +874,10 @@ const fetchFeed = async (mode = 'reset', { silent = false } = {}) => {
       feedHasMore.value = events.length >= feedPageSize
       feedOffset.value = (mode === 'append' ? feedOffset.value : 0) + events.length
     }
+    feedLastUpdated.value = new Date()
   } catch (e) {
-    console.error('Failed to fetch feed:', e)
+    feedError.value =
+      e.response?.data?.detail || 'Could not load activity for this period.'
   } finally {
     feedLoading.value = false
     feedLoadingMore.value = false
@@ -853,30 +900,37 @@ const fetchFilterOptions = async (courseId) => {
   }
 }
 
+const refreshReporting = () => {
+  fetchLearning()
+  fetchPulse()
+  fetchFeed()
+}
+
 const onCourseChange = () => {
   selectedUser.value = null
   fetchFilterOptions(selectedCourse.value)
-  fetchPulse()
-  fetchFeed()
+  refreshReporting()
 }
 
 const onUserChange = () => {
-  fetchPulse()
-  fetchFeed()
+  refreshReporting()
 }
 
-const selectPreset = (preset) => {
-  activePreset.value = preset
-  fetchPulse()
-  fetchFeed()
+const changePreset = (next) => {
+  setPreset(next)
+  refreshPeriod()
+  refreshReporting()
 }
 
-watch([customStart, customEnd], () => {
-  if (activePreset.value === 'custom' && customStart.value) {
-    fetchPulse()
-    fetchFeed()
-  }
-})
+const changeCustomStart = (value) => {
+  setCustomStart(value)
+  refreshReporting()
+}
+
+const changeCustomEnd = (value) => {
+  setCustomEnd(value)
+  refreshReporting()
+}
 
 const isDiagnosticEvent = (event) => {
   if (event.actor_role === 'admin') return true
@@ -889,24 +943,6 @@ const isDiagnosticEvent = (event) => {
   return false
 }
 
-const rangeLabelText = () => {
-  switch (activePreset.value) {
-    case '1h': return 'Last 1 hour'
-    case '6h': return 'Last 6 hours'
-    case '24h': return 'Last 24 hours'
-    case '7d': return 'Last 7 days'
-    case '30d': return 'Last 30 days'
-    case '60d': return 'Last 60 days'
-    case '90d': return 'Last 90 days'
-    case 'custom': {
-      const s = customStart.value ? new Date(customStart.value).toLocaleString() : '...'
-      const e = customEnd.value ? new Date(customEnd.value).toLocaleString() : 'now'
-      return `${s} to ${e}`
-    }
-    default: return 'Last 24 hours'
-  }
-}
-
 const downloadReport = async () => {
   if (exportLoading.value) return
   const reason = exportReason.value.trim()
@@ -916,12 +952,12 @@ const downloadReport = async () => {
     const range = filterRange.value
     const params = {
       format: exportFormat.value,
-      range_label: rangeLabelText(),
+      range_label: periodLabel.value,
       reason,
       ..._scopeParams(),
+      start: range.startIso,
+      end: range.endIso,
     }
-    if (range.start) params.start = range.start
-    if (range.end) params.end = range.end
 
     const res = await axios.get('/dashboard/instructor/report', {
       params,
@@ -957,11 +993,13 @@ const formatTime = (isoStr) => {
   return d.toLocaleDateString()
 }
 
-// Refresh the dashboard every 15 seconds; paused while the tab is hidden,
+// Refresh the dashboard every 30 seconds; paused while the tab is hidden,
 // with an immediate refresh when it becomes visible again.
 usePoll(() => {
   if (showHealthCard) fetchDashboardHealth()
+  refreshPeriod()
   fetchStats()
+  fetchLearning()
   fetchPulse()
   fetchFeed('refresh', { silent: true })
 }, 30000)
@@ -970,6 +1008,7 @@ onMounted(() => {
   if (showHealthCard) fetchDashboardHealth()
   fetchFilterOptions()
   fetchStats()
+  fetchLearning()
   fetchPulse()
   fetchFeed()
 })
@@ -1066,6 +1105,40 @@ onMounted(() => {
 .learning-grid {
   grid-template-columns: repeat(4, 1fr);
   margin-bottom: 0;
+}
+
+.learning-metrics--live {
+  margin-top: 1.5rem;
+}
+
+.period-loading {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-style: italic;
+}
+
+.period-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0 0 0.75rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--danger) 40%, var(--border-color));
+  border-radius: 8px;
+  background: var(--danger-bg);
+  color: var(--text-primary);
+  font-size: 0.78rem;
+}
+
+.period-note {
+  margin: 0 0 0.75rem;
+  padding: 0.45rem 0.6rem;
+  border-left: 2px solid var(--warning);
+  background: var(--warning-bg);
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  line-height: 1.45;
 }
 
 .rich-card--attention {
@@ -1288,6 +1361,12 @@ onMounted(() => {
   line-height: 1.45;
 }
 
+.pulse-note--forecast {
+  padding-left: 0.55rem;
+  border-left: 2px solid var(--accent);
+  color: var(--text-secondary);
+}
+
 .panel__description {
   color: var(--text-muted);
   font-size: 0.875rem;
@@ -1459,6 +1538,18 @@ onMounted(() => {
 .feed-count {
   margin-left: auto;
   margin-right: 0.5rem;
+}
+
+.feed-freshness {
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  white-space: nowrap;
+}
+
+.feed-note {
+  margin: 0 0 0.5rem;
+  color: var(--text-muted);
+  font-size: 0.72rem;
 }
 
 .feed-load-more {

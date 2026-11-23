@@ -37,5 +37,5 @@ forbidden_networks:
 - control-plane
 - database
 - other-learners
-max_memory_mb: 768
-max_cpu: 0.75
+max_memory_mb: 384
+max_cpu: 0.5

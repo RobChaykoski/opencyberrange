@@ -2596,11 +2596,29 @@ async def get_lab_details(
         except Exception as e:
             logger.warning(f"Failed to reconstruct requested hints: {e}")
     
+    # Build the device inventory even when target IPs are hidden in RangeBox
+    # mode. The inventory answers "what is in this lab?"; the IP list answers
+    # "where is it?" only when the session is allowed to reveal addresses.
+    topo_nodes_raw = []
+    try:
+        topo_nodes_raw = json.loads(lab.topology_nodes) if lab.topology_nodes else []
+    except Exception as e:
+        logger.warning(f"Failed to parse topology for lab {lab_id}: {e}")
+
+    lab_devices = [
+        {
+            "id": node.get("id", ""),
+            "label": node.get("label", ""),
+            "type": node.get("type", "server"),
+        }
+        for node in topo_nodes_raw
+        if isinstance(node, dict)
+    ]
+
     # Compute target IPs for opted-in labs and VPN-only sessions.
     target_ips = []
     if should_reveal_target_ips(lab, session):
         try:
-            topo_nodes_raw = json.loads(lab.topology_nodes) if lab.topology_nodes else []
             # Parse subnet base: "10.100.6.0/24" -> "10.100.6"
             subnet_base = ".".join(session.network_subnet.split("/")[0].split(".")[:3])
             for node in topo_nodes_raw:
@@ -2609,6 +2627,7 @@ async def get_lab_details(
                     target_ips.append({
                         "id": node.get("id", ""),
                         "label": node.get("label", ""),
+                        "type": node.get("type", "server"),
                         "ip": f"{subnet_base}.{offset}"
                     })
         except Exception as e:
@@ -2627,6 +2646,7 @@ async def get_lab_details(
             "duration_minutes": lab.duration_minutes,
             "objectives": objectives,
             "tools": tools,
+            "devices": lab_devices,
             "hints_total": len(hints),
             "hints_available": available_hints_count,
             "hints_used": hints_used,

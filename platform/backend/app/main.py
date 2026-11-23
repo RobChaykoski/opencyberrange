@@ -1070,6 +1070,14 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["Authorization", "Content-Type"],
+    expose_headers=[
+        "X-Error-Code",
+        "X-Reauth-Required",
+        "X-Reauth-Purpose",
+        "X-Session-Invalid",
+        "X-Security-Version",
+        "X-Impersonating",
+    ],
 )
 
 # Central consent gate for derived-data APIs. Individual routers still check
@@ -1433,6 +1441,7 @@ async def impersonation_read_only_middleware(request: Request, call_next):
                     # get_current_user reuses this payload and performs the
                     # revocation check with the request-scoped session.
                     request.state.auth_payload = payload
+                    request.state.auth_revocation_checked = False
                     if payload.get("imp"):
                         return JSONResponse(
                             status_code=403,

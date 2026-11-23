@@ -83,6 +83,11 @@ async def consent_enforcement(request: Request, call_next):
     try:
         try:
             payload = _decode_token(token, db)
+            # The route dependency can reuse this decode instead of validating
+            # the same token again. Consent already paid for the revocation
+            # lookup above.
+            request.state.auth_payload = payload
+            request.state.auth_revocation_checked = True
         except HTTPException:
             # Let the route's authentication dependency own the 401 response.
             return await call_next(request)

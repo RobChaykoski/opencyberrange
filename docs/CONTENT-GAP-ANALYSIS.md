@@ -3,7 +3,7 @@
 Status: **planning** (12 November 2026). This is a curriculum roadmap, not a
 release commitment.
 
-The catalogue covers 13 track folders and 210 lab definitions. Classic pentest
+The catalogue covers 13 track folders and 214 lab definitions. Classic pentest
 enumeration is deep (Windows services, Linux privilege escalation, web
 reconnaissance to injection, network analysis). The gaps below are ranked by
 learner value and by how much of the existing RangeBox/tester toolchain they

@@ -18,6 +18,7 @@ import qrcode
 import re
 
 from app.ratelimit import create_limiter
+from app.api_errors import api_error
 from app.services.event_burst import login_rate_limit, registration_rate_limit
 from app.services.input_safety import normalize_text
 from app.database import get_db
@@ -1691,9 +1692,10 @@ async def register(
     if not existing and user_data.student_id:
         existing = db.query(User).filter(User.student_id == user_data.student_id).first()
     if existing:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="An account with these credentials already exists"
+        raise api_error(
+            status.HTTP_400_BAD_REQUEST,
+            "account_exists",
+            "An account with these credentials already exists",
         )
     
     # Invite gate: registration needs a valid, unused InviteCode. The gate is

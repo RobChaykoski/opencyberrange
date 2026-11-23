@@ -218,7 +218,13 @@ revocation) and which is out of scope.
 
 ## 4.3 Defender for Cloud-like posture scanning
 
-Stack: **OpenSCAP, Trivy, Prowler, ScoutSuite, and the local `scanner` service**.
+Stack: **OpenSCAP, Trivy, Prowler, ScoutSuite, Cloudsplaining, TruffleHog, Steampipe, and the local `scanner` service**.
+
+Prowler is the multi-cloud benchmark and ThreatScore source. Cloudsplaining is
+the IAM least-privilege report. TruffleHog is the secret-discovery scan. Steampipe
+and Powerpipe remain the queryable inventory. Each writes evidence; none changes
+a resource. LocalStack coverage is partial, so run provider-specific checks
+against a sandbox account and label any simulated finding as simulated.
 
 The scanner reports findings such as:
 

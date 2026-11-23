@@ -272,6 +272,9 @@ def record(
 
 
 def resolve_request_user(request: Request, db: Session) -> User | None:
+    existing = getattr(request.state, "user", None)
+    if existing is not None:
+        return existing
     header = request.headers.get("authorization") or ""
     scheme, _, token = header.partition(" ")
     if scheme.lower() != "bearer" or not token.strip():
@@ -284,7 +287,9 @@ def resolve_request_user(request: Request, db: Session) -> User | None:
             return resolve_token(db, token)
         from app.auth import _decode_token, get_user_by_username
 
-        payload = _decode_token(token, db)
+        payload = getattr(request.state, "auth_payload", None)
+        if payload is None:
+            payload = _decode_token(token, db)
         user = get_user_by_username(db, username=payload.get("sub"))
         if user is not None:
             from app.services import auth_sessions

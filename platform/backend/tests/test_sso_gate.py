@@ -2,9 +2,13 @@
 
 import uuid
 
+import pytest
+
 from app.models import IdentityProvider, SsoLoginTicket
 from app.routers import sso as sso_module
 from app.services import sso_flow
+
+pytestmark = pytest.mark.db
 
 
 def test_sso_disabled_hides_providers(client, monkeypatch):

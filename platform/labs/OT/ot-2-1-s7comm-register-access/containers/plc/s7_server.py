@@ -30,7 +30,7 @@ db1_buffer = (ctypes.c_char * len(db1)).from_buffer_copy(db1)
 server.register_area(srvAreaDB, 1, db1_buffer)
 server.start(102)
 
-print("HIC-S7 PLC S7comm server listening on 0.0.0.0:102", flush=True)
+print("TIC-S7 PLC S7comm server listening on 0.0.0.0:102", flush=True)
 
 while True:
     time.sleep(3600)

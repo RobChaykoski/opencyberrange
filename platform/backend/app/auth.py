@@ -682,11 +682,16 @@ def get_current_user(
                 detail="Could not validate credentials",
                 headers={"WWW-Authenticate": "Bearer"},
             )
-        _enforce_revocation(payload, db)
+        # Consent and impersonation middleware cache the decoded payload. Only
+        # pay for the revocation lookup when the producer did not already do it.
+        if not getattr(request.state, "auth_revocation_checked", False):
+            _enforce_revocation(payload, db)
+            request.state.auth_revocation_checked = True
     else:
         payload = _decode_token(
             token, db=db, expected_types=("access", "impersonation")
         )
+        request.state.auth_revocation_checked = True
     request.state.auth_payload = payload
     username = payload.get("sub")
 

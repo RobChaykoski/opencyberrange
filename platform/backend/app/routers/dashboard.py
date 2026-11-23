@@ -45,6 +45,8 @@ from app.services.achievements import (
 from app.services.pdf_report import generate_dashboard_report
 from app.services.curriculum_manifest import chapter_label
 from app.services.exercise_quiz import quiz_available
+from app.services.forecast import linear_forecast
+from app.services.period import parse_window
 from app.services.spreadsheet_safety import neutralize_row
 from app.routers.courses import get_course_completed_lab_ids
 from app.routers.curriculum import (
@@ -419,17 +421,21 @@ def _instructor_teaching_focus(
 
 def _instructor_learning_metrics(
     db: Session,
-    now: datetime,
+    window_start: datetime,
+    window_end: datetime,
     admin_ids: set[int],
     student_ids: Optional[set[int]],
 ) -> dict:
-    """Basic learning metrics for the last 7 days.
+    """Learning metrics for an explicit reporting window.
 
     Uses the same cohort scope as the rest of the ops dashboard. The score is a
     transparent 0-100 participation score, not the course scoreboard total:
     start at 100, subtract 10 per retry and 5 per hint, then clamp at zero.
+
+    Counts are descriptive. ``check_in_students`` is a support signal, not a
+    learner label or a prediction.
     """
-    cutoff = now - timedelta(days=7)
+    cutoff = window_start
 
     def scoped(query, column):
         if student_ids is not None:
@@ -441,6 +447,7 @@ def _instructor_learning_metrics(
     active_users: set[int] = set()
     session_rows = scoped(
         db.query(LabSession.user_id, LabSession.lab_id).filter(
+            LabSession.started_at <= window_end,
             (LabSession.started_at >= cutoff) | (LabSession.stopped_at >= cutoff),
         ),
         LabSession.user_id,
@@ -453,13 +460,19 @@ def _instructor_learning_metrics(
             LabCompletion.lab_id,
             LabCompletion.attempts,
             LabCompletion.hints_used,
-        ).filter(LabCompletion.completed_at >= cutoff),
+        ).filter(
+            LabCompletion.completed_at >= cutoff,
+            LabCompletion.completed_at <= window_end,
+        ),
         LabCompletion.user_id,
     ).all()
     active_users.update(row[0] for row in completion_rows)
 
     attempt_users = scoped(
-        db.query(FlagAttempt.user_id).filter(FlagAttempt.attempted_at >= cutoff),
+        db.query(FlagAttempt.user_id).filter(
+            FlagAttempt.attempted_at >= cutoff,
+            FlagAttempt.attempted_at <= window_end,
+        ),
         FlagAttempt.user_id,
     ).distinct().all()
     active_users.update(row[0] for row in attempt_users)
@@ -489,6 +502,7 @@ def _instructor_learning_metrics(
         ).filter(
             FlagAttempt.is_correct == False,
             FlagAttempt.attempted_at >= cutoff,
+            FlagAttempt.attempted_at <= window_end,
         ),
         FlagAttempt.user_id,
     ).group_by(FlagAttempt.user_id).having(
@@ -499,12 +513,18 @@ def _instructor_learning_metrics(
         if user_id not in completed_users:
             struggling.add(user_id)
 
+    window_days = max(
+        1,
+        round((window_end - window_start).total_seconds() / 86400),
+    )
     return {
         "students_active": len(active_users),
         "labs_completed": len(completion_rows),
         "average_score": round(sum(scores) / len(scores), 1) if scores else None,
         "struggling_students": len(struggling),
-        "metrics_window_days": 7,
+        "check_in_students": len(struggling),
+        "students_in_scope": len(student_ids) if student_ids is not None else 0,
+        "metrics_window_days": window_days,
     }
 
 
@@ -627,7 +647,9 @@ async def instructor_stats(
     avg_time_typical = _scoped(q, LabCompletion.user_id).scalar()
 
     focus = _instructor_teaching_focus(db, current_user, now, admin_ids)
-    learning = _instructor_learning_metrics(db, now, admin_ids, student_ids)
+    learning = _instructor_learning_metrics(
+        db, now - timedelta(days=7), now, admin_ids, student_ids
+    )
     return {
         "flags_today": flags_today,
         "flags_yesterday": flags_yesterday,
@@ -642,6 +664,41 @@ async def instructor_stats(
     }
 
 
+@router.get("/instructor/learning")
+async def instructor_learning(
+    start: Optional[str] = Query(None, description="ISO 8601 start datetime"),
+    end: Optional[str] = Query(None, description="ISO 8601 end datetime"),
+    course_id: Optional[int] = Query(None, description="Filter to a specific course"),
+    user_id: Optional[int] = Query(None, description="Filter to a specific user"),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_instructor_user),
+):
+    """Range-scoped learning metrics for the selected period and scope.
+
+    The response states its own window and the number of students in scope so
+    the UI never presents a count without a denominator.
+    """
+    try:
+        window = parse_window(start, end, default_days=7)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    student_ids = _resolve_student_scope(db, current_user, course_id, user_id)
+    admin_ids = _admin_user_ids(db)
+    payload = _instructor_learning_metrics(
+        db, window.start, window.end, admin_ids, student_ids
+    )
+    payload.update(
+        {
+            "window_start": window.start.isoformat(),
+            "window_end": window.end.isoformat(),
+            "window_days": window.days,
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+        }
+    )
+    return payload
+
+
 @router.get("/instructor/pulse")
 async def instructor_pulse(
     start: Optional[str] = Query(None, description="ISO 8601 start datetime"),
@@ -652,24 +709,12 @@ async def instructor_pulse(
     current_user: User = Depends(get_current_instructor_user),
 ):
     """Hourly or daily data points for The Pulse chart."""
-    now = datetime.now(timezone.utc)
-
-    # Parse start/end or default to last 24 hours
-    if start:
-        try:
-            range_start = datetime.fromisoformat(start.replace('Z', '+00:00'))
-        except ValueError:
-            raise HTTPException(status_code=400, detail="Invalid start datetime format")
-    else:
-        range_start = now - timedelta(hours=24)
-
-    if end:
-        try:
-            range_end = datetime.fromisoformat(end.replace('Z', '+00:00'))
-        except ValueError:
-            raise HTTPException(status_code=400, detail="Invalid end datetime format")
-    else:
-        range_end = now
+    try:
+        window = parse_window(start, end, default_days=7)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    range_start = window.start
+    range_end = window.end
 
     # Determine bucket granularity: hours if range <= 48h, else days
     total_hours = (range_end - range_start).total_seconds() / 3600
@@ -735,7 +780,46 @@ async def instructor_pulse(
         for k, v in bucket_data.items()
     ]
 
-    return {"data": data, "granularity": trunc_unit}
+    # A projection is useful for staffing and pacing, but it is not a claim
+    # about any learner. Only project aggregate activity, and only when there
+    # is enough history to fit a line.
+    sessions = [point["concurrent_labs"] for point in data]
+    flags = [point["flags_submitted"] for point in data]
+    periods = 7 if use_days else 6
+    session_forecast = linear_forecast(sessions, periods)
+    flag_forecast = linear_forecast(flags, periods)
+    forecast = []
+    if session_forecast and flag_forecast:
+        step = timedelta(days=1) if use_days else timedelta(hours=1)
+        last_key = data[-1]["hour"]
+        last_dt = datetime.strptime(last_key, "%Y-%m-%dT%H:%M:%SZ").replace(
+            tzinfo=timezone.utc
+        )
+        for index, (session_value, flag_value) in enumerate(
+            zip(session_forecast, flag_forecast, strict=False), start=1
+        ):
+            bucket = last_dt + step * index
+            forecast.append(
+                {
+                    "hour": bucket.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "concurrent_labs": session_value,
+                    "flags_submitted": flag_value,
+                }
+            )
+
+    note = (
+        "The dashed projection is a naive trend from the selected window. "
+        "It is a planning aid, not a prediction of learner outcomes."
+        if forecast
+        else "Not enough history for a projection in this window."
+    )
+    return {
+        "data": data,
+        "granularity": trunc_unit,
+        "forecast": forecast,
+        "forecast_method": "linear_trend_last_14_buckets" if forecast else None,
+        "forecast_note": note,
+    }
 
 
 @router.get("/instructor/feed")

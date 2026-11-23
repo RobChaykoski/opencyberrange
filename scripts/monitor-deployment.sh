@@ -6,6 +6,8 @@
 #   ALERT_WEBHOOK_URL=https://hooks.slack.com/services/...   (Slack-compatible)
 #   DISK_MIN_GB=10
 #   BACKUP_MAX_HOURS=26
+#   HEARTBEAT_URL=https://hc-ping.com/<uuid>        (external dead-man switch)
+#   HEARTBEAT_FAIL_URL=https://hc-ping.com/<uuid>/fail   (optional immediate fail)
 set -uo pipefail
 
 STATE_DIR="${STATE_DIR:-$HOME/.local/state/ocr-monitor}"
@@ -13,6 +15,8 @@ BACKUP_DIR="${BACKUP_DIR:-$HOME/backups}"
 DISK_MIN_GB="${DISK_MIN_GB:-10}"
 BACKUP_MAX_HOURS="${BACKUP_MAX_HOURS:-26}"
 CERT_FILE="${CERT_FILE:-$HOME/opencyberrange/platform/certs/selfsigned.crt}"
+HEARTBEAT_URL="${HEARTBEAT_URL:-}"
+HEARTBEAT_FAIL_URL="${HEARTBEAT_FAIL_URL:-}"
 
 # shellcheck disable=SC1090
 [ -f "$HOME/.ocr-monitor.env" ] && source "$HOME/.ocr-monitor.env"
@@ -104,6 +108,9 @@ if [ ${#issues[@]} -gt 0 ]; then
   if [ -n "${ALERT_COMMAND:-}" ]; then
     "$ALERT_COMMAND" "$msg" >/dev/null 2>&1 || true
   fi
+  if [ -n "${HEARTBEAT_FAIL_URL:-}" ]; then
+    curl -fsS --max-time 10 "$HEARTBEAT_FAIL_URL" >/dev/null 2>&1 || true
+  fi
   printf '{"ok":false,"checked_at":%s,"issues":%s}\n' "$now" \
     "$(python3 -c 'import json,sys; print(json.dumps(sys.argv[1:]))' "${issues[@]}")" \
     > "$STATE_DIR/status.json"
@@ -112,4 +119,11 @@ fi
 
 rm -f "$STATE_DIR/last-failure.txt"
 printf '{"ok":true,"checked_at":%s,"issues":[]}\n' "$now" > "$STATE_DIR/status.json"
+# Dead-man switch: the external service alerts when this ping stops. If the
+# host, Docker, or this timer dies, no ping is sent and the external check
+# pages. Do not make the heartbeat itself a reason to fail the local check.
+if [ -n "${HEARTBEAT_URL:-}" ]; then
+  curl -fsS --max-time 10 "$HEARTBEAT_URL" >/dev/null 2>&1 \
+    || echo "[$(date -u +%FT%TZ)] WARN heartbeat ping failed" >&2
+fi
 echo "[$(date -u +%FT%TZ)] OK"

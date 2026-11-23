@@ -4792,25 +4792,29 @@ test:
 import InfoTip from '../components/InfoTip.vue'
 import CopyCode from '../components/CopyCode.vue'
 import Toast, { showToast } from '../components/Toast.vue'
-import AdminPendingTab from '../components/AdminPendingTab.vue'
-import AchievementStudio from '../components/AchievementStudio.vue'
-import QuestionBankAdmin from '../components/QuestionBankAdmin.vue'
 import PrivacyText from '../components/PrivacyText.vue'
 import MobileEfficiencyNotice from '../components/MobileEfficiencyNotice.vue'
-import IdentityProvidersPanel from '../components/IdentityProvidersPanel.vue'
-import OpenBadgesPanel from '../components/OpenBadgesPanel.vue'
-import AuditHistory from '../components/AuditHistory.vue'
-import LtiPlatformsPanel from '../components/LtiPlatformsPanel.vue'
-import SecurityCenter from '../components/SecurityCenter.vue'
-import NiceMappingPicker from '../components/NiceMappingPicker.vue'
 import { getUserTimeZone } from '../utils/timezone'
 import { requireExportReason } from '../utils/exportReason'
 import { downloadBlob, filenameFromDisposition } from '../utils/download'
-import { ref, reactive, onMounted, onUnmounted, computed, watch, nextTick } from 'vue'
+import { ref, reactive, onMounted, onUnmounted, computed, watch, nextTick, defineAsyncComponent } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from '../api/axios'
 import { useModules } from '../composables/useModules'
 import { usePrivacy } from '../composables/usePrivacy'
+
+// Admin tabs and side panels load on demand. Keeping them out of the initial
+// admin chunk is the difference between a usable console on a laptop and a
+// several-hundred-kilobyte download before the first tab paints.
+const AdminPendingTab = defineAsyncComponent(() => import('../components/AdminPendingTab.vue'))
+const AchievementStudio = defineAsyncComponent(() => import('../components/AchievementStudio.vue'))
+const QuestionBankAdmin = defineAsyncComponent(() => import('../components/QuestionBankAdmin.vue'))
+const IdentityProvidersPanel = defineAsyncComponent(() => import('../components/IdentityProvidersPanel.vue'))
+const OpenBadgesPanel = defineAsyncComponent(() => import('../components/OpenBadgesPanel.vue'))
+const AuditHistory = defineAsyncComponent(() => import('../components/AuditHistory.vue'))
+const LtiPlatformsPanel = defineAsyncComponent(() => import('../components/LtiPlatformsPanel.vue'))
+const SecurityCenter = defineAsyncComponent(() => import('../components/SecurityCenter.vue'))
+const NiceMappingPicker = defineAsyncComponent(() => import('../components/NiceMappingPicker.vue'))
 
 const route = useRoute()
 const router = useRouter()

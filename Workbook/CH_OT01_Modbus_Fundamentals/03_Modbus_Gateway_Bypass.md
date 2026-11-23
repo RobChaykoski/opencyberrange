@@ -9,8 +9,8 @@
 
 ## Scenario
 
-After the setpoint incident in exercise 1.2, Halcyon Industrial placed a Modbus
-gateway in front of the HIC-2400 controller. The gateway is the only device on
+After the setpoint incident in exercise 1.2, Trailline Industrial placed a Modbus
+gateway in front of the TIC-2400 controller. The gateway is the only device on
 the lab network. It forwards reads to the PLC and permits single-register
 writes only to the batch counter block (holding registers 20-29).
 

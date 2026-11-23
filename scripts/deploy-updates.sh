@@ -39,6 +39,18 @@ BACKUP_DIR="$PLATFORM_DIR/.backups"
 LOG_FILE="$REPO_DIR/scripts/deploy.log"
 STATE_FILE="$REPO_DIR/scripts/.update-state"
 
+# Release trust anchor. The update must verify a signed tag before it checks
+# out or applies any pulled code. The public key is checked against this
+# fingerprint, so replacing the key file in a compromised tree cannot widen
+# trust.
+RELEASE_GPG_FINGERPRINT="${RELEASE_GPG_FINGERPRINT:-68A817762C831475F00DB54E775050A4C4921814}"
+DEPLOY_TAG="${DEPLOY_TAG:-}"
+ALLOW_UNSIGNED_MAIN="${ALLOW_UNSIGNED_MAIN:-0}"
+ALLOW_UNSIGNED_ZIP="${ALLOW_UNSIGNED_ZIP:-0}"
+SUPPLY_CHAIN_STRICT="${SUPPLY_CHAIN_STRICT:-1}"
+VERIFIED_RELEASE_REF=""
+OCR_RELEASE_GNUPGHOME=""
+
 # Default options
 DEPLOY_PLATFORM=false
 DRY_RUN=false
@@ -189,49 +201,127 @@ create_backup() {
     echo "$backup_path"
 }
 
-# Pull latest from git (or skip if ZIP download)
-git_pull() {
-    # Skip git pull if not a git repository (ZIP download)
-    if [ ! -d "$REPO_DIR/.git" ]; then
-        log "${YELLOW}[warn] Skipping git pull (not a git repository)${NC}"
-        log "${YELLOW}  Assuming you've already extracted the latest ZIP${NC}"
-        return 0
-    fi
-    
-    log "${BLUE}Pulling latest changes from git...${NC}"
-    
-    if [ "$DRY_RUN" = true ]; then
-        log "${YELLOW}[DRY RUN] Would run: git pull${NC}"
-        return 0
-    fi
-    
-    cd "$REPO_DIR"
-    # Pull as the repo owner, not root. A root `git pull` writes root-owned
-    # objects into the user's .git (and modern git refuses the pull outright as
-    # "dubious ownership"), which then breaks the user's own later `git pull`.
-    local git_ok=0
-    if [ "$EUID" -eq 0 ] && [ -n "$SUDO_USER" ]; then
-        sudo -u "$SUDO_USER" git pull && git_ok=1
+# Fetch and verify a signed release tag before touching the working tree.
+#
+# `git pull` followed by a hash check is not a trust boundary: the verifier,
+# the public key, and the lock all come from the tree being verified. Fetch the
+# tag first, prove the signing key is the pinned release key, verify the tag,
+# and only then check it out. The supply-chain check then runs on a tree whose
+# provenance is already established.
+git_owner() {
+    if [ "$EUID" -eq 0 ] && [ -n "${SUDO_USER:-}" ]; then
+        sudo -u "$SUDO_USER" git -C "$REPO_DIR" "$@"
     else
-        git pull && git_ok=1
+        git -C "$REPO_DIR" "$@"
     fi
-    # Restore ownership either way, in case a partial fetch touched .git as root.
-    if [ "$EUID" -eq 0 ] && [ -n "$SUDO_USER" ]; then
+}
+
+load_release_key() {
+    command -v gpg >/dev/null 2>&1 || error_exit "gpg is required to verify the release tag"
+    local key_file="$REPO_DIR/docs/release-signing-key.asc"
+    [ -f "$key_file" ] || error_exit "Release public key missing: $key_file"
+
+    local key_home
+    key_home=$(mktemp -d)
+    chmod 700 "$key_home"
+    OCR_RELEASE_GNUPGHOME="$key_home"
+
+    local fingerprint
+    fingerprint=$(GNUPGHOME="$key_home" gpg --batch --with-colons \
+        --import-options show-only --import "$key_file" 2>/dev/null \
+        | awk -F: '/^fpr:/ {print $10; exit}')
+    if [ -z "$fingerprint" ]; then
+        fingerprint=$(GNUPGHOME="$key_home" gpg --batch --show-keys --with-colons \
+            "$key_file" 2>/dev/null | awk -F: '/^fpr:/ {print $10; exit}')
+    fi
+    if [ "${fingerprint^^}" != "${RELEASE_GPG_FINGERPRINT^^}" ]; then
+        rm -rf "$key_home"
+        error_exit "Release key fingerprint mismatch: got ${fingerprint:-none}, expected $RELEASE_GPG_FINGERPRINT"
+    fi
+    if ! GNUPGHOME="$key_home" gpg --batch --import "$key_file" >/dev/null 2>&1; then
+        rm -rf "$key_home"
+        error_exit "Could not import the release public key"
+    fi
+}
+
+verify_release_tag() {
+    local tag="$1"
+    local output
+    if ! output=$(GNUPGHOME="$OCR_RELEASE_GNUPGHOME" \
+        git -c safe.directory="$REPO_DIR" -C "$REPO_DIR" verify-tag "$tag" 2>&1); then
+        error_exit "Release tag $tag is not signed or its signature is invalid:\n$output"
+    fi
+    local compact
+    compact=$(printf '%s' "$output" | tr -d ' \n' | tr '[:lower:]' '[:upper:]')
+    if [ "${compact#*$RELEASE_GPG_FINGERPRINT}" = "$compact" ]; then
+        error_exit "Release tag $tag was not signed by $RELEASE_GPG_FINGERPRINT"
+    fi
+    log "${GREEN}[ok] Release tag $tag is signed by $RELEASE_GPG_FINGERPRINT${NC}"
+}
+
+fetch_and_verify_release() {
+    if [ ! -d "$REPO_DIR/.git" ]; then
+        if [ "${ALLOW_UNSIGNED_ZIP:-0}" != "1" ]; then
+            error_exit "ZIP updates are not signature-verified. Set ALLOW_UNSIGNED_ZIP=1 only for a controlled offline update."
+        fi
+        log "${YELLOW}[warn] ZIP update allowed without a signed tag (ALLOW_UNSIGNED_ZIP=1)${NC}"
+        return 0
+    fi
+
+    log "${BLUE}Fetching release tags...${NC}"
+    if [ "$DRY_RUN" = true ]; then
+        log "${YELLOW}[DRY RUN] Would fetch tags and verify the release signature${NC}"
+        return 0
+    fi
+
+    git_owner fetch --tags --prune
+    local tag="${DEPLOY_TAG:-}"
+    if [ -z "$tag" ]; then
+        tag=$(git_owner tag --list 'v*' --sort=-v:refname | head -1)
+    fi
+    if [ -z "$tag" ]; then
+        if [ "${ALLOW_UNSIGNED_MAIN:-0}" = "1" ]; then
+            log "${YELLOW}[warn] No release tag found; ALLOW_UNSIGNED_MAIN=1 permits an unsigned main update${NC}"
+            VERIFIED_RELEASE_REF=""
+            return 0
+        fi
+        error_exit "No signed release tag found. Set DEPLOY_TAG or ALLOW_UNSIGNED_MAIN=1 for a controlled development update."
+    fi
+
+    load_release_key
+    verify_release_tag "$tag"
+    VERIFIED_RELEASE_REF="$tag"
+}
+
+checkout_verified_release() {
+    if [ ! -d "$REPO_DIR/.git" ] || [ "$DRY_RUN" = true ]; then
+        return 0
+    fi
+
+    if [ -n "$VERIFIED_RELEASE_REF" ]; then
+        log "${BLUE}Checking out verified release $VERIFIED_RELEASE_REF...${NC}"
+        git_owner checkout --detach "$VERIFIED_RELEASE_REF"
+    else
+        log "${YELLOW}[warn] Updating unsigned main because ALLOW_UNSIGNED_MAIN=1${NC}"
+        git_owner pull --ff-only
+    fi
+
+    if [ "$EUID" -eq 0 ] && [ -n "${SUDO_USER:-}" ]; then
         chown -R "$SUDO_USER:$SUDO_USER" "$REPO_DIR/.git" 2>/dev/null || true
     fi
-    # New files inherit the host umask. After the 027 hardening, git writes lab
-    # content as rw-rw---- while both backend containers and lab targets read
-    # bind mounts as different UIDs. This content is not secret, so grant read.
     chmod -R a+rX "$REPO_DIR/platform/labs" "$REPO_DIR/templates" 2>/dev/null || true
     chmod a+r "$REPO_DIR"/curriculum-*.yaml 2>/dev/null || true
-    if [ "$git_ok" -ne 1 ]; then
-        # A private or unreachable remote must not abort the whole update. The
-        # local tree is a valid source: rebuild and restart from what is here.
-        log "${YELLOW}[warn] Git pull failed (remote unreachable or private) — continuing with the local tree.${NC}"
-        return 0
+
+    if [ -n "${OCR_RELEASE_GNUPGHOME:-}" ]; then
+        rm -rf "$OCR_RELEASE_GNUPGHOME"
+        OCR_RELEASE_GNUPGHOME=""
     fi
-    
-    log "${GREEN}[ok] Git pull successful${NC}"
+}
+
+# Backwards-compatible entry point used by main().
+git_pull() {
+    fetch_and_verify_release
+    checkout_verified_release
 }
 
 # Apply platform update

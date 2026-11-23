@@ -4900,7 +4900,7 @@ labs:
     lab_id: network-0-1-ping-basics
     track: Network
     difficulty: beginner
-    expected_duration_minutes: 20
+    expected_duration_minutes: 15
     prerequisites: []
     workbook: wiki/range/netfor/CH_N0_Network_Foundations/01_Ping_Basics/
     competency_ids:
@@ -4943,7 +4943,7 @@ labs:
     - Pass every automated test step in the lab manifest.
     test_steps: 3
     flag_required: true
-    content_version: 2.5.3
+    content_version: 2.6.0
     usage_rank: 23
     usage_completions: 2
     usage_source: Production lab_completions, queried 2026-11-16
@@ -8493,7 +8493,7 @@ labs:
     lab_id: windows-1-2-multiple-port-discovery
     track: Windows
     difficulty: beginner
-    expected_duration_minutes: 120
+    expected_duration_minutes: 35
     prerequisites:
     - windows-1-1-basic-port-scan
     workbook: wiki/range/winpt/CH01_Enumeration/02_Multiple_Port_Discovery/
@@ -8537,7 +8537,7 @@ labs:
     - Pass every automated test step in the lab manifest.
     test_steps: 5
     flag_required: true
-    content_version: 2.5.3
+    content_version: 2.6.0
     usage_rank: 3
     usage_completions: 5
     usage_source: Production lab_completions, queried 2026-11-16

@@ -112,3 +112,18 @@ deploy/sso/dex/runtime/
 
 # Downloaded training VM images (provisioned separately; never commit)
 platform/lab-images/
+
+# Windows operating-system media and disk images. Institutions supply these
+# from a private artifact store. scripts/check-windows-artifacts.py enforces
+# this in CI, including for files force-added with `git add -f`.
+*.iso
+*.vhd
+*.vhdx
+*.vmdk
+*.qcow2
+*.ova
+*.ovf
+*.wim
+*.esd
+*.vdi
+*.img

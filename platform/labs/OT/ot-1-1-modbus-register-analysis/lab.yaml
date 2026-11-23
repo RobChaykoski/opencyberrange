@@ -1,4 +1,4 @@
-title: Halcyon Industrial - Modbus Register Triage
+title: Trailline Industrial - Modbus Register Triage
 category: ot
 difficulty: beginner
 estimated_time: 40
@@ -34,7 +34,7 @@ tools:
   - mbpoll
 
 scenario: |
-  Halcyon Industrial Controls operates a small process line. An analyst
+  Trailline Industrial Controls operates a small process line. An analyst
   captured a Modbus TCP conversation during a routine audit and noticed the
   controller's holding registers contain more than setpoints. The controller
   is online in the lab at the address shown under Target Hostnames.
@@ -56,12 +56,12 @@ workbook: "wiki/range/ot/CH_OT01_Modbus_Fundamentals/01_Modbus_Register_Analysis
 hostnames:
   - ip_offset: "60"
     hostname: "plc"
-    description: "HIC-2400 process controller (Modbus TCP)"
+    description: "TIC-2400 process controller (Modbus TCP)"
 
 topology:
   nodes:
     - id: "plc"
-      label: "HIC-2400 PLC"
+      label: "TIC-2400 PLC"
       type: "server"
       ip_offset: "60"
       ports: [502]

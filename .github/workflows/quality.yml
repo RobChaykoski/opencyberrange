@@ -55,6 +55,9 @@ jobs:
       - name: Validate lab test contracts
         run: python scripts/lab_harness.py --validate-all
 
+      - name: Lab freshness gate
+        run: python scripts/check-lab-freshness.py
+
       - name: Audit publication metadata and answer keys
         run: python scripts/audit-publication.py --summary
 
@@ -65,6 +68,9 @@ jobs:
 
       - name: Check licence compliance
         run: python scripts/check-licences.py
+
+      - name: Audit Windows media and activation material
+        run: python scripts/check-windows-artifacts.py
 
       - name: Verify reviewed URL bindings use safeHttpUrl
         run: python scripts/check-safe-links.py

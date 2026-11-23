@@ -1,5 +1,36 @@
 # Exercise 1.2: Multiple Port Discovery
 
+## Quick Start (10 Minutes)
+
+1. Launch **Multiple Port Discovery** and wait for **Running**.
+2. Open the lightweight **Range shell** at `http://shell.lab:7681` (login
+   `learner` / `trailguard`), or use your VPN-connected terminal. The shell has
+   `nmap` and `curl`; you do not need to install them.
+3. Copy the target IP from **Active Lab View**.
+4. Run the focused list first:
+
+   ```bash
+   nmap -Pn -p 80,445,3389 <target_ip>
+   ```
+
+5. Retrieve the flag from the HTTP service:
+
+   ```bash
+   curl http://<target_ip>/flag.txt
+   ```
+
+6. Submit the flag.
+
+The full `nmap -p-` comparison below is optional after you have the flag. It is
+useful for the analysis questions, but it is not required to finish.
+
+![How you reach this lab](../assets/lab-access-paths.svg)
+
+**This lab uses the Range shell** shown in step 2. The shell is a small
+container inside the lab network, so `nmap` and `curl` reach the target exactly
+as they would from RangeBox. If you prefer your own tools, use the VPN path
+instead. The platform page is not a target.
+
 ## Before You Begin
 
 In Exercise 1.1, you ran Nmap's default scan against the 1,000 most common
@@ -62,12 +93,12 @@ possible port and identify all exposed services.
 
 ## Your Objectives
 
+- Run the focused `80,445,3389` scan and retrieve the flag.
 - Compare single-port, list, range, and broader scan syntax.
 - Predict what the broader scan may find.
-- Run a default scan as a baseline, then scan all 65,535 TCP ports.
+- Optionally run a default scan as a baseline and compare it with a broader scan.
 - Identify any open port outside the default set.
 - Compare the results and decide whether the broader scan was justified.
-- Find and submit the flag.
 
 ## Background: Selecting More Than One Port
 
@@ -151,6 +182,20 @@ Before running the broader scan, write down your prediction in your notes:
 You will compare your prediction with the actual result.
 
 ## Walkthrough
+
+> **Time-boxed path.** If you only have ten minutes, use Quick Start above. The
+> steps below are the deeper baseline-versus-broader comparison. You can return
+> to them after submitting the flag.
+
+### Warm-up: predict the focused result
+
+Before running the scan, write down which of ports 80, 445, and 3389 you expect
+to be open and which one likely serves the flag. Then run the focused list and
+compare.
+
+**Checkpoint.** `nmap -Pn -p 80,445,3389 <target_ip>` should show three open
+ports. If it says `Host seems down`, keep `-Pn`, confirm the lab is **Running**,
+and re-copy the target. Record the actual result instead of guessing.
 
 ### Step 1: Launch the exercise
 
@@ -355,6 +400,7 @@ time justified?**
 | `-p 1,65535` scans only two ports | A comma creates a list, not a range. | Use a hyphen for a range: `-p 1-65535`. |
 | `-p-` is mistyped as `-p -` | The option and value are separated incorrectly. | Use `-p-` as a single token. |
 | The broad scan finds no new ports | The target may not expose anything outside the default set. | Record it as a valid result and compare with your baseline. Do not scan other hosts. |
+| The full scan is slow | It scans 65,535 TCP ports. | Use the focused `80,445,3389` scan to get the flag first; run the full scan later or skip it. |
 | The flag is rejected | The value was copied incorrectly, or the wrong case/format was submitted. | Copy the whole `OCR{...}` value exactly. Do not guess or alter the flag. |
 
 ## Further Reading

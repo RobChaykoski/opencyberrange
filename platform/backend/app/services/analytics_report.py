@@ -62,6 +62,9 @@ def generate_reports_pdf(payload: dict) -> bytes:
     pdf.set_font("Helvetica", "", 10)
     pdf.set_text_color(100, 116, 139)
     pdf.cell(0, 6, f"Generated {generated_label}", ln=True)
+    export_period = payload.get("export_period") or {}
+    if export_period.get("label"):
+        pdf.cell(0, 6, f"Reporting period: {export_period['label']}", ln=True)
     pdf.ln(3)
 
     summary = [

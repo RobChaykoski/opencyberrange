@@ -183,10 +183,24 @@ install_compose_binary() {
         *) return 1 ;;
     esac
     sudo mkdir -p /usr/local/lib/docker/cli-plugins || return 1
-    sudo curl -fsSL \
-        "https://github.com/docker/compose/releases/latest/download/docker-compose-linux-${arch}" \
-        -o /usr/local/lib/docker/cli-plugins/docker-compose || return 1
-    sudo chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
+    local base="https://github.com/docker/compose/releases/latest/download/docker-compose-linux-${arch}"
+    local tmp_bin tmp_sha expected actual
+    tmp_bin=$(mktemp)
+    tmp_sha=$(mktemp)
+    if ! curl -fsSL "$base" -o "$tmp_bin" \
+        || ! curl -fsSL "${base}.sha256" -o "$tmp_sha"; then
+        rm -f "$tmp_bin" "$tmp_sha"
+        return 1
+    fi
+    expected=$(tr -d '[:space:]' < "$tmp_sha")
+    actual=$(sha256sum "$tmp_bin" | awk '{print $1}')
+    if [ -z "$expected" ] || [ "$expected" != "$actual" ]; then
+        rm -f "$tmp_bin" "$tmp_sha"
+        log "${RED}Docker Compose download failed SHA-256 verification${NC}"
+        return 1
+    fi
+    sudo install -m 0755 "$tmp_bin" /usr/local/lib/docker/cli-plugins/docker-compose
+    rm -f "$tmp_bin" "$tmp_sha"
     docker compose version >/dev/null 2>&1
 }
 
@@ -1241,8 +1255,21 @@ run_once() {
     log "Installation log: $LOG_FILE"
 }
 
+# Legal notice shown once at startup. Microsoft products are not bundled.
+show_legal_notice() {
+    echo ""
+    echo -e "${BOLD}Microsoft products are not included.${NC}"
+    echo "Users are responsible for ensuring they possess the necessary Microsoft"
+    echo "licenses for all deployed software. OpenCyberRange does not distribute,"
+    echo "resell, sublicense, or provide Microsoft software, activation keys, or"
+    echo "licenses. Institutions supply evaluation or licensed media from a"
+    echo "private artifact store."
+    echo ""
+}
+
 main() {
     show_banner
+    show_legal_notice
 
     # Non-interactive mode when called with CLI flags
     if [ "$CLI_MODE" = "fresh" ]; then

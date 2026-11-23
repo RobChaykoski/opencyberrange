@@ -1120,6 +1120,14 @@
         <!-- RIGHT: Exercises Table -->
         <div class="labs-panel">
           <div class="filter-bar">
+            <PeriodFilter
+              :preset="labPeriodPreset"
+              :custom-start="labCustomStart"
+              :custom-end="labCustomEnd"
+              @update:preset="changeLabPeriod"
+              @update:custom-start="changeLabCustomStart"
+              @update:custom-end="changeLabCustomEnd"
+            />
             <input
               v-model="labSearch"
               type="text"
@@ -1132,6 +1140,11 @@
               <option value="intermediate">Intermediate</option>
               <option value="advanced">Advanced</option>
             </select>
+            <select v-model="activityFilter" class="filter-select" aria-label="Filter by period activity">
+              <option value="">All activity</option>
+              <option value="active">Active in period</option>
+              <option value="inactive">No activity in period</option>
+            </select>
             <button v-if="exerciseAuthoring" class="btn btn--primary btn--sm" @click="router.push('/studio')" title="Browse templates, generate with AI, and review staged exercises">Exercise Studio</button>
             <button v-if="exerciseAuthoring" class="btn btn--success btn--sm" @click="openUploadModal">+ Upload Exercise</button>
           </div>
@@ -1142,6 +1155,21 @@
             <span v-if="selectedCourse"> in {{ courseSummariesForSidebar.find(c => c.id === selectedCourse)?.name }}</span>
           </div>
 
+          <div class="period-activity-summary" aria-label="Activity summary for the selected period">
+            <span class="period-activity-summary__label">{{ labPeriodLabel }}</span>
+            <span><strong>{{ periodActivity.active }}</strong> exercises active</span>
+            <span><strong>{{ periodActivity.completions }}</strong> completions</span>
+            <span><strong>{{ periodActivity.starts }}</strong> starts</span>
+            <span><strong>{{ periodActivity.attempts }}</strong> flag attempts</span>
+          </div>
+          <p v-if="labPeriodIsShort" class="period-note">
+            Short window. These counts are operational; use 7 days or more for a learning view.
+          </p>
+          <p v-if="labsActivityWindow" class="period-note period-note--muted">
+            Activity is scoped to the students in your courses. The catalog itself is not
+            hidden by this period.
+          </p>
+
           <div class="table-wrapper">
             <table class="data-table">
               <thead>
@@ -1150,13 +1178,14 @@
                   <th>Track</th>
                   <th>Difficulty</th>
                   <th>Status</th>
+                  <th>Activity</th>
                   <th>Assigned To</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-if="filteredLabs.length === 0">
-                  <td colspan="6" class="empty-row">No exercises match your filters</td>
+                  <td colspan="7" class="empty-row">No exercises match your filters</td>
                 </tr>
                 <tr v-for="lab in filteredLabs" :key="lab.id">
                   <td>
@@ -1194,6 +1223,16 @@
                       <span v-else :class="['visibility-badge', `vis-${lab.visibility || 'public'}`]">
                         {{ (lab.visibility || 'public').replace('_', ' ') }}
                       </span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="activity-cell">
+                      <template v-if="hasLabActivity(lab)">
+                        <span><strong>{{ lab.activity.completions }}</strong> done</span>
+                        <span>{{ lab.activity.starts }} starts</span>
+                        <span>{{ lab.activity.learners }} learners</span>
+                      </template>
+                      <span v-else class="cell-muted">No activity</span>
                     </div>
                   </td>
                   <td>
@@ -1540,10 +1579,12 @@ import { useRoute, useRouter } from 'vue-router'
 import axios from '../api/axios'
 import PrivacyText from '../components/PrivacyText.vue'
 import MobileEfficiencyNotice from '../components/MobileEfficiencyNotice.vue'
+import PeriodFilter from '../components/PeriodFilter.vue'
 import AuditHistory from '../components/AuditHistory.vue'
 import CoursePlanningPanel from '../components/CoursePlanningPanel.vue'
 import { useImpersonation } from '../composables/useImpersonation'
 import { useModules } from '../composables/useModules'
+import { usePeriodFilter } from '../composables/usePeriod'
 import { getUserTimeZone } from '../utils/timezone'
 import { requireExportReason } from '../utils/exportReason'
 import { downloadBlob, filenameFromDisposition } from '../utils/download'
@@ -1665,6 +1706,21 @@ const selectedCourse = ref(null)
 const assignmentFilter = ref('')
 const labAssignments = ref({})
 const assigningLabId = ref(null)
+
+const {
+  preset: labPeriodPreset,
+  customStart: labCustomStart,
+  customEnd: labCustomEnd,
+  range: labRange,
+  label: labPeriodLabel,
+  isShort: labPeriodIsShort,
+  setPreset: setLabPeriod,
+  setCustomStart: setLabCustomStart,
+  setCustomEnd: setLabCustomEnd,
+  refresh: refreshLabPeriod,
+} = usePeriodFilter('7d')
+const labsActivityWindow = ref(null)
+const activityFilter = ref('')
 
 // Upload modal state
 const showUploadModal = ref(false)
@@ -3010,6 +3066,11 @@ const filteredLabs = computed(() => {
   } else if (assignmentFilter.value === 'unassigned') {
     result = result.filter(lab => !labAssignments.value[lab.id] || labAssignments.value[lab.id].length === 0)
   }
+  if (activityFilter.value === 'active') {
+    result = result.filter(hasLabActivity)
+  } else if (activityFilter.value === 'inactive') {
+    result = result.filter(lab => !hasLabActivity(lab))
+  }
   if (labSearch.value.trim()) {
     const q = labSearch.value.toLowerCase()
     result = result.filter(lab =>
@@ -3030,6 +3091,37 @@ const filteredLabs = computed(() => {
   })
   return result
 })
+
+function hasLabActivity(lab) {
+  const activity = lab?.activity
+  return Boolean(activity && (activity.starts || activity.completions || activity.attempts))
+}
+
+const periodActivity = computed(() => {
+  const rows = labs.value
+  return {
+    active: rows.filter(hasLabActivity).length,
+    starts: rows.reduce((sum, lab) => sum + (lab.activity?.starts || 0), 0),
+    completions: rows.reduce((sum, lab) => sum + (lab.activity?.completions || 0), 0),
+    attempts: rows.reduce((sum, lab) => sum + (lab.activity?.attempts || 0), 0),
+  }
+})
+
+function changeLabPeriod(next) {
+  setLabPeriod(next)
+  refreshLabPeriod()
+  fetchLabs()
+}
+
+function changeLabCustomStart(value) {
+  setLabCustomStart(value)
+  fetchLabs()
+}
+
+function changeLabCustomEnd(value) {
+  setLabCustomEnd(value)
+  fetchLabs()
+}
 
 function unassignedCoursesForLab(labId) {
   const assigned = new Set((labAssignments.value[labId] || []).map(c => c.id))
@@ -3387,9 +3479,15 @@ async function fetchCourses() {
 async function fetchLabs() {
   labsLoading.value = true
   try {
-    const { data } = await axios.get('/instructor/labs')
+    const { data } = await axios.get('/instructor/labs', {
+      params: {
+        start: labRange.value.startIso,
+        end: labRange.value.endIso,
+      },
+    })
     labs.value = data.labs
     trackSummaries.value = data.tracks
+    labsActivityWindow.value = data.activity_window || null
   } catch (e) {
     console.error('Failed to fetch exercises:', e)
   } finally {
@@ -3408,6 +3506,7 @@ async function fetchLabAssignments() {
 
 watch(activeTab, (tab) => {
   if (tab === 'overview') fetchOverview()
+  if (tab === 'labs') fetchLabs()
 })
 
 onMounted(async () => {
@@ -3655,6 +3754,56 @@ onUnmounted(() => {
 .cell-primary { font-weight: 500; color: var(--text-primary); }
 .cell-muted { color: var(--text-muted); font-size: 0.8rem; }
 .cell-actions { display: flex; gap: 0.35rem; flex-wrap: wrap; }
+
+.period-activity-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.9rem;
+  margin: 0.5rem 0 0.65rem;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+}
+
+.period-activity-summary__label {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.period-activity-summary strong {
+  color: var(--text-primary);
+}
+
+.activity-cell {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+}
+
+.activity-cell strong {
+  color: var(--text-primary);
+}
+
+.period-note {
+  margin: 0 0 0.65rem;
+  padding: 0.45rem 0.6rem;
+  border-left: 2px solid var(--warning);
+  background: var(--warning-bg);
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.period-note--muted {
+  border-left-color: var(--border-color);
+  background: var(--bg-secondary);
+}
 
 /* Action buttons */
 .action-btn {

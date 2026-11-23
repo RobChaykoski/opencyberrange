@@ -4,15 +4,24 @@ on:
   workflow_dispatch:
     inputs:
       labs:
-        description: Optional space-separated lab slugs; empty runs every lab
+        description: Optional space-separated lab slugs; empty uses the canary/full mode
         required: false
         default: ""
       runs:
         description: Clean runs per lab
         required: false
-        default: "3"
+        default: "1"
+      mode:
+        description: Canary slice (about 20%) or the full fleet
+        required: true
+        type: choice
+        options:
+          - canary
+          - full
+        default: canary
   schedule:
-    # Weekly release-gate run. Requires the self-hosted lab runner labels.
+    # Weekly canary. The five-bucket selector covers the whole fleet every five
+    # weeks. A full run is a manual workflow_dispatch with mode=full and runs=3.
     - cron: "23 3 * * 1"
 
 permissions:
@@ -43,10 +52,37 @@ jobs:
       - name: Validate every lab contract
         run: python scripts/lab_harness.py --validate-all
 
+      - name: Select the weekly canary
+        id: canary
+        env:
+          MODE: ${{ inputs.mode || 'canary' }}
+          LABS: ${{ inputs.labs }}
+        run: |
+          set -euo pipefail
+          if [ -n "$LABS" ]; then
+            printf 'selected=%s\n' "$LABS" >> "$GITHUB_OUTPUT"
+            printf 'mode=manual\n' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if [ "$MODE" = "full" ]; then
+            printf 'selected=\n' >> "$GITHUB_OUTPUT"
+            printf 'mode=full\n' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          selected=$(python scripts/select-lab-canary.py --space)
+          if [ -z "$selected" ]; then
+            echo "Canary selection is empty" >&2
+            exit 1
+          fi
+          printf 'selected=%s\n' "$selected" >> "$GITHUB_OUTPUT"
+          printf 'mode=canary\n' >> "$GITHUB_OUTPUT"
+          echo "Selected $(echo "$selected" | wc -w) labs for the weekly canary."
+
       - name: Run the lab harness
         env:
-          LABS: ${{ inputs.labs }}
-          RUNS: ${{ inputs.runs || '3' }}
+          LABS: ${{ steps.canary.outputs.selected }}
+          MODE: ${{ steps.canary.outputs.mode }}
+          RUNS: ${{ inputs.runs || '1' }}
         run: |
           set -euo pipefail
           args=(--runs "$RUNS" --rebuild --json lab-harness.json)
@@ -54,8 +90,11 @@ jobs:
             for slug in $LABS; do
               args+=(--lab "$slug")
             done
-          else
+          elif [ "$MODE" = "full" ]; then
             args+=(--all)
+          else
+            echo "No labs selected" >&2
+            exit 1
           fi
           python scripts/lab_harness.py "${args[@]}"
 

@@ -29,6 +29,7 @@ The signed tag and [`versions.yaml`](../versions.yaml) win over any page.
 - [Changelog](../CHANGELOG.md)
 - [Contributors and branches](CONTRIBUTORS-AND-BRANCHES.md)
 - [Editions](EDITIONS.md) and [supported versions](SUPPORTED-VERSIONS.md)
+- [Upgrade waves](UPGRADE-WAVES.md)
 - [Security policy](../SECURITY.md), [privacy summary](../PRIVACY.md), and
   [code of conduct](../CODE_OF_CONDUCT.md)
 - [Contributing](../CONTRIBUTING.md), [support](../SUPPORT.md), and
@@ -50,6 +51,8 @@ capstones and analytics, scale, federation, then the AI mentor.
 - [HA and Kubernetes](HA-AND-KUBERNETES.md)
 - [Federation](FEDERATION.md)
 - [AI Mentor](AI-MENTOR.md)
+- [Language and localization](LANGUAGE-AND-LOCALIZATION.md)
+- [API error codes](API-ERROR-CODES.md)
 - [ADR 0005: Release 6 is evidence-first](decisions/0005-release-6-evidence-first.md)
 - [ADR 0006: Identity platform roles](decisions/0006-identity-platform-roles.md)
 
@@ -61,13 +64,17 @@ capstones and analytics, scale, federation, then the AI mentor.
 - [Security events](SECURITY-EVENTS.md) and [auth lifecycle](AUTH-LIFECYCLE.md)
 - [Database integrity](DATABASE-INTEGRITY.md) and [migrations](DATABASE-MIGRATIONS.md)
 - [Supply chain](SUPPLY-CHAIN.md)
-- [Backup and restore testing](BACKUP-RESTORE-TEST.md)
+- [Backup and restore testing](BACKUP-RESTORE-TEST.md) and
+  [backup security](BACKUP-SECURITY.md)
+- [Operations monitoring](OPERATIONS-MONITORING.md) and
+  [host-script security](HOST-SCRIPT-SECURITY.md)
 - [Independent security testing](INDEPENDENT-SECURITY-TESTING.md)
 
 ## Curriculum and assessment
 
 - [Learning framework](LEARNING-FRAMEWORK.md)
 - [Lab metadata schema](LAB-METADATA-SCHEMA.md) and [lab outcomes](LAB-OUTCOMES.md)
+- [Lab freshness](LAB-FRESHNESS.md)
 - [Lab Definitions Repository](LAB-DEFINITIONS-REPOSITORY.md) and
   [exercise export/import](EXERCISE-EXPORT-IMPORT.md)
 - [Competency contracts](COMPETENCY-CONTRACTS.md)

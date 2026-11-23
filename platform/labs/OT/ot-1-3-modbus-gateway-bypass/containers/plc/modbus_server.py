@@ -105,15 +105,15 @@ def process_loop():
 
 
 identity = ModbusDeviceIdentification()
-identity.VendorName = "Halcyon Industrial Controls"
-identity.ProductCode = "HIC-PLC-2400"
+identity.VendorName = "Trailline Industrial Controls"
+identity.ProductCode = "TIC-PLC-2400"
 identity.VendorUrl = "https://halcyon-industrial.example"
 identity.ProductName = "Process Controller"
-identity.ModelName = "HIC-2400"
+identity.ModelName = "TIC-2400"
 identity.MajorMinorRevision = "2.4.1"
 
 
 if __name__ == "__main__":
     threading.Thread(target=process_loop, daemon=True).start()
-    print("HIC-2400 PLC Modbus TCP server listening on 0.0.0.0:502", flush=True)
+    print("TIC-2400 PLC Modbus TCP server listening on 0.0.0.0:502", flush=True)
     StartTcpServer(context=context, identity=identity, address=("0.0.0.0", 502))

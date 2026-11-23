@@ -3,6 +3,12 @@
 This page maps the tags in the repository to the release they actually
 represent. It exists because the history contains several naming eras.
 
+## Release 5.36.0 (prepared, not tagged)
+
+| Tag | Release | Status |
+|---|---|---|
+| `v5.36.0` (planned) | SWOCTS Cyber Range Release 5.36.0 | Release candidate: signed-update gate, backup and monitoring hardening, lab freshness/canary, dynamic reporting periods and forecasts, admin bundle split, and i18n/API-error groundwork. Not tagged or deployed until the staging matrix passes. |
+
 ## Current supported release
 
 | Tag | Release | Status |

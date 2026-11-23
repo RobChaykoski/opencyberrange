@@ -1,5 +1,25 @@
 # Lab 1.2: Multiple Port Discovery
 
+## Quick Start
+
+1. Launch the lab and wait for **Running**.
+2. Open the lightweight shell at `http://shell.lab:7681` (login `learner` /
+   `trailguard`), or use your VPN-connected terminal. The shell has `nmap` and
+   `curl`.
+3. Copy the target IP from **Active Lab View**.
+4. Run the focused scan and retrieve the flag:
+
+   ```bash
+   nmap -Pn -p 80,445,3389 <target_ip>
+   curl http://<target_ip>/flag.txt
+   ```
+
+5. Submit the flag.
+
+The full `nmap -p-` comparison in the longer walkthrough is optional. The target
+is a deterministic service simulator: port 80 serves the flag, while 445 and
+3389 are open for discovery practice.
+
 ## Learning Objectives
 
 - Perform full port scan on Windows host

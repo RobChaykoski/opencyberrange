@@ -47,6 +47,13 @@ module.exports = [
       'no-empty': ['error', { allowEmptyCatch: true }],
       // New raw HTML must go through utils/markdown.js (marked + DOMPurify).
       'vue/no-v-html': 'error',
+      // Localization groundwork: flag new bare user-visible strings in Vue
+      // templates. Existing strings are baselined; the CI gate fails only when
+      // a file grows beyond its baseline. Move strings to the locale catalogue
+      // as a file is touched.
+      'vue/no-bare-strings-in-template': ['warn', {
+        allowlist: ['&', '(', ')', ',', '.', ':', ';', '!', '?', '-', '—', '/', '+', '#', '%', '*', '=', '@', '|', '·', '×', '→', '…', '•'],
+      }],
     },
   },
 
