@@ -48,11 +48,17 @@ Create an Authentik OIDC application:
 
 - Redirect URI: `https://health.swocts.com/login/generic_oauth`
 - Scopes: `openid profile email`
-- Groups: `ops-admin` for configuration, `ops-viewer` for read-only
+- Groups: `swocts-platform-admins` for Grafana Admin; add a viewer group
+  before granting read-only access.
 
 Put the client ID and secret in `.env`. Keep the local Grafana admin enabled
 until OIDC works, then set `GRAFANA_DISABLE_LOGIN_FORM=true`. Keep the bootstrap
 password in the institutional password manager.
+
+The shipped role expression maps membership in `swocts-platform-admins` to the
+Grafana Admin role and everyone else admitted by the application policy to
+Viewer. Adjust `GRAFANA_OIDC_ROLE_PATH` if the institution uses different group
+names.
 
 Grafana does not map Authentik groups to Grafana roles automatically unless the
 role attribute path matches. Verify one admin and one viewer account before the

@@ -106,8 +106,8 @@ required.
 
 ## Security
 
-- Authentik OIDC only, with an `ops-admin` group for configuration and an
-  `ops-viewer` group for read-only access.
+- Authentik OIDC only, with the platform-admin group for configuration. Add a
+  dedicated read-only viewer group before sharing the dashboard.
 - No local dashboard passwords. The break-glass path is the platform admin, not
   a shared monitoring account.
 - Ingest uses a scoped token or mTLS; agents cannot read other agents' data.
