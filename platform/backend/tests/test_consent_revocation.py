@@ -26,7 +26,7 @@ from app.models import (
     PlatformSetting,
     User,
 )
-from app.services.dna_events import emit_completion_event
+from app.services.dna_events import backfill_completions, emit_completion_event
 
 # Test-only login credential; security-delta: allow credential-like assignment
 PASSWORD = "Consent#Pass123"
@@ -140,6 +140,7 @@ def _seed_derived(db_session, user_id: int, lab_id: int) -> None:
                 attempts=1,
                 hints_used=0,
                 time_spent_minutes=10,
+                flag_submitted="TESTFLAG",
             )
         )
     db_session.commit()
@@ -214,6 +215,13 @@ def test_revoke_blocks_immediately_then_purges_atomically(
     assert after["evidence"] == 0
     assert after["snapshots"] == 0
     assert after["learner_snapshots"] == 0
+
+    # The backfill adapter applies the same consent gate. The surviving
+    # completion must not recreate evidence after the purge.
+    backfill = backfill_completions(db_session, user_id=test_user.id)
+    assert backfill["evidence_rows"] == 0
+    assert backfill["blocked"] >= 1
+    assert _counts(db_session, test_user.id)["evidence"] == 0
     # Educational records survive.
     assert after["completions"] >= 1
     assert after["achievements"] >= 1

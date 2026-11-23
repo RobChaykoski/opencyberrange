@@ -362,18 +362,26 @@ Example affinity payload when the gate is met:
 
 - `cyber_dna_v3_enabled=true` and `advanced_dna_insights_enabled=true` on
   production, although both settings default to false.
-- The completion backfill was reconciled on production: the dry run reported
-  130 completions and 274 evidence rows (50 completions without a competency
-  mapping); the write added 271 rows after idempotent deduplication.
-- `dna_evidence_records` now holds 274 rows for 15 learners across 41
-  activities and 10 domains. `dna_snapshots` holds 0 rows.
-- The affinity gate was verified against production data. Learner 16 is
-  available at 40 labs, 9 domains, and 146 observations with 13 pathways (top:
-  `appsec-engineer`). Learners 13 and 4 are below the gate and return no
-  pathways.
+- The first production backfill (dry run 130 completions, 274 rows) bypassed the
+  consent gate and wrote 271 rows for 15 learners, including 12 learners with no
+  granted consent. The live completion path already checked consent; the
+  backfill adapter did not.
+- The 230 rows belonging to the 12 non-consenting learners were purged with
+  `erase_learner`. `dna_evidence_records` now holds 44 rows for the 3 consenting
+  learners (13, 1, and 194), across 11 activities and 3 domains;
+  `dna_snapshots` holds 0 rows.
+- The consenting data does not meet the affinity gate yet. Learner 13 has 38
+  observations, 3 domains, and 11 activities; learners 1 and 194 have 3
+  observations each. The API therefore returns `available: false` for every
+  consenting learner.
+- Fixed in 5.30.2: the backfill is now a shared `backfill_completions` service
+  that applies `consent_allows_processing` per learner, and a regression test
+  proves a revoked learner's surviving completion cannot recreate evidence
+  after the purge.
 - The Phase 2 learner UI is not shipped, so the enabled read APIs have no
-  learner-facing surface yet. Keep the flag on for API readiness; the gate
-  prevents a score below its thresholds.
+  learner-facing surface yet. Keep the flag on for API readiness; the consent
+  middleware returns `403` for a revoked learner and the gate hides affinity
+  below its thresholds.
 
 ## 10.1 Consent and revocation
 

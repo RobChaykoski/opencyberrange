@@ -60,9 +60,10 @@ This page tracks what is left; the deployment record is
 ## Open queue
 
 1. **Cyber DNA v3 rollout.** Development is enabled and backfilled. Production
-   is now backfilled too (274 evidence rows, 15 learners, 41 activities) and the
-   gate is verified: learner 16 is available with 13 pathways, while below-gate
-   learners return none. Next: ship the Phase 2 learner UI, then tune the
+   is backfilled for consenting learners only (44 evidence rows, 3 learners, 11
+   activities); the initial backfill bypassed consent, so 230 rows were purged
+   for 12 learners and 5.30.2 added the consent gate. No consenting learner
+   meets the affinity gate yet. Next: ship the Phase 2 learner UI, then tune the
    behavior weights after a term of evidence. See
    [`CYBER-DNA-V3.md`](CYBER-DNA-V3.md). Affinity only; employer access is out
    of scope.

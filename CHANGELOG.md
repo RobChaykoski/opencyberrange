@@ -2,7 +2,15 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
-## [Unreleased]
+## [5.30.2] - 2026-11-22
+
+### Cyber DNA consent
+
+- The completion backfill now applies the same consent gate as the live
+  completion path. A completion that predates a revocation can no longer
+  recreate evidence after the purge. The production backfill had bypassed this
+  check; the rows written for learners without granted consent were removed and
+  the backfill was re-run against consenting learners only.
 
 ### Moodle LTI networking
 

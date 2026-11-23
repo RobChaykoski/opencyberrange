@@ -8,7 +8,8 @@ Run inside the backend image:
 
 This is an exercise-side adapter: it reads completions and emits the same
 ``ActivityCompleted`` events the live completion path emits. Cyber DNA itself
-never reads exercise tables.
+never reads exercise tables. Consent is checked per learner, so a completion
+that predates a revocation never recreates evidence.
 """
 
 from __future__ import annotations
@@ -16,11 +17,8 @@ from __future__ import annotations
 import argparse
 import sys
 
-from app.cyber_dna.service import ingest_activity
 from app.database import SessionLocal
-from app.models import LabCompletion
-from app.services.dna_events import build_completion_event
-from sqlalchemy.orm import joinedload
+from app.services.dna_events import backfill_completions
 
 
 def main() -> int:
@@ -32,44 +30,24 @@ def main() -> int:
 
     db = SessionLocal()
     try:
-        query = (
-            db.query(LabCompletion)
-            .options(joinedload(LabCompletion.lab))
-            .filter(
-                LabCompletion.flag_submitted.isnot(None),
-                LabCompletion.flag_submitted != "",
-            )
-            .order_by(LabCompletion.completed_at.asc())
+        stats = backfill_completions(
+            db,
+            dry_run=args.dry_run,
+            user_id=args.user_id,
+            limit=args.limit,
         )
-        if args.user_id:
-            query = query.filter(LabCompletion.user_id == args.user_id)
-        if args.limit:
-            query = query.limit(args.limit)
-
-        completions_seen = 0
-        rows_written = 0
-        no_mapping = 0
-        for completion in query.all():
-            completions_seen += 1
-            event = build_completion_event(
-                db, completion.user_id, completion, completion.lab
-            )
-            if event is None:
-                no_mapping += 1
-                continue
-            if args.dry_run:
-                rows_written += len(event.competency_weights)
-            else:
-                rows_written += ingest_activity(db, event)
-
-        mode = "DRY RUN" if args.dry_run else "WROTE"
-        print(
-            f"{mode}: {completions_seen} completion(s), "
-            f"{rows_written} evidence row(s), {no_mapping} without a mapping"
-        )
-        return 0
     finally:
         db.close()
+
+    mode = "DRY RUN" if args.dry_run else "WROTE"
+    print(
+        f"{mode}: {stats['completions']} completion(s), "
+        f"{stats['evidence_rows']} evidence row(s), "
+        f"{stats['no_mapping']} without a mapping, "
+        f"{stats['blocked']} blocked by consent, "
+        f"{stats['learners']} consenting learner(s)"
+    )
+    return 0
 
 
 if __name__ == "__main__":

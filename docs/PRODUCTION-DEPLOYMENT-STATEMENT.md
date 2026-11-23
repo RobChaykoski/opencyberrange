@@ -70,7 +70,6 @@ SSO switch, so production now runs with `sso_enabled=false`. Deployed on
 | SSO switch | **`sso_enabled=false`**; `/api/auth/sso/providers` returns an empty provider list |
 | LTI JWKS | **200** |
 | Moodle cURL blocked hosts | **Narrowed** to the default ranges plus only `172.16.16.11` in `172.16.0.0/12`; JWKS fetch through Moodle's cURL wrapper **200**; `172.16.16.41` and `10.0.0.1` rejected |
-| Cyber DNA v3 production backfill | **271 rows written**; 274 total for 15 learners, 41 activities, 10 domains; gate verified (learner 16 available with 13 pathways; below-gate learners return none) |
 | Pre-deploy backup | `~/backups/ocr-backup-20261122-194312.dump` |
 | Restore drill | **PASSED**, same counts as 5.30.0 (67 users, 211 labs, 2 courses, 64 enrollments, 134 completions, 497 achievements, 1,567 activity events) |
 | Rollback images | `ocr-backend:pre-5.30.1`, `ocr-frontend:pre-5.30.1` |
@@ -82,6 +81,24 @@ endpoints still reject new SSO logins. The JWKS path Moodle needs was exercised
 through Moodle's own cURL wrapper after the blocked-host narrowing and returned
 `200`. The pre-change blocked-host value is kept at
 `~/moodle-prod/curlsecurityblockedhosts.pre-narrow.txt`.
+
+The Cyber DNA v3 backfill run after this deployment initially bypassed the
+consent gate. 5.30.2 fixes the adapter and records the purge of the rows
+belonging to learners without granted consent; see the 5.30.2 section.
+
+## 5.30.2 deployment verification
+
+Patch release: the Cyber DNA completion backfill applies the same consent gate
+as the live completion path. Deployed on 22 November 2026.
+
+| Check | Result |
+|---|---|
+| CI, Quality checks, CodeQL, Trivy, Security delta review, and OpenSSF Scorecard | **pending** |
+| `/api/version` | **pending** |
+| Consent purge | **230 rows removed** for 12 learners without granted consent |
+| Remaining evidence | **44 rows** for 3 consenting learners (13, 1, 194), 11 activities, 3 domains |
+| Backfill re-run | **pending** |
+| Affinity gate | **not met** by any consenting learner yet (learner 13: 38 observations, 3 domains, 11 activities) |
 
 ## 5.30.0 deployment verification
 
