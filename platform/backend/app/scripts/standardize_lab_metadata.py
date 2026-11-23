@@ -72,7 +72,7 @@ LEGACY_KEYS = (
     "learning_objectives",
 )
 REMOVE_KEYS = set(REQUIRED_KEYS) | set(LEGACY_KEYS)
-VALID_DIFFICULTIES = {"beginner", "intermediate", "advanced"}
+VALID_DIFFICULTIES = {"beginner", "intermediate", "advanced", "expert"}
 CATEGORY_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 
 DEFAULT_ASSESSMENT = (
@@ -500,7 +500,7 @@ def _validate(metadata: dict) -> list[str]:
     if not CATEGORY_RE.match(metadata["category"]):
         errors.append("category must be lower-case kebab-case")
     if metadata["difficulty"] not in VALID_DIFFICULTIES:
-        errors.append("difficulty must be beginner, intermediate, or advanced")
+        errors.append("difficulty must be beginner, intermediate, advanced, or expert")
     if not isinstance(metadata["estimated_time"], int) or metadata["estimated_time"] <= 0:
         errors.append("estimated_time must be a positive integer")
     for key in ("prerequisites", "learning_outcomes", "mapped_skills", "assessment_criteria"):

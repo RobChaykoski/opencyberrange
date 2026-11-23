@@ -365,7 +365,7 @@ modules:
     estimated_minutes: 150
     prerequisites: [DFIR-04, DFIR-08, DFIR-10]
     datasets: [velociraptor-hunt.md]
-    external_datasets: [velociraptor-artifact-exchange]
+    external_datasets: []
     existing_labs: []
     planned_labs: [forensics-5-1-velociraptor-endpoint-hunt]
     competencies:

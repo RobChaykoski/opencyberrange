@@ -151,7 +151,7 @@
       "sha256": "8df97bf21eaf01ff635e41981e529120975cc8766dae4b954805cccd8f51b867"
     },
     "platform/backend/app/data/dfir-pathway.yaml": {
-      "sha256": "e185892f6fa280ffed289d615599ef0d4c7c213810edfd7367f3a208d7687b7a"
+      "sha256": "da3aafd608df8701f6f46f692b0f71a2f04a97878e0f9c72a1146eb6453b40dc"
     },
     "platform/backend/app/data/external-datasets.yaml": {
       "sha256": "5b2e572553d623799466dc02a4e36f01f1d6d88073e8b0ea24f62a2c7fe8af7f"

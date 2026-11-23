@@ -70,4 +70,4 @@ Using hints is allowed. The first hint is a starting point, not a penalty.
 - [Secure Authentication](01_Secure_Authentication.md)
 - [OAuth and OpenID Connect](02_OAuth_OIDC.md)
 - [Identity Lifecycle](03_Identity_Lifecycle.md)
-- [Chapter Review](04_Chapter_Review.md)
+- [Chapter Review](05_Chapter_Review.md)
