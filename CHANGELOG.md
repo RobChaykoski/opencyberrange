@@ -2,6 +2,39 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.37.0] - 2026-11-23
+
+### Release 6 foundation
+
+- Added the Admin **Learning → Quality** tab and
+  `GET /api/admin/competency-coverage`: contract totals, reviewed and pending
+  counts, per-track coverage, and the next 25 labs awaiting review.
+- Added the competency-contract review queue, per-track review packets, and a
+  structural validator for all 214 contracts (taxonomy ids, weight sums,
+  evidence types, one contract per lab).
+- Added a versioned rubric registry with `blue-team-timeline`,
+  `vulnerability-report`, and `capstone-brief`, a loader, validation, and tests.
+- Updated the i18n bare-string baseline for the Quality tab and documented the
+  increase.
+
+### Monitoring and operations
+
+- Added the separate `deploy/monitoring` stack for `health.swocts.com`:
+  Prometheus, Blackbox Exporter, Alertmanager, Pushgateway, Grafana, and an
+  optional local `node_exporter`.
+- Added provisioned Grafana dashboards, alert rules, private target files, and a
+  per-host agent for Linux hosts.
+- Added Authentik OIDC for the dashboard, a platform-admin policy binding, and
+  Grafana role mapping.
+- Wired Alertmanager to the existing platform SMTP settings with a private,
+  gitignored config and Docker secret. Email delivery is verified.
+- Added `scripts/deploy-inplace.sh` for the production `platform/` +
+  `docker-compose.prod.yml` layout. It verifies the signed tag and supply-chain
+  lock, takes a backup, tags rollback images, rebuilds the application and wiki,
+  and verifies the deployed version.
+- Added private, gitignored Prometheus target files so production addresses stay
+  out of the public repository.
+
 ## [5.36.0] - 2026-11-23
 
 ### Security and deployment

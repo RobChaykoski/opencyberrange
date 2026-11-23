@@ -4,7 +4,7 @@ This file records the platform baseline, the target for the latest-supported-GA
 upgrade, and the reason for every exception. It is the human-readable companion
 to `versions.yaml`.
 
-Last reviewed: **2026-11-23**. Current **platform release: 5.36.0** (release
+Last reviewed: **2026-11-23**. Current **platform release: 5.37.0** (release
 candidate; tag after the staging matrix). Production remains on the last signed
 tag until cutover. **Community /
 Academic**, **Professional**, and **Enterprise** are edition profiles on that
@@ -15,7 +15,7 @@ remains a supported maintenance line for existing single-host installations. See
 order for majors is in [Upgrade waves](UPGRADE-WAVES.md).
 
 The separate HA control-plane repository has its own version and is described by
-compatibility with platform Release 5.36.0. Enterprise ships OIDC, SAML, and
+compatibility with platform Release 5.37.0. Enterprise ships OIDC, SAML, and
 LDAP single sign-on; multi-tenancy, LTI, and the per-student accommodation
 engine remain post-5.36 candidates.
 

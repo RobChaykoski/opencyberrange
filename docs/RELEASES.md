@@ -3,11 +3,17 @@
 This page maps the tags in the repository to the release they actually
 represent. It exists because the history contains several naming eras.
 
+## Release 5.37.0
+
+| Tag | Release | Status |
+|---|---|---|
+| `v5.37.0` | SWOCTS Cyber Range Release 5.37.0 | Signed annotated tag: Admin competency quality tab, review queue and packets, versioned rubrics, the separate `health.swocts.com` monitoring stack, Authentik OIDC, email alerts, and the in-place production deploy script. |
+
 ## Release 5.36.0
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.36.0` | SWOCTS Cyber Range Release 5.36.0 | Signed annotated tag: signed-update gate, backup and monitoring hardening, lab freshness/canary, dynamic reporting periods and forecasts, admin bundle split, and i18n/API-error groundwork. Deployed to development and production. |
+| `v5.36.0` | SWOCTS Cyber Range Release 5.36.0 | Signed annotated tag: signed-update gate, backup and monitoring hardening, lab freshness/canary, dynamic reporting periods and forecasts, admin bundle split, and i18n/API-error groundwork. |
 | `v5.35.0` | SWOCTS Cyber Range Release 5.35.0 | Previous feature release (signed annotated tag): production Authentik SSO, the AI02 multi-agent capstone, the metadata/DLP context service, DFIR-13 Velociraptor, and the publication metadata audit. |
 | `v5.34.0` | SWOCTS Cyber Range Release 5.34.0 | Previous feature release (signed annotated tag): the Trailline non-human identity lab and leaked `svc-trailguard-bot` token exercise |
 | `v5.33.0` | SWOCTS Cyber Range Release 5.33.0 | Previous feature release (signed annotated tag): the Trailline Security & GRC universe, a reframed AI01 stream, and the agent-hijacking lab `ai-2-1` |
