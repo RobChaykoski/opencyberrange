@@ -157,8 +157,14 @@ For an email receiver, keep the real config and SMTP password out of git:
 # then set in .env
 ALERTMANAGER_CONFIG=./alertmanager/alertmanager.local.yml
 ALERTMANAGER_SMTP_PASSWORD_FILE=./alertmanager/smtp_password
+ALERTMANAGER_USER=1000:1000
 docker compose up -d alertmanager
 ```
+
+`ALERTMANAGER_USER` must match the owner of the private config and the
+`alertmanager/smtp_password` file, and must be able to write
+`alertmanager/data/`. The default `1000:1000` is the usual single-host deploy
+UID; change it on hosts that use another UID.
 
 `alertmanager.local.yml` and `smtp_password` are gitignored. Do not put the
 SMTP password in the tracked `alertmanager.yml`.

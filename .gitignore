@@ -134,3 +134,6 @@ deploy/monitoring/prometheus/targets/local/*.yml
 deploy/monitoring/alertmanager/alertmanager.local.yml
 
 deploy/monitoring/alertmanager/smtp_password
+
+deploy/monitoring/alertmanager/data/*
+!deploy/monitoring/alertmanager/data/.gitkeep
