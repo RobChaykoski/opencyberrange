@@ -3,7 +3,7 @@
     "label": "OCR",
     "role": "production",
     "url": "https://<platform-host>",
-    "expected_version": "5.35.0",
+    "expected_version": "5.36.0",
     "line": "OCR production deployment"
   },
   {
