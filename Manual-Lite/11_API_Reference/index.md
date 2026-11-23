@@ -114,6 +114,7 @@ owner-only unless an explicit share or break-glass grant exists.
 | `GET` | `/api/admin/badges/settings` | Badge Settings | OAuth2PasswordBearer |
 | `PUT` | `/api/admin/badges/settings` | Update Badge Settings | OAuth2PasswordBearer |
 | `POST` | `/api/admin/badges/{badge_id}/revoke` | Revoke Badge | OAuth2PasswordBearer |
+| `GET` | `/api/admin/competency-coverage` | Competency Coverage | OAuth2PasswordBearer |
 | `POST` | `/api/admin/containers/cleanup-orphaned` | Cleanup Orphaned Containers | OAuth2PasswordBearer |
 | `GET` | `/api/admin/courses/{course_id}/retention` | Get Retention Policy | OAuth2PasswordBearer |
 | `PUT` | `/api/admin/courses/{course_id}/retention` | Set Retention Policy | OAuth2PasswordBearer |
@@ -792,6 +793,18 @@ Download the filtered activity log as JSON or CSV.  This is the archive path: ex
 
 - `200`: Successful Response
 - `422`: Validation Error — `HTTPValidationError`
+
+### `GET /api/admin/competency-coverage`
+
+**Competency Coverage**
+
+Read-only Release 6 coverage for the contract review queue.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Responses**
+
+- `200`: Successful Response
 
 ### `POST /api/admin/containers/cleanup-orphaned`
 
