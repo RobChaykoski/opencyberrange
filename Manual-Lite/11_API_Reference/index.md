@@ -583,7 +583,7 @@ owner-only unless an explicit share or break-glass grant exists.
 | `GET` | `/api/setup/status` | Setup Status | Public |
 | `GET` | `/api/usage/admin` | Admin Usage | OAuth2PasswordBearer |
 | `GET` | `/api/usage/admin.csv` | Admin Usage Csv | OAuth2PasswordBearer |
-| `GET` | `/api/usage/admin/qr.png` | Admin Qr Png | OAuth2PasswordBearer |
+| `GET` | `/api/usage/admin/qr` | Admin Qr Png | OAuth2PasswordBearer |
 | `GET` | `/api/usage/public` | Public Usage | Public |
 | `GET` | `/api/usage/public.csv` | Public Usage Csv | Public |
 | `GET` | `/api/version` | Api Version | Public |
@@ -9622,7 +9622,7 @@ Exact usage detail for administrators.
 - `200`: Successful Response
 - `422`: Validation Error — `HTTPValidationError`
 
-### `GET /api/usage/admin/qr.png`
+### `GET /api/usage/admin/qr`
 
 **Admin Qr Png**
 

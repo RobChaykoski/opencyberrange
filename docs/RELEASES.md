@@ -7,7 +7,8 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.32.0` | SWOCTS Cyber Range Release 5.32.0 | Current feature release (signed annotated tag): registration source and QR attribution, a public usage tracker, and admin lab-completion telemetry |
+| `v5.32.1` | SWOCTS Cyber Range Release 5.32.1 | Current patch release (signed annotated tag): serve the admin QR generator from a non-static API path |
+| `v5.32.0` | SWOCTS Cyber Range Release 5.32.0 | Previous feature release (signed annotated tag): registration source and QR attribution, a public usage tracker, and admin lab-completion telemetry |
 | `v5.31.0` | SWOCTS Cyber Range Release 5.31.0 | Previous feature release (signed annotated tag): Cyber DNA v3 learner surface (Career affinity), consent and feature states, and clearer affinity explanations |
 | `v5.30.2` | SWOCTS Cyber Range Release 5.30.2 | Previous patch release (signed annotated tag): the Cyber DNA completion backfill applies the consent gate, so a revoked learner's evidence cannot be recreated |
 | `v5.30.1` | SWOCTS Cyber Range Release 5.30.1 | Previous patch release (signed annotated tag): LTI launches no longer depend on the deployment-wide SSO switch |

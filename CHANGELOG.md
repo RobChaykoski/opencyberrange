@@ -2,6 +2,15 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.32.1] - 2026-11-22
+
+### Usage tracker
+
+- The admin QR generator is served at `/api/usage/admin/qr` instead of a
+  `.png` path. The frontend static-file rule intercepted the dotted path before
+  the API proxy, so the image request returned the SPA 404. The response is
+  still `image/png`.
+
 ## [5.32.0] - 2026-11-22
 
 ### Usage tracker and registration attribution

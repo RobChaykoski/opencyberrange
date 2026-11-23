@@ -662,7 +662,7 @@ async function downloadLabsCsv() {
 async function loadQr() {
   if (!props.admin) return
   try {
-    const response = await axios.get('/usage/admin/qr.png', {
+    const response = await axios.get('/usage/admin/qr', {
       params: {
         source: qrSource.value,
         campaign: qrCampaign.value || undefined,

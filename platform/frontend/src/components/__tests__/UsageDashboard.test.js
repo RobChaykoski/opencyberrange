@@ -135,7 +135,7 @@ describe('UsageDashboard', () => {
 
   it('renders admin detail and the QR generator', async () => {
     get.mockImplementation((path) => {
-      if (path === '/usage/admin/qr.png') {
+      if (path === '/usage/admin/qr') {
         return Promise.resolve({ data: new Blob(['png']) })
       }
       return Promise.resolve({ data: payload({ public: false }) })

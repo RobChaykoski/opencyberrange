@@ -202,12 +202,12 @@ def test_qr_png_requires_admin(client, db_session):
 
     assert (
         client.get(
-            "/api/usage/admin/qr.png?source=gdg", headers=_headers(client, student)
+            "/api/usage/admin/qr?source=gdg", headers=_headers(client, student)
         ).status_code
         == 403
     )
     response = client.get(
-        "/api/usage/admin/qr.png?source=gdg&campaign=gdg-november-2026",
+        "/api/usage/admin/qr?source=gdg&campaign=gdg-november-2026",
         headers=_headers(client, admin),
     )
     assert response.status_code == 200

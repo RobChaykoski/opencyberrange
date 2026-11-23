@@ -132,7 +132,7 @@ def admin_usage_csv(
     )
 
 
-@router.get("/admin/qr.png")
+@router.get("/admin/qr")
 def admin_qr_png(
     source: str = Query(..., min_length=1, max_length=50),
     campaign: str | None = Query(None, max_length=100),
