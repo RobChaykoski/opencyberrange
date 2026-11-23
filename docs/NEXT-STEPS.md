@@ -60,10 +60,9 @@ This page tracks what is left; the deployment record is
 ## Open queue
 
 1. **Cyber DNA v3 rollout.** Development is enabled and backfilled. Production
-   already has `cyber_dna_v3_enabled=true` but only 3 evidence rows and no
-   snapshots, so the backfill and gate check have not run there. Reconcile that
-   before Phase 2: either backfill after a dry run and validate with a real
-   learner, or turn the flag off until the learner UI ships. Then tune the
+   is now backfilled too (274 evidence rows, 15 learners, 41 activities) and the
+   gate is verified: learner 16 is available with 13 pathways, while below-gate
+   learners return none. Next: ship the Phase 2 learner UI, then tune the
    behavior weights after a term of evidence. See
    [`CYBER-DNA-V3.md`](CYBER-DNA-V3.md). Affinity only; employer access is out
    of scope.

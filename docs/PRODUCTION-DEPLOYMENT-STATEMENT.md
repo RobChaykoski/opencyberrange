@@ -70,6 +70,7 @@ SSO switch, so production now runs with `sso_enabled=false`. Deployed on
 | SSO switch | **`sso_enabled=false`**; `/api/auth/sso/providers` returns an empty provider list |
 | LTI JWKS | **200** |
 | Moodle cURL blocked hosts | **Narrowed** to the default ranges plus only `172.16.16.11` in `172.16.0.0/12`; JWKS fetch through Moodle's cURL wrapper **200**; `172.16.16.41` and `10.0.0.1` rejected |
+| Cyber DNA v3 production backfill | **271 rows written**; 274 total for 15 learners, 41 activities, 10 domains; gate verified (learner 16 available with 13 pathways; below-gate learners return none) |
 | Pre-deploy backup | `~/backups/ocr-backup-20261122-194312.dump` |
 | Restore drill | **PASSED**, same counts as 5.30.0 (67 users, 211 labs, 2 courses, 64 enrollments, 134 completions, 497 achievements, 1,567 activity events) |
 | Rollback images | `ocr-backend:pre-5.30.1`, `ocr-frontend:pre-5.30.1` |

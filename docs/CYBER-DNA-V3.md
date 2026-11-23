@@ -362,14 +362,18 @@ Example affinity payload when the gate is met:
 
 - `cyber_dna_v3_enabled=true` and `advanced_dna_insights_enabled=true` on
   production, although both settings default to false.
-- `dna_evidence_records` holds 3 rows and `dna_snapshots` holds 0 rows; the
-  production completion backfill has not been run.
+- The completion backfill was reconciled on production: the dry run reported
+  130 completions and 274 evidence rows (50 completions without a competency
+  mapping); the write added 271 rows after idempotent deduplication.
+- `dna_evidence_records` now holds 274 rows for 15 learners across 41
+  activities and 10 domains. `dna_snapshots` holds 0 rows.
+- The affinity gate was verified against production data. Learner 16 is
+  available at 40 labs, 9 domains, and 146 observations with 13 pathways (top:
+  `appsec-engineer`). Learners 13 and 4 are below the gate and return no
+  pathways.
 - The Phase 2 learner UI is not shipped, so the enabled read APIs have no
-  learner-facing surface yet.
-- Before the next rollout step, reconcile the flag: either run
-  `scripts/backfill-evidence.py` on production after a dry run and verify the
-  gate with a real learner, or set `cyber_dna_v3_enabled=false` until Phase 2
-  ships. Record the decision here.
+  learner-facing surface yet. Keep the flag on for API readiness; the gate
+  prevents a score below its thresholds.
 
 ## 10.1 Consent and revocation
 
