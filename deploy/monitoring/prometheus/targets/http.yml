@@ -1,20 +1,36 @@
 # Public HTTPS checks. Add every production service that has a stable URL.
 # Keep labels low-cardinality and free of secrets, IPs, or learner data.
 #
-# Examples (replace the placeholder hosts):
-#
-# - targets:
-#     - https://<ctfd-host>
-#   labels:
-#     environment: production
-#     service: ctfd
-#     owner: platform
-#
-# - targets:
-#     - https://<auth-host>
-#   labels:
-#     environment: production
-#     service: authentik
-#     owner: identity
+# The monitoring stack checks its own services first. These names resolve on the
+# monitoring Compose network, not on the public internet.
 
-[]
+- targets:
+    - http://prometheus:9090/-/ready
+  labels:
+    environment: monitoring
+    service: prometheus
+    owner: operations
+
+- targets:
+    - http://grafana:3000/api/health
+  labels:
+    environment: monitoring
+    service: grafana
+    owner: operations
+
+- targets:
+    - http://alertmanager:9093/-/ready
+  labels:
+    environment: monitoring
+    service: alertmanager
+    owner: operations
+
+# Add the platform, Moodle, OpenGRC, and other public origins here, for example:
+#
+# - targets:
+#     - https://<platform-host>
+#   labels:
+#     environment: production
+#     service: ocr
+#     owner: platform
+

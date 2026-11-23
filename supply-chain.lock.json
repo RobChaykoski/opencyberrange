@@ -19,7 +19,7 @@
       "sha256": "f4824fc426bbfbe23c5ad7c67be4a318dec48d662ad015bf9e9690e212c00232"
     },
     ".github/workflows/quality.yml": {
-      "sha256": "7c048107248878219a82a8481edec44bf2e9bc20764c308b6f806ae9cd0f2bc7"
+      "sha256": "241d8a9a0a21902ae6880cdcdb5e9a4b4fbf2120d99a012593a2f5753e011d06"
     },
     ".github/workflows/trivy.yml": {
       "sha256": "4e33daf5440aa286d3144424e8dac52daf6536f36c42b8319e8ea77b635e26a0"
