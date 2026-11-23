@@ -1,5 +1,5 @@
 framework: NICE
-generated_at: '2026-11-19T07:33:17.088186+00:00'
+generated_at: '2026-11-23T02:13:25.510061+00:00'
 mappings:
   ai-1-1-prompt-injection-basics:
     confidence: medium
@@ -63,6 +63,28 @@ mappings:
     - T0751
     - T1052
     - T1083
+    work_roles:
+    - DD-WRL-003
+    - DD-WRL-005
+    - PD-WRL-006
+  ai-2-1-agent-hijacking:
+    confidence: medium
+    knowledge:
+    - K0866
+    - K0917
+    - K0918
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0434
+    - S0435
+    - S0466
+    source: derived_from_competency_and_category
+    tasks:
+    - T1052
+    - T0751
+    - T1054
     work_roles:
     - DD-WRL-003
     - DD-WRL-005
@@ -2570,6 +2592,28 @@ mappings:
     - T1021
     - T1428
     - T1503
+    work_roles:
+    - DD-WRL-009
+    - PD-WRL-004
+    - PD-WRL-001
+  ot-3-1-ics-pcap-forensics:
+    confidence: medium
+    knowledge:
+    - K0950
+    - K1289
+    - K1296
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0951
+    - S0875
+    - S0941
+    source: derived_from_competency_and_category
+    tasks:
+    - T1387
+    - T2036
+    - T2040
     work_roles:
     - DD-WRL-009
     - PD-WRL-004

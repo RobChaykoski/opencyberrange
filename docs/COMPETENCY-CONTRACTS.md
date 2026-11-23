@@ -20,9 +20,9 @@ history. Those signals are prohibited for every lab.
 
 ## Coverage
 
-- Labs: **211**
+- Labs: **212**
 - Reviewed: **25**
-- Baseline derived, awaiting review: **186**
+- Baseline derived, awaiting review: **187**
 
 ## Highest-use reviewed labs
 

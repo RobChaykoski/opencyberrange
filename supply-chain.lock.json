@@ -61,7 +61,7 @@
       "sha256": "b4e5cc77a8408624fcdd3b95e22773d1ce59fd5ea755e4100e1bae7c47648460"
     },
     "platform/backend/app/data/competency-contracts.yaml": {
-      "sha256": "af33e632fbc3331ce5618b6c4185c60c5b02aaad663eb56d9e1a4d527a871de3"
+      "sha256": "1175f330ed947fb13c57ee1c78ed8d3e0fb1791df1e628ef27887275bf2022bd"
     },
     "platform/backend/app/data/competency-mapping.yaml": {
       "sha256": "23cd82a50b8c2c23970cdc5a9eb77afcc0e5a96b018bcd5fa791e5b306fc0c32"
@@ -160,7 +160,7 @@
       "sha256": "d073d2202db1e15c9b259640ea31cde86fc10329b3918c9fdc18fab906fd4d4d"
     },
     "platform/backend/app/data/lab-outcomes.yaml": {
-      "sha256": "20ed5d4f5b0874617e5fbc61300cac31c739a72add30df84802537568b6db422"
+      "sha256": "d04efe595089cd473071d1812f3f903a0734479d8f439bcdf77d8d37231a5dcf"
     },
     "platform/backend/app/data/malware-samples.yaml": {
       "sha256": "4e6a00ce7febc54336c44fe167b45180fbc8ae8cbb4343f772b2ad0554cc77be"
@@ -172,7 +172,7 @@
       "sha256": "a67628fe072235c02aeecb19b468f5c71fd4e5d66163f6a3a2c4c3c19caa3fc4"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "5cd746b5dd4040704686863e9c8b217fdf01d4e5dfbb04488d3518ffddf218eb"
+      "sha256": "5602462ef107f04211b996a46a1ad883fb05271c92dc46f9a3fbbb30bfd20624"
     },
     "platform/backend/app/security/permissions.yaml": {
       "sha256": "8df4a537d137d826dbad3e333c09a02ac87a8ec281cf40c1dc3767b418ca0404"
@@ -187,7 +187,7 @@
       "sha256": "18f211d07b779cb88dbb4e5c71c6ae4d62f4f6e38c71104b901ede93df31f6bd"
     },
     "platform/backend/app/version.py": {
-      "sha256": "948737cd210db80a81f6345ea78b62047e0ec5157d75fffec2909c9ed618622c"
+      "sha256": "68504835c7e40a67b5cbd8ae9b9b381feb5f3e047de845de637b4828bd19b325"
     },
     "platform/backend/lab_metadata.schema.json": {
       "sha256": "7590d5bf2a3a9ea2ecf275ba18c82394dfec252b0a39fe0846d18e57d746c36c"
@@ -367,27 +367,33 @@
       "sha256": "f08f563a56860357a3c246993e4fd3da16cf1df35cce49f9890c0b09eb1ab769"
     },
     "versions.yaml": {
-      "sha256": "b031c147d0c3e9f177648dd62cb3d9b000071d5d8d473d768b7079990f8d25d3"
+      "sha256": "db9bc785e219024eeeffa2c631ded03ec493f95e7fd521227161dfe231f90304"
     }
   },
   "generator": "scripts/supply_chain.py",
   "labs": {
     "ai-1-1-prompt-injection-basics": {
-      "content_hash": "7842c37e4044c8438096f9ea1577ba3e358bc602a2448634fa83c31d8f3e4649",
+      "content_hash": "4ed66be820cb81e584c3029c8961d9fe18e97fb714b129e3161040bdf9a00173",
       "services": [
         "chatbot"
       ]
     },
     "ai-1-2-jailbreak-policy-bypass": {
-      "content_hash": "fccc6638c41b876a866c6e5b2b3ba5bdfeeff408ab5f48d7727221741ab95ebf",
+      "content_hash": "8333d2c01640ff059ef8fe630157c82f831fe88c57dac917943a1480d247d029",
       "services": [
         "chatbot"
       ]
     },
     "ai-1-3-indirect-prompt-injection": {
-      "content_hash": "db471af4a2b5f3471fe478071b886218ee445ad8b0bed0ece68546173dcc37c7",
+      "content_hash": "c575010614c9b5239abf01139588c559d2c1dbe92250c5ad079e582e22ce3c9a",
       "services": [
         "chatbot"
+      ]
+    },
+    "ai-2-1-agent-hijacking": {
+      "content_hash": "14f7746050909e30c92648e7492d51750063b37fe8bf13ffe3a3cc3327e283f6",
+      "services": [
+        "intake"
       ]
     },
     "forensics-1-1-windows-memory-volatility": {
@@ -1654,6 +1660,6 @@
       ]
     }
   },
-  "release": "5.32.1",
+  "release": "5.33.0",
   "schema": 1
 }

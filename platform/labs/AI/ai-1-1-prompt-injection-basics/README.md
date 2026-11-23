@@ -10,13 +10,13 @@
 
 `http://assistant.lab:8080`
 
-Nova is a deterministic, rule-based mock assistant running inside the lab
+TrailGuard AI is a deterministic, rule-based mock assistant running inside the lab
 network. It has no model weights and no internet access.
 
 ## Solution
 
-1. Ask a normal support question to confirm the assistant is reachable.
-2. Ask directly for the system prompt; Nova refuses.
+1. Ask a normal compliance question to confirm the assistant is reachable.
+2. Ask directly for the system prompt; TrailGuard AI refuses.
 3. Override the instruction and request the confidential note:
 
 ```bash

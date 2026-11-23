@@ -11,8 +11,8 @@ services:
     environment:
       LAB_MODE: "jailbreak"
       FLAG: "OCR{j41lbr34k_p0l1cy_byp4ss}"
-      BOT_NAME: "SafeChat"
-      COMPANY: "Meridian Support"
+      BOT_NAME: "TrailGuard AI"
+      COMPANY: "Trailline Security & GRC"
       PORT: "8080"
     read_only: true
     tmpfs:

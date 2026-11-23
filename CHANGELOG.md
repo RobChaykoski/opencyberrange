@@ -2,6 +2,26 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.33.0] - 2026-11-22
+
+### Trailline universe and agentic AI lab
+
+- Established the **Trailline Security & GRC** fictional organisation as the
+  shared setting for the Release 6 AI, identity, and GRC exercises. The
+  [Trailline universe](../Workbook/TRAILLINE-UNIVERSE.md) page defines the
+  domains, personas, data classes, and recurring service identity.
+- Refactored `AI01` (prompt injection, jailbreak policy bypass, and indirect
+  injection) to the TrailGuard AI / Trailline setting so the stream has one
+  cast and one data model.
+- Added `AI02: Agentic AI Security` and lab
+  `ai-2-1-agent-hijacking`: a poisoned LumenPay vendor report causes TrailGuard
+  AI to call an audit-export tool through `svc-trailguard-bot`. The lab
+  includes a workbook chapter, three automated checks, and the deterministic
+  `agent_hijack` mock mode.
+- Added a provisional NICE mapping for the new lab, regenerated competency
+  contracts and outcomes, and refreshed the curriculum, framework, coverage,
+  and workbook navigation documents. The lab count is now 212.
+
 ## [5.32.1] - 2026-11-22
 
 ### Usage tracker

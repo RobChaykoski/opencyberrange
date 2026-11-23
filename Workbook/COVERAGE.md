@@ -6,7 +6,7 @@ links.
 
 | Track | Labs with workbook |
 |---|---:|
-| AI | 3 |
+| AI | 4 |
 | Forensics | 5 |
 | High School | 18 |
 | Identity | 3 |
@@ -19,7 +19,7 @@ links.
 | Software Security | 2 |
 | Web | 26 |
 | Windows | 62 |
-| **Total** | **201** |
+| **Total** | **202** |
 
 ## Labs
 
@@ -27,6 +27,7 @@ links.
 |---|---|---|
 | AI | Indirect Prompt Injection (`ai-1-3-indirect-prompt-injection`) | `wiki/range/ai/CH_AI01_AI_Foundations/03_Indirect_Prompt_Injection/` |
 | AI | Jailbreak Policy Bypass (`ai-1-2-jailbreak-policy-bypass`) | `wiki/range/ai/CH_AI01_AI_Foundations/02_Jailbreak_Policy_Bypass/` |
+| AI | Poisoned Vendor Report and TrailGuard AI Agent Hijacking (`ai-2-1-agent-hijacking`) | `wiki/range/ai/CH_AI02_Agentic_AI_Security/01_Agent_Hijacking/` |
 | AI | Prompt Injection Basics (`ai-1-1-prompt-injection-basics`) | `wiki/range/ai/CH_AI01_AI_Foundations/01_Prompt_Injection_Basics/` |
 | Forensics | Live Linux Memory Acquisition (`forensics-3-1-live-linux-memory`) | `wiki/range/forensics/CH_FOR03_Live_Memory/01_Live_Linux_Memory/` |
 | Forensics | Topology Forensics - Guided Path Reconstruction (`forensics-2-2-topology-forensics-guided`) | `wiki/range/forensics/CH_FOR03_Topology_Forensics/01_Guided_Path/` |

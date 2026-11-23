@@ -67,6 +67,7 @@ nav:
   - Home: index.md
   - "Curriculum map": CURRICULUM.md
   - Terminology: TERMINOLOGY.md
+  - "Trailline universe": TRAILLINE-UNIVERSE.md
   - Frameworks: FRAMEWORKS.md
   - "AI01: AI Security Foundations":
     - Introduction: CH_AI01_AI_Foundations/00_Introduction.md
@@ -74,5 +75,9 @@ nav:
     - "Exercise 1.2 -- Jailbreak Policy Bypass": CH_AI01_AI_Foundations/02_Jailbreak_Policy_Bypass.md
     - "Exercise 1.3 -- Indirect Prompt Injection": CH_AI01_AI_Foundations/03_Indirect_Prompt_Injection.md
     - Chapter Review: CH_AI01_AI_Foundations/04_Chapter_Review.md
+  - "AI02: Agentic AI Security":
+    - Introduction: CH_AI02_Agentic_AI_Security/00_Introduction.md
+    - "Exercise 2.1 -- Agent Hijacking in a RAG Intake Pipeline": CH_AI02_Agentic_AI_Security/01_Agent_Hijacking.md
+    - Chapter Review: CH_AI02_Agentic_AI_Security/02_Chapter_Review.md
   - "IoT security references": IOT-SECURITY-REFERENCES.md
   - "Free training and certifications": FREE-TRAINING-AND-CERTIFICATIONS.md

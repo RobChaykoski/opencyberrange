@@ -1,6 +1,6 @@
 # SWOCTS Cyber Range
 
-> **Release 5 is the current release line (latest signed `v5.32.1`).**
+> **Release 5 is the current release line (latest signed `v5.33.0`).**
 >
 > **Edition: Community / Academic** (single-host, `lite` entitlement). The
 > Professional and Enterprise profiles are separate licence tiers built from the
@@ -240,7 +240,7 @@ These are current, checkable counts from this repository and metrics the platfor
 | Breadth of hands-on practice | Runnable exercises, tracks, and levels | **211** lab definitions; **201** expose a workbook page |
 | Guided lab instruction | Workbook walkthroughs and analysis questions | **201 workbook-mapped labs**, with guided analysis sections and questions |
 | Supported practice | Hints available and hint usage recorded per completion | **500+ hints**; hints used are stored with each completion |
-| Automated verification | Per-lab validation checks and flag checks | **211 lab contracts**, each run through **10 checks × 3 clean runs** by `scripts/lab_harness.py`; flags are stored as hashes |
+| Automated verification | Per-lab validation checks and flag checks | **212 lab contracts**, each run through **10 checks × 3 clean runs** by `scripts/lab_harness.py`; flags are stored as hashes |
 | Skill progression | Sequential level completion and level certificates | Level gates and **certificates for each completed level** |
 | Course delivery | Assignments, completion, course health, and feedback | Per-student completion, attempt, hint, time, and private feedback records |
 | Recognition | Achievement and event scoring signals | Completion, no-hint, first-attempt, speed, and first-blood signals |

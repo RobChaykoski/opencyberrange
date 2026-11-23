@@ -11,8 +11,8 @@ services:
     environment:
       LAB_MODE: "system_prompt"
       FLAG: "OCR{pr0mpt_1nj3ct10n_syst3m_l34k}"
-      BOT_NAME: "Nova"
-      COMPANY: "Asteria Cloud"
+      BOT_NAME: "TrailGuard AI"
+      COMPANY: "Trailline Security & GRC"
       PORT: "8080"
     read_only: true
     tmpfs:

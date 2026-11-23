@@ -11,8 +11,8 @@ services:
     environment:
       LAB_MODE: "indirect"
       FLAG: "OCR{1nd1r3ct_pr0mpt_1nj3ct10n}"
-      BOT_NAME: "TicketBot"
-      COMPANY: "Northwind Service Desk"
+      BOT_NAME: "TrailGuard AI"
+      COMPANY: "Trailline Security & GRC"
       PORT: "8080"
     read_only: true
     tmpfs:

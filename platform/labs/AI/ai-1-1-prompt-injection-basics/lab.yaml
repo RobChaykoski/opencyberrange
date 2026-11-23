@@ -32,10 +32,10 @@ tools:
   - curl
 
 scenario: |
-  Asteria Cloud has deployed Nova, an internal support assistant built on a
-  hosted language model. Nova answers routine account and billing questions,
-  but its system prompt contains an operator note that must never reach a
-  customer.
+  Trailline Security & GRC has deployed TrailGuard AI, an internal compliance
+  assistant built on a hosted language model. TrailGuard answers control,
+  evidence, and vendor-onboarding questions, but its system prompt contains an
+  operator note that must never reach a client or vendor.
 
   The assistant is online at the address shown under Target Hostnames. It has
   been told to refuse direct requests for its instructions. Your job is to test
@@ -57,12 +57,12 @@ workbook: "wiki/range/ai/CH_AI01_AI_Foundations/01_Prompt_Injection_Basics/"
 hostnames:
   - ip_offset: "70"
     hostname: "assistant.lab"
-    description: "Nova support assistant (HTTP 8080)"
+    description: "TrailGuard AI support assistant (HTTP 8080)"
 
 topology:
   nodes:
     - id: "chatbot"
-      label: "Nova support assistant"
+      label: "TrailGuard AI support assistant"
       type: "server"
       ip_offset: "70"
       ports: [8080]
@@ -72,7 +72,7 @@ topology:
 
 hints:
   - text: |
-      Open http://assistant.lab:8080 in the lab browser and ask Nova a normal
+      Open http://assistant.lab:8080 in the lab browser and ask TrailGuard AI a normal
       support question first. Notice that it gives scripted replies.
     unlock_after_minutes: 5
 

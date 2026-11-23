@@ -1,9 +1,10 @@
 {
   "generator": "scripts/generate-integrity-manifest.py",
   "labs": {
-    "ai-1-1-prompt-injection-basics": "7842c37e4044c8438096f9ea1577ba3e358bc602a2448634fa83c31d8f3e4649",
-    "ai-1-2-jailbreak-policy-bypass": "fccc6638c41b876a866c6e5b2b3ba5bdfeeff408ab5f48d7727221741ab95ebf",
-    "ai-1-3-indirect-prompt-injection": "db471af4a2b5f3471fe478071b886218ee445ad8b0bed0ece68546173dcc37c7",
+    "ai-1-1-prompt-injection-basics": "4ed66be820cb81e584c3029c8961d9fe18e97fb714b129e3161040bdf9a00173",
+    "ai-1-2-jailbreak-policy-bypass": "8333d2c01640ff059ef8fe630157c82f831fe88c57dac917943a1480d247d029",
+    "ai-1-3-indirect-prompt-injection": "c575010614c9b5239abf01139588c559d2c1dbe92250c5ad079e582e22ce3c9a",
+    "ai-2-1-agent-hijacking": "14f7746050909e30c92648e7492d51750063b37fe8bf13ffe3a3cc3327e283f6",
     "forensics-1-1-windows-memory-volatility": "7561931ec5dad1b39ea467817820b4f02111c831aa26f38a88e29ad2d6552535",
     "forensics-2-1-voip-call-reconstruction": "5e4f7e9bc8a237bd8eee030e9f01915458e14e0417aabbcbd450b23407e5b292",
     "forensics-2-2-topology-forensics-guided": "20cca8cb49da18013c5da3c5241d63c1fbe55c65fc53007aae813f05a4a5f20b",
@@ -213,7 +214,7 @@
     "windows-9-2-multi-service-exploitation": "26eb01bca4408b0bef4dcdbe4542906cd02d2f4c7e12b99dd9c0756abaf4162b",
     "windows-9-3-complete-windows-penetration-test": "a7267f4dc93846dd833ceb86456bf76367c3c8d2d72a9868b44e051fb01a847d"
   },
-  "release": "5.32.1",
+  "release": "5.33.0",
   "schema": 1,
   "source_lock": "supply-chain.lock.json"
 }

@@ -60,6 +60,7 @@ Frameworks registered but not mapped yet are shown as **Not yet**. They remain i
 | `WIN07` | LDAP Enumeration | Windows Penetration Testing | `identity_access` | `NICE` (NICE Workforce Framework for Cybersecurity), `CWE` (Common Weakness Enumeration) |
 | `WIN08` | Credential Reuse and Lateral Movement | Windows Penetration Testing | `identity_access` | `NICE` (NICE Workforce Framework for Cybersecurity), `MITRE_ATTACK` (MITRE ATT&CK) |
 | `WIN09` | Complete Network Assessment | Windows Penetration Testing | `network_systems` | `NICE` (NICE Workforce Framework for Cybersecurity), `MITRE_ATTACK` (MITRE ATT&CK) |
+| `WIN10` | Active Directory and Authentication | Windows Penetration Testing | `—` | — |
 | `LIN01` | Linux Service Enumeration | Linux Fundamentals | `network_systems` | `NICE` (NICE Workforce Framework for Cybersecurity), `MITRE_ATTACK` (MITRE ATT&CK) |
 | `LIN01B` | Network Discovery | Linux Fundamentals | `network_systems` | `NICE` (NICE Workforce Framework for Cybersecurity), `MITRE_ATTACK` (MITRE ATT&CK) |
 | `LIN02` | SSH Authentication and Discovery | Linux Fundamentals | `identity_access` | `NICE` (NICE Workforce Framework for Cybersecurity), `CWE` (Common Weakness Enumeration) |
@@ -74,6 +75,7 @@ Frameworks registered but not mapped yet are shown as **Not yet**. They remain i
 | `NET01B` | Traffic and Log Correlation | Network Security | `incident_forensics` | `NICE` (NICE Workforce Framework for Cybersecurity), `NIST_CSF` (NIST Cybersecurity Framework 2.0) |
 | `NET02` | PCAP Forensics | Network Security | `incident_forensics` | `NICE` (NICE Workforce Framework for Cybersecurity), `NIST_CSF` (NIST Cybersecurity Framework 2.0) |
 | `NET03` | Firewalls and Network Policy | Network Security | `network_systems` | `NICE` (NICE Workforce Framework for Cybersecurity), `NIST_CSF` (NIST Cybersecurity Framework 2.0) |
+| `NET04` | Device Topology and Routed Paths | Network Security | `network_systems` | `NICE` (NICE Workforce Framework for Cybersecurity), `NIST_CSF` (NIST Cybersecurity Framework 2.0) |
 | `WEB01` | Web Reconnaissance | Web Application Security | `web_api` | `OWASP_TOP10` (OWASP Top 10), `OWASP_ASVS` (OWASP Application Security Verification Standard) |
 | `WEB01B` | Advanced Recon and Traversal | Web Application Security | `web_api` | `OWASP_TOP10` (OWASP Top 10), `OWASP_ASVS` (OWASP Application Security Verification Standard) |
 | `WEB02` | SQL Injection and Web Exploitation | Web Application Security | `web_api` | `OWASP_TOP10` (OWASP Top 10), `CWE` (Common Weakness Enumeration) |
@@ -81,9 +83,11 @@ Frameworks registered but not mapped yet are shown as **Not yet**. They remain i
 | `WEB03` | Advanced Web Exploitation | Web Application Security | `web_api` | `OWASP_TOP10` (OWASP Top 10), `OWASP_ASVS` (OWASP Application Security Verification Standard) |
 | `MAL01` | Malware Fundamentals | Malware Analysis | `malware` | `NICE` (NICE Workforce Framework for Cybersecurity), `MITRE_ATTACK` (MITRE ATT&CK) |
 | `MAL02` | Executable Analysis | Malware Analysis | `malware` | `NICE` (NICE Workforce Framework for Cybersecurity), `MITRE_ATTACK` (MITRE ATT&CK) |
+| `MAL03` | Detection and Triage | Malware Analysis | `—` | — |
 | `OT01` | Modbus Fundamentals | OT/ICS Security | `ot_ics` | `NIST_800_82` (NIST SP 800-82 Rev. 3), `IEC_62443` (IEC 62443) |
 | `OT02` | S7comm and PLC Data Blocks | OT/ICS Security | `—` | — |
 | `AI01` | AI Security Foundations | AI Hacking | `ai_security` | `NIST_AI_RMF` (NIST AI Risk Management Framework), `OWASP_LLM` (OWASP Top 10 for LLM Applications) |
+| `AI02` | Agentic AI Security | AI Hacking | `ai_security` | `NIST_AI_RMF` (NIST AI Risk Management Framework), `OWASP_LLM` (OWASP Top 10 for LLM Applications) |
 | `OSINT01` | OSINT Foundations | OSINT | `osint` | `NICE` (NICE Workforce Framework for Cybersecurity), `MITRE_ATTACK` (MITRE ATT&CK) |
 | `OSINT02` | Mobile OSINT | OSINT | `—` | — |
 | `BEG01` | RangeBox Foundations | Beginner Cybersecurity | `system_administration` | `NICE` (NICE Workforce Framework for Cybersecurity), `NIST_CSF` (NIST Cybersecurity Framework 2.0) |
@@ -92,8 +96,51 @@ Frameworks registered but not mapped yet are shown as **Not yet**. They remain i
 | `BEG04` | Applied Challenges | Beginner Cybersecurity | `digital_safety` | `NICE` (NICE Workforce Framework for Cybersecurity), `NIST_CSF` (NIST Cybersecurity Framework 2.0) |
 | `SWSEC01` | Software Security Foundations | Software Security | `secure_development` | `NIST_SSDF` (NIST Secure Software Development Framework), `CWE` (Common Weakness Enumeration) |
 | `IAM01` | Identity and Access Foundations | Identity & Access | `identity_access` | `NICE` (NICE Workforce Framework for Cybersecurity), `NIST_CSF` (NIST Cybersecurity Framework 2.0) |
+| `IAM02` | Active Directory and Kerberos | Identity & Access | `—` | — |
+| `IAM03` | Entra ID and Hybrid Identity | Identity & Access | `—` | — |
+| `IAM04` | Keycloak and OIDC | Identity & Access | `—` | — |
+| `IAM05` | Authentik and MFA | Identity & Access | `—` | — |
+| `IAM06` | Federation: SAML and OIDC | Identity & Access | `—` | — |
+| `IAM07` | Access Review and Joiner/Mover/Leaver | Identity & Access | `—` | — |
+| `IAM08` | OpenIAM Identity Governance | Identity & Access | `—` | — |
+| `IAM09` | IAM Capstone | Identity & Access | `—` | — |
 | `FOR01` | Memory Forensics | Digital Forensics | `incident_forensics` | `NICE` (NICE Workforce Framework for Cybersecurity), `NIST_CSF` (NIST Cybersecurity Framework 2.0) |
 | `FOR02` | Network Forensics | Digital Forensics | `incident_forensics` | `NICE` (NICE Workforce Framework for Cybersecurity), `NIST_CSF` (NIST Cybersecurity Framework 2.0) |
+| `FOR03` | Topology Forensics | Digital Forensics | `—` | — |
+| `VM01` | Asset Inventory and Exposure | Vulnerability Management | `—` | — |
+| `VM02` | Authenticated Scanning with OpenVAS | Vulnerability Management | `—` | — |
+| `VM03` | Nessus Concepts and Web Scanning with Nikto and OWASP ZAP | Vulnerability Management | `—` | — |
+| `VM04` | Risk Scoring and Prioritisation | Vulnerability Management | `—` | — |
+| `VM05` | Patch Validation | Vulnerability Management | `—` | — |
+| `VM06` | Exceptions and Remediation Workflow | Vulnerability Management | `—` | — |
+| `VM07` | Host Hardening with Lynis | Vulnerability Management | `—` | — |
+| `VM08` | Vulnerability Management Capstone | Vulnerability Management | `—` | — |
+| `SOC01` | Telemetry Foundations | Security Operations | `—` | — |
+| `SOC02` | Network Detection with Suricata | Security Operations | `—` | — |
+| `SOC03` | Network Metadata and Hunting with Zeek | Security Operations | `—` | — |
+| `SOC04` | Endpoint and Vulnerability Detection with Wazuh | Security Operations | `—` | — |
+| `SOC05` | Alert Triage and Case Management | Security Operations | `—` | — |
+| `SOC06` | Detection as Code | Security Operations | `—` | — |
+| `SOC07` | Host Defense with Fail2Ban | Security Operations | `—` | — |
+| `SOC08` | Security Onion Capstone | Security Operations | `—` | — |
+| `PLAT01` | Docker and Container Security | Platform Engineering | `—` | — |
+| `PLAT02` | Kubernetes Fundamentals and Hardening | Platform Engineering | `—` | — |
+| `PLAT03` | CI/CD with GitHub Actions, GitLab, SonarQube, and Dependency-Check | Platform Engineering | `—` | — |
+| `PLAT04` | Terraform and Infrastructure as Code | Platform Engineering | `—` | — |
+| `PLAT05` | Ansible and Configuration Management | Platform Engineering | `—` | — |
+| `PLAT06` | Cilium eBPF Networking, Security, and Hubble | Platform Engineering | `—` | — |
+| `PLAT07` | Calico Network Policy and eBPF | Platform Engineering | `—` | — |
+| `PLAT08` | Istio Service Mesh | Platform Engineering | `—` | — |
+| `PLAT09` | Platform Engineering Capstone | Platform Engineering | `—` | — |
+| `NENG01` | Network Source of Truth with NetBox | Network Engineering and Infrastructure | `—` | — |
+| `NENG02` | Monitoring with LibreNMS | Network Engineering and Infrastructure | `—` | — |
+| `NENG03` | Configuration Backup with Oxidized | Network Engineering and Infrastructure | `—` | — |
+| `NENG04` | Firewall and Segmentation with OPNsense/pfSense | Network Engineering and Infrastructure | `—` | — |
+| `NENG05` | NAC and Zero Trust with PacketFence | Network Engineering and Infrastructure | `—` | — |
+| `NENG06` | Identity Integration with OpenIAM | Network Engineering and Infrastructure | `—` | — |
+| `NENG07` | Network Automation with NAPALM | Network Engineering and Infrastructure | `—` | — |
+| `NENG08` | Open vSwitch and Mininet Virtual Networks | Network Engineering and Infrastructure | `—` | — |
+| `NENG09` | Network Engineering Capstone | Network Engineering and Infrastructure | `—` | — |
 
 ## Lab-level overrides
 
