@@ -42,6 +42,8 @@ contracts and this queue.
 Public labs are listed first within each track. Fill the reviewer, decision,
 and date columns in the review record, not in this generated page.
 
+Per-track worksheets: [`docs/reviews/competency/`](reviews/competency/README.md).
+
 | Lab | Track | Difficulty | Visibility | Minutes | Competencies | Evidence | Status |
 |---|---|---|---|---:|---|---|---|
 | `ai-1-1-prompt-injection-basics` Prompt Injection Basics | AI | beginner | public | 35 | AI-001, AI-002, AI-003, AI-004 | flag, validation_step, analyst_answer, artifact | baseline_derived |

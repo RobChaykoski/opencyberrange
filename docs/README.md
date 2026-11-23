@@ -77,7 +77,7 @@ capstones and analytics, scale, federation, then the AI mentor.
 - [Lab freshness](LAB-FRESHNESS.md)
 - [Lab Definitions Repository](LAB-DEFINITIONS-REPOSITORY.md) and
   [exercise export/import](EXERCISE-EXPORT-IMPORT.md)
-- [Competency contracts](COMPETENCY-CONTRACTS.md) and [contract review queue](COMPETENCY-REVIEW-QUEUE.md)
+- [Competency contracts](COMPETENCY-CONTRACTS.md), [review queue](COMPETENCY-REVIEW-QUEUE.md), and [review packets](reviews/competency/README.md)
 - [Active Directory pathway](ACTIVE-DIRECTORY-PATHWAY.md)
 - [Modern application-security pathway](MODERN-APP-SECURITY-PATHWAY.md)
 - [DFIR pathway](DFIR-PATHWAY.md) and [detection engineering](DETECTION-ENGINEERING-PATHWAY.md)
