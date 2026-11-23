@@ -25,9 +25,13 @@ flowchart TB
 1. Go to the login page and click **Register here**, or open `/register` directly.
 2. Enter your **Username**. It must start with a letter and may contain letters, numbers, underscores, and hyphens, between 3 and 50 characters.
 3. Enter your **Email** address.
-4. Enter a **Password**. The help text reads: must be at least 8 characters and contain uppercase, lowercase, and a number. The form checks each field as you leave it.
-5. Re-enter the same password in **Confirm Password**.
-6. Click **Create Account**.
+4. Leave **Email me a registration confirmation** unchecked unless you want a receipt. This is optional and is not account verification.
+5. Optionally enter a **First name** and **Last name**. They appear on completion certificates and can be changed later in your profile.
+6. Enter a **Password**. The help text reads: must be at least 8 characters and contain uppercase, lowercase, and a number. The form checks each field as you leave it.
+7. Re-enter the same password in **Confirm Password**.
+8. Select your **Age group**. This sets the privacy defaults; the platform does not collect your date of birth.
+9. Check the **Privacy notice** acknowledgement. If you are under 13, an instructor must record a parent or guardian consent reference before an institution-managed account is created.
+10. Click **Create Account**.
 
 **What you should see:** a success message that reads, "Account created successfully! Your account is pending administrator approval. You will be able to log in once approved." The page then sends you back to the login screen after a few seconds.
 
@@ -35,7 +39,7 @@ flowchart TB
 
 ![The registration form with username, email, password, and confirm password fields](img/register.png)
 
-<figcaption>The registration form collects a username, email, and password; there is no invite code or verification step.</figcaption>
+<figcaption>The registration form collects a username, email, password, age group, and privacy acknowledgement; names are optional and there is no invite code or email-verification step.</figcaption>
 </figure>
 
 ## Approval (on by default)

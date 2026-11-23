@@ -21,7 +21,7 @@ Logging in opens your session on the platform. You enter your username and passw
 
 ![The login screen with the institution sign-in panel and username and password fields](img/login.png)
 
-<figcaption>The login page keeps the local form and adds institution sign-in when SSO is enabled.</figcaption>
+<figcaption>Institution sign-in appears above the local username and password form when SSO is enabled.</figcaption>
 </figure>
 
 ## Institution sign-in (SSO)
