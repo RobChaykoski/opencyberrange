@@ -20,6 +20,9 @@ not ready for Release 6.
 | Credentials | Level certificates and Open Badges 3.0 scope |
 | Evidence | Completion, attempt, hint, quiz, workbook, and snapshot records |
 
+The 189 baseline-derived contracts are listed, with their competencies and
+evidence types, in the [competency-contract review queue](COMPETENCY-REVIEW-QUEUE.md).
+
 The taxonomy is real and the scoring model is defined. The gap is coverage,
 hierarchy, versioning, and object mapping.
 

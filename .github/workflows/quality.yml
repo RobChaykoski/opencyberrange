@@ -49,6 +49,9 @@ jobs:
       - name: Verify competency contracts are current
         run: python scripts/generate-competency-contracts.py --check
 
+      - name: Verify competency review queue is current
+        run: python scripts/generate-competency-review-queue.py --check
+
       - name: Verify lab test manifests are current
         run: python scripts/generate-lab-manifests.py --check
 
