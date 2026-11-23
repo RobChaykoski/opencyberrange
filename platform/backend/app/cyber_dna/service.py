@@ -580,7 +580,10 @@ def build_affinity(
         ][:3]
         why = [
             f"{evidenced} of {len(critical)} critical competencies have evidence.",
-            f"Coverage includes {round(coverage * 100)}% of the pathway's critical competencies.",
+            (
+                f"{round(coverage * 100)}% of critical competencies are at "
+                "practitioner level or above."
+            ),
         ]
         if components["behavior"] is not None:
             why.append("Behavior signals are included where the sample allows.")

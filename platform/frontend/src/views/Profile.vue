@@ -533,6 +533,16 @@
         </div>
 
         <div
+          v-show="activeTab === 'affinity'"
+          id="profile-panel-affinity"
+          class="profile-panel"
+          role="tabpanel"
+          aria-labelledby="profile-tab-affinity"
+        >
+          <CyberDnaV3Panel />
+        </div>
+
+        <div
           v-show="activeTab === 'careers'"
           id="profile-panel-careers"
           class="profile-panel"
@@ -1347,6 +1357,7 @@ import PrivacyDataPanel from '../components/PrivacyDataPanel.vue'
 import { downloadBlob } from '../utils/download'
 import SurveyConsentPanel from '../components/SurveyConsentPanel.vue'
 import SkillDnaProfile from '../components/SkillDnaProfile.vue'
+import CyberDnaV3Panel from '../components/CyberDnaV3Panel.vue'
 import MomentumPanel from '../components/MomentumPanel.vue'
 import CareerAtlas from '../components/CareerAtlas.vue'
 import PortfolioPanel from '../components/PortfolioPanel.vue'
@@ -1403,16 +1414,47 @@ const loading = ref(true)
 // and transcript sections. Loaded separately from /auth/me so the account
 // forms render immediately even when that aggregate query is slow.
 const summary = ref(null)
-const BASE_PROFILE_TABS = ['overview', 'skill-tree', 'learning', 'account', 'security']
-const ALL_PROFILE_TABS = ['overview', 'skill-tree', 'careers', 'portfolio', 'learning', 'account', 'security']
+const ALL_PROFILE_TABS = [
+  'overview',
+  'skill-tree',
+  'affinity',
+  'careers',
+  'portfolio',
+  'learning',
+  'account',
+  'security',
+]
 const hasCareerEvidence = computed(() => Number(summary.value?.skill_dna?.overall || 0) > 0)
 const hasCareerAtlas = computed(
   () => hasCareerEvidence.value && !!summary.value?.skill_dna?.career_atlas
 )
-const profileTabKeys = computed(() =>
-  hasCareerAtlas.value
-    ? ['overview', 'skill-tree', 'careers', 'portfolio', 'learning', 'account', 'security']
-    : BASE_PROFILE_TABS
+const canViewAffinity = computed(() => user.value?.role === 'student')
+const PROFILE_TAB_LABELS = {
+  overview: 'Overview',
+  'skill-tree': 'Skill tree',
+  affinity: 'Career affinity',
+  careers: 'Cyber GPS',
+  portfolio: 'Portfolio',
+  learning: 'Learning record',
+  account: 'Account',
+  security: 'Security & privacy',
+}
+const profileTabKeys = computed(() => {
+  const tabs = ['overview', 'skill-tree']
+  if (canViewAffinity.value) tabs.push('affinity')
+  if (hasCareerAtlas.value) tabs.push('careers', 'portfolio')
+  tabs.push('learning', 'account', 'security')
+  return tabs
+})
+const profileTabs = computed(() =>
+  profileTabKeys.value.map((key) => ({
+    key,
+    label: PROFILE_TAB_LABELS[key],
+    count:
+      key === 'learning'
+        ? summary.value?.achievements?.length || undefined
+        : undefined,
+  }))
 )
 const lastProfileTab = computed(
   () => profileTabKeys.value[profileTabKeys.value.length - 1]
@@ -1420,6 +1462,15 @@ const lastProfileTab = computed(
 const activeTab = ref(
   ALL_PROFILE_TABS.includes(String(route.query.tab || '')) ? String(route.query.tab) : 'overview'
 )
+
+watch(profileTabKeys, (keys) => {
+  if (!keys.includes(activeTab.value)) {
+    activeTab.value = 'overview'
+    const query = { ...route.query }
+    delete query.tab
+    router.replace({ query })
+  }
+})
 
 const setTab = (tab) => {
   if (!profileTabKeys.value.includes(tab)) return
@@ -1767,23 +1818,6 @@ const hiddenTrackCount = computed(() => tracks.value.length - visibleTracks.valu
 const completions = computed(() => summary.value?.completions || [])
 const achievements = computed(() => summary.value?.achievements || [])
 const courseAchievements = computed(() => summary.value?.course_achievements || [])
-
-const profileTabs = computed(() => {
-  const tabs = [
-    { key: 'overview', label: 'Overview' },
-    { key: 'skill-tree', label: 'Skill tree' },
-  ]
-  if (hasCareerAtlas.value) {
-    tabs.push({ key: 'careers', label: 'Cyber GPS' })
-    tabs.push({ key: 'portfolio', label: 'Portfolio' })
-  }
-  tabs.push(
-    { key: 'learning', label: 'Learning record', count: achievements.value.length || undefined },
-    { key: 'account', label: 'Account' },
-    { key: 'security', label: 'Security & privacy' },
-  )
-  return tabs
-})
 
 const learningMinutes = computed(() =>
   completions.value.reduce((total, item) => total + (Number(item.time_spent_minutes) || 0), 0)

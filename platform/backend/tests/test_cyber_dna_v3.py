@@ -138,6 +138,10 @@ def test_affinity_stays_hidden_until_all_three_gates_are_met(db_session, test_us
         assert affinity["version"] == AFFINITY_VERSION
         assert affinity["pathways"]
         assert all(item["affinity"] is not None for item in affinity["pathways"])
+        assert all(
+            any("practitioner level or above" in line for line in item["why"])
+            for item in affinity["pathways"]
+        )
     finally:
         erase_learner(db_session, test_user.id)
         db_session.commit()

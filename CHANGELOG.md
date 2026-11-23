@@ -2,6 +2,25 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.31.0] - 2026-11-22
+
+### Cyber DNA v3 learner UI
+
+- Added a **Career affinity** tab to the profile for learner accounts. It shows
+  the affinity gate with text progress, pathway cards with score components and
+  next steps, competency evidence, behavior signals, and the voluntary-interest
+  vector.
+- Consent-required, role-scoped, feature-disabled, loading, empty, and error
+  states are handled explicitly. The tab is hidden for instructor and admin
+  roles, which do not carry the learner-scoped `career_affinity.view.self`
+  permission.
+- Clarified the affinity explanation: evidence coverage and practitioner-level
+  coverage are now separate statements, so "0% at practitioner level" no longer
+  reads as "no evidence".
+- Added `app/scripts/seed_dna_fixtures.py` for development: it creates a
+  synthetic above-gate learner and grants consent only to that fixture and to
+  the existing demo learner, then backfills through the consent-aware adapter.
+
 ## [5.30.2] - 2026-11-22
 
 ### Cyber DNA consent
