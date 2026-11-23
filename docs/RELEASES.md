@@ -7,7 +7,7 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.36.0` | SWOCTS Cyber Range Release 5.36.0 | Signed annotated tag: signed-update gate, backup and monitoring hardening, lab freshness/canary, dynamic reporting periods and forecasts, admin bundle split, and i18n/API-error groundwork. Deployed to `ocr-dev`; production deployment pending the deployment window. |
+| `v5.36.0` | SWOCTS Cyber Range Release 5.36.0 | Signed annotated tag: signed-update gate, backup and monitoring hardening, lab freshness/canary, dynamic reporting periods and forecasts, admin bundle split, and i18n/API-error groundwork. Deployed to the development host; production deployment pending the deployment window. |
 
 ## Current supported release
 
