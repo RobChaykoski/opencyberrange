@@ -1,0 +1,104 @@
+name: authentik
+
+services:
+  postgresql:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: authentik
+      POSTGRES_USER: authentik
+      POSTGRES_PASSWORD: ${AUTHENTIK_DB_PASSWORD:?set AUTHENTIK_DB_PASSWORD}
+    volumes:
+      - authentik_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U authentik -d authentik"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    security_opt:
+      - no-new-privileges:true
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--save", "60", "1", "--loglevel", "warning"]
+    volumes:
+      - authentik_redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    security_opt:
+      - no-new-privileges:true
+
+  server:
+    image: ghcr.io/goauthentik/server:${AUTHENTIK_VERSION:-2026.8.5}
+    command: server
+    restart: unless-stopped
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      AUTHENTIK_REDIS__HOST: redis
+      AUTHENTIK_POSTGRESQL__HOST: postgresql
+      AUTHENTIK_POSTGRESQL__USER: authentik
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${AUTHENTIK_DB_PASSWORD:?set AUTHENTIK_DB_PASSWORD}
+      AUTHENTIK_POSTGRESQL__NAME: authentik
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY:?set AUTHENTIK_SECRET_KEY}
+      AUTHENTIK_ERROR_REPORTING__ENABLED: "false"
+      AUTHENTIK_DISABLE_UPDATE_CHECK: "true"
+      AUTHENTIK_LOG_LEVEL: "info"
+      AUTHENTIK_HOST: ${AUTHENTIK_HOST:-https://auth.swocts.com}
+      AUTHENTIK_HOST_BROWSER: ${AUTHENTIK_HOST:-https://auth.swocts.com}
+      AUTHENTIK_COOKIE_DOMAIN: ${AUTHENTIK_COOKIE_DOMAIN:-auth.swocts.com}
+      AUTHENTIK_BOOTSTRAP_EMAIL: ${AUTHENTIK_BOOTSTRAP_EMAIL:-admin@swocts.com}
+      AUTHENTIK_BOOTSTRAP_PASSWORD: ${AUTHENTIK_BOOTSTRAP_PASSWORD:?set AUTHENTIK_BOOTSTRAP_PASSWORD}
+      AUTHENTIK_BOOTSTRAP_TOKEN: ${AUTHENTIK_BOOTSTRAP_TOKEN:?set AUTHENTIK_BOOTSTRAP_TOKEN}
+    volumes:
+      - authentik_media:/media
+    ports:
+      # NPM reaches this address; do not expose it to the internet.
+      - "${AUTHENTIK_BIND:-172.16.16.41}:9000:9000"
+    healthcheck:
+      test: ["CMD", "ak", "healthcheck"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 90s
+    security_opt:
+      - no-new-privileges:true
+
+  worker:
+    image: ghcr.io/goauthentik/server:${AUTHENTIK_VERSION:-2026.8.5}
+    command: worker
+    restart: unless-stopped
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      AUTHENTIK_REDIS__HOST: redis
+      AUTHENTIK_POSTGRESQL__HOST: postgresql
+      AUTHENTIK_POSTGRESQL__USER: authentik
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${AUTHENTIK_DB_PASSWORD:?set AUTHENTIK_DB_PASSWORD}
+      AUTHENTIK_POSTGRESQL__NAME: authentik
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY:?set AUTHENTIK_SECRET_KEY}
+      AUTHENTIK_ERROR_REPORTING__ENABLED: "false"
+      AUTHENTIK_DISABLE_UPDATE_CHECK: "true"
+      AUTHENTIK_LOG_LEVEL: "info"
+      AUTHENTIK_HOST: ${AUTHENTIK_HOST:-https://auth.swocts.com}
+      AUTHENTIK_HOST_BROWSER: ${AUTHENTIK_HOST:-https://auth.swocts.com}
+      AUTHENTIK_COOKIE_DOMAIN: ${AUTHENTIK_COOKIE_DOMAIN:-auth.swocts.com}
+    volumes:
+      - authentik_media:/media
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  authentik_db:
+  authentik_redis:
+  authentik_media:
