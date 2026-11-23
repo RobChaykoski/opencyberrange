@@ -19,7 +19,7 @@ def _script() -> ScriptDirectory:
 def test_alembic_head_is_the_metadata_revision():
     script = _script()
     heads = script.get_heads()
-    assert heads == ["0050_child_privacy_defaults"]
+    assert heads == ["0051_registration_attribution"]
 
 
 def test_revision_graph_is_linear():

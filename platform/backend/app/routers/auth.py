@@ -45,6 +45,7 @@ from app.auth import (
     _decode_token,
     oauth2_scheme,
 )
+from app.services import attribution
 from app.services import mail
 from app.services import network_access
 from app.services import password_reset
@@ -133,6 +134,10 @@ class RegisterRequest(BaseModel):
     age_band: Optional[Literal["under_13", "13_15", "16_17", "18_plus"]] = None
     # Recorded only when the form actually required the privacy acknowledgement.
     privacy_acknowledged: bool = False
+    # Conference QR and campaign attribution. The source is normalized to a
+    # short label; the campaign identifies the event or placement.
+    source: Optional[str] = Field(None, max_length=50)
+    campaign: Optional[str] = Field(None, max_length=100)
 
     @field_validator('username')
     @classmethod
@@ -1762,7 +1767,9 @@ async def register(
         is_approved=not require_approval,
         is_active=True if hasattr(User, 'is_active') else None,
         is_locked=False,
-        failed_attempts=0
+        failed_attempts=0,
+        registration_source=attribution.normalize_source(user_data.source),
+        registration_campaign=attribution.normalize_campaign(user_data.campaign),
     )
     new_user.password_rehashed_at = datetime.now(timezone.utc)
     
@@ -1824,9 +1831,18 @@ async def register(
         detail={"approval_required": not bool(new_user.is_approved)},
     )
 
-    log_activity(db, EventTypes.USER_REGISTERED,
-                  actor_id=new_user.id, target_type="user",
-                  target_id=new_user.id, target_label=new_user.username)
+    log_activity(
+        db,
+        EventTypes.USER_REGISTERED,
+        actor_id=new_user.id,
+        target_type="user",
+        target_id=new_user.id,
+        target_label=new_user.username,
+        detail={
+            "source": new_user.registration_source,
+            "campaign": new_user.registration_campaign,
+        },
+    )
 
     if user_data.send_registration_email:
         background_tasks.add_task(

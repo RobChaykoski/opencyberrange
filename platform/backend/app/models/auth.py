@@ -94,6 +94,11 @@ class User(Base):
     # Set when the account holder acknowledges the privacy notice. Accounts
     # created by an instructor or an identity provider acknowledge on first use.
     privacy_acknowledged_at = Column(DateTime, nullable=True)
+    # Registration attribution from conference QR links and campaigns. The
+    # source is a short normalized label (gdg, linkedin, swocts, direct, ...);
+    # the campaign identifies the specific event or placement.
+    registration_source = Column(String(50), nullable=True, index=True)
+    registration_campaign = Column(String(100), nullable=True)
     # Allow the public certificate verification page to confirm this account's
     # certificates. Public visibility is off by default; the account holder must
     # opt in. Their own certificate view and PDF still work either way.

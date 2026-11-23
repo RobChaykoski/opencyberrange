@@ -12,9 +12,14 @@
           <h1 class="page-title">Administration</h1>
           <p class="page-subtitle">{{ adminSummary }}</p>
         </div>
-        <router-link to="/reports" class="btn btn--secondary btn--sm">
-          Reports &amp; analytics
-        </router-link>
+        <div class="admin-header__links">
+          <router-link to="/admin/usage" class="btn btn--secondary btn--sm">
+            Usage dashboard
+          </router-link>
+          <router-link to="/reports" class="btn btn--secondary btn--sm">
+            Reports &amp; analytics
+          </router-link>
+        </div>
       </div>
 
       <nav class="admin-section-nav" aria-label="Admin sections">
@@ -10237,6 +10242,12 @@ watch(activeTab, (tab) => {
   flex-wrap: wrap;
   gap: 1rem;
   margin-bottom: 2rem;
+}
+
+.admin-header__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .page-title {

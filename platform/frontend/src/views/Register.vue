@@ -516,6 +516,10 @@ const route = useRoute()
 const competition = ref(null)
 const competitionId = ref(null)
 const joinCompetition = ref(true)
+const attribution = computed(() => ({
+  source: String(route.query.src || route.query.utm_source || '').trim(),
+  campaign: String(route.query.campaign || route.query.utm_campaign || '').trim(),
+}))
 
 const formatCompetitionDates = (event) => {
   if (!event?.start_at || !event?.end_at) return ''
@@ -807,6 +811,8 @@ const handleRegister = async () => {
     if (competitionId.value && joinCompetition.value) {
       payload.competition_id = competitionId.value
     }
+    if (attribution.value.source) payload.source = attribution.value.source
+    if (attribution.value.campaign) payload.campaign = attribution.value.campaign
 
     const response = await axios.post('/api/auth/register', payload)
 

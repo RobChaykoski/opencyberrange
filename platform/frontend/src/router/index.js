@@ -66,6 +66,12 @@ const routes = [
     meta: { guest: true }
   },
   {
+    path: '/usage',
+    name: 'Usage',
+    component: () => import('../components/UsageDashboard.vue'),
+    meta: { guest: true, allowAuthed: true }
+  },
+  {
     path: '/forgot-password',
     name: 'ForgotPassword',
     component: () => import('../views/ForgotPassword.vue'),
@@ -214,6 +220,13 @@ const routes = [
     path: '/admin',
     name: 'Admin',
     component: () => import('../views/Admin.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/admin/usage',
+    name: 'AdminUsage',
+    component: () => import('../components/UsageDashboard.vue'),
+    props: { admin: true },
     meta: { requiresAuth: true, requiresAdmin: true }
   },
   {

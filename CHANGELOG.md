@@ -2,6 +2,26 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.32.0] - 2026-11-22
+
+### Usage tracker and registration attribution
+
+- Registration records a normalized source and campaign from `?src=` /
+  `?utm_source=` and `?campaign=` / `?utm_campaign=`. Known sources are GDG,
+  LinkedIn, SWOCTS, and direct; unfamiliar values are sanitized and kept.
+- Added tracked QR landing links (`/api/public/qr/<source>`) that record a scan
+  before redirecting to registration, plus an admin QR generator.
+- Added the public usage tracker at `/usage`: daily registrations, QR scans, and
+  lab completions; week-over-week cards; source and campaign breakdowns; top
+  movers; latest aggregate activity; searchable lab telemetry; and JSON/CSV
+  exports.
+- Added the admin detail at `/admin/usage` with exact counts, source/campaign
+  QR generation, and a labs CSV export.
+- Public data never includes learner identities. Source and per-lab learner
+  counts below the configured cohort threshold are suppressed.
+- Migration `0051_registration_attribution` adds the source and campaign
+  columns and the source index.
+
 ## [5.31.0] - 2026-11-22
 
 ### Cyber DNA v3 learner UI

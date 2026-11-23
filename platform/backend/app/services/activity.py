@@ -48,6 +48,7 @@ class EventTypes:
     OPEN_BADGE_SETTINGS_CHANGED = "open_badge_settings_changed"
     OPEN_BADGE_KEY_ROTATED = "open_badge_key_rotated"
     OPEN_BADGE_CONSENT_CHANGED = "open_badge_consent_changed"
+    QR_SCANNED = "qr_scanned"
 
 
 # Human-readable labels for the feed
@@ -89,6 +90,7 @@ EVENT_LABELS = {
     EventTypes.OPEN_BADGE_SETTINGS_CHANGED: "Open Badge Settings Changed",
     EventTypes.OPEN_BADGE_KEY_ROTATED: "Open Badge Key Rotated",
     EventTypes.OPEN_BADGE_CONSENT_CHANGED: "Open Badge Name Sharing Changed",
+    EventTypes.QR_SCANNED: "QR Scan",
 }
 
 

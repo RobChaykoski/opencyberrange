@@ -36,6 +36,8 @@ from app.routers import modules as modules_router
 from app.routers import rangebox as rangebox_router
 from app.routers import about as about_router
 from app.routers import public_config as public_config_router
+from app.routers import public_usage as public_usage_router
+from app.routers import usage as usage_router
 from app.routers import nice as nice_router
 from app.routers import governance as governance_router
 from app.routers import lti as lti_router
@@ -1486,6 +1488,10 @@ app.include_router(modules_router.router, prefix="/api/modules", tags=["Modules"
 app.include_router(rangebox_router.router, prefix="/api/rangebox", tags=["RangeBox"])
 app.include_router(about_router.router, prefix="/api/about", tags=["About"])
 app.include_router(public_config_router.router, prefix="/api", tags=["Public config"])
+app.include_router(
+    public_usage_router.router, prefix="/api/public", tags=["Public usage"]
+)
+app.include_router(usage_router.router, prefix="/api/usage", tags=["Usage"])
 app.include_router(nice_router.router, prefix="/api/nice", tags=["NICE Framework"])
 app.include_router(
     governance_router.router, prefix="/api/governance", tags=["Governance"]

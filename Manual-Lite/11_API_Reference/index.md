@@ -552,6 +552,7 @@ owner-only unless an explicit share or break-glass grant exists.
 | `GET` | `/api/profile/transcript.pdf` | Download a printable completion transcript | OAuth2PasswordBearer |
 | `GET` | `/api/public/community-events` | Community Events | Public |
 | `GET` | `/api/public/portfolio/{token}` | Read a shared portfolio | OAuth2PasswordBearer |
+| `GET` | `/api/public/qr/{source}` | Qr Landing | Public |
 | `GET` | `/api/rangebox/capacity` | Rangebox Capacity | OAuth2PasswordBearer |
 | `DELETE` | `/api/rangebox/standalone/destroy` | Standalone Rangebox Destroy | OAuth2PasswordBearer |
 | `POST` | `/api/rangebox/standalone/launch` | Standalone Rangebox Launch | OAuth2PasswordBearer |
@@ -580,6 +581,11 @@ owner-only unless an explicit share or break-glass grant exists.
 | `POST` | `/api/setup/complete` | Complete Setup | Public |
 | `GET` | `/api/setup/config` | Public Config | Public |
 | `GET` | `/api/setup/status` | Setup Status | Public |
+| `GET` | `/api/usage/admin` | Admin Usage | OAuth2PasswordBearer |
+| `GET` | `/api/usage/admin.csv` | Admin Usage Csv | OAuth2PasswordBearer |
+| `GET` | `/api/usage/admin/qr.png` | Admin Qr Png | OAuth2PasswordBearer |
+| `GET` | `/api/usage/public` | Public Usage | Public |
+| `GET` | `/api/usage/public.csv` | Public Usage Csv | Public |
 | `GET` | `/api/version` | Api Version | Public |
 | `GET` | `/health` | Health | Public |
 
@@ -3349,6 +3355,8 @@ Register a new user.  Per-IP limits are strict normally (5/minute; 30/hour; 100/
 | `is_minor` | boolean | no |  |
 | `age_band` | `under_13` | `13_15` | `16_17` | `18_plus` or null | no |  |
 | `privacy_acknowledged` | boolean | no |  |
+| `source` | string or null | no |  |
+| `campaign` | string or null | no |  |
 
 **Responses**
 
@@ -8299,6 +8307,26 @@ Return the public SWOCTS Hub calendar, cached by the backend.
 
 - `200`: Successful Response
 
+## Public usage
+
+### `GET /api/public/qr/{source}`
+
+**Qr Landing**
+
+**Authentication:** Public
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `source` | path | string | yes |  |
+| `campaign` | query | string or null | no |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
 ## Question Banks
 
 ### `GET /api/admin/question-banks`
@@ -9550,6 +9578,100 @@ List enabled providers for the login screen.  The global switch is evaluated her
 |---|---|---|---|---|
 | `provider_id` | path | integer | yes |  |
 | `return_to` | query | string | no |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+## Usage
+
+### `GET /api/usage/admin`
+
+**Admin Usage**
+
+Exact usage detail for administrators.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `days` | query | integer | no |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `GET /api/usage/admin.csv`
+
+**Admin Usage Csv**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `days` | query | integer | no |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `GET /api/usage/admin/qr.png`
+
+**Admin Qr Png**
+
+Return a printable QR code for a tracked registration link.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `source` | query | string | yes |  |
+| `campaign` | query | string or null | no |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `GET /api/usage/public`
+
+**Public Usage**
+
+Aggregate usage for the shareable tracker page.
+
+**Authentication:** Public
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `days` | query | integer | no |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `GET /api/usage/public.csv`
+
+**Public Usage Csv**
+
+**Authentication:** Public
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `days` | query | integer | no |  |
 
 **Responses**
 
