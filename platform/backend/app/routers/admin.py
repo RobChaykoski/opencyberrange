@@ -1200,6 +1200,18 @@ async def delete_user(
     }
 
 
+# ==================== Competency Coverage ====================
+
+@router.get("/competency-coverage")
+async def competency_coverage(
+    admin: User = Depends(get_current_admin_user),
+):
+    """Read-only Release 6 coverage for the contract review queue."""
+    from app.services.competency_coverage import coverage_summary
+
+    return coverage_summary()
+
+
 # ==================== Lab Management ====================
 
 @router.get("/labs")

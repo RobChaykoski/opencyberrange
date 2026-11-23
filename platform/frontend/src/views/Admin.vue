@@ -1125,6 +1125,80 @@
           </div><!-- end .catalog-layout -->
         </div>
 
+        <!-- Release 6 competency coverage -->
+        <div v-if="activeTab === 'quality'" class="panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Curriculum quality</h2>
+            <div class="panel-actions">
+              <button @click="fetchCompetencyCoverage" class="btn btn--secondary" :disabled="competencyCoverageLoading">
+                {{ competencyCoverageLoading ? 'Refreshing...' : 'Refresh' }}
+              </button>
+            </div>
+          </div>
+          <p class="section-desc">
+            Release 6 requires a subject-matter-reviewed contract for every lab.
+            This is the current coverage from
+            <code>competency-contracts.yaml</code>; it is not a learner score.
+          </p>
+          <div v-if="competencyCoverageLoading" class="empty-state">Loading coverage...</div>
+          <div v-else-if="competencyCoverageError" class="empty-state" role="alert">{{ competencyCoverageError }}</div>
+          <template v-else-if="competencyCoverage">
+            <div class="capacity-grid">
+              <div class="capacity-stat">
+                <span>Contracts</span>
+                <strong>{{ competencyCoverage.total }}</strong>
+                <small>one per lab</small>
+              </div>
+              <div class="capacity-stat">
+                <span>Reviewed</span>
+                <strong>{{ competencyCoverage.reviewed }}</strong>
+                <small>subject-matter sign-off</small>
+              </div>
+              <div class="capacity-stat">
+                <span>Awaiting review</span>
+                <strong>{{ competencyCoverage.pending }}</strong>
+                <small>baseline-derived</small>
+              </div>
+              <div class="capacity-stat">
+                <span>Coverage</span>
+                <strong>{{ competencyCoverage.coverage_percent }}%</strong>
+                <small>{{ competencyCoverage.rubrics }} versioned rubrics</small>
+              </div>
+            </div>
+            <div class="table-wrapper">
+              <table class="data-table">
+                <caption class="visually-hidden">Competency contract coverage by track</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Track</th>
+                    <th scope="col">Total</th>
+                    <th scope="col">Reviewed</th>
+                    <th scope="col">Awaiting</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="track in competencyCoverage.tracks" :key="track.track">
+                    <td>{{ track.track }}</td>
+                    <td>{{ track.total }}</td>
+                    <td>{{ track.reviewed }}</td>
+                    <td>{{ track.pending }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <h3 class="settings-group__title">Next up</h3>
+            <p class="section-desc">
+              First 25 baseline-derived contracts. Review packets are in
+              <code>docs/reviews/competency/</code>.
+            </p>
+            <ul class="quality-next-list">
+              <li v-for="lab in competencyCoverage.pending_labs" :key="lab.slug">
+                <code>{{ lab.slug }}</code> — {{ lab.track }} / {{ lab.difficulty || 'unknown' }}
+              </li>
+            </ul>
+          </template>
+        </div>
+
         <!-- Live activity tab (consolidated Sessions + VPN + Activity) -->
         <div v-if="activeTab === 'monitoring'" class="panel">
           <div class="panel-header">
@@ -4822,7 +4896,7 @@ const { privacyMode, maskUsername, maskEmail, togglePrivacy, setAdminPrivacyDefa
 
 const legacyTabMap = { sessions: 'monitoring', vpn: 'monitoring', activity: 'monitoring', labs: 'exercises', curriculum: 'exercises', tester: 'system' }
 const legacySubTabMap = { sessions: 'sessions', vpn: 'vpn', activity: 'activity', labs: 'manage', curriculum: 'tracks' }
-const validTabs = ['users', 'pending', 'courses', 'exercises', 'monitoring', 'security', 'settings', 'system']
+const validTabs = ['users', 'pending', 'courses', 'exercises', 'quality', 'monitoring', 'security', 'settings', 'system']
 
 const monitoringSubTab = ref('sessions')
 
@@ -5071,11 +5145,34 @@ watch(() => route.query.tab, (newTab) => {
 const stats = ref({ total_users: 0, pending_users: 0, locked_users: 0, active_labs: 0, vpn_registered: 0 })
 const statsLoaded = ref(false)
 
+// --- Release 6 competency coverage ---
+const competencyCoverage = ref(null)
+const competencyCoverageLoading = ref(false)
+const competencyCoverageError = ref('')
+
+const fetchCompetencyCoverage = async () => {
+  competencyCoverageLoading.value = true
+  competencyCoverageError.value = ''
+  try {
+    const { data } = await axios.get('/admin/competency-coverage')
+    competencyCoverage.value = data
+  } catch (error) {
+    competencyCoverageError.value = error.response?.data?.detail || 'Could not load competency coverage.'
+  } finally {
+    competencyCoverageLoading.value = false
+  }
+}
+
+watch(activeTab, (tab) => {
+  if (tab === 'quality' && !competencyCoverage.value) fetchCompetencyCoverage()
+}, { immediate: true })
+
 const adminTabs = computed(() => [
   { key: 'users', label: 'Users', count: stats.value.total_users || null },
   { key: 'pending', label: 'Pending', count: stats.value.pending_users || null },
   { key: 'courses', label: 'Courses', count: adminCourses.value.length || null },
   { key: 'exercises', label: 'Exercises' },
+  { key: 'quality', label: 'Quality' },
   { key: 'monitoring', label: 'Live activity', count: stats.value.active_labs || null },
   { key: 'security', label: 'Security' },
   { key: 'system', label: 'System' },
@@ -5086,7 +5183,7 @@ const adminTabGroups = computed(() => {
   const byKey = Object.fromEntries(adminTabs.value.map((tab) => [tab.key, tab]))
   return [
     { label: 'People', tabs: [byKey.users, byKey.pending].filter(Boolean) },
-    { label: 'Learning', tabs: [byKey.courses, byKey.exercises].filter(Boolean) },
+    { label: 'Learning', tabs: [byKey.courses, byKey.exercises, byKey.quality].filter(Boolean) },
     { label: 'Operations', tabs: [byKey.monitoring, byKey.security, byKey.system].filter(Boolean) },
     { label: 'Configuration', tabs: [byKey.settings].filter(Boolean) },
   ]
