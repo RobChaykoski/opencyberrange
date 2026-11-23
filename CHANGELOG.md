@@ -2,6 +2,20 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.34.0] - 2026-11-22
+
+### Non-human identity lab
+
+- Added `identity-1-3-nhi-oauth-abuse`: TrailGuard's debug logs leak an
+  `svc-trailguard-bot` bearer token, and the internal audit API trusts it. The
+  learner finds the token, reads the LumenPay audit exceptions, and maps the
+  missing redaction, scope, workload-binding, and rotation controls.
+- Added the **Non-Human Identity** exercise to `IAM01` with workbook
+  walkthrough, review questions, four automated checks, and a `nhi` mock mode in
+  the identity target.
+- Regenerated competency contracts, outcomes, coverage, NICE mappings, integrity
+  manifest, and the signed supply-chain lock. The catalogue is now 213 labs.
+
 ## [5.33.0] - 2026-11-22
 
 ### Trailline universe and agentic AI lab

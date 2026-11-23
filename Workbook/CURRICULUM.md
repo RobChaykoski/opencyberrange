@@ -20,7 +20,7 @@ Framework alignment is selective. See [Framework alignment](FRAMEWORKS.md).
 | `malware` | Malware Analysis | Intermediate learners with networking and forensic evidence experience. | intermediate | NET02, FOR01 | 8 | 6h 15m | RangeBox with terminal and isolated malware-analysis targets | `forensics` | Malware Analyst; Incident Responder; Threat Intelligence Analyst | published |
 | `forensics` | Digital Forensics | Intermediate learners who want to investigate memory and network evidence. | intermediate | NET02 | 2 | 1h 35m | RangeBox with forensic evidence images and PCAPs | `osint` | Digital Forensics Examiner; Incident Responder; Threat Intelligence Analyst | published |
 | `osint` | OSINT | Beginner-to-intermediate learners who want public-source investigation skills. | beginner | NET00 | 8 | 4h 05m | Browser and RangeBox; public-source simulation | `identity` | OSINT Analyst; Threat Intelligence Analyst; Investigator | published |
-| `identity` | Identity & Access | Intermediate learners interested in authentication, federation, and account lifecycle. | intermediate | NET00 | 3 | 2h 15m | RangeBox with browser and identity lab targets | `forensics` | IAM Analyst; SOC Analyst; Identity Engineer | published |
+| `identity` | Identity & Access | Intermediate learners interested in authentication, federation, account lifecycle, and non-human identity. | intermediate | NET00 | 4 | 3h 10m | RangeBox with browser and identity lab targets | `forensics` | IAM Analyst; SOC Analyst; Identity Engineer | published |
 | `ot` | OT/ICS Security | Intermediate learners interested in industrial control systems and Modbus. | intermediate | NET00 | 2 | 1h 25m | RangeBox with terminal and Modbus lab target | `ai` | OT Security Analyst; ICS Engineer; SOC Analyst | published |
 | `ai` | AI Hacking | Intermediate learners exploring prompt injection, agent hijacking, and AI-assisted security. | intermediate | WEB02 | 4 | 2h 45m | RangeBox with browser and mock AI lab target | `winpt` | AI Security Analyst; Red Team Operator; Secure AI Developer | published |
 | `winpt` | Windows Penetration Testing | Intermediate learners who have completed the beginner pathway or have equivalent terminal and networking experience. | intermediate | BEG04, NET00 | 51 | 102h 00m | RangeBox with terminal, browser, and Windows lab targets | `linpt` | Penetration Tester; Red Team Operator; SOC Analyst | published |
@@ -51,7 +51,7 @@ Framework alignment is selective. See [Framework alignment](FRAMEWORKS.md).
 | `FOR02` | Network Forensics | `CH_FOR02_Network_Forensics` | intermediate | FOR01 | 1 | 45m | `OSINT01` | published |
 | `OSINT01` | OSINT Foundations | `CH_OSINT01_OSINT_Foundations` | beginner | NET00 | 5 | 2h 55m | `IAM01` | published |
 | `OSINT02` | Mobile OSINT | `CH_OSINT02_Mobile_OSINT` | beginner | OSINT01 | 3 | 1h 10m | `IAM01` | published |
-| `IAM01` | Identity and Access Foundations | `CH_IAM01_Identity_And_Access` | intermediate | NET00 | 3 | 2h 15m | `FOR01` | published |
+| `IAM01` | Identity and Access Foundations | `CH_IAM01_Identity_And_Access` | intermediate | NET00 | 4 | 3h 10m | `FOR01` | published |
 | `OT01` | Modbus Fundamentals | `CH_OT01_Modbus_Fundamentals` | intermediate | NET00 | 1 | 40m | `OT02` | published |
 | `OT02` | S7comm and PLC Data Blocks | `CH_OT02_S7comm_Data_Blocks` | intermediate | OT01 | 1 | 45m | `AI01` | published |
 | `AI01` | AI Security Foundations | `CH_AI01_AI_Foundations` | intermediate | WEB02 | 3 | 1h 50m | `AI02` | published |

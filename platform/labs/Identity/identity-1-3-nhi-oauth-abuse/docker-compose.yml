@@ -1,0 +1,32 @@
+services:
+  nhi:
+    mem_limit: 128m
+    cpus: 0.15
+    deploy:
+      resources:
+        limits:
+          cpus: '0.15'
+          memory: 128M
+        reservations:
+          cpus: '0.05'
+          memory: 64M
+    build:
+      context: ../_shared
+      dockerfile: Dockerfile
+    hostname: trailguard-nhi
+    labels:
+      ip_offset: "93"
+    environment:
+      LAB_MODE: "nhi"
+      FLAG: "OCR{svc_t0k3n_l34k_2_4ud1t}"
+      SERVICE_TOKEN: "ocr-svc-trailguard-7c1e4a9b"
+      TITLE: "TrailGuard service identity"
+      PORT: "8080"
+    read_only: true
+    tmpfs:
+      - /tmp:size=8m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped

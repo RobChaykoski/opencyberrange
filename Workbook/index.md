@@ -79,7 +79,7 @@ See the [framework alignment](FRAMEWORKS.md) for the selective mapping.
 | `malware` | Malware Analysis | Intermediate learners with networking and forensic evidence experience. | intermediate | NET02, FOR01 | 8 | 6h 15m | published |
 | `forensics` | Digital Forensics | Intermediate learners who want to investigate memory and network evidence. | intermediate | NET02 | 2 | 1h 35m | published |
 | `osint` | OSINT | Beginner-to-intermediate learners who want public-source investigation skills. | beginner | NET00 | 8 | 4h 05m | published |
-| `identity` | Identity & Access | Intermediate learners interested in authentication, federation, and account lifecycle. | intermediate | NET00 | 3 | 2h 15m | published |
+| `identity` | Identity & Access | Intermediate learners interested in authentication, federation, account lifecycle, and non-human identity. | intermediate | NET00 | 4 | 3h 10m | published |
 | `ot` | OT/ICS Security | Intermediate learners interested in industrial control systems and Modbus. | intermediate | NET00 | 2 | 1h 25m | published |
 | `ai` | AI Hacking | Intermediate learners exploring prompt injection, agent hijacking, and AI-assisted security. | intermediate | WEB02 | 4 | 2h 45m | published |
 | `winpt` | Windows Penetration Testing | Intermediate learners who have completed the beginner pathway or have equivalent terminal and networking experience. | intermediate | BEG04, NET00 | 51 | 102h 00m | published |

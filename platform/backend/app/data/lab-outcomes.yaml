@@ -1541,6 +1541,62 @@ labs:
         reviewed.
     review_status: baseline_derived
     reviewed_at: null
+  identity-1-3-nhi-oauth-abuse:
+    track: Identity
+    difficulty: intermediate
+    expected_duration_minutes: 55
+    workbook: wiki/range/identity/CH_IAM01_Identity_And_Access/04_NHI_Token_Leak/
+    skills_earned:
+    - id: WIN-009
+      name: Active Directory Fundamentals
+      weight: 0.4
+    - id: WIN-012
+      name: Authentication Concepts
+      weight: 0.3
+    - id: WIN-013
+      name: Kerberos Fundamentals
+      weight: 0.2
+    - id: WEB-007
+      name: Authentication Security
+      weight: 0.1
+    competencies_proven:
+    - id: WIN-009
+      name: Active Directory Fundamentals
+      weight: 0.4
+      category: Active Directory
+    - id: WIN-012
+      name: Authentication Concepts
+      weight: 0.3
+      category: Active Directory
+    - id: WIN-013
+      name: Kerberos Fundamentals
+      weight: 0.2
+      category: Active Directory
+    - id: WEB-007
+      name: Authentication Security
+      weight: 0.1
+      category: Web Security
+    knowledge_domains:
+    - id: WEB
+      label: Web Technologies
+    - id: WIN
+      label: Windows
+    practice_axes:
+    - Identity and access
+    - Web and API
+    evidence_artifacts:
+    - flag
+    - automated validation
+    - analyst finding
+    - submitted artifact
+    confidence:
+      score: 0.65
+      level: medium
+      basis: Baseline contract derived from the reviewed competency mapping. The evidence types and weights
+        are explicit; live harness evidence and analyst-answer moderation are required before marking
+        reviewed.
+    review_status: baseline_derived
+    reviewed_at: null
   identity-2-1-identity-lifecycle:
     track: Identity
     difficulty: beginner

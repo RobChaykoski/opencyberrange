@@ -1,0 +1,119 @@
+title: "Non-Human Identity: Leaked TrailGuard Service Token"
+category: authentication
+difficulty: intermediate
+estimated_time: 55
+prerequisites:
+  - identity-1-2-oauth-oidc-sso
+# By completion students will be able to:
+learning_outcomes:
+  - Explain why a non-human identity needs its own lifecycle, scope, and rotation
+  - Find a service credential exposed in debug logs and name the logging defect
+  - Use the token to call an internal API and read client audit evidence
+  - Recommend least-privilege scopes, secret redaction, and automatic rotation
+mapped_skills:
+  - identity_access
+  - web_api
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+  - Name the logging and scoping controls that were missing.
+mitre_attack:
+  - tactic: Credential Access
+    technique: T1552.001
+    technique_name: Unsecured Credentials in Files
+    detection: Alert on service credentials appearing in application logs, on token use from unexpected workloads, and on audit exports outside the scheduled job window.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "1.0.0"
+reviewed_at: "2026-11-22"
+review_status: "automated static proof; live walkthrough pending"
+description: "TrailGuard's debug logs contain a live bearer token for svc-trailguard-bot. Use the token to reach the internal audit API, read the LumenPay audit exceptions, and explain the non-human identity controls that failed."
+visibility: public
+flag: "OCR{svc_t0k3n_l34k_2_4ud1t}"
+
+tools:
+  - browser
+  - curl
+  - terminal
+
+scenario: |
+  Trailline Security & GRC runs TrailGuard AI, a compliance assistant that
+  reviews vendor evidence and exports client audit records. Its worker runs as
+  the non-human identity svc-trailguard-bot.
+
+  Marcus Chen enabled HTTP debug logging during the last rollout. The service
+  logs now contain a live bearer token, and the internal audit API trusts that
+  token without checking which workload sent it. The token also carries more
+  scope than the worker needs.
+
+  Your job is to find the credential, use it against the internal API, and read
+  the LumenPay audit exceptions. Then explain how the identity and the logging
+  should have been designed.
+
+  This is a safe, simulated target. It has no external network access, no real
+  client data, and no real credentials.
+
+troubleshooting: "If the audit API returns 401, copy the complete token from the Authorization line in the logs. The token starts with ocr-svc- and is case-sensitive. If the logs page is empty, use the terminal endpoint /api/logs. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Never log bearer tokens, cookies, or Authorization headers. Give a workload identity only the scopes it needs, bind tokens to the workload and audience, keep lifetimes short, rotate automatically, and alert on token use from a new workload or location. Treat a leaked service token as a credential incident, not a logging nuisance."
+difficulty_evidence: "Static student-tester walkthrough of the lab definition, mock service, and workbook; live lab run not recorded; declared difficulty 'intermediate' retained as provisional because the learner must connect a log defect to an API authorisation decision."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-22"
+workbook: "wiki/range/identity/CH_IAM01_Identity_And_Access/04_NHI_Token_Leak/"
+
+hostnames:
+  - ip_offset: "93"
+    hostname: "trailguard-nhi.lab"
+    description: "TrailGuard service health and debug logs (HTTP 8080)"
+
+topology:
+  nodes:
+    - id: "nhi"
+      label: "TrailGuard service identity"
+      type: "server"
+      ip_offset: "93"
+      ports: [8080]
+      services: ["http"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Open http://trailguard-nhi.lab:8080 and read the service identity card.
+      Note the scopes and the note about the debug logger.
+    unlock_after_minutes: 5
+
+  - text: |
+      Open /logs or run `curl -s http://trailguard-nhi.lab:8080/api/logs`. Look
+      for the `Authorization: Bearer` line emitted during token refresh.
+    unlock_after_minutes: 12
+
+  - text: |
+      Call the internal audit API with the token:
+
+      curl -s -H 'Authorization: Bearer ocr-svc-trailguard-7c1e4a9b' \
+        http://trailguard-nhi.lab:8080/api/internal/audit
+    unlock_after_minutes: 20
+
+test:
+  steps:
+    - name: "Service health endpoint responds"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.nhi}:8080/health"
+      expect: "200"
+      timeout: 20
+
+    - name: "Debug logs expose a service token"
+      command: "curl -s http://{target.nhi}:8080/api/logs"
+      expect: "ocr-svc-trailguard"
+      timeout: 20
+
+    - name: "Audit API rejects an anonymous request"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.nhi}:8080/api/internal/audit"
+      expect: "401"
+      timeout: 20
+
+    - name: "Leaked token reads the client audit records"
+      command: "curl -s -H 'Authorization: Bearer ocr-svc-trailguard-7c1e4a9b' http://{target.nhi}:8080/api/internal/audit"
+      expect: "OCR{svc_t0k3n_l34k_2_4ud1t}"
+      timeout: 20

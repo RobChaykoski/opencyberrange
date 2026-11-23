@@ -6,6 +6,7 @@ Each lab selects a mode with LAB_MODE and supplies its own FLAG:
     authweak   - a staff portal with a forgeable session cookie and weak hashing
     oauth      - a mock OIDC client that trusts any redirect URI and skips state
     lifecycle  - an access review with a stale leaver account and an admin token
+    nhi        - a leaked service-account token in TrailGuard debug logs
 
 The targets are deliberately vulnerable in the taught area. They are isolated,
 read-only, and dependency-free. They never call the internet or store state.
@@ -56,6 +57,8 @@ ACCOUNTS = [
 ]
 REPORT_ADMIN_TOKEN = "tok_rowan_9f2c"
 REPORT_READ_TOKENS = {"tok_amara_staff_2b7c", "tok_svc_reports_4d1a"}
+SERVICE_TOKEN = os.environ.get("SERVICE_TOKEN", "ocr-svc-trailguard-7c1e4a9b")
+SERVICE_SCOPES = "audit:read, audit:export, directory:read"
 
 STYLE = """
 :root {
@@ -472,6 +475,68 @@ def lifecycle_reports_body() -> str:
     """
 
 
+def nhi_home_body() -> str:
+    return f"""
+      <span class="pill">Trailline GRC</span>
+      <h1>TrailGuard service health</h1>
+      <p class="lede">Internal status page for the TrailGuard AI orchestration
+      service. The service identity <code>svc-trailguard-bot</code> reads client
+      audit evidence and calls the export API.</p>
+      <div class="card">
+        <h2>Service identity</h2>
+        <p><code>svc-trailguard@trailline.internal</code></p>
+        <p>Granted scopes: <code>{SERVICE_SCOPES}</code></p>
+        <p>The identity is managed by Marcus Chen, Lead AI Governance Architect.</p>
+      </div>
+      <div class="card note">
+        <h2>Recent deployment</h2>
+        <p>The HTTP debug logger was enabled during the last rollout. Review the
+        <a href="/logs">service logs</a> if token refresh calls look noisy.</p>
+      </div>
+      <div class="card">
+        <h2>Internal audit API</h2>
+        <p><code>GET /api/internal/audit</code> requires a service bearer token.
+        It returns the current client audit exceptions for the LumenPay review.</p>
+      </div>
+      <p><a href="/logs">Open service logs</a></p>
+    """
+
+
+def nhi_log_text() -> str:
+    return f"""2026-11-22T09:14:02Z level=info component=trailguard msg="starting intake worker"
+2026-11-22T09:14:03Z level=info component=trailguard msg="loaded policy bundle audit-2026.1"
+2026-11-22T09:14:04Z level=debug component=trailguard msg="refreshing service token"
+2026-11-22T09:14:04Z level=debug component=trailguard msg="Authorization: Bearer {SERVICE_TOKEN}" scopes="{SERVICE_SCOPES}"
+2026-11-22T09:14:05Z level=info component=trailguard msg="token refresh ok" expires_in=900
+2026-11-22T09:14:06Z level=info component=trailguard msg="audit export worker ready"
+2026-11-22T09:15:12Z level=warn component=trailguard msg="vendor document failed schema check" vendor="LumenPay"
+"""
+
+
+def nhi_logs_body() -> str:
+    escaped = html.escape(nhi_log_text())
+    return f"""
+      <span class="pill">Debug logs</span>
+      <h1>TrailGuard service logs</h1>
+      <p class="lede">Recent debug output from the TrailGuard intake worker. The
+      logger was left at <code>debug</code> during the deployment.</p>
+      <div class="card">
+        <h2>Log stream</h2>
+        <pre>{escaped}</pre>
+      </div>
+      <div class="card">
+        <h2>Call the internal audit API</h2>
+        <p>Paste the bearer token from the log line above.</p>
+        <form method="get" action="/api/internal/audit">
+          <label for="token">Service token</label>
+          <input id="token" name="token" autocomplete="off" placeholder="ocr-svc-...">
+          <button type="submit">Call audit API</button>
+        </form>
+      </div>
+      <p><a href="/">Back to the service health page</a></p>
+    """
+
+
 class Handler(BaseHTTPRequestHandler):
     server_version = "IdentityAccess/1.0"
 
@@ -546,6 +611,10 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         path = self.path.split("?", 1)[0]
         params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+
+        if path == "/health":
+            self._send(200, "ok", "text/plain; charset=utf-8")
+            return
 
         if MODE == "authweak":
             if path in ("/", "/index.html"):
@@ -685,6 +754,41 @@ class Handler(BaseHTTPRequestHandler):
                         ),
                     )
                     return
+            else:
+                self._send(404, page("Not found", "<h1>Not found</h1>"))
+                return
+
+        elif MODE == "nhi":
+            if path in ("/", "/index.html"):
+                body = page("TrailGuard service health", nhi_home_body())
+            elif path == "/logs":
+                body = page("TrailGuard service logs", nhi_logs_body())
+            elif path == "/api/logs":
+                self._send(200, nhi_log_text(), "text/plain; charset=utf-8")
+                return
+            elif path == "/api/internal/audit":
+                token = (params.get("token") or [""])[0]
+                authorization = self.headers.get("Authorization", "")
+                if not token and authorization.lower().startswith("bearer "):
+                    token = authorization[7:].strip()
+                if token != SERVICE_TOKEN:
+                    self._send(
+                        401,
+                        "Missing or invalid service token\n",
+                        "text/plain; charset=utf-8",
+                    )
+                    return
+                self._send(
+                    200,
+                    (
+                        "client audit records\n"
+                        "client=LumenPay control=CC6.1 status=exception\n"
+                        "client=LumenPay control=CC7.2 status=exception\n"
+                        f"export marker={FLAG}\n"
+                    ),
+                    "text/plain; charset=utf-8",
+                )
+                return
             else:
                 self._send(404, page("Not found", "<h1>Not found</h1>"))
                 return

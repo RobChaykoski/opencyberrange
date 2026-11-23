@@ -7,7 +7,8 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.33.0` | SWOCTS Cyber Range Release 5.33.0 | Current feature release (signed annotated tag): the Trailline Security & GRC universe, a reframed AI01 stream, and the agent-hijacking lab `ai-2-1` |
+| `v5.34.0` | SWOCTS Cyber Range Release 5.34.0 | Current feature release (signed annotated tag): the Trailline non-human identity lab and leaked `svc-trailguard-bot` token exercise |
+| `v5.33.0` | SWOCTS Cyber Range Release 5.33.0 | Previous feature release (signed annotated tag): the Trailline Security & GRC universe, a reframed AI01 stream, and the agent-hijacking lab `ai-2-1` |
 | `v5.32.1` | SWOCTS Cyber Range Release 5.32.1 | Previous patch release (signed annotated tag): serve the admin QR generator from a non-static API path |
 | `v5.32.0` | SWOCTS Cyber Range Release 5.32.0 | Previous feature release (signed annotated tag): registration source and QR attribution, a public usage tracker, and admin lab-completion telemetry |
 | `v5.31.0` | SWOCTS Cyber Range Release 5.31.0 | Previous feature release (signed annotated tag): Cyber DNA v3 learner surface (Career affinity), consent and feature states, and clearer affinity explanations |

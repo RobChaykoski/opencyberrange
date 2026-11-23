@@ -9,7 +9,7 @@ links.
 | AI | 4 |
 | Forensics | 5 |
 | High School | 18 |
-| Identity | 3 |
+| Identity | 4 |
 | Linux | 30 |
 | Malware | 10 |
 | Metasploit | 8 |
@@ -19,7 +19,7 @@ links.
 | Software Security | 2 |
 | Web | 26 |
 | Windows | 62 |
-| **Total** | **202** |
+| **Total** | **203** |
 
 ## Labs
 
@@ -53,6 +53,7 @@ links.
 | High School | RangeBox Network Basics (`high-school-10-1-rangebox-network-basics`) | `wiki/range/high-school/CH_HS10_Grade_10_RangeBox_Basics/05_Network_Communication_and_Ports/` |
 | High School | Read the Link Before You Click (`high-school-9-6-read-the-link`) | `wiki/range/high-school/CH_HS09_Grade_9_RangeBox_Basics/06_Read_The_Link/` |
 | Identity | Identity Lifecycle: Joiners, Movers, and Leavers (`identity-2-1-identity-lifecycle`) | `wiki/range/identity/CH_IAM01_Identity_And_Access/03_Identity_Lifecycle/` |
+| Identity | Non-Human Identity: Leaked TrailGuard Service Token (`identity-1-3-nhi-oauth-abuse`) | `wiki/range/identity/CH_IAM01_Identity_And_Access/04_NHI_Token_Leak/` |
 | Identity | OAuth/OIDC: Redirects, State, and Token Trust (`identity-1-2-oauth-oidc-sso`) | `wiki/range/identity/CH_IAM01_Identity_And_Access/02_OAuth_OIDC/` |
 | Identity | Secure Authentication: Sessions, MFA, and Password Storage (`identity-1-1-secure-authentication`) | `wiki/range/identity/CH_IAM01_Identity_And_Access/01_Secure_Authentication/` |
 | Linux | Aegis Security Corp - Brute Force Detection (`linux-5-6-brute-force-detection`) | `wiki/range/linpt/CH_LIN05_Detection/02_Brute_Force_Detection/` |

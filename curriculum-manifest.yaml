@@ -586,8 +586,8 @@ tracks:
         display_name: "Identity and Access Foundations"
         difficulty: "intermediate"
         prerequisites: [NET00]
-        exercises: 3
-        estimated_minutes: 135
+        exercises: 4
+        estimated_minutes: 190
         recommended_next: IAM02
         status: published
         intro: CH_IAM01_Identity_And_Access/00_Introduction.md
