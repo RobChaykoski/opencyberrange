@@ -1,4 +1,4 @@
-# Release tags
+﻿# Release tags
 
 This page maps the tags in the repository to the release they actually
 represent. It exists because the history contains several naming eras.
@@ -7,7 +7,7 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.37.1` | SWOCTS Cyber Range Release 5.37.1 | Patch: normalize lab permissions during in-place deployment and fix the runtime integrity check for unreadable lab trees. |
+| `v5.37.1` | SWOCTS Cyber Range Release 5.37.1 | Patch: normalize lab permissions during in-place deployment and fix the runtime integrity check for unreadable lab trees. Deployed to development and production. |
 
 ## Release 5.37.0
 

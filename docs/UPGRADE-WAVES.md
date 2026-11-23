@@ -1,4 +1,4 @@
-# Upgrade waves
+﻿# Upgrade waves
 
 This page is the execution order for majors. `versions.yaml` records the
 baseline; `platform/backend/app/version.py` (`APP_VERSION`) is the version of
@@ -16,7 +16,7 @@ Last reviewed: **2026-11-23**.
 | `versions.yaml` `release.version` | `5.37.1` | Last released line |
 | `versions.yaml` `development.version` | `5.38.0` | Next planned line |
 | `platform/frontend/package.json` | `5.37.1` | Frontend build metadata |
-| Signed tag | `v5.37.1` (pending) | Release evidence |
+| Signed tag | `v5.37.1` | Release evidence |
 
 Do not hand-maintain a second major line in these files. If a value disagrees,
 fix it before a release and run:

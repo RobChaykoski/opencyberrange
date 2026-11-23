@@ -1,12 +1,11 @@
-# Supported Versions
+﻿# Supported Versions
 
 This file records the platform baseline, the target for the latest-supported-GA
 upgrade, and the reason for every exception. It is the human-readable companion
 to `versions.yaml`.
 
 Last reviewed: **2026-11-23**. Current **platform release: 5.37.1**. Production is
-on the signed `v5.37.0` tag and will move to `v5.37.1` for the lab-permission
-fix. **Community /
+on the signed `v5.37.1` tag. **Community /
 Academic**, **Professional**, and **Enterprise** are edition profiles on that
 release, not separate platform version lines. **Community / Academic 1.1.3**
 remains a supported maintenance line for existing single-host installations. See
@@ -124,7 +123,7 @@ baseline; Wave 5 updates the runtime and Wave 1 updates the toolchain.
 
 The following remain on their current bases in this programme:
 
-- `platform/labs/**` — including ~148 Ubuntu 22.04 images, Alpine 3.18/3.19,
+- `platform/labs/**` â€” including ~148 Ubuntu 22.04 images, Alpine 3.18/3.19,
   PHP 8.1, MySQL 8.0, and Python 3.11 mock services.
 - `RangeBox/**`, `UbuntuBox/**`, `RemnuxBox/**`.
 

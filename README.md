@@ -1,6 +1,6 @@
-# SWOCTS Cyber Range
+﻿# SWOCTS Cyber Range
 
-> **Release 5 is the current release line (latest signed `v5.37.0`; development and production are on 5.37.0).**
+> **Release 5 is the current release line (latest signed `v5.37.1`; development and production are on 5.37.1).**
 >
 > **Edition: Community / Academic** (single-host, `lite` entitlement). The
 > Professional and Enterprise profiles are separate licence tiers built from the
@@ -99,8 +99,8 @@ See [ADR 0004](docs/decisions/0004-single-platform-release-version.md).
 | Edition profile | Platform release | State | Host OS | Purpose |
 |---|---|---|---|---|
 | **Community / Academic** | `Release 5` | **Supported** | Ubuntu 22.04 / 24.04 LTS | Single-host teaching platform; lab/workbook improvements, authoring, maintenance, and security |
-| **Professional** | `Release 5` | **Release profile — analytics preview** | Ubuntu 24.04 LTS | Community / Academic plus analytics, reporting, cohort analysis, competency evidence, accreditation support, and research exports |
-| **Enterprise** | `Release 5` | **Release profile — SSO** | Ubuntu 24.04 LTS | Professional plus HA, SSO/identity federation, enterprise reporting, and compliance reporting. Multi-tenancy remains deferred. |
+| **Professional** | `Release 5` | **Release profile â€” analytics preview** | Ubuntu 24.04 LTS | Community / Academic plus analytics, reporting, cohort analysis, competency evidence, accreditation support, and research exports |
+| **Enterprise** | `Release 5` | **Release profile â€” SSO** | Ubuntu 24.04 LTS | Professional plus HA, SSO/identity federation, enterprise reporting, and compliance reporting. Multi-tenancy remains deferred. |
 
 The Community / Academic profile remains the reference behaviour and the
 fallback. Professional is additive: the Community / Academic curriculum, learner
@@ -113,9 +113,9 @@ Release 5; multi-tenancy remains deferred. See the
 walkthrough with screenshots and the
 [pilot event runbook](docs/PILOT-EVENT-RUNBOOK.md) for the production session.
 
-The five Professional priorities — Competency Framework Engine, Student
+The five Professional priorities â€” Competency Framework Engine, Student
 Feedback Engine, Radar / Spider Web Reporting, Exercise Health Analytics, and
-Instructor Intervention Dashboard — are **Professional and Enterprise only**.
+Instructor Intervention Dashboard â€” are **Professional and Enterprise only**.
 They are not Community / Academic work.
 
 **Bug fixes and security updates continue on the Community / Academic 1.1.3
@@ -240,7 +240,7 @@ These are current, checkable counts from this repository and metrics the platfor
 | Breadth of hands-on practice | Runnable exercises, tracks, and levels | **214** lab definitions; **204** expose a workbook page |
 | Guided lab instruction | Workbook walkthroughs and analysis questions | **204 workbook-mapped labs**, with guided analysis sections and questions |
 | Supported practice | Hints available and hint usage recorded per completion | **500+ hints**; hints used are stored with each completion |
-| Automated verification | Per-lab validation checks and flag checks | **214 lab contracts**, each run through **10 checks × 3 clean runs** by `scripts/lab_harness.py`; flags are stored as hashes |
+| Automated verification | Per-lab validation checks and flag checks | **214 lab contracts**, each run through **10 checks Ã— 3 clean runs** by `scripts/lab_harness.py`; flags are stored as hashes |
 | Skill progression | Sequential level completion and level certificates | Level gates and **certificates for each completed level** |
 | Course delivery | Assignments, completion, course health, and feedback | Per-student completion, attempt, hint, time, and private feedback records |
 | Recognition | Achievement and event scoring signals | Completion, no-hint, first-attempt, speed, and first-blood signals |
@@ -359,7 +359,7 @@ finished what.
 
 **Administration.** Users, sessions, VPN peers and platform settings in one
 panel. The Users tab includes a portable **Import / Export Users** workflow for
-moving accounts between installations, and the System → Backups tab can create,
+moving accounts between installations, and the System â†’ Backups tab can create,
 download, upload, and restore snapshots, including a plain SQL snapshot from
 another installation. Every export requires a reason that is written to the
 audit log.
@@ -378,7 +378,7 @@ and a downloadable PDF transcript.
 issues a certificate with a deterministic ID, a verification QR code, and a
 print/PDF action. Certificates can be rendered in **Classic**, **Executive**,
 **Modern**, or **Minimal** designs. Choose one from the certificate page, or set
-the platform default in **Admin → Settings → General → Certificate Design**. The
+the platform default in **Admin â†’ Settings â†’ General â†’ Certificate Design**. The
 same profile view generates a PDF transcript containing certificates, every
 completed exercise, track progress, and course achievements.
 
@@ -462,7 +462,7 @@ the 12 published manifest tracks; the Metasploit track is counted in
 
 Recommended pathway:
 
-`BEG01` → `BEG02` → `BEG03` → `BEG04` → `NET00` → `NET01` → `NET01B` → `NET02` → `NET03` → `WEB01` → `WEB01B` → `WEB02` → `WEB02B` → `WEB03` → `SWSEC01` → `MAL01` → `MAL02` → `FOR01` → `FOR02` → `OSINT01` → `OSINT02` → `IAM01` → `OT01` → `OT02` → `AI01` → `WIN01` → `WIN02` → `WIN03` → `WIN04` → `WIN05` → `WIN06` → `WIN07` → `WIN08` → `WIN09` → `LIN01` → `LIN01B` → `LIN02` → `LIN02B` → `LIN03` → `LIN03B` → `LIN04` → `LIN05` → `LIN09`
+`BEG01` â†’ `BEG02` â†’ `BEG03` â†’ `BEG04` â†’ `NET00` â†’ `NET01` â†’ `NET01B` â†’ `NET02` â†’ `NET03` â†’ `WEB01` â†’ `WEB01B` â†’ `WEB02` â†’ `WEB02B` â†’ `WEB03` â†’ `SWSEC01` â†’ `MAL01` â†’ `MAL02` â†’ `FOR01` â†’ `FOR02` â†’ `OSINT01` â†’ `OSINT02` â†’ `IAM01` â†’ `OT01` â†’ `OT02` â†’ `AI01` â†’ `WIN01` â†’ `WIN02` â†’ `WIN03` â†’ `WIN04` â†’ `WIN05` â†’ `WIN06` â†’ `WIN07` â†’ `WIN08` â†’ `WIN09` â†’ `LIN01` â†’ `LIN01B` â†’ `LIN02` â†’ `LIN02B` â†’ `LIN03` â†’ `LIN03B` â†’ `LIN04` â†’ `LIN05` â†’ `LIN09`
 <!-- END GENERATED CURRICULUM INVENTORY -->
 
 ## Network Foundations stream
@@ -470,11 +470,11 @@ Recommended pathway:
 The **Network Security** track opens with a beginner **Network Foundations**
 level for students who have never used a terminal:
 
-- **Ping Basics** — reachability, latency, packet loss, and why a reply is not a
+- **Ping Basics** â€” reachability, latency, packet loss, and why a reply is not a
   service check.
-- **DNS Basics** — A, CNAME, MX, and TXT records, queried directly against an
+- **DNS Basics** â€” A, CNAME, MX, and TXT records, queried directly against an
   authoritative lab server.
-- **Name or Network?** — a troubleshooting capstone that separates a stale name
+- **Name or Network?** â€” a troubleshooting capstone that separates a stale name
   from a dead host and a stopped service.
 
 The matching workbook chapter is **CH N0 -- Network Foundations**.
@@ -484,16 +484,16 @@ The matching workbook chapter is **CH N0 -- Network Foundations**.
 The **AI Hacking** track starts with a beginner module, **AI Security
 Foundations**, containing three labs:
 
-- **Prompt Injection Basics** — override a mock assistant's hidden instructions.
-- **Jailbreak Policy Bypass** — move past a keyword filter with role-play and
+- **Prompt Injection Basics** â€” override a mock assistant's hidden instructions.
+- **Jailbreak Policy Bypass** â€” move past a keyword filter with role-play and
   authority framing.
-- **Indirect Prompt Injection** — plant instructions in a support ticket that a
+- **Indirect Prompt Injection** â€” plant instructions in a support ticket that a
   summariser reads.
 
 Each lab uses a deterministic, dependency-free mock assistant inside the lab
 network. No external model, API key, or internet access is required. The next
-levels — instruction hierarchy, RAG/data exposure, agent tool abuse, model
-supply chain, and an AI-assisted capstone — are defined in the curriculum and
+levels â€” instruction hierarchy, RAG/data exposure, agent tool abuse, model
+supply chain, and an AI-assisted capstone â€” are defined in the curriculum and
 will appear as their labs are published.
 
 ## OSINT stream
@@ -502,16 +502,16 @@ The **OSINT** track teaches students to work from the outside in. The target is
 **Kestrel Ridge**, a fictional company with a simulated intranet, a public
 employee badge, and a public code trail:
 
-- **The Public Footprint** — map a staff intranet, read `robots.txt`, and find a
+- **The Public Footprint** â€” map a staff intranet, read `robots.txt`, and find a
   flag in a review page's HTML source.
-- **Badge Photo Intelligence** — inspect PNG metadata, then extract a flag from
+- **Badge Photo Intelligence** â€” inspect PNG metadata, then extract a flag from
   the least-significant bits of the blue channel. The exercise ships with a
   dependency-free Python extractor, a browser-based extractor for shared or
   low-tooling devices, and also works with `zsteg`.
-- **The Developer's Trail** — fetch a static JavaScript asset and recover a
+- **The Developer's Trail** â€” fetch a static JavaScript asset and recover a
   staging token left in a developer comment. A bonus flag is in a reviewed local
   repository file; learners do not search GitHub for a real person.
-- **The Public Homepage** — read a reviewed offline mirror of a public homepage,
+- **The Public Homepage** â€” read a reviewed offline mirror of a public homepage,
   search its document metadata, and find the flag in the page head. The mirror
   is the only assessed target; the old live path is retired.
 
@@ -612,10 +612,10 @@ and do not alter real learner records. See
 The repository includes GitHub-native checks that need no third-party account
 or repository secret:
 
-- **Dependabot** — weekly dependency and Docker base-image update PRs.
-- **CodeQL** — Python and JavaScript/TypeScript static analysis.
-- **Trivy** — filesystem vulnerability, secret, and configuration scanning.
-- **Dependency audit** — `pip-audit` and `npm audit --omit=dev` on every pull
+- **Dependabot** â€” weekly dependency and Docker base-image update PRs.
+- **CodeQL** â€” Python and JavaScript/TypeScript static analysis.
+- **Trivy** â€” filesystem vulnerability, secret, and configuration scanning.
+- **Dependency audit** â€” `pip-audit` and `npm audit --omit=dev` on every pull
   request and weekly.
 
 Current status on `main`: `pip-audit` reports **0 packages with advisories**
@@ -641,14 +641,14 @@ need to be documented separately.
   an append-only PostgreSQL change ledger. Application writes are attributed to
   a user or a system job; direct SQL writes are recorded as `unattributed` and
   reported. The ledger has an immutable trigger and a broken-chain check. The
-  live ledger summary is in **Admin → System → Integrity**, and
+  live ledger summary is in **Admin â†’ System â†’ Integrity**, and
   `scripts/db-integrity-check.sh` with `deploy/systemd/` schedules the daily
   quality, ledger, and checksum evidence. See
   [Database integrity and change attribution](docs/DATABASE-INTEGRITY.md).
 - **Deleted-user resilience.** Enrollments, completions, quiz data, feedback,
   surveys, achievements, and celebrations cascade; optional creator/actor
   references are nulled. Courses block deletion until ownership is transferred.
-  Dashboards render “Deleted user / learner / participant” instead of breaking,
+  Dashboards render â€œDeleted user / learner / participantâ€ instead of breaking,
   and orphaned coaching notes are excluded from course-health counts.
 - **Supply-chain lock.** `supply-chain.lock.json` covers dependency, build,
   deployment, workflow, and lab inputs. CI verifies it, and install, update, and
@@ -679,7 +679,7 @@ Validation history:
 | 2.7.0 code scanning (11 November 2026) | **0 open alerts**; CI, CodeQL, Trivy, and Quality checks green |
 | 2.7.0 deployment smoke | Dev and prod on `2.7.0`, healthy; 164 labs; quiz banks, learning smoke, target reveal, and a non-Beginner lab verified |
 | 2.6.0 code scanning (10 November 2026) | **0 open alerts**; CI, CodeQL, Trivy, and Quality checks green |
-| 2.6.0 data integrity | **Admin → System → Integrity** live ledger summary; daily timer units in `deploy/systemd/` |
+| 2.6.0 data integrity | **Admin â†’ System â†’ Integrity** live ledger summary; daily timer units in `deploy/systemd/` |
 | 2.6.0 event certificates | Participation, placement, and trophy certificates; JSON and PDF; public verification, opt-out, `409`, and `403` tests pass |
 | 2.6.0 deployment smoke | Dev and prod on `2.6.0`, healthy, 162 labs discovered, event route present, no backend errors |
 | Development database quality (2.5.1) | **0 critical, 0 warning, 2 info** |
@@ -733,19 +733,19 @@ classrooms where not every student has the same hardware:
 - **No public ranking.** The Celebration Wall shows recent wins and the badges
   people are celebrating. It does not publish individual badge counts or ranks.
   Learners choose a real-name, username, or anonymous label, and can opt out via
-  “Show me on the wall”; opted-out users still see their own private corner.
+  â€œShow me on the wallâ€; opted-out users still see their own private corner.
   Other signed-in users can celebrate a win anonymously, one per person; only
   the count is shown. Admin diagnostic accounts are excluded.
 - **Data minimisation.** The wall exposes only a display name, the latest badge,
   a relative timestamp, and anonymous celebration counts. It does not expose
   email addresses, student IDs, avatars, or the identity of a celebrator.
 - **Optional surveys, explicit consent.** Platform and usage surveys are
-  off by default. Profile → **Surveys** shows the versioned privacy statement
+  off by default. Profile â†’ **Surveys** shows the versioned privacy statement
   before consent is recorded, keeps an append-only consent history, and allows
   withdrawal at any time. Survey consent covers platform feedback only; it does
   not permit collection of passwords, grades, lab flags, or sensitive personal
   data. See [Survey privacy and consent](docs/SURVEY-PRIVACY.md).
-- **Email consent and withdrawal.** Profile → **Privacy and data** explains why
+- **Email consent and withdrawal.** Profile â†’ **Privacy and data** explains why
   account email is collected, states that it is not marketing, and lets the
   learner withdraw consent to optional account email under PIPEDA. The consent
   version and update time are recorded. Essential security and service messages
@@ -820,12 +820,12 @@ building during a student spawn.
 - The default retention is **30 days**. `upgrade-from-backup.sh` copies the
   ledger into each backup and prunes older completed backups; use
   `--backup-retention-days N` to change the window or `0` to disable pruning.
-- **Cross-system restore.** Admin → System → Backups → **Restore from another
+- **Cross-system restore.** Admin â†’ System â†’ Backups â†’ **Restore from another
   system** accepts a plain `.sql` snapshot from another installation. A full
   restore replaces every account and record, including the signed-in
   administrator; take a local snapshot first. Use the portable user import to
   merge accounts without replacing the local administrators.
-- **Portable user migration.** Admin → Users → **Import / Export Users** writes
+- **Portable user migration.** Admin â†’ Users â†’ **Import / Export Users** writes
   a JSON export and imports it with a preview. Password hashes travel so users
   keep their passwords; MFA, trusted devices, VPN keys, sessions, and learning
   progress are excluded. Existing administrator accounts are never overwritten
@@ -872,10 +872,10 @@ building during a student spawn.
 
 ### Data deletion process
 
-- **Self-service:** Profile → **Privacy and data** → **Delete my account**.
+- **Self-service:** Profile â†’ **Privacy and data** â†’ **Delete my account**.
   The request requires the current password, a live TOTP or recovery code when
   MFA is enabled, and typing `DELETE`.
-- **Administrator:** Admin → Users → Delete requires typing the username and
+- **Administrator:** Admin â†’ Users â†’ Delete requires typing the username and
   uses the same erasure service.
 - Deletion removes identity and credential data, the WireGuard peer and keys,
   enrolments, completions, flag and quiz attempts, achievements, event
@@ -1033,39 +1033,39 @@ work and is not part of the Release 4 release gate.
 
 ```
 opencyberrange/
-├── platform/
-│   ├── backend/          # FastAPI app, migrations, curriculum and lab scripts
-│   ├── frontend/         # Vue 3 SPA and nginx; wiki served from wiki_data
-│   ├── db/               # PostgreSQL init and password bootstrap
-│   ├── labs/             # Exercise library (organized by track)
-│   ├── rangebox/         # RangeBox container build
-│   ├── templates/        # Exercise Studio template catalog
-│   ├── tester/           # Exercise tester module
-│   ├── wiki-builder/     # MkDocs builder image for the wiki_data volume
-│   ├── certs/            # Local TLS certificates (not committed)
-│   ├── docker-compose.prod.yml
-│   └── .env.example      # Environment variable template
-├── docs/                 # Architecture, analytics, privacy, research, release docs
-├── Manual-Lite/          # Deployment, student, instructor, and admin guides
-├── Workbook/             # Student walkthroughs (MkDocs source)
-├── RangeBox/             # Kali in-browser desktop image source
-├── UbuntuBox/            # Ubuntu in-browser desktop image source
-├── RemnuxBox/            # REMnux in-browser desktop image source
-├── scripts/              # Setup, deployment, backup, and lab validation tools
-├── tools/                # Wiki generation and maintenance tools
-├── wiki-overrides/       # MkDocs theme overrides
-├── .github/              # CI, CodeQL, Dependabot, and Trivy workflows
-├── .opencode/            # Project-local design and authoring skills
-├── mkdocs-*.yml          # Per-track workbook build configuration
-├── versions.yaml         # Runtime, dependency, and image pins
-├── wikis.yaml            # Workbook wiki registry
-├── BUILD_NOTICE.md       # Updated-build provenance, attribution, and AI disclosure
-├── BRANDING.md           # SWOCTS/OpenCyberRange marks and ownership
-├── THIRD_PARTY_NOTICES.md # Third-party licence inventory and attribution checklist
-├── THIRD_PARTY_LICENSES/  # Notice-sensitive licence texts
-├── RELEASE_NOTES.md      # Current release notes
-├── CHANGELOG.md          # Release and change history
-└── CONTRIBUTING.md       # Contributor guidelines
+â”œâ”€â”€ platform/
+â”‚   â”œâ”€â”€ backend/          # FastAPI app, migrations, curriculum and lab scripts
+â”‚   â”œâ”€â”€ frontend/         # Vue 3 SPA and nginx; wiki served from wiki_data
+â”‚   â”œâ”€â”€ db/               # PostgreSQL init and password bootstrap
+â”‚   â”œâ”€â”€ labs/             # Exercise library (organized by track)
+â”‚   â”œâ”€â”€ rangebox/         # RangeBox container build
+â”‚   â”œâ”€â”€ templates/        # Exercise Studio template catalog
+â”‚   â”œâ”€â”€ tester/           # Exercise tester module
+â”‚   â”œâ”€â”€ wiki-builder/     # MkDocs builder image for the wiki_data volume
+â”‚   â”œâ”€â”€ certs/            # Local TLS certificates (not committed)
+â”‚   â”œâ”€â”€ docker-compose.prod.yml
+â”‚   â””â”€â”€ .env.example      # Environment variable template
+â”œâ”€â”€ docs/                 # Architecture, analytics, privacy, research, release docs
+â”œâ”€â”€ Manual-Lite/          # Deployment, student, instructor, and admin guides
+â”œâ”€â”€ Workbook/             # Student walkthroughs (MkDocs source)
+â”œâ”€â”€ RangeBox/             # Kali in-browser desktop image source
+â”œâ”€â”€ UbuntuBox/            # Ubuntu in-browser desktop image source
+â”œâ”€â”€ RemnuxBox/            # REMnux in-browser desktop image source
+â”œâ”€â”€ scripts/              # Setup, deployment, backup, and lab validation tools
+â”œâ”€â”€ tools/                # Wiki generation and maintenance tools
+â”œâ”€â”€ wiki-overrides/       # MkDocs theme overrides
+â”œâ”€â”€ .github/              # CI, CodeQL, Dependabot, and Trivy workflows
+â”œâ”€â”€ .opencode/            # Project-local design and authoring skills
+â”œâ”€â”€ mkdocs-*.yml          # Per-track workbook build configuration
+â”œâ”€â”€ versions.yaml         # Runtime, dependency, and image pins
+â”œâ”€â”€ wikis.yaml            # Workbook wiki registry
+â”œâ”€â”€ BUILD_NOTICE.md       # Updated-build provenance, attribution, and AI disclosure
+â”œâ”€â”€ BRANDING.md           # SWOCTS/OpenCyberRange marks and ownership
+â”œâ”€â”€ THIRD_PARTY_NOTICES.md # Third-party licence inventory and attribution checklist
+â”œâ”€â”€ THIRD_PARTY_LICENSES/  # Notice-sensitive licence texts
+â”œâ”€â”€ RELEASE_NOTES.md      # Current release notes
+â”œâ”€â”€ CHANGELOG.md          # Release and change history
+â””â”€â”€ CONTRIBUTING.md       # Contributor guidelines
 ```
 
 ## Documentation
