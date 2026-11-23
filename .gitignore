@@ -127,3 +127,6 @@ platform/lab-images/
 *.esd
 *.vdi
 *.img
+
+deploy/monitoring/prometheus/targets/local/*.yml
+!deploy/monitoring/prometheus/targets/local/README.md

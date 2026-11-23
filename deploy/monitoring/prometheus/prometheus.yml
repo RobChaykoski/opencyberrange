@@ -31,6 +31,7 @@ scrape_configs:
     file_sd_configs:
       - files:
           - /etc/prometheus/targets/nodes.yml
+          - /etc/prometheus/targets/local/nodes.yml
         refresh_interval: 60s
 
   - job_name: blackbox-http
@@ -40,6 +41,7 @@ scrape_configs:
     file_sd_configs:
       - files:
           - /etc/prometheus/targets/http.yml
+          - /etc/prometheus/targets/local/http.yml
         refresh_interval: 60s
     relabel_configs:
       - source_labels: [__address__]
@@ -56,6 +58,7 @@ scrape_configs:
     file_sd_configs:
       - files:
           - /etc/prometheus/targets/http-insecure.yml
+          - /etc/prometheus/targets/local/http-insecure.yml
         refresh_interval: 60s
     relabel_configs:
       - source_labels: [__address__]
@@ -72,6 +75,7 @@ scrape_configs:
     file_sd_configs:
       - files:
           - /etc/prometheus/targets/tcp.yml
+          - /etc/prometheus/targets/local/tcp.yml
         refresh_interval: 60s
     relabel_configs:
       - source_labels: [__address__]
