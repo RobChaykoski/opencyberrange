@@ -47,6 +47,7 @@ services:
       - --storage.path=/alertmanager
     volumes:
       - ./alertmanager:/etc/alertmanager:ro
+      - ${ALERTMANAGER_CONFIG:-./alertmanager/alertmanager.yml}:/etc/alertmanager/alertmanager.yml:ro
       - alertmanager_data:/alertmanager
     ports:
       - "127.0.0.1:9093:9093"

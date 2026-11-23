@@ -146,6 +146,20 @@ The repository contains a placeholder, not a live URL. Alert routing:
 Test the path by stopping one target and confirming a page. A dashboard that
 has never alerted is an assumption.
 
+### Email receiver
+
+For an email receiver, keep the real config and SMTP password out of git:
+
+```bash
+# create alertmanager/alertmanager.local.yml with smtp_* and email_configs
+# then set in .env
+ALERTMANAGER_CONFIG=./alertmanager/alertmanager.local.yml
+docker compose up -d alertmanager
+```
+
+`alertmanager.local.yml` is gitignored. Do not put the SMTP password in the
+tracked `alertmanager.yml`.
+
 ## External watchdog
 
 The dashboard cannot detect its own host failure. Configure an external uptime
