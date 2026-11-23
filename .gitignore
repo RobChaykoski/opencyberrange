@@ -132,3 +132,5 @@ deploy/monitoring/prometheus/targets/local/*.yml
 !deploy/monitoring/prometheus/targets/local/README.md
 
 deploy/monitoring/alertmanager/alertmanager.local.yml
+
+deploy/monitoring/alertmanager/smtp_password

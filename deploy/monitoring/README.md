@@ -151,14 +151,17 @@ has never alerted is an assumption.
 For an email receiver, keep the real config and SMTP password out of git:
 
 ```bash
-# create alertmanager/alertmanager.local.yml with smtp_* and email_configs
+# create alertmanager/alertmanager.local.yml with smtp_* and email_configs,
+# using smtp_auth_password_file: /run/secrets/smtp_password
+# create alertmanager/smtp_password with the SMTP password (mode 600)
 # then set in .env
 ALERTMANAGER_CONFIG=./alertmanager/alertmanager.local.yml
+ALERTMANAGER_SMTP_PASSWORD_FILE=./alertmanager/smtp_password
 docker compose up -d alertmanager
 ```
 
-`alertmanager.local.yml` is gitignored. Do not put the SMTP password in the
-tracked `alertmanager.yml`.
+`alertmanager.local.yml` and `smtp_password` are gitignored. Do not put the
+SMTP password in the tracked `alertmanager.yml`.
 
 ## External watchdog
 

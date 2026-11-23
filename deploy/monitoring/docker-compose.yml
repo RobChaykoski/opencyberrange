@@ -49,6 +49,8 @@ services:
       - ./alertmanager:/etc/alertmanager:ro
       - ${ALERTMANAGER_CONFIG:-./alertmanager/alertmanager.yml}:/etc/alertmanager/alertmanager.yml:ro
       - alertmanager_data:/alertmanager
+    secrets:
+      - smtp_password
     ports:
       - "127.0.0.1:9093:9093"
     restart: unless-stopped
@@ -146,3 +148,7 @@ volumes:
   prometheus_data:
   alertmanager_data:
   grafana_data:
+
+secrets:
+  smtp_password:
+    file: ${ALERTMANAGER_SMTP_PASSWORD_FILE:-./alertmanager/smtp_password.example}
