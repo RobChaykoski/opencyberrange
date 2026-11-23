@@ -1,0 +1,28 @@
+# node_exporter agent for one monitored host.
+#
+# Run this on each platform, edge, identity, data, and lab host. It exposes only
+# the host metrics that the central monitoring instance scrapes. The port must
+# be reachable from the monitoring host only; do not publish 9100 publicly.
+#
+#   cd deploy/monitoring/agent
+#   cp .env.example .env
+#   chmod 600 .env
+#   docker compose up -d
+
+name: ocr-monitoring-agent
+
+services:
+  node-exporter:
+    image: prom/node-exporter:v1.9.1@sha256:d00a542e409ee618a4edc67da14dd48c5da66726bbd5537ab2af9c1dfc442c8a
+    container_name: ocr-monitoring-node-exporter
+    command:
+      - --path.rootfs=/host
+      - --collector.filesystem.mount-points-exclude=^/(dev|proc|sys|var/lib/docker/.+)($|/)
+    pid: host
+    volumes:
+      - /:/host:ro,rslave
+    ports:
+      - "${NODE_EXPORTER_BIND:?set NODE_EXPORTER_BIND to the private management address}:9100:9100"
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true

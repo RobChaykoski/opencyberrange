@@ -81,9 +81,10 @@ Grafana is at `http://127.0.0.1:3000` until NPM publishes it.
 
 ## Add hosts
 
-On each monitored Linux host, run `node_exporter` on a private management
-address and allow only the monitoring host to reach port 9100. Then add the
-address to `prometheus/targets/nodes.yml` and reload:
+On each Linux host, run the agent in [`agent/`](agent/README.md). It exposes
+`node_exporter` on a private management address. Allow only the monitoring host
+to reach port 9100, then add the address to `prometheus/targets/nodes.yml` and
+reload:
 
 ```bash
 curl -X POST http://127.0.0.1:9090/-/reload
