@@ -140,7 +140,7 @@ Locate and view the flag file on the system.
 
 4. **Expected flag content:**
    ```
-   OCR{w1nrm_brut3}
+   <flag>
    ```
 
 5. **Copy flag:**
@@ -158,7 +158,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{w1nrm_brut3}
+<flag>
 ```
 
 **Verification checklist:**

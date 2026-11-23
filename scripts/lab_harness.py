@@ -123,7 +123,8 @@ def validate_manifest(manifest: dict, manifest_path: Path) -> list[str]:
         errors.append(f"{manifest_path.name}: source lab.yaml not found")
         return errors
     lab = load_lab(lab_dir)
-    if str(lab.get("flag") or "") != str(manifest.get("expected_flag") or ""):
+    expected = str(manifest.get("expected_flag") or "")
+    if expected not in ("", "{flag}") and str(lab.get("flag") or "") != expected:
         errors.append(f"{manifest_path.name}: expected_flag differs from lab.yaml")
 
     services = manifest.get("expected_services")
@@ -570,7 +571,7 @@ def _run_steps(
             checks.append(Check(name, False, "timed out after 90s"))
             continue
         output += result.stdout + "\n" + result.stderr + "\n"
-        expected = str(step.get("expect") or "")
+        expected = str(step.get("expect") or "").replace("{flag}", flag)
         passed = result.returncode == 0 and (not expected or expected in output)
         detail = "" if passed else (
             f"exit={result.returncode}; expected {expected!r}; "
@@ -634,6 +635,9 @@ def run_one(lab: dict, manifest: dict, args: argparse.Namespace, run_index: int)
     project = f"ocr-harness-{manifest['lab_id']}-{run_index}-{int(time.time())}"[:63]
     solver_name = f"{project}-solver"[:63]
     checks: list[Check] = []
+    expected_flag = str(manifest.get("expected_flag") or "")
+    if expected_flag == "{flag}":
+        expected_flag = str(lab.get("flag") or "")
     temp_dir = Path(tempfile.mkdtemp(prefix="ocr-lab-harness-"))
     solver_started = False
     topology_override: Path | None = None
@@ -712,7 +716,7 @@ def run_one(lab: dict, manifest: dict, args: argparse.Namespace, run_index: int)
                 containers, project, list(manifest["forbidden_networks"])
             )
         )
-        checks.append(_static_flag_check(lab_dir, manifest.get("expected_flag") or ""))
+        checks.append(_static_flag_check(lab_dir, expected_flag))
 
         credentials = _credentials(lab)
         steps = (manifest.get("solver") or {}).get("steps") or []
@@ -722,13 +726,13 @@ def run_one(lab: dict, manifest: dict, args: argparse.Namespace, run_index: int)
                 steps,
                 targets,
                 credentials,
-                manifest.get("expected_flag") or "",
+                expected_flag,
             )
             checks.extend(step_checks)
             checks.append(
                 _flag_validation(
                     output,
-                    manifest.get("expected_flag") or "",
+                    expected_flag,
                     int(manifest.get("expected_flag_count") or 0),
                 )
             )

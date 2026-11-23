@@ -1,6 +1,6 @@
 # SWOCTS Cyber Range
 
-> **Release 5 is the current release line (latest signed `v5.34.0`).**
+> **Release 5 is the current release line (latest signed `v5.35.0`).**
 >
 > **Edition: Community / Academic** (single-host, `lite` entitlement). The
 > Professional and Enterprise profiles are separate licence tiers built from the
@@ -34,7 +34,7 @@
 
 [![Platform](https://img.shields.io/badge/platform-Release%205-8b5cf6)](RELEASE_NOTES.md)
 [![Maintenance](https://img.shields.io/badge/community-1.1.3%20maintenance-blue)](docs/SUPPORTED-VERSIONS.md)
-[![Labs](https://img.shields.io/badge/labs-211-blue)](platform/labs/)
+[![Labs](https://img.shields.io/badge/labs-214-blue)](platform/labs/)
 [![Tracks](https://img.shields.io/badge/tracks-12-green)](platform/labs/)
 [![Platform](https://img.shields.io/badge/platform-Docker%20%2B%20WireGuard-orange)](Manual-Lite/00_Server_Deployment/06_Architecture.md)
 [![License](https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-blue)](LICENSE)
@@ -237,19 +237,19 @@ These are current, checkable counts from this repository and metrics the platfor
 
 | Outcome | How it is measured | Baseline in this repository |
 |---|---|---|
-| Breadth of hands-on practice | Runnable exercises, tracks, and levels | **211** lab definitions; **201** expose a workbook page |
-| Guided lab instruction | Workbook walkthroughs and analysis questions | **201 workbook-mapped labs**, with guided analysis sections and questions |
+| Breadth of hands-on practice | Runnable exercises, tracks, and levels | **214** lab definitions; **204** expose a workbook page |
+| Guided lab instruction | Workbook walkthroughs and analysis questions | **204 workbook-mapped labs**, with guided analysis sections and questions |
 | Supported practice | Hints available and hint usage recorded per completion | **500+ hints**; hints used are stored with each completion |
-| Automated verification | Per-lab validation checks and flag checks | **213 lab contracts**, each run through **10 checks × 3 clean runs** by `scripts/lab_harness.py`; flags are stored as hashes |
+| Automated verification | Per-lab validation checks and flag checks | **214 lab contracts**, each run through **10 checks × 3 clean runs** by `scripts/lab_harness.py`; flags are stored as hashes |
 | Skill progression | Sequential level completion and level certificates | Level gates and **certificates for each completed level** |
 | Course delivery | Assignments, completion, course health, and feedback | Per-student completion, attempt, hint, time, and private feedback records |
 | Recognition | Achievement and event scoring signals | Completion, no-hint, first-attempt, speed, and first-blood signals |
 | Learner evidence | Profile, transcript, and reports | PDF transcript, completion matrix, and per-course reports |
 | Session isolation | Network separation per learner | One `/24` per session plus WireGuard access |
 
-The badge counts every `lab.yaml` under `platform/labs` (**211** today). A
-running deployment registers all **211** after discovery, and the generated
-table below lists the **201** that have a workbook page. See [Lab and content
+The badge counts every `lab.yaml` under `platform/labs` (**214** today). A
+running deployment registers all **214** after discovery, and the generated
+table below lists the **204** that have a workbook page. See [Lab and content
 counts](docs/COUNTS.md) for the exact definitions.
 
 ### Release and repositories
@@ -433,11 +433,11 @@ Regenerate with `python scripts/generate-curriculum-docs.py`; CI can use
 | `osint` | OSINT | Beginner-to-intermediate learners who want public-source investigation skills. | beginner | NET00 | 8 | 4h 05m | published |
 | `identity` | Identity & Access | Intermediate learners interested in authentication, federation, and account lifecycle. | intermediate | NET00 | 3 | 2h 15m | published |
 | `ot` | OT/ICS Security | Intermediate learners interested in industrial control systems and Modbus. | intermediate | NET00 | 2 | 1h 25m | published |
-| `ai` | AI Hacking | Intermediate learners exploring prompt injection, policy bypass, and AI-assisted security. | intermediate | WEB02 | 3 | 1h 50m | published |
+| `ai` | AI Hacking | Intermediate learners exploring prompt injection, policy bypass, agent hijacking, and AI-assisted security. | intermediate | WEB02 | 5 | 4h 15m | published |
 | `winpt` | Windows Penetration Testing | Intermediate learners who have completed the beginner pathway or have equivalent terminal and networking experience. | intermediate | BEG04, NET00 | 51 | 102h 00m | published |
 | `linpt` | Linux Fundamentals | Intermediate learners building Linux enumeration, SSH access, privilege escalation, and detection skills. | intermediate | WIN09 | 30 | 38h 45m | published |
 
-**Total:** 201 workbook-mapped exercises across 13 tracks.
+**Total:** 204 workbook-mapped exercises across 13 tracks.
 
 Recommended pathway:
 

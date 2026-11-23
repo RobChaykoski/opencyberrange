@@ -29,7 +29,7 @@ Declared in `template.yaml` under `cosmetic_schema`:
 |-----------------------|-----------------------|
 | `CRED_ssh-user_USER`  | `webadmin`            |
 | `CRED_ssh-user_PASS`  | `WebServer2024#`      |
-| `FLAG`                | `OCR{f1l3_d1sc0v3ry}` |
+| `FLAG`                | `<flag>` |
 
 The hyphenated credential env vars are read with `printenv` because they are not
 valid POSIX shell identifiers. All passwords use `#`, never `!` (bash history

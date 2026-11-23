@@ -142,7 +142,7 @@ Includes: Names, DOB, SSN, diagnoses, medications
 
 Access credentials for the backup server:
 Username: backup_admin
-Password: OCR{smtp_d4t4_3xf1ltr4t10n}    <-- FLAG!
+Password: <flag>    <-- FLAG!
 
 Database dump attached (see file share link)
 https://filestorage.external.com/share/Ab7Yx23K
@@ -154,7 +154,7 @@ Let me know if you need anything else.
 250 OK
 ```
 
-**Flag**: `OCR{smtp_d4t4_3xf1ltr4t10n}`
+**Flag**: `<flag>`
 
 ## Key Takeaways
 

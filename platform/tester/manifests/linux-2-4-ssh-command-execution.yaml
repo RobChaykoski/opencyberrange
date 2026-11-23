@@ -20,9 +20,9 @@ solver:
     expect: SSH
   - name: SSH login and retrieve flag from environment variable
     command: sshpass -p '{cred.ssh-user.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.ssh-user.user}@{target.target} 'env | grep OCR 2>/dev/null || echo $SECURITY_ASSESSMENT_FLAG' 2>&1
-    expect: OCR{cmd_3x3c}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{cmd_3x3c}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

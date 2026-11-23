@@ -28,9 +28,9 @@ solver:
     expect: '403'
   - name: The supported item reveals the training token
     command: curl -s 'http://{target.portal}:8080/verify?id=river-cleanup' | grep -o 'OCR{[^}]*}'
-    expect: OCR{provenance_beats_visual_tells}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{provenance_beats_visual_tells}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

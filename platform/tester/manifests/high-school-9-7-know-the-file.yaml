@@ -28,9 +28,9 @@ solver:
     expect: OCR{d3c0y_n0t_th3_r34l_fl4g}
   - name: Extracting the archive reveals the real token
     command: curl -s http://{target.portal}:8080/downloads/event-photo.png | python3 -c 'import sys,io,zipfile; print(zipfile.ZipFile(io.BytesIO(sys.stdin.buffer.read())).read("token.txt").decode())' | grep -o 'OCR{[^}]*}'
-    expect: OCR{extensions_are_labels_not_evidence}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{extensions_are_labels_not_evidence}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

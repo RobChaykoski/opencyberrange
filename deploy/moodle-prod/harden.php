@@ -14,7 +14,8 @@ require('/bitnami/moodle/config.php');
 global $DB;
 
 $siteUrl = getenv('MOODLE_SITE_URL') ?: '';
-if (str_contains($siteUrl, 'ctfd.swocts.com')) {
+$platformHost = getenv('OCR_PUBLIC_HOST') ?: 'platform.example.com';
+if ($platformHost !== '' && str_contains($siteUrl, $platformHost)) {
     fwrite(STDERR, "REFUSING: this is the OpenCyberRange host, not the Moodle site URL\n");
     exit(2);
 }

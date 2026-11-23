@@ -125,7 +125,7 @@ Once connected via RDP, locate and view the flag file.
 
 6. **Expected flag content:**
    ```
-   OCR{rdp_m4nu4l_c0nn3ct}
+   <flag>
    ```
 
 7. **Copy flag to clipboard:**
@@ -139,7 +139,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{rdp_m4nu4l_c0nn3ct}
+<flag>
 ```
 
 **Verification checklist:**

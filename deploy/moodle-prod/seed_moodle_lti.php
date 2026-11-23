@@ -29,7 +29,7 @@ require_once($CFG->dirroot . '/course/lib.php');
 global $DB;
 
 $clientId = trim(getenv('MOODLE_LTI_CLIENT_ID') ?: 'ocr-training-client');
-$ocrBase = rtrim(getenv('OCR_PUBLIC_URL') ?: 'https://172.16.16.44', '/');
+$ocrBase = rtrim(getenv('OCR_PUBLIC_URL') ?: 'https://platform.example.com', '/');
 $ocrInternal = rtrim(getenv('OCR_INTERNAL_URL') ?: $ocrBase, '/');
 $courseShortname = getenv('MOODLE_LTI_COURSE') ?: 'OCR-CAP-COHORT';
 $courseToolName = getenv('MOODLE_LTI_COURSE_TOOL_NAME') ?: 'OpenCyberRange Showcase';

@@ -20,9 +20,9 @@ solver:
     expect: /var/www/html/private/flag.txt
   - name: Flag file in private directory
     command: curl -s http://{target.webserver}/private/flag.txt
-    expect: OCR{c0mpr3h3ns1v3_r3c0n_b4s1c}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{c0mpr3h3ns1v3_r3c0n_b4s1c}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

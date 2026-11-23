@@ -25,7 +25,7 @@ curl -s -X POST \
   http://assistant.lab:8080/api/chat
 ```
 
-The response contains `OCR{pr0mpt_1nj3ct10n_syst3m_l34k}`.
+The response contains `<flag>`.
 
 ## Why it works
 

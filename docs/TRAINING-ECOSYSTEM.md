@@ -8,8 +8,8 @@ It is not a production integration. It is not a data pipeline. It is a lab.
 
 ## Hard rules
 
-- Run it on the **development host** (`172.16.16.44`) or a developer workstation.
-  Never deploy it on the production host (`172.16.16.41`).
+- Run it on the **development host** (`<dev-host-ip>`) or a developer workstation.
+  Never deploy it on the production host (`<prod-host-ip>`).
 - Load **fake users, fake courses, fake assets, and fake endpoint data** only.
 - No production SMTP, no production SSO, no production API tokens, no production
   database dumps, no patient, learner, or employee records.
@@ -45,18 +45,18 @@ dev host, so the training seed fetches OpenIAM but does not start it.
 
 ## Current dev deployment
 
-The stack is deployed on the development host (`172.16.16.44`) with lab-only
+The stack is deployed on the development host (`<dev-host-ip>`) with lab-only
 credentials and synthetic data. Ports bind to the dev host IP so the dev range
 and learner machines can reach them:
 
 | Service | URL |
 |---|---|
-| Moodle | `http://172.16.16.44:8091/` |
-| Moodle (dev TLS) | `https://moodle.172.16.16.44.sslip.io:9443/` |
-| Authentik | `http://172.16.16.44:9000/` |
-| NetBox | `http://172.16.16.44:8083/` |
-| Ralph | `http://172.16.16.44:8084/` |
-| Fleet | `http://172.16.16.44:8082/` |
+| Moodle | `http://<dev-host-ip>:8091/` |
+| Moodle (dev TLS) | `https://<moodle-dev-host>:9443/` |
+| Authentik | `http://<dev-host-ip>:9000/` |
+| NetBox | `http://<dev-host-ip>:8083/` |
+| Ralph | `http://<dev-host-ip>:8084/` |
+| Fleet | `http://<dev-host-ip>:8082/` |
 
 Validated on 19 November 2026 with Moodle 5.0.1, Authentik 2026.8.5,
 NetBox, Ralph, and Fleet. The validator reported all checks passing on both the
@@ -100,7 +100,7 @@ First-run notes:
 The `tls` profile adds Caddy on 9443 in front of Moodle. It uses Caddy's
 internal CA, so browsers and services must trust that CA; the certificate is not
 publicly trusted. Set `MOODLE_TLS_HOST` to the host learners and the dev range
-use (for example `172.16.16.44`) and keep the port on the dev network.
+use (for example `<dev-host-ip>`) and keep the port on the dev network.
 
 Moodle is configured with `MOODLE_REVERSEPROXY=yes` and `MOODLE_SSLPROXY=yes`, so
 its generated URLs use `https` when Caddy forwards `X-Forwarded-Proto: https`.
@@ -173,10 +173,10 @@ instructor workflow, scenario packs, and reset steps.
 
 ## Linking to the development cyber range
 
-The development OpenCyberRange instance is at `172.16.16.44`. Integration is
+The development OpenCyberRange instance is at `<dev-host-ip>`. Integration is
 **dev-to-dev only**:
 
-1. Set `MOODLE_BIND=172.16.16.44` (or the dev host IP) in the training `.env` so
+1. Set `MOODLE_BIND=<dev-host-ip>` (or the dev host IP) in the training `.env` so
    the dev range can reach Moodle, or run the stack on the same host.
 2. Register the OCR dev instance as an LTI/external tool in Moodle.
 3. Register the training Moodle as an OIDC client in Authentik, then use that
@@ -245,10 +245,10 @@ Field map:
 
 | Side | Setting | Value |
 |---|---|---|
-| Moodle tool | Tool URL | `https://<ocr-dev-host>/api/lti/launch` |
-| Moodle tool | Initiate login URL | `https://<ocr-dev-host>/api/lti/login` |
-| Moodle tool | Public keyset URL | `https://<ocr-dev-host>/api/lti/jwks` |
-| Moodle tool | Redirection URI | `https://<ocr-dev-host>/api/lti/launch` |
+| Moodle tool | Tool URL | `https://<<dev-host>-host>/api/lti/launch` |
+| Moodle tool | Initiate login URL | `https://<<dev-host>-host>/api/lti/login` |
+| Moodle tool | Public keyset URL | `https://<<dev-host>-host>/api/lti/jwks` |
+| Moodle tool | Redirection URI | `https://<<dev-host>-host>/api/lti/launch` |
 | OCR platform | Issuer | Moodle site URL |
 | OCR platform | Auth login URL | `<moodle>/mod/lti/auth.php` |
 | OCR platform | Token URL | `<moodle>/mod/lti/token.php` |
@@ -257,7 +257,7 @@ Field map:
 | OCR platform | Deployment ID | Moodle tool type id |
 
 LTI 1.3 expects HTTPS. The dev host uses
-`https://moodle.172.16.16.44.sslip.io:9443`; set `MOODLE_TLS_HOST` to a
+`https://<moodle-dev-host>:9443`; set `MOODLE_TLS_HOST` to a
 hostname that resolves to the dev host. Do not expose it publicly.
 
 ## Validate

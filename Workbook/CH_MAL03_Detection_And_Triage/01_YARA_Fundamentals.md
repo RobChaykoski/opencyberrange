@@ -42,7 +42,7 @@ Expected: only `report.txt` matches. The invoice and notes are controls.
 cat /samples/report.txt
 ```
 
-Expected: `OCR{y4r4_rul3s_4nd_3v1d3nc3}`.
+Expected: `<flag>`.
 
 ## Analysis
 

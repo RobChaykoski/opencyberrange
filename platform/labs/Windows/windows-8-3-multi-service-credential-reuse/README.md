@@ -164,7 +164,7 @@ The flag is located at `/tmp/private/flag.txt` and can be retrieved via SSH usin
 
 4. **Expected flag content:**
    ```
-   OCR{cr3d_r3us3_mult1}
+   <flag>
    ```
 
 5. **Copy flag:**
@@ -177,7 +177,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{cr3d_r3us3_mult1}
+<flag>
 ```
 
 **Verification checklist:**

@@ -104,7 +104,7 @@ grep "SentinelBreaker" /var/log/nginx/access.log | head -1
 ### Step 8: Assemble Flag
 
 ```
-OCR{d3t3ct_rul3_wr1t3r}
+<flag>
 ```
 
 ## Common Mistakes

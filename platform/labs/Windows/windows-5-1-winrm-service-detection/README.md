@@ -205,7 +205,7 @@ Once connected via SSH, navigate to the flag file location.
 
    **Expected output:**
    ```
-   OCR{w1nrm_d3t3ct}
+   <flag>
    ```
 
 5. **Alternative: Search for flag:**
@@ -225,7 +225,7 @@ Extract the flag and disconnect from the SSH session.
    ```
 
 2. **Copy the flag:**
-   - Select the flag text: `OCR{w1nrm_d3t3ct}`
+   - Select the flag text: `<flag>`
    - Copy to clipboard (Ctrl+Shift+C in terminal)
 
 3. **Exit SSH session:**
@@ -245,7 +245,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{w1nrm_d3t3ct}
+<flag>
 ```
 
 **Verification checklist:**

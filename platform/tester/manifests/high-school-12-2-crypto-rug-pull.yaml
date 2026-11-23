@@ -28,9 +28,9 @@ solver:
     expect: '404'
   - name: The drained wallet reveals the case token
     command: curl -s 'http://{target.portal}:8080/case?wallet=0x9f2c4a7b1e5d8c3f6a2b9d0e4c7f1a8b3d6e9c2f' | grep -o 'OCR{[^}]*}'
-    expect: OCR{follow_the_liquidity_not_the_hype}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{follow_the_liquidity_not_the_hype}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

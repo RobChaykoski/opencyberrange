@@ -151,7 +151,7 @@ Use the discovered password to connect via RDP and retrieve the flag.
 
 6. **Expected flag content:**
    ```
-   OCR{rdp_brut3_f0rc3}
+   <flag>
    ```
 
 7. **Copy flag:**
@@ -164,7 +164,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{rdp_brut3_f0rc3}
+<flag>
 ```
 
 **Verification checklist:**

@@ -15,7 +15,7 @@ Set the public origin the browser and the backend will use. It must match the
 URL in the browser, including a non-default port:
 
 ```bash
-export PUBLIC_BASE_URL="https://172.16.16.44"
+export PUBLIC_BASE_URL="https://platform.example.com"
 ```
 
 ## Generate the Dex configuration

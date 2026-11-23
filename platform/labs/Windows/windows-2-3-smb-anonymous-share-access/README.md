@@ -142,7 +142,7 @@ Download the flag file from the anonymous share.
 
    **Expected flag content:**
    ```
-   OCR{smb_4n0n_sh4r3}
+   <flag>
    ```
 
 **Troubleshooting:**
@@ -156,7 +156,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{smb_4n0n_sh4r3}
+<flag>
 ```
 
 **Verification checklist:**

@@ -39,10 +39,10 @@ solver:
     command: sshpass -p '{cred.webadmin.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.webadmin.user}@{target.target} 'grep -o "SentinelBreaker/[a-zA-Z0-9_]*" /var/log/nginx/access.log | head -1 | cut -d/ -f2' 2>&1
     expect: wr1t3r
   - name: Assemble and verify complete flag
-    command: echo 'OCR{d3t3ct_rul3_wr1t3r}'
-    expect: OCR{d3t3ct_rul3_wr1t3r}
+    command: echo '{flag}'
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{d3t3ct_rul3_wr1t3r}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

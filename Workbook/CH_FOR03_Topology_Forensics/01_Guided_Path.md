@@ -48,7 +48,7 @@ status:
 wget -qO- http://<case-svc-link-address>/flag
 ```
 
-Expected: `OCR{f0r3ns1c_p4th_gu1d3d}`.
+Expected: `<flag>`.
 
 ## Step 5: Record the path
 

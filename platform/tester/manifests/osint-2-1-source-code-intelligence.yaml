@@ -22,9 +22,9 @@ solver:
     expect: '200'
   - name: Flag is present in a JavaScript comment
     command: curl -s http://{target.intranet}:8080/static/app.js | grep -o 'OCR{[^}]*}'
-    expect: OCR{c0d3_c0mm3nts_l34k_s3cr3ts}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{c0d3_c0mm3nts_l34k_s3cr3ts}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

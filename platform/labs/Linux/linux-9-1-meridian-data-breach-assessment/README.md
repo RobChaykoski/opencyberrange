@@ -77,7 +77,7 @@ SELECT * FROM data_classifications WHERE classification = 'PII';
 # Shows PII records and their locations
 
 SELECT * FROM compliance_findings WHERE severity = 'CRITICAL';
-# Returns CF-2026-001 with flag: OCR{d4ta_br34ch_3xp0s3d}
+# Returns CF-2026-001 with flag: <flag>
 ```
 
 ## Common Mistakes

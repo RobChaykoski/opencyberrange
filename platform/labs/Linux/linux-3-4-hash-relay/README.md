@@ -91,7 +91,7 @@ cat ~/flag.txt
 
 ### Step 6: Assemble the Flag
 
-Combine the two tokens: `OCR{h4sh_r3l4y_ch41n}`
+Combine the two tokens: `<flag>`
 
 ## Common Mistakes
 

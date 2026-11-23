@@ -41,7 +41,7 @@ def _upsert(db, name: str, kind: str, config: dict, secrets: dict, desired_id: i
 
 
 def main() -> int:
-    oidc_issuer = os.environ.get("SSO_OIDC_ISSUER", "https://172.16.16.44/idp").rstrip("/")
+    oidc_issuer = os.environ.get("SSO_OIDC_ISSUER", "https://<dev-host-ip>/idp").rstrip("/")
     oidc_secret = os.environ.get("SSO_OIDC_CLIENT_SECRET", "").strip()
     if not oidc_secret:
         raise SystemExit("SSO_OIDC_CLIENT_SECRET is required")

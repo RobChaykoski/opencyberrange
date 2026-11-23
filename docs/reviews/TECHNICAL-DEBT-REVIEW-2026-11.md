@@ -2,7 +2,7 @@
 
 Date: 12 November 2026
 Reviewer role: Programme management / technical debt
-Release under review: `2.7.0` (development `172.16.16.44`)
+Release under review: `2.7.0` (development `<dev-host-ip>`)
 Method: file-size and hotspot inventory, test/CI review, incident review of the
 12 November availability stall, security backlog, dependency review, and the
 data-quality audit.

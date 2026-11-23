@@ -213,7 +213,11 @@ def allowed_id_token_algorithms(document: dict) -> list[str]:
 def validate_id_token(provider: IdentityProvider, id_token: str, nonce: str) -> dict:
     config = provider_config(provider)
     document = discover(provider)
-    issuer = str(config.get("issuer", "")).rstrip("/")
+    # Compare issuer values with one trailing slash normalized away. Authentik
+    # (and several other providers) advertise and sign an issuer ending in "/",
+    # while the configured value may omit it. PyJWT compares the claim exactly,
+    # so a literal comparison rejects a token that is otherwise valid.
+    expected_issuer = str(document.get("issuer") or config.get("issuer", "")).rstrip("/")
     client_id = str(config.get("client_id", ""))
     algorithms = allowed_id_token_algorithms(document)
     try:
@@ -224,11 +228,13 @@ def validate_id_token(provider: IdentityProvider, id_token: str, nonce: str) -> 
             signing_key.key,
             algorithms=algorithms,
             audience=client_id,
-            issuer=issuer,
-            options={"require": ["exp", "iat", "sub"]},
+            options={"require": ["exp", "iat", "sub"], "verify_iss": False},
         )
     except Exception as exc:
         raise OIDCError(f"ID token validation failed: {exc}") from exc
+    actual_issuer = str(claims.get("iss", "")).rstrip("/")
+    if not hmac.compare_digest(actual_issuer, expected_issuer):
+        raise OIDCError("ID token issuer does not match the discovery document.")
     if not hmac.compare_digest(str(claims.get("nonce", "")), nonce):
         raise OIDCError("ID token nonce does not match the authorization request.")
     return claims

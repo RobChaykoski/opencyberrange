@@ -23,9 +23,9 @@ solver:
     expect: PUT method accepted
   - name: Flag file accessible after PUT
     command: curl -s http://{target.webserver}/uploads/flag.txt
-    expect: OCR{http_m3th0ds_3num3r4t10n}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{http_m3th0ds_3num3r4t10n}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

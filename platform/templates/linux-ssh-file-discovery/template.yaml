@@ -55,7 +55,7 @@ structural:
   # Flag location is structural (the tester reads this exact path). The value is
   # cosmetic, injected via the FLAG env var with a baked fallback.
   flag_location: "/var/www/html/backups/deployment_notes.txt"
-  flag_fallback: "OCR{f1l3_d1sc0v3ry}"
+  flag_fallback: "<flag>"
 
   # Credential roles are locked; usernames/passwords are cosmetic overrides.
   credential_roles:
@@ -163,7 +163,7 @@ cosmetic_schema:
           default: "fixed"
         value:
           type: "string"
-          default: "OCR{f1l3_d1sc0v3ry}"
+          default: "<flag>"
           pattern: "^OCR\\{[a-z0-9_]+\\}$"
     difficulty:
       type: "enum"

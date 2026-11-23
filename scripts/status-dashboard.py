@@ -19,9 +19,9 @@ file via ``--config`` or the ``OCR_STATUS_PROD_URL`` / ``OCR_STATUS_DEV_URL``
 environment variables:
 
     [
-      {"label": "OCR", "role": "production", "url": "https://ocr.swocts.com",
+      {"label": "OCR", "role": "production", "url": "https://platform.example.com",
        "expected_version": "2.7.0"},
-      {"label": "CTFd host OCR", "role": "internal", "url": "https://172.16.16.41",
+      {"label": "CTFd host OCR", "role": "internal", "url": "https://prod.example.com",
        "expected_version": "2.7.0"}
     ]
 
@@ -51,14 +51,14 @@ DEFAULT_HOSTS = [
     {
         "label": "OCR",
         "role": "production",
-        "url": os.environ.get("OCR_STATUS_PROD_URL", "https://ocr.swocts.com"),
+        "url": os.environ.get("OCR_STATUS_PROD_URL", "").strip(),
         "expected_version": "2.7.0",
         "line": "OCR public deployment",
     },
     {
         "label": "CTFd host OCR",
         "role": "internal",
-        "url": os.environ.get("OCR_STATUS_DEV_URL", "https://172.16.16.41"),
+        "url": os.environ.get("OCR_STATUS_DEV_URL", "").strip(),
         "expected_version": "2.7.0",
         "line": "OCR stack on the CTFd host",
     },
@@ -326,7 +326,13 @@ def main():
     if args.config:
         hosts = json.loads(Path(args.config).read_text(encoding="utf-8"))
     else:
-        hosts = DEFAULT_HOSTS
+        hosts = [host for host in DEFAULT_HOSTS if host.get("url")]
+
+    if not hosts:
+        parser.error(
+            "Set OCR_STATUS_PROD_URL and/or OCR_STATUS_DEV_URL, or pass --config. "
+            "The dashboard does not contain a built-in deployment address."
+        )
 
     rows = [probe(host) for host in hosts]
     state, message = overall_state(rows)

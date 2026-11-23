@@ -26,7 +26,7 @@ Create a dedicated token, not a global API key:
 
 1. Cloudflare dashboard -> My Profile -> API Tokens -> Create Token.
 2. Use the **Edit zone DNS** template.
-3. Zone Resources: include **only** `swocts.com`.
+3. Zone Resources: include **only** `example.com`.
 4. Permissions: `Zone -> DNS -> Edit`.
 5. Copy the token once into `.env`. Do not paste it into chat, tickets, or the
    repository.
@@ -49,10 +49,10 @@ docker compose logs -f cloudflare-ddns
 The default record list is:
 
 ```text
-moodle.swocts.com,ctfd.swocts.com
+<moodle-host>,<platform-host>
 ```
 
-Keep it explicit. Do not use `*.swocts.com` unless every record should follow
+Keep it explicit. Do not use `*.example.com` unless every record should follow
 the firewall address.
 
 ## Proxied or DNS-only
@@ -73,15 +73,15 @@ For a proxied record, Cloudflare manages the edge TTL.
 From an external resolver:
 
 ```bash
-dig +short moodle.swocts.com @1.1.1.1
-dig +short ctfd.swocts.com @1.1.1.1
+dig +short <moodle-host> @1.1.1.1
+dig +short <platform-host> @1.1.1.1
 ```
 
 Both should return the current public IPv4 address. Then check:
 
 ```bash
-curl -sSI https://moodle.swocts.com/login/index.php
-curl -sS https://ctfd.swocts.com/api/version
+curl -sSI https://<moodle-host>/login/index.php
+curl -sS https://<platform-host>/api/version
 ```
 
 If the firewall IP changed and DNS is stale, check the updater logs first:
@@ -101,14 +101,14 @@ docker compose logs --tail=100 cloudflare-ddns
 
 ## Deployment status
 
-Deployed on `ocr-prod` on 2026-11-20 and verified:
+Deployed on `<prod-host>` on 2026-11-20 and verified:
 
 - `.env` is mode `600`, owned by the deploy user.
 - The container is `running` with restart policy `unless-stopped`; Docker is
   enabled at boot.
-- It detected WAN IPv4 `70.54.16.7` and reported both records already current.
+- It detected WAN IPv4 `<public-ip>` and reported both records already current.
 - A no-op DNS write returned `200`, confirming the token can edit records.
-- Public resolvers return `70.54.16.7` for both names.
+- Public resolvers return `<public-ip>` for both names.
 
 ```bash
 cd ~/cloudflare-ddns
@@ -118,7 +118,7 @@ docker compose logs --tail 30 --no-log-prefix
 
 ## Security
 
-- Use a token scoped to `Zone:DNS:Edit` for `swocts.com` only. The current pilot
+- Use a token scoped to `Zone:DNS:Edit` for `example.com` only. The current pilot
   token was supplied interactively and should be rotated after the event.
 - `.env` is mode 600 and gitignored.
 - The container drops capabilities and enables `no-new-privileges`.
@@ -132,9 +132,9 @@ docker compose logs --tail 30 --no-log-prefix
 
 The production pilot uses:
 
-- NPM host: `172.16.16.11`
-- NPM upstream for `moodle.swocts.com`: `172.16.16.41:8092`
-- Production OCR: `https://ctfd.swocts.com`
+- NPM host: `<npm-host-ip>`
+- NPM upstream for `<moodle-host>`: `<prod-host-ip>:8092`
+- Production OCR: `https://<platform-host>`
 
 The DDNS updater only changes public DNS. It does not change NPM upstreams,
 Moodle, OpenCyberRange, or TLS certificates.

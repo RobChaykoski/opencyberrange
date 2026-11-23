@@ -22,9 +22,9 @@ solver:
     expect: /admin/export?token=devfest-export-2026
   - name: Export route returns the flag
     command: curl -s 'http://{target.portal}:8080/admin/export?token=devfest-export-2026' | grep -o 'OCR{[^}]*}'
-    expect: OCR{cl13nt_s1d3_s3cr3ts_4r3_publ1c}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{cl13nt_s1d3_s3cr3ts_4r3_publ1c}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

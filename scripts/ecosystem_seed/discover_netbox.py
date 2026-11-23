@@ -14,7 +14,7 @@ Safety rules:
 
 Usage:
     NETBOX_URL=http://127.0.0.1:8083 NETBOX_TOKEN=... \
-      python scripts/ecosystem_seed/discover_netbox.py --cidr 172.16.16.0/24 --dry-run
+      python scripts/ecosystem_seed/discover_netbox.py --cidr <private-subnet> --dry-run
 
     # Replay a saved nmap -oX file without scanning
     python scripts/ecosystem_seed/discover_netbox.py --nmap-xml scan.xml --dry-run
@@ -165,7 +165,7 @@ def main() -> int:
         return 2
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--cidr", help="IPv4/IPv6 CIDR to scan, e.g. 172.16.16.0/24")
+    parser.add_argument("--cidr", help="IPv4/IPv6 CIDR to scan, e.g. <private-subnet>")
     parser.add_argument("--nmap-xml", help="Replay a saved nmap -oX file instead of scanning")
     parser.add_argument("--site", default="training-dc", help="NetBox site slug for the prefix")
     parser.add_argument("--tenant", default="training", help="NetBox tenant slug for the prefix")

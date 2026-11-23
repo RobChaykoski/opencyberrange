@@ -64,7 +64,7 @@ cat /home/dbadmin/maintenance/assessment_token.txt
 ### Step 6: Assemble Flag
 
 ```
-OCR{cr3d_p1v0t}
+<flag>
 ```
 
 ## Common Mistakes

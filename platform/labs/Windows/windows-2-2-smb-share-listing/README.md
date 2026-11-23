@@ -61,7 +61,7 @@ Use smbclient to enumerate all available shares on the target. The flag is in on
    ---------       ----      -------
    public          Disk      Public Share
    data            Disk      Data Share
-   backup          Disk      OCR{smb_sh4r3_l1st}
+   backup          Disk      <flag>
    IPC$            IPC       IPC Service (Windows Server)
    
    Workgroup            Master
@@ -69,7 +69,7 @@ Use smbclient to enumerate all available shares on the target. The flag is in on
    WORKGROUP
    ```
 
-   **The flag is in the backup share comment!** Look for: `OCR{smb_sh4r3_l1st}`
+   **The flag is in the backup share comment!** Look for: `<flag>`
 
 3. **Alternative: List shares with enum4linux:**
    ```bash
@@ -86,7 +86,7 @@ Review the share listing output:
 |------------|------|---------|
 | public | Disk | Public Share |
 | data | Disk | Data Share |
-| backup | Disk | **OCR{smb_sh4r3_l1st}** |
+| backup | Disk | **<flag>** |
 | IPC$ | IPC | IPC Service |
 
 **Key observations:**
@@ -98,7 +98,7 @@ Review the share listing output:
 
 **Flag format:**
 ```
-OCR{smb_sh4r3_l1st}
+<flag>
 ```
 
 **Success Criteria:**

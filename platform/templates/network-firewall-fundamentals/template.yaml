@@ -87,7 +87,7 @@ structural:
   # Flag is revealed by the check-rules script reading /root/flag.txt on the
   # firewall. Value is cosmetic; injected via FLAG with a baked fallback.
   flag_location: "/root/flag.txt (revealed by sudo check-rules)"
-  flag_fallback: "OCR{tr4ff1c_c0ntr0ll3d}"
+  flag_fallback: "<flag>"
 
   credential_roles:
     - role: "analyst"
@@ -207,7 +207,7 @@ cosmetic_schema:
           default: "fixed"
         value:
           type: "string"
-          default: "OCR{tr4ff1c_c0ntr0ll3d}"
+          default: "<flag>"
           pattern: "^OCR\\{[a-z0-9_]+\\}$"
     difficulty:
       type: "enum"

@@ -17,7 +17,7 @@ not a production integration and must never receive production data.
 - Treat every credential in `.env` as a lab credential, not a secret to reuse.
 
 For a separate, internet-facing staging Moodle (for example
-`moodle.swocts.com`), see
+`<moodle-host>`), see
 [`../moodle-staging/README.md`](../moodle-staging/README.md). That stack has its
 own database, volumes, and hardening; it is not this disposable lab and must not
 be connected to production.

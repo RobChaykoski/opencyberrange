@@ -22,12 +22,12 @@ solver:
     expect: '0'
   - name: Mobile build contains the flag
     command: curl -s -A 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X)' http://{target.portal}:8080/ | grep -o 'OCR{[^}]*}'
-    expect: OCR{m0b1l3_r3nd3r3r_l34k}
+    expect: '{flag}'
   - name: Mobile JSON contains the access marker
     command: curl -s -A 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X)' http://{target.portal}:8080/api/profile | grep -o 'OCR{[^}]*}'
-    expect: OCR{m0b1l3_r3nd3r3r_l34k}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{m0b1l3_r3nd3r3r_l34k}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

@@ -61,6 +61,62 @@ def test_oidc_algorithms_fail_closed_without_asymmetric_support():
         )
 
 
+def _oidc_provider(issuer: str) -> SimpleNamespace:
+    return SimpleNamespace(
+        id=1,
+        name="OIDC issuer test",
+        config=json.dumps({"issuer": issuer, "client_id": "ocr-client"}),
+        secrets=None,
+    )
+
+
+def _mock_id_token(monkeypatch, claims: dict) -> None:
+    document = {
+        "issuer": "https://auth.example.edu/application/o/ocr/",
+        "id_token_signing_alg_values_supported": ["RS256"],
+    }
+
+    class Key:
+        key = object()
+
+    class JWKClient:
+        def get_signing_key_from_jwt(self, token):
+            return Key()
+
+    monkeypatch.setattr(oidc, "discover", lambda provider: document)
+    monkeypatch.setattr(oidc, "_jwk_client", lambda document: JWKClient())
+    monkeypatch.setattr(oidc.jwt, "decode", lambda *args, **kwargs: claims)
+
+
+@pytest.mark.parametrize(
+    "configured,claimed",
+    [
+        ("https://auth.example.edu/application/o/ocr/", "https://auth.example.edu/application/o/ocr/"),
+        ("https://auth.example.edu/application/o/ocr", "https://auth.example.edu/application/o/ocr/"),
+        ("https://auth.example.edu/application/o/ocr/", "https://auth.example.edu/application/o/ocr"),
+    ],
+)
+def test_oidc_issuer_trailing_slash_is_normalized(monkeypatch, configured, claimed):
+    _mock_id_token(monkeypatch, {"iss": claimed, "nonce": "nonce", "sub": "subject"})
+    claims = oidc.validate_id_token(
+        _oidc_provider(configured), "signed-token", "nonce"
+    )
+    assert claims["sub"] == "subject"
+
+
+def test_oidc_issuer_mismatch_is_rejected(monkeypatch):
+    _mock_id_token(
+        monkeypatch,
+        {"iss": "https://evil.example/application/o/ocr/", "nonce": "nonce", "sub": "subject"},
+    )
+    with pytest.raises(SSOError):
+        oidc.validate_id_token(
+            _oidc_provider("https://auth.example.edu/application/o/ocr/"),
+            "signed-token",
+            "nonce",
+        )
+
+
 def _ldap_provider(config: dict) -> SimpleNamespace:
     return SimpleNamespace(
         id=1,

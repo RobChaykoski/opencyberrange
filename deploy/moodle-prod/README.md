@@ -1,18 +1,22 @@
 # Production pilot Moodle
 
-This stack is the production-host Moodle for the live `moodle.swocts.com`
+This stack is the production-host Moodle for the live `<moodle-host>`
 pilot. It is separate from `deploy/moodle-staging` and from the disposable
 training lab.
 
 Use it only for authorised participants and the agreed pilot course. Do not run
 the synthetic training seed (`seed_moodle.php`) here.
 
+> **Placeholders.** `<moodle-host>`, `<prod-host-ip>`, and `<npm-host-ip>` are
+> intentionally generic. Take the real values from the private deployment
+> inventory and never commit them.
+
 ## Shape
 
 ```text
 Internet
-  -> Nginx Proxy Manager :443, https://moodle.swocts.com
-  -> production host 172.16.16.41:8092
+  -> Nginx Proxy Manager :443, https://<moodle-host>
+  -> production host <prod-host-ip>:8092
   -> Moodle + MariaDB (private compose network)
 ```
 
@@ -82,14 +86,14 @@ follow-on plan is in
 Public DNS follows the firewall's WAN address. Use the scoped Cloudflare DDNS
 stack in [`../cloudflare-ddns/`](../cloudflare-ddns/README.md) or the firewall's
 built-in Cloudflare DDNS client. After a firewall reboot, verify both
-`moodle.swocts.com` and `ctfd.swocts.com` before debugging NPM or Moodle.
+`<moodle-host>` and `<platform-host>` before debugging NPM or Moodle.
 
-The upstream is `172.16.16.41:8092`. Set the NPM proxy host to:
+The upstream is `<prod-host-ip>:8092`. Set the NPM proxy host to:
 
 | NPM setting | Value |
 |---|---|
 | Scheme | `http` |
-| Forward host | `172.16.16.41` |
+| Forward host | `<prod-host-ip>` |
 | Forward port | `8092` |
 | Preserve Host header | enabled |
 | Websockets | not required |
@@ -104,7 +108,7 @@ add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" alway
 Restrict the direct upstream port to the NPM host:
 
 ```bash
-sudo ufw allow from 172.16.16.11 to any port 8092 proto tcp
+sudo ufw allow from <npm-host-ip> to any port 8092 proto tcp
 # or the equivalent firewall rule for the host
 ```
 
@@ -146,7 +150,7 @@ Only after the Moodle-side pilot is ready and a change window is agreed:
 2. Use the production OpenCyberRange only for a dedicated pilot course and
    dedicated test account.
 3. Create the Moodle 5 course tool and a pilot activity with
-   `seed_moodle_lti.php`, pointing at `https://ctfd.swocts.com`.
+   `seed_moodle_lti.php`, pointing at `https://<platform-host>`.
 4. Register the platform in the production OpenCyberRange.
 5. Test launch, reviewed grade passback, and NRPS with the pilot course.
 6. Record the result and remove the platform/links/scores/roster when the test
@@ -158,8 +162,8 @@ To build the Moodle side:
 
 ```bash
 docker compose exec -T -u daemon \
-  -e OCR_PUBLIC_URL=https://ctfd.swocts.com \
-  -e OCR_INTERNAL_URL=https://ctfd.swocts.com \
+  -e OCR_PUBLIC_URL=https://<platform-host> \
+  -e OCR_INTERNAL_URL=https://<platform-host> \
   -e MOODLE_LTI_CLIENT_ID=ocr-moodle-pilot \
   -e MOODLE_LTI_COURSE=PILOT-101 \
   -e MOODLE_LTI_COURSE_TOOL_NAME='OpenCyberRange Pilot' \
@@ -175,18 +179,18 @@ endpoint.
 
 ## LTI networking
 
-The production host resolves `ctfd.swocts.com` to the private NPM address
-`172.16.16.11`.
+The production host resolves `<platform-host>` to the private NPM address
+`<npm-host-ip>`.
 
 OpenCyberRange 5.30.1 removed the ticket-exchange dependency on
 `sso_enabled`, so a local-login deployment can leave SSO off and LTI launches
 still work. No public SSO provider is configured.
 
 Moodle's `curlsecurityblockedhosts` is narrowed to the default private ranges
-plus a carve-out that admits only the NPM address `172.16.16.11`; every other
+plus a carve-out that admits only the NPM address `<npm-host-ip>`; every other
 address in `172.16.0.0/12` is blocked. The LTI JWKS fetch was verified at `200`
 through Moodle's own cURL wrapper, and private targets such as
-`172.16.16.41` and `10.0.0.1` are rejected. The pre-change value is kept on the
+`<prod-host-ip>` and `10.0.0.1` are rejected. The pre-change value is kept on the
 production host at
 `~/moodle-prod/curlsecurityblockedhosts.pre-narrow.txt`.
 
@@ -221,7 +225,7 @@ OpenCyberRange `wiki_frame_ancestor` setting. Set it to include the LMS origin,
 or the workbook pane will be blocked by `frame-ancestors`:
 
 ```text
-https://172.16.16.41 https://ctfd.swocts.com https://70.54.16.7 https://moodle.swocts.com
+https://<prod-host-ip> https://<platform-host> https://<public-ip> https://<moodle-host>
 ```
 
 The backend caches this value for 30 seconds. After changing it, wait for the
@@ -251,7 +255,7 @@ and test a restore into a disposable copy before the event.
 If the pilot fails:
 
 1. Point NPM back to the staging upstream
-   (`http://172.16.16.29:8092`) or take the site offline.
+   (`http://<staging-host-ip>:8092`) or take the site offline.
 2. Stop `moodle-prod` with `docker compose down` (do not delete volumes until
    the feedback and retention decision are recorded).
 3. Remove any production OpenCyberRange LTI platform, links, scores, roster

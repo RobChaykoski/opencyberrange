@@ -28,7 +28,7 @@ solver:
     expect: '1'
   - name: Capture contains the training token
     command: curl -s http://{target.evidence}:8080/voip-call.pcap | strings | grep -o 'OCR{[^}]*}'
-    expect: OCR{v01c3_c4ll_r3c0n}
+    expect: '{flag}'
   - name: Capture is large enough to hold the RTP media
     command: curl -s http://{target.evidence}:8080/voip-call.pcap | python3 -c "import sys; print('large' if len(sys.stdin.buffer.read()) > 100000 else 'small')"
     expect: large
@@ -36,10 +36,10 @@ solver:
     command: curl -s -o /tmp/voip-call.pcap http://{target.evidence}:8080/voip-call.pcap && curl -s -o /tmp/reconstruct.py http://{target.evidence}:8080/reconstruct.py && python3 /tmp/reconstruct.py /tmp/voip-call.pcap /tmp/call.wav >/dev/null 2>&1 && python3 -c "import wave; w=wave.open('/tmp/call.wav'); print(round(w.getnframes()/w.getframerate()))"
     expect: '12'
   - name: Assembled flag
-    command: echo 'OCR{v01c3_c4ll_r3c0n}'
-    expect: OCR{v01c3_c4ll_r3c0n}
+    command: echo '{flag}'
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{v01c3_c4ll_r3c0n}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

@@ -8,8 +8,8 @@ OpenBao are deliberate later phases, not last-minute event changes.
 
 ## Current event posture
 
-- Production pilot Moodle on `172.16.16.41`, published at
-  `https://moodle.swocts.com` through Nginx Proxy Manager.
+- Production pilot Moodle on `<prod-host-ip>`, published at
+  `https://<moodle-host>` through Nginx Proxy Manager.
 - Local Moodle accounts with unique generated passwords, stored in a mode-600
   CSV on the production host.
 - Self-registration, guest access, and debug output are disabled.
@@ -52,7 +52,7 @@ bootstrap.
 ### Build steps
 
 1. Deploy Authentik on a production-grade host with its own PostgreSQL and
-   Redis, TLS at `auth.swocts.com`, backups, and restricted admin access.
+   Redis, TLS at `<auth-host>`, backups, and restricted admin access.
 2. Configure MFA policy for staff and, if required, learners.
 3. Create a Moodle OIDC or SAML application. Use OIDC if Moodle's OAuth2
    plugin covers the required claim mapping; use SAML if the institution needs

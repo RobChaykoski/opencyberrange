@@ -456,8 +456,8 @@ tracks:
         display_name: "Agentic AI Security"
         difficulty: "intermediate"
         prerequisites: [AI01, WEB02]
-        exercises: 1
-        estimated_minutes: 55
+        exercises: 2
+        estimated_minutes: 145
         recommended_next: WIN01
         status: published
         intro: CH_AI02_Agentic_AI_Security/00_Introduction.md

@@ -254,7 +254,7 @@ Download the flag file from the SMB share.
 
 5. **Expected flag content:**
    ```
-   OCR{b4s1c_p0rt_sc4n}
+   <flag>
    ```
 
 **Alternative: Download to specific location:**
@@ -274,7 +274,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{b4s1c_p0rt_sc4n}
+<flag>
 ```
 
 **Verification checklist:**

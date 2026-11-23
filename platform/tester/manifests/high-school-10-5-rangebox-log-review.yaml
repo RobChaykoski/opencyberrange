@@ -19,9 +19,9 @@ solver:
     expect: '200'
   - name: Log contains the training flag
     command: curl -s http://{target.events}:8080/access.log | grep -o 'OCR{[^}]*}'
-    expect: OCR{l0gs_ar3_3v1d3nc3}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{l0gs_ar3_3v1d3nc3}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

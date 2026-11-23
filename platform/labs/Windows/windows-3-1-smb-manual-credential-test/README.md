@@ -184,7 +184,7 @@ Download the flag file from the private share.
 
    **Expected flag content:**
    ```
-   OCR{smb_m4nu4l_4uth}
+   <flag>
    ```
 
 **Alternative download methods:**
@@ -197,7 +197,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{smb_m4nu4l_4uth}
+<flag>
 ```
 
 **Verification checklist:**

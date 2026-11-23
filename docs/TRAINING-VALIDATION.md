@@ -2,7 +2,7 @@
 
 **Date:** 19 November 2026
 
-**Environment:** development host `172.16.16.44`
+**Environment:** development host `<dev-host-ip>`
 
 **Release line:** 5.27.3
 

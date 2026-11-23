@@ -224,7 +224,7 @@ Once connected via RDP, navigate to the flag file location.
 
 6. **Expected flag content:**
    ```
-   OCR{rdp_d3t3ct}
+   <flag>
    ```
 
 **Alternative: Copy flag to clipboard:**
@@ -238,7 +238,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{rdp_d3t3ct}
+<flag>
 ```
 
 **Verification checklist:**

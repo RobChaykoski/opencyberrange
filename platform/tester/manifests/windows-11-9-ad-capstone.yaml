@@ -14,12 +14,12 @@ solver:
   steps:
   - name: Recover the assessment token from svc-capstone
     command: i=0; while [ $i -lt 30 ]; do out=$(ldapsearch -x -o ldif-wrap=no -H ldap://{target.ldap} -D '{cred.analyst.user}' -w '{cred.analyst.pass}' -b 'dc=lab,dc=example,dc=org' '(uid=svc-capstone)' description 2>&1); echo "$out" | grep -o 'OCR{[^}]*}' && exit 0; i=$((i+1)); sleep 2; done; echo "$out"; exit 1
-    expect: OCR{4d_c4pst0n3_r3p0rt}
+    expect: '{flag}'
   - name: Explain the defensive control in the report
-    command: echo OCR{4d_c4pst0n3_r3p0rt}
-    expect: OCR{4d_c4pst0n3_r3p0rt}
+    command: echo {flag}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{4d_c4pst0n3_r3p0rt}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

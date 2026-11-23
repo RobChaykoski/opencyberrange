@@ -20,12 +20,12 @@ solver:
     expect: full-attack.pcap
   - name: Flag found in PCAP captures
     command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.network-2-5} 'strings /home/analyst/captures/*.pcap 2>&1 | grep -o "OCR{[^}]*}" | head -1'
-    expect: OCR{full_4tt4ck_ch41n_m4pp3d}
+    expect: '{flag}'
   - name: Echo confirmed flag
-    command: echo 'OCR{full_4tt4ck_ch41n_m4pp3d}'
-    expect: OCR{full_4tt4ck_ch41n_m4pp3d}
+    command: echo '{flag}'
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{full_4tt4ck_ch41n_m4pp3d}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

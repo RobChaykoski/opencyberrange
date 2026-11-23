@@ -83,7 +83,7 @@ openssl enc -aes-256-cbc -d -pbkdf2 \
     -in /home/mwebb/audit_backup.enc \
     -pass pass:CryptoVault-EMP-4471-2025
 
-# Output: Internal audit report containing OCR{r3c0v3ry_pr0c3dur3_f0ll0w3d}
+# Output: Internal audit report containing <flag>
 ```
 
 ## Red Herrings

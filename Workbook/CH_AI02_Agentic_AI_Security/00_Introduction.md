@@ -69,17 +69,24 @@ uploaded for review, so the auditor may never see the payload.
 
 ## What You Will Build Toward
 
-This chapter starts with one focused exercise: a poisoned vendor report and an
-unauthorised audit export. Later Release 6 labs extend the same universe to
-non-human identity, RAG poisoning, model supply chains, detection engineering,
-and post-quantum migration.
+This chapter starts with a focused exercise: a poisoned vendor report and an
+unauthorised audit export. It ends with a two-stage capstone that adds the
+non-human identity layer: a leaked machine credential, an agent-to-agent trust
+gap, semantic forensics, and a policy-as-code remediation design.
 
 | Exercise | Target | Service |
 |----------|--------|---------|
 | 2.1 | `trailguard.lab` | HTTP 8080 |
+| 2.2 capstone | `trailguard-intake.lab` | HTTP 8080 |
+
+The capstone is graded on the final audit-record flag, the automated test steps,
+and a completed evidence table. The stage 1 marker is evidence, not the final
+answer.
 
 ## Before You Start
 
 - Complete `AI01` or be comfortable with prompt injection and jailbreak basics.
+- Complete the non-human identity lab or know how service tokens differ from
+  human sessions.
 - Know how to read an HTTP request and response with `curl`.
 - Treat every vendor document in this lab as hostile input.

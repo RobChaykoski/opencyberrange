@@ -31,7 +31,7 @@ solver:
     command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.workstation} 'openssl enc -aes-256-cbc -d -pbkdf2 -in /home/mwebb/audit_backup.enc -pass pass:CryptoVault-EMP-4471-2025 2>/dev/null' 2>&1
     expect: OCR{
 expected_flag_count: 1
-expected_flag: OCR{r3c0v3ry_pr0c3dur3_f0ll0w3d}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

@@ -19,9 +19,9 @@ solver:
     expect: '200'
   - name: Response includes the training-token header
     command: curl -s -D - -o /dev/null http://{target.network}:8080/status.json | python3 -c "import sys; print(next(line.split(':', 1)[1].strip() for line in sys.stdin if line.lower().startswith('x-ocr-token:')))"  # security-delta: allow credential-like assignment - lab fixture
-    expect: OCR{h34d3rs_t3ll_st0r13s}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{h34d3rs_t3ll_st0r13s}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

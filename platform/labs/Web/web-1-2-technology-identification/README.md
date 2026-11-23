@@ -477,7 +477,7 @@ Based on the technology identification (WordPress), check the WordPress admin di
 
 2. **Expected output:**
    ```
-   OCR{t3ch_1d3nt1f1c4t10n_b4s1c}
+   <flag>
    ```
 
 3. **Alternative locations to check:**
@@ -501,7 +501,7 @@ Based on the technology identification (WordPress), check the WordPress admin di
 
 **Flag:**
 ```
-OCR{t3ch_1d3nt1f1c4t10n_b4s1c}
+<flag>
 ```
 
 **Troubleshooting:**
@@ -515,7 +515,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{t3ch_1d3nt1f1c4t10n_b4s1c}
+<flag>
 ```
 
 **Verification checklist:**

@@ -51,17 +51,17 @@ services:
       AUTHENTIK_ERROR_REPORTING__ENABLED: "false"
       AUTHENTIK_DISABLE_UPDATE_CHECK: "true"
       AUTHENTIK_LOG_LEVEL: "info"
-      AUTHENTIK_HOST: ${AUTHENTIK_HOST:-https://auth.swocts.com}
-      AUTHENTIK_HOST_BROWSER: ${AUTHENTIK_HOST:-https://auth.swocts.com}
-      AUTHENTIK_COOKIE_DOMAIN: ${AUTHENTIK_COOKIE_DOMAIN:-auth.swocts.com}
-      AUTHENTIK_BOOTSTRAP_EMAIL: ${AUTHENTIK_BOOTSTRAP_EMAIL:-admin@swocts.com}
+      AUTHENTIK_HOST: ${AUTHENTIK_HOST:-https://auth.example.com}
+      AUTHENTIK_HOST_BROWSER: ${AUTHENTIK_HOST:-https://auth.example.com}
+      AUTHENTIK_COOKIE_DOMAIN: ${AUTHENTIK_COOKIE_DOMAIN:-auth.example.com}
+      AUTHENTIK_BOOTSTRAP_EMAIL: ${AUTHENTIK_BOOTSTRAP_EMAIL:-admin@example.com}
       AUTHENTIK_BOOTSTRAP_PASSWORD: ${AUTHENTIK_BOOTSTRAP_PASSWORD:?set AUTHENTIK_BOOTSTRAP_PASSWORD}
       AUTHENTIK_BOOTSTRAP_TOKEN: ${AUTHENTIK_BOOTSTRAP_TOKEN:?set AUTHENTIK_BOOTSTRAP_TOKEN}
     volumes:
       - authentik_media:/media
     ports:
       # NPM reaches this address; do not expose it to the internet.
-      - "${AUTHENTIK_BIND:-172.16.16.41}:9000:9000"
+      - "${AUTHENTIK_BIND:-127.0.0.1}:9000:9000"
     healthcheck:
       test: ["CMD", "ak", "healthcheck"]
       interval: 30s
@@ -90,9 +90,9 @@ services:
       AUTHENTIK_ERROR_REPORTING__ENABLED: "false"
       AUTHENTIK_DISABLE_UPDATE_CHECK: "true"
       AUTHENTIK_LOG_LEVEL: "info"
-      AUTHENTIK_HOST: ${AUTHENTIK_HOST:-https://auth.swocts.com}
-      AUTHENTIK_HOST_BROWSER: ${AUTHENTIK_HOST:-https://auth.swocts.com}
-      AUTHENTIK_COOKIE_DOMAIN: ${AUTHENTIK_COOKIE_DOMAIN:-auth.swocts.com}
+      AUTHENTIK_HOST: ${AUTHENTIK_HOST:-https://auth.example.com}
+      AUTHENTIK_HOST_BROWSER: ${AUTHENTIK_HOST:-https://auth.example.com}
+      AUTHENTIK_COOKIE_DOMAIN: ${AUTHENTIK_COOKIE_DOMAIN:-auth.example.com}
     volumes:
       - authentik_media:/media
     security_opt:

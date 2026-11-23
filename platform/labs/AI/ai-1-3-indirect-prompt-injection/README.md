@@ -27,7 +27,7 @@ curl -s -X POST \
   http://tickets.lab:8080/api/ticket
 ```
 
-The summary contains `OCR{1nd1r3ct_pr0mpt_1nj3ct10n}`.
+The summary contains `<flag>`.
 
 ## Why it works
 

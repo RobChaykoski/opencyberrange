@@ -120,7 +120,7 @@ Output:
 ### Step 7: Assemble Flag
 
 ```
-OCR{sql1_un10n_3xtr4ct}
+<flag>
 ```
 
 ## Common Mistakes

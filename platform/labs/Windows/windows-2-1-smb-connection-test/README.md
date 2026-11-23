@@ -71,14 +71,14 @@ Use smbclient to test the connection and enumerate the SMB service. The flag is 
    Sharename       Type      Comment
    ---------       ----      -------
    public          Disk      
-   IPC$            IPC       IPC Service (Windows Server - OCR{smb_c0nn3ct})
+   IPC$            IPC       IPC Service (Windows Server - <flag>)
    
    Workgroup            Master
    ---------            -------
    WORKGROUP
    ```
 
-   **The flag is in the IPC$ comment!** Look for: `OCR{smb_c0nn3ct}`
+   **The flag is in the IPC$ comment!** Look for: `<flag>`
 
 3. **Alternative: Use enum4linux:**
    ```bash
@@ -107,7 +107,7 @@ Type `exit` to disconnect.
 
 **Flag format:**
 ```
-OCR{smb_c0nn3ct}
+<flag>
 ```
 
 **Success Criteria:**

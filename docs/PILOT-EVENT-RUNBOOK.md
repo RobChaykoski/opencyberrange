@@ -9,14 +9,14 @@ in [`deploy/moodle-prod/README.md`](../deploy/moodle-prod/README.md).
 
 | Item | Value |
 |---|---|
-| Moodle | `https://moodle.swocts.com` |
-| OpenCyberRange | `https://ctfd.swocts.com` |
+| Moodle | `https://<moodle-host>` |
+| OpenCyberRange | `https://<platform-host>` |
 | Course | `PILOT-101` — “SWOCTS Moodle Pilot Course” |
 | Activity | “OpenCyberRange Pilot Lab” (`/mod/lti/view.php?id=2`) |
-| Accounts | `ocr-prod:~/moodle-prod/pilot-accounts.csv` (mode `600`) |
-| Admin credentials | `ocr-prod:~/moodle-prod/.env` (mode `600`) |
+| Accounts | `<prod-host>:~/moodle-prod/pilot-accounts.csv` (mode `600`) |
+| Admin credentials | `<prod-host>:~/moodle-prod/.env` (mode `600`) |
 | Backups | `~/moodle-prod/backups` and `~/backups` |
-| Public IP | `70.54.16.7` for both hostnames |
+| Public IP | `<public-ip>` for both hostnames |
 | DDNS | `~/cloudflare-ddns`, updates every 5 minutes |
 
 Never paste the accounts CSV, `.env`, or the Cloudflare token into chat, email,
@@ -26,15 +26,15 @@ or the course.
 
 ```bash
 # Public reachability and HSTS
-curl -sSI https://moodle.swocts.com/login/index.php | grep -i strict-transport
-curl -sSI https://ctfd.swocts.com/ | grep -i strict-transport
+curl -sSI https://<moodle-host>/login/index.php | grep -i strict-transport
+curl -sSI https://<platform-host>/ | grep -i strict-transport
 
 # LTI JWKS
-curl -sS https://ctfd.swocts.com/api/lti/jwks | head -c 200; echo
+curl -sS https://<platform-host>/api/lti/jwks | head -c 200; echo
 
 # DNS and DDNS
-getent hosts moodle.swocts.com ctfd.swocts.com
-ssh ocr-prod 'cd ~/cloudflare-ddns && docker compose ps && docker compose logs --tail 5 --no-log-prefix'
+getent hosts <moodle-host> <platform-host>
+ssh <prod-host> 'cd ~/cloudflare-ddns && docker compose ps && docker compose logs --tail 5 --no-log-prefix'
 ```
 
 Then:
@@ -49,7 +49,7 @@ Then:
 
 ## Participant flow
 
-1. Sign in at `https://moodle.swocts.com` with the supplied pilot account.
+1. Sign in at `https://<moodle-host>` with the supplied pilot account.
 2. Open **My courses → PILOT-101**.
 3. Open **OpenCyberRange Pilot Lab**.
 4. Select **Start Exercise**; the desktop, exercise, and workbook panes load in
@@ -68,9 +68,9 @@ courses; the LTI activity and gradebook are the pilot surfaces.
 | Symptom | Check |
 |---|---|
 | Workbook pane blank | Hard refresh (`Ctrl+Shift+R`), then copy the frame URL. Confirm it is `/wiki/range/netfor/...` and returns `200`. |
-| `frame-ancestors` error | `wiki_frame_ancestor` must contain `https://moodle.swocts.com`; the backend caches it for 30 seconds. |
+| `frame-ancestors` error | `wiki_frame_ancestor` must contain `https://<moodle-host>`; the backend caches it for 30 seconds. |
 | `sitemap.xml` CORS error | Confirm the generated public sitemap route is present in the frontend container; see the workbook section in the prod README. |
-| Launch loops back to login | Clear cookies for `moodle.swocts.com` and `ctfd.swocts.com`, then relaunch. |
+| Launch loops back to login | Clear cookies for `<moodle-host>` and `<platform-host>`, then relaunch. |
 | “Workbook opens when you select this tab” | The pane loads on tab selection in narrow layouts; select the Workbook tab again. |
 | Grade not in Moodle | Scores post after the platform review gate. Check `lti_scores` and the Moodle gradebook; use the LTI panel to re-send if needed. |
 | Roster looks stale | NRPS sync is on demand; refresh the roster from the LTI panel. |
@@ -98,7 +98,7 @@ cd ~/moodle-prod
 ```
 
 If the Moodle host itself is the problem, point the NPM proxy host for
-`moodle.swocts.com` back to the staging upstream. Do not delete the production
+`<moodle-host>` back to the staging upstream. Do not delete the production
 stack.
 
 ## After the event
@@ -108,7 +108,7 @@ stack.
    `docker compose up -d`.
 3. Deploy the LTI instructor-role mapping (already in the repository) with a
    backend rebuild.
-4. Restrict `ocr-pg-gateway` (`172.16.16.41:5432`) to the lab network or
+4. Restrict `ocr-pg-gateway` (`<prod-host-ip>:5432`) to the lab network or
    localhost.
 5. Revert the pilot-only exceptions: `sso_enabled=true`, the relaxed Moodle
    cURL allow-list, and the broad `wiki_frame_ancestor` list.

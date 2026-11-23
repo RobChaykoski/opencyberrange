@@ -56,7 +56,7 @@ not its management address:
 curl -s http://<svc-link-address>/flag
 ```
 
-Expected: `OCR{t0p0l0gy_r0ut3d}`.
+Expected: `<flag>`.
 
 If you use the management address, you are testing the management plane, not the
 routed path. The link address proves the packet left `h1`, crossed `r1`, and

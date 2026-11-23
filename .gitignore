@@ -12,6 +12,10 @@
 *.env.local
 !**/.env.example
 
+# Private deployment inventory and local publication index (never publish).
+.local/
+deploy/inventory.local.env
+
 # Logs
 *.log
 

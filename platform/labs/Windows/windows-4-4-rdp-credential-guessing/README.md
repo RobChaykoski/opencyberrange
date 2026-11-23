@@ -135,7 +135,7 @@ Navigate to the flag location and retrieve it.
 
 5. **Expected flag content:**
    ```
-   OCR{rdp_cr3d_gu3ss}
+   <flag>
    ```
 
 6. **Copy flag:**
@@ -149,7 +149,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{rdp_cr3d_gu3ss}
+<flag>
 ```
 
 **Verification checklist:**

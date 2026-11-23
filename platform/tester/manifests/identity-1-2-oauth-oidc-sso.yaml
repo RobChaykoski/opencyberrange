@@ -28,9 +28,9 @@ solver:
     expect: '401'
   - name: The stolen access token reveals the victim token
     command: curl -s 'http://{target.portal}:8080/me?access_token=ACCESS-TOKEN-amara-7f3a' | grep -o 'OCR{[^}]*}'
-    expect: OCR{redirect_uri_trust_is_not_authentication}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{redirect_uri_trust_is_not_authentication}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

@@ -1,7 +1,7 @@
 # Data analyst review and sign-off - 2.7.x upgrade
 
 Date: 12 November 2026
-Scope: development database `labdb` on `172.16.16.44`, release `2.7.0`,
+Scope: development database `labdb` on `<dev-host-ip>`, release `2.7.0`,
 schema head `0014_performance_indexes`.
 Reviewer role: Data Analyst (upgrade gate).
 

@@ -20,9 +20,9 @@ solver:
     expect: WordPress
   - name: Flag file exists in wp-admin directory
     command: curl -s http://{target.webserver}/wp-admin/flag.txt
-    expect: OCR{t3ch_1d3nt1f1c4t10n_b4s1c}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{t3ch_1d3nt1f1c4t10n_b4s1c}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

@@ -24,6 +24,9 @@ from app.models import (
 )
 from app.auth import get_current_active_user, get_current_instructor_user
 from app.export_reason import require_export_reason
+from starlette.concurrency import run_in_threadpool
+
+from app.services import policy_context
 from app.services.activity import EVENT_LABELS
 from app.services.audit import log_admin_action, AuditActions
 from app.services.export_labels import csv_with_labels
@@ -875,6 +878,18 @@ async def instructor_report(
     fmt = (format or "pdf").lower()
     if fmt not in ("pdf", "csv"):
         raise HTTPException(status_code=400, detail="format must be 'pdf' or 'csv'")
+
+    # Metadata-driven policy context. The call is a no-op unless
+    # POLICY_CONTEXT_URL is configured. A deny or require_approval outcome
+    # blocks the export before any learner data is read.
+    await run_in_threadpool(
+        policy_context.enforce_export,
+        current_user,
+        resource_id="reports:instructor:all",
+        resource_type="report",
+        action="export",
+        request=request,
+    )
 
     local_tz = resolve_timezone(getattr(current_user, "timezone", None))
 

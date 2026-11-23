@@ -119,7 +119,7 @@ Output:
 ### Step 7: Assemble Flag
 
 ```
-OCR{h1dd3n_d3f4ult_3xp0s3d}
+<flag>
 ```
 
 ## Common Mistakes

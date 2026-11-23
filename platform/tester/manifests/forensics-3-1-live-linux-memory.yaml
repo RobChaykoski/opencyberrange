@@ -23,9 +23,9 @@ solver:
     expect: /proc/
   - name: Flag is present in the live process environment
     command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PreferredAuthentications=password -o PubkeyAuthentication=no {cred.analyst.user}@{target.target} 'sudo grep -h MEMFLAG= /proc/[0-9]*/environ 2>/dev/null | head -1' 2>&1
-    expect: OCR{live_mem_4f8c2a}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{live_mem_4f8c2a}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

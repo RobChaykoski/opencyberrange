@@ -336,7 +336,7 @@ Use discovered credentials to access the flag share.
 
    **Expected output:**
    ```
-   OCR{smb_full_4tt4ck}
+   <flag>
    ```
 
 ### Step 7: Verify Flag Format
@@ -345,7 +345,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{smb_full_4tt4ck}
+<flag>
 ```
 
 **Verification checklist:**

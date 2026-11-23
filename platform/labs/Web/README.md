@@ -240,12 +240,12 @@ services:
 
 ### Flag Format
 
-All flags use the format: `OCR{descriptive_flag_name}`
+All flags use the format: `OCR{<descriptive_flag_name>}`
 
 Examples:
-- `OCR{d1r3ct0ry_3num3r4t10n_b4s1c}`
-- `OCR{sql_1nj3ct10n_g3t_b4s1c}`
-- `OCR{xss_r3fl3ct3d_b4s1c}`
+- `<flag>`
+- `<flag>`
+- `OCR{replace_me}`
 
 ## Hostname Support (.lab Domains)
 

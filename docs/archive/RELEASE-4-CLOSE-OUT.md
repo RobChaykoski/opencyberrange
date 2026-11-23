@@ -39,7 +39,7 @@ a real sign-in reaches `/dashboard` without a reload loop.
 | Environment | Status |
 |---|---|
 | Development `.44` | Release 4, healthy, 179 active labs |
-| Production `.41` / `ctfd.swocts.com` | Release 4, healthy, 179 active labs |
+| Production `.41` / `<platform-host>` | Release 4, healthy, 179 active labs |
 
 Release 5 is **not** deployed to production.
 
@@ -64,7 +64,7 @@ Release 5 is **not** deployed to production.
 ## Known boundary
 
 Production currently uses the same-origin wiki fallback because the only second
-hostname available (`ocr.swocts.com`) is a different deployment. The wiki
+hostname available (`<platform-host>`) is a different deployment. The wiki
 settings are ready for a same-instance custom hostname; adding DNS/TLS and the
 three values is a deployment change, not a code change. The JWT is not exposed
 to the framed wiki: the cookie is HttpOnly and the fallback sandbox has an opaque

@@ -29,7 +29,7 @@ grep HALCYON-BEACON /var/log/incident.log
 
 The log line names the host, process, file, marker, action, and case token.
 
-Expected token: `OCR{y4r4_m33ts_l0g5}`.
+Expected token: `<flag>`.
 
 ## Step 3: Write the evidence note
 

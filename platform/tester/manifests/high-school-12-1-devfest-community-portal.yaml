@@ -25,9 +25,9 @@ solver:
     expect: '200'
   - name: Flag is present in the slide metadata
     command: curl -s http://{target.portal}:8080/assets/devfest-slide.png | grep -a -o 'OCR{[^}]*}'
-    expect: OCR{d3vf3st_c0mmun1ty_p0rtal}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{d3vf3st_c0mmun1ty_p0rtal}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

@@ -78,7 +78,7 @@ Use MySQL functions to read the flag file from the file system.
    +---------------------------+
    | LOAD_FILE('/tmp/flag.txt')|
    +---------------------------+
-   | OCR{mssql_f1l3_4cc3ss} |
+   | <flag> |
    +---------------------------+
    1 row in set (0.00 sec)
    ```
@@ -93,7 +93,7 @@ Use MySQL functions to read the flag file from the file system.
    +----------------------------------+
    | sys_exec('cat /tmp/flag.txt')   |
    +----------------------------------+
-   | OCR{mssql_f1l3_4cc3ss} |
+   | <flag> |
    +----------------------------------+
    1 row in set (0.00 sec)
    ```
@@ -134,7 +134,7 @@ Extract the flag from the file reading results.
 
 1. **The flag is in the query output:**
    ```
-   OCR{mssql_f1l3_4cc3ss}
+   <flag>
    ```
 
 2. **Copy the flag:**
@@ -157,7 +157,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{mssql_f1l3_4cc3ss}
+<flag>
 ```
 
 **Verification checklist:**

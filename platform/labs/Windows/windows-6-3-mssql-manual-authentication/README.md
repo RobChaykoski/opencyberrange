@@ -133,7 +133,7 @@ The flag is located in /tmp/flag.txt on the database server (accessible via file
 
 3. **Expected flag content:**
    ```
-   OCR{mssql_m4nu4l_4uth}
+   <flag>
    ```
 
 4. **Alternative: Check if flag is in database:**
@@ -154,7 +154,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{mssql_m4nu4l_4uth}
+<flag>
 ```
 
 **Verification checklist:**

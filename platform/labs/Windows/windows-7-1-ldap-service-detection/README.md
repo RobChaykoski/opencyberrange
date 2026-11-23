@@ -146,7 +146,7 @@ The flag is located in `/tmp/flag.txt` on the LDAP server.
 
    **Expected output:**
    ```
-   OCR{ldap_d3t3ct}
+   <flag>
    ```
 
 3. **Alternative: Check if flag is accessible via LDAP:**
@@ -165,7 +165,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{ldap_d3t3ct}
+<flag>
 ```
 
 **Verification checklist:**

@@ -56,7 +56,7 @@ before extracting the binary.
 
 ## Flag
 
-`OCR{w3bs0ck3t_c2_tunn3l_d3t3ct3d}` appears in the tasking JSON response and is
+`<flag>` appears in the tasking JSON response and is
 visible inside the WebSocket frames in the capture.
 
 ## Validation

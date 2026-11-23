@@ -21,9 +21,11 @@ from app.database import SessionLocal
 from app.models import LtiPlatform
 from app.services import lti as lti_service
 
-ISSUER = os.environ.get(
-    "MOODLE_ISSUER", "https://moodle.172.16.16.44.sslip.io:9443"
-).rstrip("/")
+ISSUER = (os.environ.get("MOODLE_ISSUER") or "").rstrip("/")
+if not ISSUER:
+    raise SystemExit(
+        "MOODLE_ISSUER is required, for example https://moodle.example.test:9443"
+    )
 INTERNAL_URL = os.environ.get("MOODLE_INTERNAL_URL", ISSUER).rstrip("/")
 CLIENT_ID = os.environ.get("MOODLE_LTI_CLIENT_ID", "ocr-training-client").strip()
 DEPLOYMENT_ID = os.environ.get("MOODLE_LTI_DEPLOYMENT_ID", "1").strip()

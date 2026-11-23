@@ -78,6 +78,7 @@ nav:
   - "AI02: Agentic AI Security":
     - Introduction: CH_AI02_Agentic_AI_Security/00_Introduction.md
     - "Exercise 2.1 -- Agent Hijacking in a RAG Intake Pipeline": CH_AI02_Agentic_AI_Security/01_Agent_Hijacking.md
+    - "Exercise 2.2 -- Shadow Deputy Capstone": CH_AI02_Agentic_AI_Security/03_Shadow_Deputy_Capstone.md
     - Chapter Review: CH_AI02_Agentic_AI_Security/02_Chapter_Review.md
   - "IoT security references": IOT-SECURITY-REFERENCES.md
   - "Free training and certifications": FREE-TRAINING-AND-CERTIFICATIONS.md

@@ -53,7 +53,7 @@ Use smbclient with null session to enumerate available shares. The flag is in a 
    Sharename       Type      Comment
    ---------       ----      -------
    public          Disk      Public Share
-   admin_backup    Disk      OCR{smb_null_3num}
+   admin_backup    Disk      <flag>
    IPC$            IPC       IPC Service (Windows Server)
    
    Workgroup            Master
@@ -83,7 +83,7 @@ Review the shares discovered via null session:
 | Share Name | Type | Comment |
 |------------|------|---------|
 | public | Disk | Public Share |
-| admin_backup | Disk | **OCR{smb_null_3num}** |
+| admin_backup | Disk | **<flag>** |
 | IPC$ | IPC | IPC Service |
 
 **Key observations:**
@@ -95,7 +95,7 @@ Review the shares discovered via null session:
 
 **Flag format:**
 ```
-OCR{smb_null_3num}
+<flag>
 ```
 
 **Success Criteria:**

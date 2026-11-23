@@ -23,9 +23,9 @@ solver:
     expect: '1'
   - name: Metadata exposes the flag
     command: curl -s http://{target.archive}/evidence.jpg -o /tmp/evidence.jpg && grep -a -o 'OCR{[^}]*}' /tmp/evidence.jpg
-    expect: OCR{ex1f_m3tadata_l34ks}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{ex1f_m3tadata_l34ks}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

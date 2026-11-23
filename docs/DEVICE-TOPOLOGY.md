@@ -132,7 +132,7 @@ independent forensic variants.
   checking metadata, flags, and test steps.
 - Live dev: the lab spawned as `h1`, `r1`, and `svc`; `h1` had a default route
   via `r1`, `r1` reported forwarding `1`, and `h1` fetched
-  `OCR{t0p0l0gy_r0ut3d}` from the service link address.
+  `<flag>` from the service link address.
 
 ## Not shipped
 

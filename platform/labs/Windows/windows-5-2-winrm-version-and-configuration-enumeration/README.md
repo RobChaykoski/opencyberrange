@@ -132,7 +132,7 @@ Connect via SSH (WinRM alternative in this lab) to retrieve the flag.
 
    **Expected output:**
    ```
-   OCR{w1nrm_3num}
+   <flag>
    ```
 
 6. **Alternative locations to check:**
@@ -154,7 +154,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{w1nrm_3num}
+<flag>
 ```
 
 **Verification checklist:**

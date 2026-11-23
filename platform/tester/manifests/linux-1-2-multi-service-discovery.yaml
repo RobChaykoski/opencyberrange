@@ -38,7 +38,7 @@ solver:
     command: 'FTP_PART=$( (curl -s --ftp-port - ftp://anonymous@{target.target}/pub/readme.txt --connect-timeout 10 || curl -s ftp://anonymous@{target.target}/pub/readme.txt --connect-timeout 10) | grep -o ''OCR{[^}]*'') && HTTP_PART=$(curl -s http://{target.target}/ | grep -o ''Part 2: [^ <]*'' | sed ''s/Part 2: //'') && echo "${FTP_PART}${HTTP_PART}"'
     expect: OCR{
 expected_flag_count: 1
-expected_flag: OCR{mult1_s3rv1c3}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

@@ -2,6 +2,62 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.35.0] - 2026-11-22
+
+### Production identity
+
+- Added the production Authentik stack and public OIDC provider, with learner
+  and instructor login verification and correct group-to-role mapping.
+- Normalized ID-token issuer validation for providers that sign a trailing
+  slash, while keeping signature, audience, nonce, and algorithm checks.
+- Local password login remains independent of `sso_enabled`; the break-glass
+  administrator path is unchanged.
+
+### Agentic AI capstone and DFIR
+
+- Added `ai-2-2-multi-agent-privilege-escalation`, a two-service intake and
+  audit-vault capstone with a workbook, CTF template, investigation evidence,
+  and a remediation rubric. The catalogue is now 214 labs and 204 workbook
+  pages.
+- Added `DFIR-13 Enterprise Endpoint Hunting with Velociraptor`, including a
+  synthetic hunt dataset, VQL/artifact objectives, custody requirements, and a
+  peer-reviewed report requirement.
+
+### Metadata, DLP, and policy
+
+- Added `POST /scan` and `POST /scan-and-decide` to the context service, with
+  detectors for private/public addresses, internal hosts, cloud metadata
+  endpoints, assessment answer keys, and secret assignments.
+- Added OPA rules for secret material, answer-key publication, unsafe
+  publication, and infrastructure-metadata export.
+- Added OpenDiscoveryEngine publication detectors and OpenGRC `PUB-001` through
+  `PUB-004` classifications, policies, and `PublicationDlpSeeder`.
+- Documented the ecosystem roles for DefectDojo, Steampipe/Powerpipe, Cloud
+  Custodian, Sigstore, OpenMetadata, OPA, and Velociraptor, including the
+  observation/decision/enforcement boundaries.
+
+### Publication privacy
+
+- Added `scripts/audit-publication.py`, the publication metadata policy, and the
+  Quality CI gate. The audit indexes all lab flags and fails on answer keys or
+  real infrastructure metadata in public files.
+- Redacted real addresses, hostnames, deployment accounts, and answer keys from
+  docs, workbooks, lab READMEs, generated manifests, tests, templates, and the
+  CTF pack.
+- Test manifests now store `{flag}` and `lab_harness.py` resolves it from
+  `lab.yaml`; the public contract no longer contains answer keys.
+- Deployment defaults bind to loopback or `*.example.com`; seed scripts require
+  explicit origins and fail closed without them.
+- Added proposed automotive/aerospace and drone MAVLink pathway designs.
+
+### Fixes
+
+- `status-dashboard.py` now requires `OCR_STATUS_PROD_URL` / `OCR_STATUS_DEV_URL`
+  or a config file instead of a built-in deployment address.
+- `setup-sso.py`, `seed_lti.py`, and `seed_lti.sh` require an explicit origin.
+- Restored safe certificate filenames and loopback defaults in the Moodle seed
+  and trust scripts.
+
 ## [5.34.0] - 2026-11-22
 
 ### Non-human identity lab
@@ -98,7 +154,7 @@ All notable changes to OpenCyberRange are recorded here.
 
 - Production Moodle's `curlsecurityblockedhosts` is narrowed from a blanket
   `172.16.0.0/12` omission to the default private ranges plus a carve-out that
-  admits only the NPM address `172.16.16.11`. The tool JWKS fetch was verified
+  admits only the NPM address `<npm-host-ip>`. The tool JWKS fetch was verified
   through Moodle's own cURL wrapper, and other private targets are rejected.
   The dev-only seed path keeps its explicit private-URL relaxation.
 
@@ -1509,7 +1565,7 @@ This is a patch release for the production NICE review action; the training-stac
   backend middleware and feature flags.
 
 ### Operations
-- Production backups now push off-host to `ocr-offsite:/home/ocrv2/backups/prod`
+- Production backups now push off-host to `ocr-offsite:/home/<dev-user>/backups/prod`
   after the nightly dump; the weekly restore drill is unchanged.
 
 ### Next
@@ -1529,7 +1585,7 @@ Security and compliance patch on top of Release 5.
 - SSO: post-login `return_to` rejects backslash and control-character forms in
   both the backend and the SPA.
 - Production: `wiki_frame_ancestor` is set for the real app origins so workbooks
-  frame on `https://172.16.16.41`, `https://ctfd.swocts.com`, and the public IP.
+  frame on `https://<prod-host-ip>`, `https://<platform-host>`, and the public IP.
 
 ### Review record
 - Added `docs/SECURITY-REVIEW-5.0.1.md` covering the SSO review, route-guard and
@@ -1575,7 +1631,7 @@ development both run this release from `main`.
   gone, and connection/clipboard/fullscreen/quality controls stay in one place.
   Left/right arrow keys move between tabs.
 - Workbooks can be served from a dedicated wiki origin. Dev uses
-  `https://172.16.16.44:8443`, so the framed workbook keeps its own storage and
+  `https://<dev-host-ip>:8443`, so the framed workbook keeps its own storage and
   search without access to the SPA token; the SPA CSP allows that frame.
 - The workbook iframe loads only when the Workbook tab is first opened. It
   stays mounted afterwards, so switching tabs does not reload it or lose its
@@ -1608,10 +1664,10 @@ development both run this release from `main`.
 
 ### Operations
 - Migrations `0015`–`0025`.
-- Development `172.16.16.44` tracks `main`; live lab spawn, pause/resume,
+- Development `<dev-host-ip>` tracks `main`; live lab spawn, pause/resume,
   accommodation read-back, 10-lab sampling, and an authenticated page pass all
   verified.
-- Production `172.16.16.41` deployed on 2026-11-14: version 5, Alembic
+- Production `<prod-host-ip>` deployed on 2026-11-14: version 5, Alembic
   `0025_review_requests`, 179 labs, backend/frontend healthy, 8443 workbook
   origin responding.
 

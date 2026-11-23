@@ -34,9 +34,9 @@ solver:
     expect: '1'
   - name: Case metadata reveals the training token
     command: curl -s http://{target.mail}:8080/email.eml | grep '^X-OCR-Case-Token:' | grep -o 'OCR{[^}]*}'  # security-delta: allow credential-like assignment - lab fixture
-    expect: OCR{headers_tell_the_real_story}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{headers_tell_the_real_story}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

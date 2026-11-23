@@ -1,17 +1,23 @@
-# SWOCTS Cyber Range security policy
+﻿# SWOCTS Cyber Range security policy
 
 SWOCTS Cyber Range is powered by OpenCyberRange. This policy covers the branded deployment and the upstream platform code it runs.
+
+> **Publication rule.** Do not commit real addresses, internal hostnames,
+> deployment usernames, lab flags, or secrets. Use the placeholders in
+> [`docs/PUBLICATION-METADATA-POLICY.md`](docs/PUBLICATION-METADATA-POLICY.md);
+> `python scripts/audit-publication.py --summary` enforces the rule in CI.
 
 ## Supported versions
 
 Security fixes land on the current supported release. The current platform
-release is **5.34.0** (`v5.34.0`, signed annotated tag), with security fixes also
+release is **5.35.0** (`v5.35.0`, signed annotated tag), with security fixes also
 maintained on the **1.1.3** Community / Academic maintenance line where the
 same defect applies.
 
 | Version | Supported |
 |---|---|
-| `v5.34.x` | Yes — current Community / Academic release |
+| `v5.35.x` | Yes - current Community / Academic release |
+| `v5.34.x` | Security fixes only - upgrade to `v5.35` |
 | `v5` / `main` | Yes |
 | `v4` | Security fixes only - upgrade to `v5` |
 | `v2.7.0` | Security fixes only - upgrade to `v5` |
@@ -228,7 +234,7 @@ Commands and the full runbook are in
   host socket. `CONTAINERS`, `IMAGES`, `NETWORKS`, `VOLUMES`, `INFO`, `POST`,
   `EXEC`, and read-only `SYSTEM` accounting are enabled; `BUILD` remains off so
   a compromised backend cannot submit build recipes.
-- `SYSTEM` is used only for `/system/df` so **Admin → Disk Management** can show
+- `SYSTEM` is used only for `/system/df` so **Admin â†’ Disk Management** can show
   image, container, volume, and build-cache sizes. It does not enable mutation.
 - The proxy is attached only to the internal `docker_control` network. Lab
   containers and the frontend are not on it.
@@ -293,7 +299,7 @@ credential traffic to a real host, a public domain, or another learner's
 session.
 
 > **Historical evidence.** The dated sections below record the deployment and
-> test state at the time. Hostnames (`ocr.swocts.com`), versions, and lab counts
+> test state at the time. Hostnames (`<platform-host>`), versions, and lab counts
 > in them are not current. See the
 > [production deployment statement](docs/PRODUCTION-DEPLOYMENT-STATEMENT.md) and
 > [validation report](docs/VALIDATION-REPORT.md) for the current state.
@@ -302,7 +308,7 @@ session.
 
 | Check | Result |
 |---|---|
-| Deployment baseline | Prod `172.16.16.41` and dev `172.16.16.44` on `2835303b`; frontend assets contain the combined exercise workspace and the WEB01 wiki pages are published |
+| Deployment baseline | Prod `<prod-host-ip>` and dev `<dev-host-ip>` on `2835303b`; frontend assets contain the combined exercise workspace and the WEB01 wiki pages are published |
 | Browser walkthrough | Dedicated test student and instructor accounts launched `RangeBox First Steps`; **44/44 checks passed** for the workspace layout, VNC connection, Expand/Restore, both new-tab controls, hint request, invalid-flag handling, Stop, and the mobile fallback |
 | Workspace fix | **Open in new tab** now opens `/rangebox?...` in a new tab instead of navigating the exercise tab |
 | Stop/relaunch race | Cleanup for an old session defers to a newer starting/running session for the same lab, so a rapid relaunch keeps its network and RangeBox instead of silently launching VPN-only |
@@ -424,7 +430,7 @@ client-side secrets, and upstream supply-chain compromise.
 
 | Check | Result |
 |---|---|
-| Deployment | Dev `172.16.16.44` and prod `172.16.16.41` / `https://ctfd.swocts.com` on `ce7c25bb`, version `2.7.0`, healthy, WireGuard client route present |
+| Deployment | Dev `<dev-host-ip>` and prod `<prod-host-ip>` / `https://<platform-host>` on `ce7c25bb`, version `2.7.0`, healthy, WireGuard client route present |
 | Quiz banks | Four Beginner banks seeded (5/5/4/4 questions, pass 70); `has_quiz=true` on all four levels; Stage 2 submission **100% (5/5)** on both hosts |
 | Learning smoke | `scripts/ui-learning-smoke.mjs` **13/13** on completed and fresh accounts on both hosts |
 | Target reveal | VPN-only labs expose the computed IP; RangeBox sessions keep `hostnames` without an IP, on both hosts |
@@ -443,7 +449,7 @@ client-side secrets, and upstream supply-chain compromise.
 | Supply-chain lock | **42 files and 162 lab hashes** match release `2.6.0` |
 | Event certificate tests | Participation, placement, and trophy listings; JSON and PDF; public verification; tampered IDs; opt-out; `409` before the event ends; `403` for a non-participant |
 | Event route smoke | Unauthenticated certificate list returns `401`; unknown `OCR-EVT-` ID returns the generic invalid result |
-| Deployment smoke | Dev `172.16.16.44` and prod `172.16.16.41` / `https://ocr.swocts.com` on `2.6.0`; healthy; 162 labs discovered; no backend errors |
+| Deployment smoke | Dev `<dev-host-ip>` and prod `<prod-host-ip>` / `https://<platform-host>` on `2.6.0`; healthy; 162 labs discovered; no backend errors |
 | VPN route verifier | All active labs passed after the `/32` and own-`/24` route change |
 | Release tag | `v2.6.0` is an annotated, unsigned tag; the supply-chain lock is signed by the release key |
 
@@ -452,7 +458,7 @@ was created without the private release key, which is held outside the
 repository. Sign the tag on the release workstation if a signed tag is
 required; the lock signature remains valid independently.
 
-## Security review evidence — 8 November 2026
+## Security review evidence â€” 8 November 2026
 
 | Check | Result |
 |---|---|

@@ -184,7 +184,7 @@ Check the special headers endpoint that may contain additional information or th
    Server: Apache/2.4.54 (Ubuntu)
    X-Flag-Hint: Check internal server name
    X-Internal-Server: web-server-01.internal.lab
-   X-Secret-Key: OCR{h34d3r_4n4lys1s_b4s1c}
+   X-Secret-Key: <flag>
    Content-Type: text/html
    ```
 
@@ -205,7 +205,7 @@ Check the special headers endpoint that may contain additional information or th
 ```
 X-Flag-Hint: Check internal server name
 X-Internal-Server: web-server-01.internal.lab
-X-Secret-Key: OCR{h34d3r_4n4lys1s_b4s1c}
+X-Secret-Key: <flag>
 ```
 
 **What these headers reveal:**
@@ -226,7 +226,7 @@ The flag is in the `X-Secret-Key` header from the headers.php endpoint.
 
    **Expected output:**
    ```
-   X-Secret-Key: OCR{h34d3r_4n4lys1s_b4s1c}
+   X-Secret-Key: <flag>
    ```
 
 2. **Get all headers and manually look for it:**
@@ -243,7 +243,7 @@ The flag is in the `X-Secret-Key` header from the headers.php endpoint.
 
    **Expected output:**
    ```
-   OCR{h34d3r_4n4lys1s_b4s1c}
+   <flag>
    ```
 
 4. **Alternative: Use browser DevTools:**
@@ -256,7 +256,7 @@ The flag is in the `X-Secret-Key` header from the headers.php endpoint.
 
 **Flag:**
 ```
-OCR{h34d3r_4n4lys1s_b4s1c}
+<flag>
 ```
 
 **Troubleshooting:**
@@ -270,7 +270,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{h34d3r_4n4lys1s_b4s1c}
+<flag>
 ```
 
 **Verification checklist:**

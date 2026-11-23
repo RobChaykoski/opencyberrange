@@ -125,7 +125,7 @@ Use the same reused credentials to connect via SSH and read the flag file direct
 
 4. **Expected flag content:**
    ```
-   OCR{cr3d_r3us3_cr0ss}
+   <flag>
    ```
 
 ### Step 5: Verify Flag Format
@@ -134,7 +134,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{cr3d_r3us3_cr0ss}
+<flag>
 ```
 
 **Verification checklist:**

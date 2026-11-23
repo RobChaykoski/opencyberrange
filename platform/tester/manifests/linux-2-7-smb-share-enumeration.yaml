@@ -28,10 +28,10 @@ solver:
     command: smbclient //{target.target}/hr_data -U hr_svc%Bl4ckw3ll_HR# -c 'get assessment_token.txt /tmp/smb_token2.txt' 2>&1 && cat /tmp/smb_token2.txt
     expect: sh4r3d
   - name: Verify complete flag
-    command: echo 'OCR{3num_sh4r3d}'
-    expect: OCR{3num_sh4r3d}
+    command: echo '{flag}'
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{3num_sh4r3d}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

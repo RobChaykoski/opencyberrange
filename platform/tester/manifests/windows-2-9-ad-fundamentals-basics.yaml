@@ -17,9 +17,9 @@ solver:
     expect: S3rv1ce!Pass
   - name: Recover the case token from the description
     command: ldapsearch -x -H ldap://{target.ldap} -D '{cred.analyst.user}' -w '{cred.analyst.pass}' -b 'dc=lab,dc=example,dc=org' '(uid=svc-backup)' description 2>&1 | grep -o 'OCR{[^}]*}'
-    expect: OCR{ad_c0nc3pts_ld4p}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{ad_c0nc3pts_ld4p}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

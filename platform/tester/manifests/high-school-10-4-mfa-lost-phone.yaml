@@ -25,9 +25,9 @@ solver:
     expect: '403'
   - name: The public answer recovers the account and the token
     command: curl -s -X POST -d 'user=amara&answer=The+Lantern+Keeper' http://{target.portal}:8080/recover | grep -o 'OCR{[^}]*}'
-    expect: OCR{recovery_is_part_of_mfa}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{recovery_is_part_of_mfa}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

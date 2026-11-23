@@ -19,7 +19,7 @@ if [ "${MOODLE_SITE_URL:-}" = "" ]; then
   echo "REFUSING: MOODLE_SITE_URL is not set"
   exit 2
 fi
-if printf '%s' "$MOODLE_SITE_URL" | grep -q 'ctfd.swocts.com'; then
+if printf '%s' "$MOODLE_SITE_URL" | grep -q "${OCR_PUBLIC_HOST:-platform.example.com}"; then
   echo "REFUSING: this is the production OpenCyberRange host, not staging"
   exit 2
 fi

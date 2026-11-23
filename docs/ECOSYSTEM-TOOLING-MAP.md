@@ -20,9 +20,16 @@ records. OpenIAM is fetched separately as its own compose stack.
 | **OpenCyberRange (OCR)** | Teaching and workforce development | Lab tracks, NICE mapping, readiness evidence, instructor workflows, learner-facing practice |
 | **OpenGRC** | Governance, risk, and compliance | Control catalogue, framework mapping, evidence requests, audits, exceptions, training-to-control links |
 | **OpenDetectionEngine / OpenDLP** | Data discovery, classification, and protection | Data sources, classifiers, DLP policy, discovery evidence, classification reports |
+| **DefectDojo** | Vulnerability and finding management | Finding ingestion, cross-scanner deduplication, exploitability ranking, SLA and remediation tracking |
+| **Steampipe / Powerpipe** | Read-only cloud and SaaS inventory | Scheduled SQL collection, benchmark results, configuration evidence snapshots |
+| **Cloud Custodian** | Cloud guardrails and remediation | Policy-as-code filters/actions, lab-account TTL, tag enforcement, public-exposure remediation, dry-run evidence |
+| **Sigstore / Cosign** | Supply-chain trust | Keyless artifact signing, provenance attestations, transparency-log evidence, release verification |
+| **OpenMetadata** | Metadata authority | Classification, ownership, lineage, jurisdiction, retention, controls, policy context |
+| **OPA** | Policy decision engine | Versioned policy bundles, allow/deny/mask/approval decisions, decision audit records |
 | **OpenEMR / DRButler** | Clinical operations | PHI protection, identity, endpoint compliance, vendor risk, HIPAA evidence, clinician workflow |
 | **Ralph** | Asset inventory | Asset ownership, lifecycle, network/device inventory |
 | **Fleet** | Endpoint management | Device posture, OS/package state, endpoint compliance evidence |
+| **Velociraptor** | Endpoint DFIR and hunting | VQL hunts, artifact collection, offline collectors, timeline evidence, scoped response |
 
 ## Tool map
 
@@ -42,8 +49,61 @@ records. OpenIAM is fetched separately as its own compose stack.
 | Endpoint compliance | Fleet | Endpoint compliance report | Control evidence | Collector posture | Clinical device posture |
 | Containers/Kubernetes | Docker, Kubernetes, Cilium, Calico, Istio | PLAT01/PLAT02/PLAT06/PLAT07/PLAT08 labs | SDLC and platform control evidence | Collector deployment | Clinical service platform evidence |
 | CI/CD and code quality | GitHub Actions, GitLab CI, SonarQube, OWASP Dependency-Check, ScanCode | PLAT03 lab | Build/release control evidence | Build pipeline evidence | Build pipeline and vendor evidence |
-| Data classification/DLP | OpenDLP | Privacy labels and export classification | Privacy/control evidence | Core classification and DLP | PHI classification and DLP evidence |
+| Data classification/DLP | OpenDLP, OpenMetadata | Privacy labels and export classification | Privacy/control evidence | Core classification and DLP | PHI classification and DLP evidence |
+| Vulnerability management | DefectDojo, OpenVAS, Trivy, Grype | Vulnerability labs and remediation exercises | Risk, control, and SLA evidence | Scanner findings and exposure context | Clinical application and vendor vulnerability evidence |
+| Cloud/SaaS configuration evidence | Steampipe, Powerpipe | Cloud and SaaS security labs | Benchmark and control evidence snapshots | Cloud data-source and exposure context | Cloud-hosted PHI configuration evidence |
+| Endpoint DFIR and hunting | Velociraptor, Wazuh, Fleet | DFIR labs, VQL hunts, artifact collection | Forensic evidence and control testing | Endpoint evidence for data exposure | Clinical endpoint DFIR |
+| Cloud guardrails and remediation | Cloud Custodian, OPA | Cloud lab guardrails, TTL, and cleanup | Cloud control evidence and exceptions | Cloud data-source protection context | Cloud-hosted PHI guardrails |
+| Supply-chain trust | Sigstore, Cosign, Syft | Release signing and verification labs | Build and release control evidence | Collector and policy-bundle verification | Vendor artifact and image verification |
+| Metadata and policy context | OpenMetadata, OPA, Authentik | Learner and lab metadata context | Decision evidence and policy version | Classification and policy context | PHI policy context and access decisions |
 | Privacy and reporting | Shared role model | Privacy office and auditor dashboards | Evidence requests and audit packs | Classification and discovery reports | PHI access and retention evidence |
+
+## Enforcement boundaries
+
+The tools overlap in vocabulary but not in authority. Keep these boundaries
+explicit so a query tool never becomes an enforcement engine and a policy engine
+never becomes a scanner.
+
+| Layer | Tools | Allowed role | Not allowed |
+|---|---|---|---|
+| Observe | Steampipe, Powerpipe, OpenMetadata, Ralph, NetBox, Fleet, Wazuh, Velociraptor, OpenDLP | Scheduled read-only collection and evidence snapshots | Synchronous request-path dependency or system of record |
+| Decide | OPA, Authentik, OpenCyberRange context service | Application and data authorization, identity, policy decisions | Mutating cloud resources |
+| Enforce cloud | Cloud Custodian | Scoped remediation in lab or sandbox accounts after dry-run and approval | Production remediation without approval, change window, and audit record |
+| Track findings | DefectDojo | Deduplicate, rank, assign, SLA, retest | Owning control, risk, or exception decisions |
+| Govern | OpenGRC | Controls, risks, evidence requests, exceptions, audits | Running scanners or storing raw secrets |
+| Trust | Sigstore, Cosign | Sign and verify artifacts, provenance, and transparency-log entries | Replacing access control or runtime authorization |
+| Train | OpenCyberRange | Labs, readiness evidence, instructor workflows | Production data or real credentials |
+
+### Data flow
+
+```text
+Steampipe / Powerpipe ─┐
+OpenDLP / OpenMetadata ─┼─> DefectDojo ──> OpenGRC
+Cloud Custodian ────────┘        │
+                                 └─> remediation, retest, SLA evidence
+
+OpenMetadata ──> context service ──> OPA ──> OCR / OpenGRC / OpenDLP
+Sigstore ──────> verify release artifacts, SBOMs, and policy bundles
+```
+
+### Rules
+
+1. **Steampipe is read-only.** It observes cloud and SaaS APIs; it never becomes
+   the system of record or an inline dependency.
+2. **Cloud Custodian is the only tool allowed to mutate cloud resources.** Run
+   `--dry-run` first, scope credentials to a lab or sandbox account, require an
+   approval for any non-dry-run action, and record the policy version, target,
+   before/after state, actor, and evidence hash.
+3. **OPA decides application and data actions.** It does not remediate cloud
+   resources; Cloud Custodian does not authorize learner exports.
+4. **DefectDojo tracks findings.** OpenGRC consumes the aggregate evidence and
+   owns the risk, control, exception, and audit decision.
+5. **Sigstore is a release gate.** Verify signatures and provenance before a
+   deploy or a policy-bundle load, not on every learner request.
+6. **No synchronous collector calls in the request path.** Materialize evidence
+   on a schedule and serve the last reviewed snapshot.
+7. **Every automated action is attributable.** Actor, policy version, target,
+   before/after, approval, and evidence hash are mandatory.
 
 ## Identity architecture
 

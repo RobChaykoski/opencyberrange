@@ -49,7 +49,7 @@ The important fields are:
 | `GPSLatitude` | 0° 0' 0" N |
 | `GPSLongitude` | 0° 0' 0" E |
 | `ImageDescription` | Loading bay camera 3, frame 0042 |
-| `UserComment` | `OCR{ex1f_m3tadata_l34ks}` |
+| `UserComment` | `<flag>` |
 
 If you prefer a different tool:
 
@@ -75,7 +75,7 @@ innocuous.
 The flag is the value in `UserComment`:
 
 ```
-OCR{ex1f_m3tadata_l34ks}
+<flag>
 ```
 
 Paste it into the **Submit Flag** form and submit.

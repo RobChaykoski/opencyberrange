@@ -24,9 +24,9 @@ solver:
     expect: flag
   - name: Retrieve flag via HTTP
     command: curl -s http://{target.target}/flag.txt
-    expect: OCR{n3tw0rk_3num}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{n3tw0rk_3num}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

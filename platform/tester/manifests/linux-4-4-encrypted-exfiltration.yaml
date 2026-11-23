@@ -28,10 +28,10 @@ solver:
     command: sshpass -p '{cred.operator.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.operator.user}@{target.target} 'cat /opt/obsidian/.cache/.data_store | xxd -r -p' 2>&1
     expect: 3xf1l
   - name: Verify complete flag
-    command: echo 'OCR{3ncrypt_d3c0d3_3xf1l}'
-    expect: OCR{3ncrypt_d3c0d3_3xf1l}
+    command: echo '{flag}'
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{3ncrypt_d3c0d3_3xf1l}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

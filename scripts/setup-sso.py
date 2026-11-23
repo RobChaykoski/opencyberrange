@@ -17,8 +17,12 @@ TEMPLATE = ROOT / "deploy" / "sso" / "dex" / "config.template.yaml"
 base = (
     os.environ.get("PUBLIC_BASE_URL")
     or os.environ.get("SSO_BASE_URL")
-    or "https://172.16.16.44"
+    or ""
 ).rstrip("/")
+if not base:
+    raise SystemExit(
+        "Set PUBLIC_BASE_URL or SSO_BASE_URL to the browser-facing origin."
+    )
 
 RUNTIME.mkdir(parents=True, exist_ok=True)
 secret_file = RUNTIME / "client-secret.txt"

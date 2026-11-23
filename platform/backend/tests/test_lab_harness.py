@@ -79,7 +79,7 @@ def test_generated_manifest_contract_smoke():
         ROOT / "platform/tester/manifests/linux-1-1-ssh-service-detection.yaml"
     )
 
-    assert manifest["expected_flag"] == "OCR{ssh_d3t3ct3d}"
+    assert manifest["expected_flag"] == "{flag}"
     assert manifest["expected_flag_count"] == 1
     assert {"port": 22, "protocol": "tcp"} in manifest["expected_services"]
     assert manifest["solver"]["steps"]

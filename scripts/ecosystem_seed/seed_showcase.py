@@ -12,7 +12,7 @@ Typical local Docker Desktop use:
 For the standard dev host with TLS, set the public/internal URLs explicitly:
 
     MOODLE_ISSUER=https://moodle.example.test:9443 \
-    OCR_PUBLIC_URL=https://172.16.16.44 \
+    OCR_PUBLIC_URL=https://platform.example.com \
     python scripts/ecosystem_seed/seed_showcase.py
 
 Environment overrides:

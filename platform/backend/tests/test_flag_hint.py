@@ -9,16 +9,16 @@ def _hash(flag: str) -> str:
 
 
 def test_lookalike_digit_hint_for_leetspeak_miss():
-    expected = _hash("OCR{pr0mpt_1nj3ct10n_syst3m_l34k}")
-    hint = _wrong_flag_hint("OCR{pr0mpt_1nj3cti0n_syst3m_l34k}", expected)
+    expected = _hash("OCR{test_1nj3ct10n_syst3m_l34k}")
+    hint = _wrong_flag_hint("OCR{test_1nj3cti0n_syst3m_l34k}", expected)
 
     assert "look-alike" in hint.lower()
     assert "1 for" in hint
 
 
 def test_lookalike_hint_when_public_is_typed_with_a_letter():
-    expected = _hash("OCR{cl13nt_s1d3_s3cr3ts_4r3_publ1c}")
-    hint = _wrong_flag_hint("OCR{cl13nt_s1d3_s3cr3ts_4r3_public}", expected)
+    expected = _hash("OCR{test_s3cr3ts_4r3_publ1c}")
+    hint = _wrong_flag_hint("OCR{test_s3cr3ts_4r3_public}", expected)
 
     assert "look-alike" in hint.lower()
 

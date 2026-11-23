@@ -105,7 +105,7 @@ Look for: `hunt.exfil.evil-dns.net`: the first subdomain label is the IOC.
 ### Step 6: Assemble Flag
 
 ```
-OCR{c0rr3l4t3_l0g_hunt}
+<flag>
 ```
 
 ## Correlation Summary

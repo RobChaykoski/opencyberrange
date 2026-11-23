@@ -34,9 +34,9 @@ solver:
     expect: b'PK'
   - name: Extracting the grant pack reveals the token
     command: curl -s http://{target.portal}:8080/files/grant-pack.png | python3 -c 'import sys,io,zipfile; print(zipfile.ZipFile(io.BytesIO(sys.stdin.buffer.read())).read("token.txt").decode())' | grep -o 'OCR{[^}]*}'
-    expect: OCR{decode_then_verify_then_open}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{decode_then_verify_then_open}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

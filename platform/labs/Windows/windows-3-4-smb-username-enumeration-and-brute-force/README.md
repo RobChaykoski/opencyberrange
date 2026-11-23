@@ -309,7 +309,7 @@ Use the discovered credentials to connect to the SMB share and retrieve the flag
 
    **Expected output:**
    ```
-   OCR{smb_3num_brut3}
+   <flag>
    ```
 
 ### Step 7: Verify Flag Format
@@ -318,7 +318,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{smb_3num_brut3}
+<flag>
 ```
 
 **Verification checklist:**

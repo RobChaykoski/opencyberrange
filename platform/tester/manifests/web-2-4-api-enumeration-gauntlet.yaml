@@ -27,10 +27,10 @@ solver:
     command: mysql -h {target.dbserver} -u {cred.db.user} -p'{cred.db.pass}' stonebridge -N -e 'SELECT value FROM audit_flags LIMIT 1' 2>&1
     expect: l34k
   - name: Assemble and verify complete flag
-    command: echo 'OCR{4p1_v3rs10n_l34k}'
+    command: echo '{flag}'
     expect: OCR{
 expected_flag_count: 1
-expected_flag: OCR{4p1_v3rs10n_l34k}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

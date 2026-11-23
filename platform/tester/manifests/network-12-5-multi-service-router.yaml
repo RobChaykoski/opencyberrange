@@ -27,9 +27,9 @@ solver:
     expect: '"node": "svc2"'
   - name: Flag service is reachable through the router
     command: IP=$(curl -s --connect-timeout 5 http://{target.r1}:8080/status | jq -r '.links[] | select(.peer=="svc1") | .peer_ip'); sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.h1} "wget -qO- http://$IP/flag" 2>&1
-    expect: OCR{mult1_s3rv1c3_r0ut3}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{mult1_s3rv1c3_r0ut3}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

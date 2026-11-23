@@ -3,10 +3,10 @@
 Pre-event review of the production Moodle LTI pilot before the first participant
 session on 2026-11-21.
 
-- Public Moodle: `https://moodle.swocts.com` (backend `172.16.16.41:8092`)
-- Public platform: `https://ctfd.swocts.com`
-- Public DNS: both names resolve to `70.54.16.7`; the internal view resolves to
-  NPM at `172.16.16.11`
+- Public Moodle: `https://<moodle-host>` (backend `<prod-host-ip>:8092`)
+- Public platform: `https://<platform-host>`
+- Public DNS: both names resolve to `<public-ip>`; the internal view resolves to
+  NPM at `<npm-host-ip>`
 - Roles tested: student, editing teacher
 
 ## Verdict
@@ -31,7 +31,7 @@ Two items are deliberate pilot exceptions and one code change is pending:
 
 | Check | Result |
 |---|---|
-| Public DNS for both hosts | `70.54.16.7` |
+| Public DNS for both hosts | `<public-ip>` |
 | Moodle login from an external fetcher | `200`, `Server: openresty` |
 | Platform root from an external fetcher | `200` |
 | Public TLS certificate (Moodle) | Let's Encrypt, valid to 2027-02-18 |
@@ -72,7 +72,7 @@ database, authenticated as an instructor:
 | Offline crawl (3,392 pages) | only 4 broken links, all in the high-school wiki (excluded pages) |
 
 The workbook URL used by the pilot activity is
-`https://ctfd.swocts.com/wiki/range/netfor/CH_N0_Network_Foundations/01_Ping_Basics/`.
+`https://<platform-host>/wiki/range/netfor/CH_N0_Network_Foundations/01_Ping_Basics/`.
 Its HTML, CSS, JS, images, and sitemap all return `200`, and the page renders
 inside the sandboxed iframe with the `ocr-embed` class.
 
@@ -100,8 +100,8 @@ inside the sandboxed iframe with the `ocr-embed` class.
 - Added HSTS at the Moodle origin (`deploy/moodle-prod/apache-hsts.conf`,
   mounted by Compose); NPM passes the origin header through. Verified
   externally.
-- Fixed `platform_settings.mail_public_url` from `https//ctfd.swocts.com` to
-  `https://ctfd.swocts.com`.
+- Fixed `platform_settings.mail_public_url` from `https//<platform-host>` to
+  `https://<platform-host>`.
 - Renamed the Moodle course section from the default “New section” to
   “Pilot activities”.
 - Disabled Moodle’s stock user tours so the course activity is visible on first
@@ -133,8 +133,8 @@ Until then:
 
 ### 2. Postgres is reachable on the LAN
 
-`ocr-pg-gateway` (an `alpine/socat` container) publishes `172.16.16.41:5432`.
-The database is password-protected, but any host on `172.16.16.0/24` can reach
+`ocr-pg-gateway` (an `alpine/socat` container) publishes `<prod-host-ip>:5432`.
+The database is password-protected, but any host on `<private-subnet>` can reach
 it. Restrict the gateway to the lab bridge, or bind it to `127.0.0.1` if no lab
 depends on it. Do not change this during the pilot without checking the lab
 network path.
@@ -170,10 +170,10 @@ Revert the pilot-only settings documented in `deploy/moodle-prod/README.md`:
 
 ### 7. Cloudflare DDNS
 
-Deployed on `ocr-prod` and verified on 2026-11-20:
+Deployed on `<prod-host>` and verified on 2026-11-20:
 
 - container running with `unless-stopped`, Docker enabled at boot
-- detects WAN IPv4 `70.54.16.7`
+- detects WAN IPv4 `<public-ip>`
 - both records current; a no-op write returned `200`, confirming edit access
 - checks every five minutes and on startup
 
@@ -199,16 +199,16 @@ Completed after the pilot session:
   `~/moodle-prod/backups/moodle-db-20261122-010738.sql.gz`).
 - Rebuilt all workbook wikis, including the restored high-school pages.
 - Narrowed `wiki_frame_ancestor` from the raw-IP list to
-  `https://ctfd.swocts.com https://moodle.swocts.com`; the platform still frames
+  `https://<platform-host> https://<moodle-host>`; the platform still frames
   only its own origin and the LMS.
 - Deployed the LTI instructor-role mapping and marked `pilot-instructor` as
   SSO-managed (`password_login_disabled=true`) so future launches follow the
   `membership#Instructor` claim instead of the local role workaround.
-- Confirmed `ocr-pg-gateway` is restricted to `172.16.16.44/32`.
+- Confirmed `ocr-pg-gateway` is restricted to `<dev-host-ip>/32`.
 - Release 5.30.1 removed the LTI ticket exchange's dependency on
   `sso_enabled`, and production now runs with `sso_enabled=false`.
 - Narrowed Moodle's `curlsecurityblockedhosts` to the default private ranges
-  plus a carve-out for only the NPM address `172.16.16.11`. The JWKS fetch was
+  plus a carve-out for only the NPM address `<npm-host-ip>`. The JWKS fetch was
   verified at `200` through Moodle's own cURL wrapper.
 - Workbook cards now open the workbook page for the learner's current exercise
   in that track (or the first exercise when they have not started), instead of
@@ -226,16 +226,16 @@ are:
 
 ```bash
 # Public reachability and HSTS (from outside)
-curl -sSI https://moodle.swocts.com/login/index.php | grep -i strict-transport
-curl -sSI https://ctfd.swocts.com/ | grep -i strict-transport
+curl -sSI https://<moodle-host>/login/index.php | grep -i strict-transport
+curl -sSI https://<platform-host>/ | grep -i strict-transport
 
 # LTI JWKS
-curl -sS https://ctfd.swocts.com/api/lti/jwks | head
+curl -sS https://<platform-host>/api/lti/jwks | head
 
 # Workbook page and sitemap (authenticated browser session required)
-#   https://ctfd.swocts.com/wiki/range/netfor/CH_N0_Network_Foundations/01_Ping_Basics/
-#   https://ctfd.swocts.com/wiki/range/netfor/sitemap.xml
+#   https://<platform-host>/wiki/range/netfor/CH_N0_Network_Foundations/01_Ping_Basics/
+#   https://<platform-host>/wiki/range/netfor/sitemap.xml
 
 # Backups
-ssh ocr-prod 'ls -lt ~/backups | head -4'
+ssh <prod-host> 'ls -lt ~/backups | head -4'
 ```

@@ -23,9 +23,9 @@ solver:
     expect: ssh-auth-methods
   - name: Retrieve flag via SSH (password auth confirmed by NSE)
     command: sshpass -p 'techstart2024' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null student@{target.target} 'cat /home/student/flag.txt'
-    expect: OCR{nse_scr1pt}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{nse_scr1pt}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

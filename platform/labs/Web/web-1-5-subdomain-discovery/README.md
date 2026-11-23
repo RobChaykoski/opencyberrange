@@ -258,7 +258,7 @@ Once you've discovered the admin subdomain:
 
    **Expected output:**
    ```
-   OCR{subd0m41n_d1sc0v3ry_b4s1c}
+   <flag>
    ```
 
 4. **Alternative flag locations (if needed):**
@@ -270,7 +270,7 @@ Once you've discovered the admin subdomain:
 
 **Flag:**
 ```
-OCR{subd0m41n_d1sc0v3ry_b4s1c}
+<flag>
 ```
 
 ---

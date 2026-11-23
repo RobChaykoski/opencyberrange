@@ -25,9 +25,9 @@ solver:
     expect: '200'
   - name: Apply default-deny policy and validate
     command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.firewall} 'sudo iptables -F FORWARD && sudo iptables -A FORWARD -p tcp --dport 80 -j ACCEPT && sudo iptables -A FORWARD -p tcp --dport 443 -j ACCEPT && sudo iptables -A FORWARD -j DROP && sleep 3 && sudo check-rules' 2>&1
-    expect: OCR{d3f4ult_d3ny_m4st3r}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{d3f4ult_d3ny_m4st3r}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

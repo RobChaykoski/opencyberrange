@@ -30,6 +30,7 @@ The source of truth is
 | DFIR-10 | Memory and PCAP Correlation | advanced | 180 | process-to-flow matching, DNS/TLS, timestamp skew |
 | DFIR-11 | Analyst Reporting and Peer Review | advanced | 120 | executive summary, evidence table, confidence |
 | DFIR-12 | Capstone: Ransomware Investigation | advanced | 240 | full-chain reconstruction, impact, recovery, review |
+| DFIR-13 | Enterprise Endpoint Hunting with Velociraptor | advanced | 150 | VQL, artifact selection, scoped hunts, offline collectors, custody |
 
 Each module declares weighted competencies that sum to 1.0. The progression is
 ordered: every prerequisite is an earlier module.

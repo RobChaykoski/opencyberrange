@@ -210,10 +210,10 @@ grep -i "flag\|alert\|analysis" dns.log
 **Expected finding**:
 ```
 # 2024-01-04 14:36:45 ANALYSIS: Malware C2 detected - Source: 10.50.4.67, Domain: c2-dns-3xf1ltr4t10n.tk, Pattern: Data exfiltration via DNS
-# 2024-01-04 14:36:45 ALERT: Malicious domain pattern contains flag: OCR{dns_3xf1ltr4t10n}
+# 2024-01-04 14:36:45 ALERT: Malicious domain pattern contains flag: <flag>
 ```
 
-**Flag**: `OCR{dns_3xf1ltr4t10n}`
+**Flag**: `<flag>`
 
 ## Key Takeaways
 

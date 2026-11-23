@@ -1,8 +1,8 @@
 # Release 5 production readiness
 
 Status: **`v5.17.5` (Community / Academic edition) is released and deployed, and
-production is cut over.** Development `172.16.16.44` and production
-`172.16.16.41` both run `main` at the commit tagged `v5.17.5` with Alembic
+production is cut over.** Development `<dev-host-ip>` and production
+`<prod-host-ip>` both run `main` at the commit tagged `v5.17.5` with Alembic
 `0041_tenant_rls_legacy`. The release tags `v5.0.0`, `v5.0.1`,
 `v5.1.0`, `v5.1.1`, `v5.1.2`, `v5.2.0`, `v5.2.1`, `v5.2.2`, `v5.3.0`,
 `v5.3.1`, `v5.4.0`, `v5.5.0`, `v5.6.0`, `v5.7.0`, `v5.8.0`, `v5.8.1`,
@@ -280,11 +280,11 @@ Community / Academic release and the one-way cutover is complete.
   `~/backups/platform-env-pre-r5-20261114-044349`.
 - Rollback images: `ocr-frontend:release4-rollback-20261114-044349` and
   `ocr-backend:release4-rollback-20261114-044349`.
-- `wiki_origin` set to `https://172.16.16.41:8443`; the 8443 listener serves the
+- `wiki_origin` set to `https://<prod-host-ip>:8443`; the 8443 listener serves the
   main HTTPS server, `/wiki/` enforces the session gate (302), and the SPA CSP
   allows `frame-src https://*:8443`.
 - `wiki_frame_ancestor` set to
-  `https://172.16.16.41 https://ctfd.swocts.com https://70.54.16.7` after the
+  `https://<prod-host-ip> https://<platform-host> https://<public-ip>` after the
   5.0.0 smoke test showed the workbook was blocked when the app was opened on
   the direct host or the public domain.
 - `opencyberrange/rangebox:lite` rebuilt on the host from the pinned Kali digest
@@ -371,7 +371,7 @@ Community / Academic release and the one-way cutover is complete.
 - Production smoke test: spawned `metasploit-1-1-workspace-and-modules` with a
   Kali RangeBox. The target log reported `KVM acceleration enabled`, the KVM
   device was present in the target container, and the RangeBox retrieved
-  `OCR{msf_workspace_7c1a}` from `http://target/flag.txt`. The temporary user and
+  `<flag>` from `http://target/flag.txt`. The temporary user and
   session were removed.
 - LVM: the root LV was 99 GiB inside a 198 GiB volume group. Extended the LV to
   198 GiB and grew ext4 online; root is now 195 GiB with about 97 GiB free (43%
@@ -390,7 +390,7 @@ Community / Academic release and the one-way cutover is complete.
 - Built `ocr-ubuntu-memory:latest` on production and ran the lab with a Kali
   RangeBox. The target used KVM acceleration, the student acquired a 2.0 GiB
   memory image, transferred it with `scp`, and recovered
-  `MEMFLAG=OCR{live_mem_4f8c2a}`.
+  `MEMFLAG=<flag>`.
 - The SHA-256 matched after transfer. Temporary user, completions, session, and
   containers were removed. Production had about 82 GiB free after the image
   build.
@@ -432,7 +432,7 @@ Community / Academic release and the one-way cutover is complete.
 - End-to-end checks on both hosts: spawn with a temporary learner, run the
   three manifest test steps from a sidecar on the lab network (service
   reachable, setpoint writes and reads back as 250, marker decodes to
-  `OCR{m0dbu5_wr1t3_c0ntr0l}`), submit the flag, then erase the learner and
+  `<flag>`), submit the flag, then erase the learner and
   session. The workbook page builds and serves on both hosts.
 - OpenPLC was evaluated for this lab and deferred. The maintained OpenPLC
   Runtime v4 image starts but exposes no Modbus registers without a program ZIP

@@ -23,9 +23,9 @@ solver:
     expect: ssh
   - name: Retrieve flag from SSH service banner
     command: nmap -Pn -n -p 22 -sV {target.target} 2>&1 | grep -o 'OCR{[^}]*}'
-    expect: OCR{ssh_d3t3ct3d}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{ssh_d3t3ct3d}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

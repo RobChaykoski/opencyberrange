@@ -1,8 +1,8 @@
 # Production deployment validation matrix - 2.7.x upgrade
 
 Status: **READY FOR PRODUCTION** (all required gates PASS).
-Environment: development host `172.16.16.44` (`ocrv2`) and production host
-`172.16.16.41` (`rchaykoski`), release `3`, deployed 12 November 2026.
+Environment: development host `<dev-host-ip>` (`<dev-user>`) and production host
+`<prod-host-ip>` (`<deploy-user>`), release `3`, deployed 12 November 2026.
 
 ## Gate rule
 
@@ -46,7 +46,7 @@ notes.
 | P2 | Upgrade rehearsal 2.6 -> 2.7 | Yes | PASS | Scratch DB downgraded 0014 -> 0011 (2.6-era head) and upgraded back to 0014; row counts unchanged (141/178/230) |
 | P3 | Rollback rehearsal | Yes | PASS | Full `pg_dump`/`pg_restore` rollback plus the Alembic downgrade path above |
 | P4 | Signed release tag | Yes | PASS | `v3` signed annotated tag; key `8E81B5F3FDC5F5A62B0C258791FD6FBC4ADAFDA2`; `git tag -v v3` verified |
-| P5 | Production-shaped host rehearsal | Yes | PASS | Production `172.16.16.41`: migrations `0008 -> 0014`, 169 labs, healthy containers, backup, integrity, and profile checks |
+| P5 | Production-shaped host rehearsal | Yes | PASS | Production `<prod-host-ip>`: migrations `0008 -> 0014`, 169 labs, healthy containers, backup, integrity, and profile checks |
 | P6 | Email delivery | Yes | PASS | Mailpit sink on the compose network; `/api/settings/mail/test` delivered "SWOCTS Cyber Range mail test" to admin@example.com |
 | P7 | WireGuard / Peer Manager | Yes | PASS | Hardened build on `172.17.0.1:5000`; `/peers` returns 401 without a key and 200 with the backend key; `preshared_key` nulled |
 | P8 | RangeBox desktop launch | Yes | PASS | Spawned session 497 (`high-school-9-1-rangebox-first-steps`): running in 15s, RangeBox and portal containers up, stop initiated |
@@ -81,7 +81,7 @@ gate is PASS.
 
 ## Production deployment evidence
 
-Production `172.16.16.41` was deployed as `rchaykoski` on **12 November 2026**.
+Production `<prod-host-ip>` was deployed as `<deploy-user>` on **12 November 2026**.
 The signed `v3` tag and the production deployment/rehearsal complete P4 and P5.
 
 | Check | Evidence |
@@ -120,6 +120,6 @@ mojibake; the manifest was regenerated and CI now checks it against the lock.
 
 | Role | Name | Decision | Date |
 |---|---|---|---|
-| Release owner | rchaykoski | PASS; Release 3 deployed | 2026-11-12 |
+| Release owner | <deploy-user> | PASS; Release 3 deployed | 2026-11-12 |
 | Data analyst | | PASS with D5 historical attribution note | 2026-11-12 |
 | Security reviewer | | PASS on P7 and P4; P10 optional partial | 2026-11-12 |

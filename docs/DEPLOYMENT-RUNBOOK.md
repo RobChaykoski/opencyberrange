@@ -2,6 +2,11 @@
 
 Operational commands for the two deployed environments.
 
+> **Placeholders.** Commands use `<prod-host-ip>`, `<dev-host-ip>`,
+> `<npm-host-ip>`, `<public-ip>`, and `<...-host>`. Take the real values from the
+> private deployment inventory, never from this repository. See
+> [`PUBLICATION-METADATA-POLICY.md`](PUBLICATION-METADATA-POLICY.md).
+
 **Current release:** `5.30.2` (signed tag `v5.30.2`, Alembic
 `0050_child_privacy_defaults`). The admin **System → Health → Release status**
 panel compares the installed version with the latest GitHub release or tag.
@@ -18,8 +23,8 @@ non-production environment, a missing strict-authorization flag, or a missing
 
 | Environment | Address | Login / deploy user | Repository | Compose directory |
 |---|---|---|---|---|
-| Production | `172.16.16.41` / `https://ctfd.swocts.com` | `rchaykoski` | `~/opencyberrange` | `~/opencyberrange/platform` |
-| Development | `172.16.16.44` | `ocrv2` | `~/opencyberrange` | `~/opencyberrange` |
+| Production | `<prod-host-ip>` / `https://<platform-host>` | `<deploy-user>` | `~/opencyberrange` | `~/opencyberrange/platform` |
+| Development | `<dev-host-ip>` | `<dev-user>` | `~/opencyberrange` | `~/opencyberrange` |
 
 The canonical repository is `RobChaykoski/opencyberrange`. Production tracks it
 as `canonical/main`; its `origin` remote points at the same repository.
@@ -258,7 +263,7 @@ deploy user's crontab. It writes a validated custom-format dump
 SHA-256 file to `~/backups`, pruning only its own files after 14 days.
 
 The cron sets
-`BACKUP_REMOTE=ocr-offsite:/home/ocrv2/backups/prod` and
+`BACKUP_REMOTE=ocr-offsite:/home/<dev-user>/backups/prod` and
 `BACKUP_GPG_RECIPIENT=1082980711C1246F3601434C84F6ACCD1A0E0CB0`. The
 `ocr-offsite` SSH alias on the production host uses
 `~/.ssh/ocr_backup_ed25519`, whose public key is authorized on development.
@@ -273,8 +278,8 @@ retention policy.
 Restore from the off-host copy:
 
 ```bash
-scp ocr-dev:/home/ocrv2/backups/prod/ocr-backup-<stamp>.dump.gpg .
-scp ocr-dev:/home/ocrv2/backups/prod/ocr-backup-<stamp>.dump.sha256 .
+scp <dev-host>:/home/<dev-user>/backups/prod/ocr-backup-<stamp>.dump.gpg .
+scp <dev-host>:/home/<dev-user>/backups/prod/ocr-backup-<stamp>.dump.sha256 .
 gpg --decrypt --output ocr-backup-<stamp>.dump ocr-backup-<stamp>.dump.gpg
 sha256sum -c ocr-backup-<stamp>.dump.sha256   # compare the hash only
 ```
@@ -292,9 +297,9 @@ Any combination of these can be set; each receives the encrypted set. Without
 
 | Variable | Transport | Notes |
 |---|---|---|
-| `BACKUP_REMOTE` | rsync over SSH | Current production path (`ocr-offsite:/home/ocrv2/backups/prod`); SSH encrypts transit |
+| `BACKUP_REMOTE` | rsync over SSH | Current production path (`ocr-offsite:/home/<dev-user>/backups/prod`); SSH encrypts transit |
 | `BACKUP_NFS_DIR` | NFS | Path to an **already mounted** directory. Prefer NFSv4 with Kerberos; the mounted filesystem must be writable by the deploy user |
-| `BACKUP_SMB_URL` | SMB via curl | `smb://172.16.16.8/Backups/OCR-Export-Backup/` with `BACKUP_SMB_NETRC`; prefer SMB3 signing/encryption |
+| `BACKUP_SMB_URL` | SMB via curl | `smb://<backup-host-ip>/Backups/OCR-Export-Backup/` with `BACKUP_SMB_NETRC`; prefer SMB3 signing/encryption |
 | `BACKUP_RCLONE_REMOTE` | Any rclone remote | S3/WebDAV/SFTP; use an rclone `crypt` remote or provider-side encryption |
 | `BACKUP_COPY_CMD` | Custom executable | Receives each encrypted file path; the escape hatch for an institutional tool |
 
@@ -305,10 +310,10 @@ by the host operator; the backup script itself never mounts anything.
 For SMB, create `~/.ocr-smb-netrc` (mode 600):
 
 ```text
-machine 172.16.16.8 login <service-account> password <secret>
+machine <backup-host-ip> login <service-account> password <secret>
 ```
 
-and set `BACKUP_SMB_URL='smb://172.16.16.8/Backups/OCR-Export-Backup/'` plus
+and set `BACKUP_SMB_URL='smb://<backup-host-ip>/Backups/OCR-Export-Backup/'` plus
 `BACKUP_SMB_NETRC="$HOME/.ocr-smb-netrc"` in the backup cron. The NAS copy
 stays disabled until that service account is provided; the dev off-host copy
 remains the active secondary target.

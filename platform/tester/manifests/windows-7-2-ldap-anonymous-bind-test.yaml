@@ -22,7 +22,7 @@ solver:
     command: ldapsearch -x -H ldap://{target.target} -b 'dc=financecorp,dc=local' description 2>&1 | grep 'OCR{' || (sleep 3 && ldapsearch -x -H ldap://{target.target} -b 'dc=financecorp,dc=local' description 2>&1 | grep 'OCR{')
     expect: OCR{
 expected_flag_count: 1
-expected_flag: OCR{ldap_4n0n_b1nd}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

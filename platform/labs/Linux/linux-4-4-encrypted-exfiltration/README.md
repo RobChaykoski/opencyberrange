@@ -77,7 +77,7 @@ Token 3: `3xf1l`
 
 ### Step 6: Assemble the Flag
 
-Combine the three tokens: `OCR{3ncrypt_d3c0d3_3xf1l}`
+Combine the three tokens: `<flag>`
 
 ## Common Mistakes
 

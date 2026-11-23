@@ -27,10 +27,10 @@ solver:
     command: smbclient -L //{target.dc} -N 2>&1
     expect: 3num
   - name: Combine flag parts into final flag
-    command: echo 'OCR{m1dt3rm_n3tw0rk_3num}'
-    expect: OCR{m1dt3rm_n3tw0rk_3num}
+    command: echo '{flag}'
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{m1dt3rm_n3tw0rk_3num}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

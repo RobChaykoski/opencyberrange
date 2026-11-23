@@ -45,7 +45,7 @@ solver:
     command: mysql -h {target.dbserver} -u {cred.dbuser.user} -p'{cred.dbuser.pass}' meridian_compliance -N -e 'SELECT finding_detail FROM compliance_findings WHERE severity="CRITICAL"' 2>&1
     expect: OCR{
 expected_flag_count: 1
-expected_flag: OCR{d4ta_br34ch_3xp0s3d}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

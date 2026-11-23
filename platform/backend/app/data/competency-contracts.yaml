@@ -228,6 +228,65 @@ labs:
     usage_source: null
     review_status: baseline_derived
     reviewed_at: null
+  ai-2-2-multi-agent-privilege-escalation:
+    lab_id: ai-2-2-multi-agent-privilege-escalation
+    track: AI
+    difficulty: expert
+    expected_duration_minutes: 90
+    prerequisites:
+    - ai-2-1-agent-hijacking
+    - identity-1-3-nhi-oauth-abuse
+    workbook: wiki/range/ai/CH_AI02_Agentic_AI_Security/03_Shadow_Deputy_Capstone/
+    competency_ids:
+    - id: AI-001
+      weight: 0.4
+    - id: AI-005
+      weight: 0.3
+    - id: AI-006
+      weight: 0.2
+    - id: AI-008
+      weight: 0.1
+    evidence:
+    - type: flag
+      weight: 0.35
+      source: lab.flag
+      validation: exact_match
+    - type: validation_step
+      weight: 0.35
+      source: platform/tester/manifests/ai-2-2-multi-agent-privilege-escalation.yaml
+      validation: all_steps_pass
+    - type: analyst_answer
+      weight: 0.2
+      source: workbook.analysis_questions
+      validation: rubric
+    - type: artifact
+      weight: 0.1
+      source: submitted_artifact
+      validation: rubric
+    prohibited_collection:
+    - keystrokes
+    - mouse_movement
+    - exhaustive_terminal_history
+    assessment_reliability:
+      level: medium
+      score: 0.65
+      evidence_completeness: medium
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Baseline contract derived from the reviewed competency mapping. The evidence types and weights are explicit; live harness evidence and analyst-answer moderation are required before marking reviewed.
+    assessment_criteria:
+    - Submit the final flag from the Meridian Capital audit record.
+    - Pass every automated test step in the lab manifest.
+    - Record the leaked identity, the trust gap, the decision chain, and the control change in the capstone evidence table.
+    - Explain why the stage 1 marker is evidence rather than the graded flag.
+    test_steps: 6
+    flag_required: true
+    content_version: 1.0.0
+    usage_rank: null
+    usage_completions: null
+    usage_source: null
+    review_status: baseline_derived
+    reviewed_at: null
   forensics-1-1-windows-memory-volatility:
     lab_id: forensics-1-1-windows-memory-volatility
     track: Forensics

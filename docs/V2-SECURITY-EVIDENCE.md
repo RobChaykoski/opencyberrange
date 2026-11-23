@@ -40,7 +40,7 @@ Manual evidence:
 - Lab validation: **162 labs, 0 errors, 0 warnings**.
 - Quiz banks: **24 valid**.
 - Supply-chain check: **42 files, 162 labs**, release `2.6.0`.
-- Deployment smoke: dev `172.16.16.44` and prod `172.16.16.41` / `https://ocr.swocts.com` report `2.6.0`, healthy, 162 labs discovered, event route present, and no backend errors.
+- Deployment smoke: dev `<dev-host-ip>` and prod `<prod-host-ip>` / `https://<platform-host>` report `2.6.0`, healthy, 162 labs discovered, event route present, and no backend errors.
 - VPN route verifier: all active labs passed after the `/32` and own-`/24` route change.
 - Release tag: `v2.6.0` is annotated and unsigned; sign it on the release workstation if a signed tag is required.
 
@@ -57,7 +57,7 @@ Residual notes:
 | A02 Cryptographic failures | Release signing key rotated for 2.5.4. `v2.5.4` is a signed annotated tag and `supply-chain.lock.json.asc` verifies with the committed public key. Active fingerprint: `095B D8B5 6802 771D A27E 759E 1BAE 4CD3 1609 A1BF`. The first candidate key was discarded before use and no artifact was signed with it. JWT and database secrets are non-default in the status check. TLS termination remains at Cloudflare/OPNsense; NPM Force SSL is intentionally off. | Pass |
 | A03 Injection | Scenario markdown is sanitized and external links are validated before rendering. CSV exports neutralize formula-leading cells. Lab metadata is schema-validated, and CodeQL is green for Python and JavaScript/TypeScript. `tests/test_input_safety.py`, `tests/test_spreadsheet_safety.py`, `tests/test_activity_admin.py`, `tests/test_lab_metadata_schema.py`, `scripts/validate-lab.py --all` | Pass for covered surfaces |
 | A04 Insecure design | Analytics remains aggregate-only with minimum-cohort suppression and no public learner ranking. The new instructor learning snapshot reuses scoped session/completion/attempt data and returns counts/medians, not learner answers. `tests/test_analytics.py`, `tests/test_competency_radar.py`, `tests/test_instructor_learning_metrics.py` | Pass |
-| A05 Security misconfiguration | Nginx CSP, HSTS, frame, content-type, referrer, and permissions headers remain enforced. External probes to ports 5000 and 8000 remain blocked. NPM Force SSL is intentionally off because Cloudflare/OPNsense already terminate and enforce TLS. UI smoke against `https://ocr.swocts.com` passed (`42741914124`). `scripts/check-nginx-security-headers.py`, `/api/admin/system/status` | Pass |
+| A05 Security misconfiguration | Nginx CSP, HSTS, frame, content-type, referrer, and permissions headers remain enforced. External probes to ports 5000 and 8000 remain blocked. NPM Force SSL is intentionally off because Cloudflare/OPNsense already terminate and enforce TLS. UI smoke against `https://<platform-host>` passed (`42741914124`). `scripts/check-nginx-security-headers.py`, `/api/admin/system/status` | Pass |
 | A06 Vulnerable components | Trivy filesystem/secret/config scan and CodeQL are green on the 2.5.4 commits. The 8 November dependency audit reported no known Python or production npm vulnerabilities; no dependency pins changed in this pass. | Pass for scanned inputs; dependency audit not rerun in this pass |
 | A07 Authentication failures | Login, MFA, lockout, token revocation, profile, and admin re-authentication/session-revocation tests remain green in the backend suite. No authentication contract changed in 2.5.4. `tests/test_auth.py`, `tests/test_mfa.py`, `tests/test_token_revocation.py`, `tests/test_profile.py` | Pass for covered paths |
 | A08 Integrity failures | Alembic migrations `0007_lab_metadata` and `0008_mitre_attack` are additive and applied on both OCR stacks. Supply-chain lock covers 42 files and 149 labs and verifies with the rotated release key. The database integrity ledger is summarised in **Admin → System → Integrity**; `scripts/db-integrity-check.sh` and `deploy/systemd/` provide the daily host check and signed weekly manifests. | Pass |
@@ -68,7 +68,7 @@ Residual notes:
 Manual evidence:
 
 - CI, Quality checks, CodeQL, and Trivy are green on the 2.5.4 release commits.
-- UI smoke: run `42741914124`, success against `https://ocr.swocts.com` on `2.5.4`.
+- UI smoke: run `42741914124`, success against `https://<platform-host>` on `2.5.4`.
 - Backend non-DB suite: **176 passed**.
 - DB-backed metadata, instructor-metrics, course-focus, analytics, competency, and authorization tests passed against disposable PostgreSQL.
 - Lab validation: **149 labs, 0 errors, 0 warnings**.

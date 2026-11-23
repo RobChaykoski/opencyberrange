@@ -189,7 +189,7 @@ tshark -r capture.pcap -Y 'http.request.method == "POST"' \
 
 **Expected output** (fields separated by tabs):
 ```
-POST	/api/login	medical.medicare.local	application/x-www-form-urlencoded	username=dr.johnson&password=OCR{http_cr3d3nt14ls}
+POST	/api/login	medical.medicare.local	application/x-www-form-urlencoded	username=dr.johnson&password=<flag>
 ```
 
 To see the full verbose packet decode (similar to expanding all protocol layers), use the `-V` flag:
@@ -213,10 +213,10 @@ Hypertext Transfer Protocol
     [Full request URI: http://medical.medicare.local/api/login]
     File Data: 56 bytes
        Line-based text data: application/x-www-form-urlencoded
-         username=dr.johnson&password=OCR{http_cr3d3nt14ls}
+         username=dr.johnson&password=<flag>
 ```
 
-**The flag is in the password field**: `OCR{http_cr3d3nt14ls}`
+**The flag is in the password field**: `<flag>`
 
 ### Step 7: Alternative Method - Follow HTTP Stream
 
@@ -247,7 +247,7 @@ Content-Type: application/x-www-form-urlencoded
 Content-Length: 56
 Connection: keep-alive
 
-username=dr.johnson&password=OCR{http_cr3d3nt14ls}
+username=dr.johnson&password=<flag>
 
 HTTP/1.1 200 OK
 Server: nginx/1.18.0
@@ -260,7 +260,7 @@ Connection: keep-alive
 
 **The credentials are in plaintext**:
 - **Username**: dr.johnson
-- **Password**: OCR{http_cr3d3nt14ls}; **This is the flag**
+- **Password**: <flag>; **This is the flag**
 
 ### Step 8: Compare with HTTPS Traffic
 
@@ -300,7 +300,7 @@ You'll see encrypted gibberish, not readable text. This is what secure communica
 - **Method**: Form-based authentication
 - **Credentials exposed**:
   - Username: dr.johnson
-  - Password: OCR{http_cr3d3nt14ls}
+  - Password: <flag>
 - **Compliance**: HIPAA violation (PHI system without encryption)
 
 ### Why This Is Critical
@@ -525,7 +525,7 @@ tshark -r capture.pcap -q -z http,tree
 
 **Phase 1: Identification** (What happened?)
 - Cleartext HTTP authentication detected on medical.medicare.local
-- Credentials: dr.johnson / OCR{http_cr3d3nt14ls}
+- Credentials: dr.johnson / <flag>
 - Date/Time: [from packet timestamps]
 - Duration: Unknown (need to check historical logs)
 
@@ -666,7 +666,7 @@ You've successfully:
 - Documented a HIPAA compliance violation
 - Learned professional packet analysis techniques
 
-**Flag**: `OCR{http_cr3d3nt14ls}`
+**Flag**: `<flag>`
 
 **Core Skill Acquired**: Network packet analysis for security assessment - a critical capability for SOC analysts, incident responders, and penetration testers.
 

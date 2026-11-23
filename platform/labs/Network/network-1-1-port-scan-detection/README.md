@@ -124,7 +124,7 @@ grep "OCR{" firewall.log
 
 **Expected finding**:
 ```
-# 2024-01-03 22:32:50 ANALYSIS: Port scan detected - Source: 203.0.113.66, Ports: 80, Flag: OCR{p0rt_sc4n_d3t3ct3d}
+# 2024-01-03 22:32:50 ANALYSIS: Port scan detected - Source: 203.0.113.66, Ports: 80, Flag: <flag>
 ```
 
 ## Key Takeaways

@@ -19,7 +19,7 @@ def _certificate(design: str) -> dict:
         "certificate_id": "OCR-LVL-1-3-ABCDEF0123",
         "public_verification": True,
         "verify_url": (
-            "https://ctfd.swocts.com/verify/certificate/"
+            "https://<platform-host>/verify/certificate/"
             "OCR-LVL-1-3-ABCDEF0123"
         ),
         "achievements": [

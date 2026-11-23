@@ -105,7 +105,7 @@ In this demo the two user-facing endpoints were:
 Use whichever name resolves to the Docker host on the demo machine. Replace it
 with the institution's HTTPS hostnames for a real deployment.
 
-For a separate public staging Moodle on `moodle.swocts.com`, use
+For a separate public staging Moodle on `<moodle-host>`, use
 [`deploy/moodle-staging/README.md`](../deploy/moodle-staging/README.md). That
 stack is isolated from this training lab and must not be connected to
 OpenCyberRange production.

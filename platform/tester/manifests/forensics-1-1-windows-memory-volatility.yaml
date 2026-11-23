@@ -25,10 +25,10 @@ solver:
     command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'vol -s /home/analyst/symbols -f /home/analyst/evidence/memdump.mem windows.hashdump 2>/dev/null | grep "^student" | cut -f4 | cut -c1-8' 2>&1
     expect: e19ccf75
   - name: Assembled flag
-    command: echo 'OCR{e19ccf75}'
-    expect: OCR{e19ccf75}
+    command: echo '{flag}'
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{e19ccf75}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

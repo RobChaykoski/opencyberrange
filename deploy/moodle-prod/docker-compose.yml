@@ -1,4 +1,4 @@
-# Production pilot Moodle for https://moodle.swocts.com.
+# Production pilot Moodle for https://<moodle-host>.
 #
 # This is a separate stack with its own database and volumes. Nginx Proxy
 # Manager terminates TLS; this stack serves plain HTTP only on the private

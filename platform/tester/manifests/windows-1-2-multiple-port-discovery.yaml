@@ -32,7 +32,7 @@ solver:
     command: curl -s http://{target.target}/flag.txt
     expect: OCR{
 expected_flag_count: 1
-expected_flag: OCR{mult1pl3_p0rts}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

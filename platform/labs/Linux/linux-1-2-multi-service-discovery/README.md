@@ -155,7 +155,7 @@ Combine the parts found from both services:
 - **Part 1 (FTP):** `OCR{mult1_`
 - **Part 2 (HTTP):** `s3rv1c3}`
 
-**Complete flag:** `OCR{mult1_s3rv1c3}`
+**Complete flag:** `<flag>`
 
 ## Key Takeaways
 

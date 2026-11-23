@@ -13,6 +13,12 @@
 5. **Detection.** What would you log to investigate an unexpected export?
 6. **Defence in depth.** Which single control would you add first, and what
    would still be possible after adding it?
+7. **Machine identity.** In the capstone, why is the leaked token useful even
+   after the agent-to-agent trust gap is fixed?
+8. **Semantic forensics.** Which fields would let you prove that a specific
+   document caused a specific tool call?
+9. **Governance.** Who should own `svc-trailguard-bot`, and why is an ownerless
+   identity a finding rather than a paperwork problem?
 
 ## Practical Checklist
 
@@ -23,12 +29,14 @@
 - [ ] I can name at least three controls that would reduce the impact.
 - [ ] I can describe how least-privilege scopes would limit
   `svc-trailguard-bot`.
+- [ ] I enumerated the capstone API and found the leaked machine credential.
+- [ ] I reconstructed the agent-to-agent decision chain from telemetry.
+- [ ] I proposed workload identity, scoped OAuth, policy-as-code, and approval.
 
 ## Next Steps
 
 The next Release 6 labs continue the Trailline story:
 
-- a leaked `svc-trailguard-bot` token and OAuth abuse across internal APIs;
 - a poisoned model or dependency in the TrailGuard pipeline;
 - detection-as-code against automated swarms;
 - a post-quantum migration for a legacy Trailline service.

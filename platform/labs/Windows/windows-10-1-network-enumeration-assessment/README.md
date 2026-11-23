@@ -2,14 +2,14 @@
 
 ## Overview
 
-This lab is a midterm assessment covering passive and active scanning. Students must discover three hosts on their assigned subnet (IPs are **randomized per student**), identify each machine by its services, and collect three flag parts to form the complete flag **OCR{m1dt3rm_n3tw0rk_3num}**.
+This lab is a midterm assessment covering passive and active scanning. Students must discover three hosts on their assigned subnet (IPs are **randomized per student**), identify each machine by its services, and collect three flag parts to form the complete flag **<flag>**.
 
 ## Learning Objectives
 
 - Discover live hosts using subnet scanning (`nmap -sn`)
 - Identify hosts by open ports and services (web portal, file server, domain controller)
 - Apply passive recon (web source, robots.txt, HTTP content) and active recon (port scan, version/OS detection, SMB enumeration)
-- Assemble the flag from three parts: `OCR{m1dt3rm_n3tw0rk_3num}`
+- Assemble the flag from three parts: `<flag>`
 
 ## Solution Walkthrough (Instructor)
 
@@ -69,7 +69,7 @@ nmap -sV -p- <ip3>
 
 ### Step 6: Assemble the flag
 
-Combine in order: **OCR{m1dt3rm_n3tw0rk_3num}**
+Combine in order: **<flag>**
 
 Students submit this full string to complete the lab.
 
@@ -126,4 +126,4 @@ Run from the project root:
 python3 scripts/validate-lab.py labs/Windows/windows-10-1-network-enumeration-assessment/
 ```
 
-The full flag **OCR{m1dt3rm_n3tw0rk_3num}** must appear in this README for the flag-consistency check to pass.
+The full flag **<flag>** must appear in this README for the flag-consistency check to pass.

@@ -18,6 +18,7 @@ documentation ranges (`10.20.0.0/24`, `example.org`, `lab.example`).
 | `plaso-timeline.jsonl` | Plaso/Timesketch-style timeline output | DFIR-09 |
 | `memory-pcap-correlation.jsonl` | Process, connection, DNS, and TLS records | DFIR-10, DFIR-12 |
 | `ransomware-case.yaml` | Capstone case, affected hosts, and indicators | DFIR-12 |
+| `velociraptor-hunt.md` | Scoped endpoint hunt case, artifacts, and custody requirements | DFIR-13 |
 | `report-template.md` | Required analyst report structure | DFIR-11, DFIR-12 |
 
 ## Policy

@@ -9,7 +9,7 @@
 #   chmod 600 .env
 #   docker compose up -d
 #
-# Use a Cloudflare API token scoped to Zone:DNS:Edit for swocts.com only.
+# Use a Cloudflare API token scoped to Zone:DNS:Edit for example.com only.
 
 name: cloudflare-ddns
 

@@ -267,7 +267,7 @@ The PUT method might allow file uploads, which could be used to create files on 
 
 4. **Alternative: Try creating flag file directly:**
    ```bash
-   curl -X PUT http://api.lab/uploads/flag.txt -d "OCR{http_m3th0ds_3num3r4t10n}"
+   curl -X PUT http://api.lab/uploads/flag.txt -d "<flag>"
    ```
 
 ### Step 9: Access the Flag
@@ -307,7 +307,7 @@ Based on the PUT method response, check the uploads directory or use PUT to trig
 
 **Expected flag output:**
 ```
-OCR{http_m3th0ds_3num3r4t10n}
+<flag>
 ```
 
 **Troubleshooting:**
@@ -322,7 +322,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{http_m3th0ds_3num3r4t10n}
+<flag>
 ```
 
 **Verification checklist:**

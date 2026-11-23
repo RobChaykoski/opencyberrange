@@ -20,9 +20,9 @@ solver:
     expect: '200'
   - name: Flag file exists in admin directory
     command: curl -s http://{target.webserver}/admin/flag.txt
-    expect: OCR{d1r3ct0ry_3num3r4t10n_b4s1c}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{d1r3ct0ry_3num3r4t10n_b4s1c}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

@@ -25,7 +25,7 @@ solver:
     command: smbclient -L //{target.target} -N 2>&1
     expect: OCR{
 expected_flag_count: 1
-expected_flag: OCR{smb_null_3num}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

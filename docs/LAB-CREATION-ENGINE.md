@@ -14,7 +14,7 @@ python3 scripts/create-lab.py \
   --node svc:service:flag \
   --link h1-r1 --link r1-r2 --link r2-svc \
   --pace guided \
-  --flag 'OCR{bgp_route_leak}'
+  --flag 'OCR{replace_me}'
 ```
 
 Without `--node` / `--link` it creates the standard three-node guided topology

@@ -30,9 +30,9 @@ solver:
     expect: '"node": "decoy"'
   - name: Recover the case token through the routed path
     command: IP=$(curl -s --connect-timeout 5 http://{target.router}:8080/status | jq -r '.links[] | select(.peer=="case-svc") | .peer_ip'); sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.workstation} "wget -qO- http://$IP/flag" 2>&1
-    expect: OCR{f0r3ns1c_p4th_1nd3p3nd3nt}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{f0r3ns1c_p4th_1nd3p3nd3nt}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

@@ -28,10 +28,10 @@ solver:
     command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'tcpdump -r /home/analyst/evidence/capture.pcap -n port 53 2>/dev/null | grep -o "token_[a-z0-9]*\.data\.evil-c2\.net" | head -1 | sed "s/token_//;s/\..*//"' 2>&1
     expect: 3xf1l
   - name: Assemble and verify complete flag
-    command: echo 'OCR{p4ck3t_4n4lyz3_3xf1l}'
-    expect: OCR{p4ck3t_4n4lyz3_3xf1l}
+    command: echo '{flag}'
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{p4ck3t_4n4lyz3_3xf1l}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

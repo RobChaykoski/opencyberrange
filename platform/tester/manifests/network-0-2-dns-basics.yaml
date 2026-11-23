@@ -20,9 +20,9 @@ solver:
     expect: portal.range.local.
   - name: TXT record contains the flag
     command: dig @{target.target} _note.range.local TXT +short
-    expect: OCR{dns_1s_th3_ph0n3b00k}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{dns_1s_th3_ph0n3b00k}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

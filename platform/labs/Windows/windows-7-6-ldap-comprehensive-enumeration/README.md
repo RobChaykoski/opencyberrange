@@ -168,7 +168,7 @@ The flag is located in /tmp/flag.txt on the LDAP server.
 
 3. **Expected flag content:**
    ```
-   OCR{ldap_c0mpl3t3_3num}
+   <flag>
    ```
 
 4. **Alternative: Check if flag is in LDAP directory:**
@@ -187,7 +187,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{ldap_c0mpl3t3_3num}
+<flag>
 ```
 
 **Verification checklist:**

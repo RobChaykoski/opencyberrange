@@ -24,7 +24,7 @@ RUN useradd -m -s /bin/bash analyst && \
     echo 'analyst ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/analyst
 
 # -- Flag placeholder (overwritten by start.sh from the FLAG env var) -------
-RUN echo 'OCR{tr4ff1c_c0ntr0ll3d}' > /root/flag.txt && \
+RUN echo 'OCR{replace_me}' > /root/flag.txt && \
     chmod 600 /root/flag.txt
 
 # -- Monitor script ---------------------------------------------------------

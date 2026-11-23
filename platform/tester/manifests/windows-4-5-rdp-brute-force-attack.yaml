@@ -24,7 +24,7 @@ solver:
     command: sshpass -p 'qwerty' ssh -o StrictHostKeyChecking=no admin@{target.target} cat /home/admin/flag.txt
     expect: OCR{
 expected_flag_count: 1
-expected_flag: OCR{rdp_brut3_f0rc3}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

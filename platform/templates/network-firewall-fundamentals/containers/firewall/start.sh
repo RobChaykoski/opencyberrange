@@ -5,7 +5,7 @@
 # Reads per-instance secrets from the environment with baked fallbacks:
 #   CRED_analyst_USER  firewall SSH username  (fallback: analyst)
 #   CRED_analyst_PASS  firewall SSH password  (fallback: M3r1d14n_Fw#)
-#   FLAG               flag value             (fallback: OCR{tr4ff1c_c0ntr0ll3d})
+#   FLAG               flag value             (fallback: <flag>)
 #
 # CRED_analyst_* are valid shell identifiers, so ${...} expansion is fine.
 # All expansions are quoted to avoid word-splitting on special characters.
@@ -18,7 +18,7 @@ ANALYST_PASS="${CRED_analyst_PASS:-M3r1d14n_Fw#}"
 # (the inner } closes the expansion early and a stray } leaks into the value), so
 # assign the literal separately, single-quoted.
 FLAG_VALUE="${FLAG:-}"
-[ -n "$FLAG_VALUE" ] || FLAG_VALUE='OCR{tr4ff1c_c0ntr0ll3d}'
+[ -n "$FLAG_VALUE" ] || FLAG_VALUE='<flag>'
 
 # Create the requested user if it differs from the baked default, then set the
 # password and grant passwordless sudo (needed for iptables, monitor, check-rules).

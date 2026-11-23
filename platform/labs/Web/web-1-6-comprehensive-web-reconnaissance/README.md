@@ -202,7 +202,7 @@ Based on header analysis, check the private directory where the flag is located.
 
    **Expected output:**
    ```
-   OCR{c0mpr3h3ns1v3_r3c0n_b4s1c}
+   <flag>
    ```
 
 3. **Alternative: If directory listing is disabled, try direct access:**
@@ -216,7 +216,7 @@ Based on header analysis, check the private directory where the flag is located.
 
 **Flag:**
 ```
-OCR{c0mpr3h3ns1v3_r3c0n_b4s1c}
+<flag>
 ```
 
 **Troubleshooting:**
@@ -230,7 +230,7 @@ Ensure the flag is correct and verify you've completed all reconnaissance steps.
 
 **Flag format:**
 ```
-OCR{c0mpr3h3ns1v3_r3c0n_b4s1c}
+<flag>
 ```
 
 **Verification checklist:**

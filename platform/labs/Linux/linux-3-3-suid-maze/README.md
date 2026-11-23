@@ -84,7 +84,7 @@ cat /root/flag.txt
 ### Step 7: Assemble the Flag
 
 ```
-OCR{su1d_m4z3_p01s0n}
+<flag>
 ```
 
 ## Common Mistakes

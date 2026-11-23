@@ -17,9 +17,9 @@ solver:
     expect: '200'
   - name: Flag served
     command: curl -s http://{target.target}/flag.txt
-    expect: OCR{msf_aux_scan_2e4b}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{msf_aux_scan_2e4b}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

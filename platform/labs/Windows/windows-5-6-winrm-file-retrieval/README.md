@@ -104,7 +104,7 @@ Access and view the flag file from its location.
 
 2. **Expected flag content:**
    ```
-   OCR{w1nrm_f1l3_r3tr13v3}
+   <flag>
    ```
 
 3. **Alternative: Check file permissions:**
@@ -138,7 +138,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{w1nrm_f1l3_r3tr13v3}
+<flag>
 ```
 
 **Verification checklist:**

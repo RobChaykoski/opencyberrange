@@ -34,7 +34,7 @@ smbclient //<files-ip>/evidence -U 'svc-backup%S3rv1ce!Pass' \
 cat /tmp/flag.txt
 ```
 
-Expected: `OCR{ad_t0_smb_p4th}`.
+Expected: `<flag>`.
 
 ## Step 4: Write the finding
 

@@ -25,9 +25,9 @@ solver:
     expect: address-ok
   - name: Portal page contains the flag
     command: curl -s http://{target.target}/ | grep -o 'OCR{[^}]*}'
-    expect: OCR{ch3ck_th3_n4m3_th3n_th3_h0st}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{ch3ck_th3_n4m3_th3n_th3_h0st}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

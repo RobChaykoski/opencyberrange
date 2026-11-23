@@ -52,7 +52,7 @@ of each other so a participant can attempt either one first.
   2. View the page source or open the linked JavaScript file.
   3. Find a developer comment with an export route and token.
   4. Open the route with the token and read the flag.
-- **Flag:** `OCR{cl13nt_s1d3_s3cr3ts_4r3_publ1c}` (placeholder; finalize before
+- **Flag:** `<flag>` (placeholder; finalize before
   publishing).
 - **Test steps:**
   - `GET /` returns 200.
@@ -72,7 +72,7 @@ of each other so a participant can attempt either one first.
   2. Run a normal host lookup.
   3. Try a shell separator and read the flag file.
   4. Explain how to remove the shell and validate input.
-- **Flag:** `OCR{sh3ll_1nj3ct10n_1s_4_bug}` (placeholder).
+- **Flag:** `<flag>` (placeholder).
 - **Test steps:**
   - `GET /lookup?host=127.0.0.1` returns 200.
   - `GET /lookup?host=127.0.0.1%3Bcat%20/tmp/flag` contains the flag.

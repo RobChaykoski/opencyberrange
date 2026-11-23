@@ -25,10 +25,10 @@ solver:
     command: 'snmpwalk -v2c -c public -t 5 {target.target} 1.3.6.1.2.1.1.4.0 2>&1 | grep -o ''Token: [a-z0-9_]*'' | awk ''{print $2}'''
     expect: c0mmun1ty
   - name: Verify complete flag
-    command: echo 'OCR{snmp_w4lk_c0mmun1ty}'
-    expect: OCR{snmp_w4lk_c0mmun1ty}
+    command: echo '{flag}'
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{snmp_w4lk_c0mmun1ty}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

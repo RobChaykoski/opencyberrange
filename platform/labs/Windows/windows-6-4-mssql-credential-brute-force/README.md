@@ -146,7 +146,7 @@ The flag is located in /tmp/flag.txt on the database server.
 
 3. **Expected flag content:**
    ```
-   OCR{mssql_brut3}
+   <flag>
    ```
 
 4. **Alternative: Check if flag is in database:**
@@ -166,7 +166,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{mssql_brut3}
+<flag>
 ```
 
 **Verification checklist:**

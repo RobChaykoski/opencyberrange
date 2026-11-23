@@ -30,9 +30,9 @@ solver:
     expect: default via
   - name: Protected service returns the flag
     command: curl -s --connect-timeout 5 http://{target.svc}/flag
-    expect: OCR{t0p0l0gy_r0ut3d}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{t0p0l0gy_r0ut3d}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

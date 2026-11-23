@@ -1,0 +1,53 @@
+services:
+  intake:
+    build:
+      context: ../../_shared
+      dockerfile: Dockerfile
+    hostname: trailguard-intake
+    ports:
+      - "8000:8080"
+    networks:
+      - default
+      - control
+    environment:
+      LAB_MODE: "agent_chain"
+      FLAG_1: "${CTF_FLAG_1:?set CTF_FLAG_1}"
+      AGENT_TOKEN: "nhi_live_98f7a6d5e4c3b2a1_intake_bot"
+      VAULT_URL: "http://trailguard-vault:8001/agent/execute"
+      BOT_NAME: "TrailGuard Intake"
+      COMPANY: "Trailline Security & GRC"
+      PORT: "8080"
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped
+
+  vault:
+    build:
+      context: ../../_shared
+      dockerfile: Dockerfile
+    hostname: trailguard-vault
+    networks:
+      - control
+    environment:
+      LAB_MODE: "vault"
+      FLAG: "${CTF_FLAG_2:?set CTF_FLAG_2}"
+      EXPECTED_TOKEN: "nhi_live_98f7a6d5e4c3b2a1_intake_bot"
+      PORT: "8001"
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped
+
+networks:
+  default:
+  control:
+    internal: true

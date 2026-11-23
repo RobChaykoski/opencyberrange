@@ -36,10 +36,10 @@ solver:
     command: 'timeout 3 bash -c ''cat < /dev/tcp/{target.target-charlie}/9999'' 2>&1 | grep -o ''Token: [a-z0-9_]*'' | awk ''{print $2}'''
     expect: t4rg3t
   - name: Verify complete flag
-    command: echo 'OCR{tr14g3_r34l_t4rg3t}'
+    command: echo '{flag}'
     expect: OCR{
 expected_flag_count: 1
-expected_flag: OCR{tr14g3_r34l_t4rg3t}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

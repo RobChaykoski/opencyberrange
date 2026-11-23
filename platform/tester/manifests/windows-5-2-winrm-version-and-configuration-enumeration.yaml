@@ -29,7 +29,7 @@ solver:
     command: sshpass -p '{cred.winrm-user.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.winrm-user.user}@{target.target} 'cat /home/admin/flag.txt'
     expect: OCR{
 expected_flag_count: 1
-expected_flag: OCR{w1nrm_3num}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

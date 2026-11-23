@@ -55,7 +55,7 @@ From h1, use the service **link** address from r2's status document:
 curl -s http://<svc-link-address>/flag
 ```
 
-Expected: `OCR{tw0_r0ut3rs_0n3_p4th}`.
+Expected: `<flag>`.
 
 ## Analysis
 

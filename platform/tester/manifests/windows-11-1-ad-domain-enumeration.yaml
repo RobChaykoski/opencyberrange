@@ -14,12 +14,12 @@ solver:
   steps:
   - name: Recover the assessment token from svc-sql
     command: i=0; while [ $i -lt 30 ]; do out=$(ldapsearch -x -o ldif-wrap=no -H ldap://{target.ldap} -D '{cred.analyst.user}' -w '{cred.analyst.pass}' -b 'dc=lab,dc=example,dc=org' '(uid=svc-sql)' description 2>&1); echo "$out" | grep -o 'OCR{[^}]*}' && exit 0; i=$((i+1)); sleep 2; done; echo "$out"; exit 1
-    expect: OCR{4d_d0m41n_3num}
+    expect: '{flag}'
   - name: Explain the defensive control in the report
-    command: echo OCR{4d_d0m41n_3num}
-    expect: OCR{4d_d0m41n_3num}
+    command: echo {flag}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{4d_d0m41n_3num}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

@@ -14,7 +14,7 @@ DATASETS = DATA / "dfir-datasets"
 TAXONOMY = DATA / "competency-taxonomy.yaml"
 LABS = ROOT / "platform/labs"
 
-REQUIRED_MODULES = [f"DFIR-{index:02d}" for index in range(1, 13)]
+REQUIRED_MODULES = [f"DFIR-{index:02d}" for index in range(1, 14)]
 REPORT_SECTIONS = [
     "Short finding",
     "Evidence and custody",

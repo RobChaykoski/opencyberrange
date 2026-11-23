@@ -55,6 +55,9 @@ jobs:
       - name: Validate lab test contracts
         run: python scripts/lab_harness.py --validate-all
 
+      - name: Audit publication metadata and answer keys
+        run: python scripts/audit-publication.py --summary
+
       - name: Verify runtime integrity manifest is current
         run: |
           python scripts/generate-integrity-manifest.py

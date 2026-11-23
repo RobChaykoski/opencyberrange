@@ -33,10 +33,10 @@ solver:
     command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} "tshark -r /home/analyst/data/nozomi-triton-tristation/malware_exec.pcap -Y 'udp.port==1502' 2>/dev/null | wc -l" 2>&1
     expect: '896'
   - name: Assembled flag
-    command: echo 'OCR{192.168.1.88_1502_896}'
-    expect: OCR{192.168.1.88_1502_896}
+    command: echo '{flag}'
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{192.168.1.88_1502_896}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

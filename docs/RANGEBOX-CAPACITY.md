@@ -56,7 +56,7 @@ On **11 November 2026** both deployed hosts reported a computed maximum of
 **20** and a live cap of **15** at the default 75%. Memory allows 27 boxes on
 these 62 GiB hosts, but the two-core CPU reserve with a 0.5-core quota allows
 20, so CPU is the binding constraint. The production host
-(`172.16.16.41`) has about **35 GB free** on `/var/lib/docker`; a launch needs
+(`<prod-host-ip>`) has about **35 GB free** on `/var/lib/docker`; a launch needs
 10 GB free, so desktop headroom is fine, but new image prebuilds should be
 planned against that limit.
 
@@ -75,8 +75,8 @@ setting.
 
 | Host | Computed hard maximum | Live cap at 75% | Short burst | Enforce with |
 |---|---:|---:|---:|---|
-| 12 vCPU / 62 GiB (development, `172.16.16.44`) | 20 | **15** | 20 | `rangebox_capacity_percent=75` |
-| 12 vCPU / 61 GiB (production, `172.16.16.41`) | 20 | **15** | 20 | `rangebox_capacity_percent=75` |
+| 12 vCPU / 62 GiB (development, `<dev-host-ip>`) | 20 | **15** | 20 | `rangebox_capacity_percent=75` |
+| 12 vCPU / 61 GiB (production, `<prod-host-ip>`) | 20 | **15** | 20 | `rangebox_capacity_percent=75` |
 | 8 vCPU / 30 GiB (reference small host) | 11 | **8** | 11 | `rangebox_capacity_percent=75` |
 
 The computed maximum is the tighter of memory, CPU, and disk headroom. The live

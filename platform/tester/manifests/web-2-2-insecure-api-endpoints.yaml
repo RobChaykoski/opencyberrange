@@ -25,10 +25,10 @@ solver:
     command: curl -s http://{target.webapp}/api/debug | grep -o 'debug_token[^a-z0-9_]*[a-z0-9_]*' | sed 's/.*[^a-z0-9_]//'
     expect: br0k3n_acc3ss
   - name: Verify complete flag
-    command: echo 'OCR{4p1_br0k3n_acc3ss}'
-    expect: OCR{4p1_br0k3n_acc3ss}
+    command: echo '{flag}'
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{4p1_br0k3n_acc3ss}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

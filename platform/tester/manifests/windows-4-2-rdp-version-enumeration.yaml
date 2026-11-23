@@ -27,7 +27,7 @@ solver:
     command: sshpass -p 'password123' ssh -o StrictHostKeyChecking=no rdpuser@{target.target} cat /home/rdpuser/flag.txt
     expect: OCR{
 expected_flag_count: 1
-expected_flag: OCR{rdp_v3rs10n}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

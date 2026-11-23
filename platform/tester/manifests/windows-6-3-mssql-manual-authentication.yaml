@@ -22,7 +22,7 @@ solver:
     command: mysql --ssl-verify-server-cert=0 -h {target.target} -u {cred.sa.user} -p{cred.sa.pass} -N -e "SELECT LOAD_FILE('/tmp/flag.txt')" 2>&1
     expect: OCR{
 expected_flag_count: 1
-expected_flag: OCR{mssql_m4nu4l_4uth}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

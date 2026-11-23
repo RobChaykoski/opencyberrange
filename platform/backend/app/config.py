@@ -98,6 +98,14 @@ class Settings(BaseSettings):
     # Local development only. Production issuers must be https://.
     SSO_ALLOW_INSECURE_HTTP: bool = False
 
+    # Metadata-driven policy context (Release 6 MVP). An empty URL disables
+    # the call and preserves the existing behaviour. The service is only
+    # reachable on the private network and requires the shared token.
+    POLICY_CONTEXT_URL: str = ""
+    POLICY_CONTEXT_TOKEN: str = ""
+    POLICY_CONTEXT_TIMEOUT_SECONDS: float = 2.0
+    POLICY_CONTEXT_FAIL_CLOSED: bool = True
+
     # Contact shown in the survey privacy statement and other privacy notices.
     PRIVACY_CONTACT_EMAIL: str = "privacy@swocts.com"
     

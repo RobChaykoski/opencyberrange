@@ -20,9 +20,9 @@ solver:
     expect: '200'
   - name: Flag is on the maintenance page
     command: curl -s http://{target.target}/ | grep -o 'OCR{[^}]*}'
-    expect: OCR{ping_pr0v3s_th3_h0st_n0t_th3_s3rv1c3}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{ping_pr0v3s_th3_h0st_n0t_th3_s3rv1c3}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

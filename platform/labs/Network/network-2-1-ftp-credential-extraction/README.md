@@ -100,7 +100,7 @@ tshark -r captures/medical-records-ftp.pcap -Y 'ftp.request.command == "USER" ||
 
 In the output, you will see multiple failed login attempts (from usernames like admin, root, test, backup, ftp, guest) before the successful one. Look for:
 - `USER medrecords` - The username
-- `PASS OCR{ftp_us3r_p4ssw0rd_l34k}` - The password (FLAG!)
+- `PASS <flag>` - The password (FLAG!)
 
 ### Step 8: Extract Credentials (Method 2 - Follow the TCP Stream)
 
@@ -124,7 +124,7 @@ This displays the entire FTP session in readable ASCII:
 220 MediCare Medical Records FTP Server Ready
 USER medrecords
 331 Password required for medrecords
-PASS OCR{ftp_us3r_p4ssw0rd_l34k}
+PASS <flag>
 230 User medrecords logged in
 LIST
 150 Opening data connection for directory list
@@ -132,7 +132,7 @@ RETR patient_records.db
 150 Opening BINARY mode data connection for patient_records.db
 ```
 
-The password is the flag: **OCR{ftp_us3r_p4ssw0rd_l34k}**
+The password is the flag: **<flag>**
 
 ## Key Takeaways
 
@@ -153,7 +153,7 @@ The password is the flag: **OCR{ftp_us3r_p4ssw0rd_l34k}**
 
 **Successful attempt**:
 - Username: medrecords
-- Password: OCR{ftp_us3r_p4ssw0rd_l34k}
+- Password: <flag>
 - Response: `230 User logged in`
 
 ### tshark Analysis Skills
@@ -214,7 +214,7 @@ In real incident response:
 
 ### Incident Response Steps
 
-1. **Identify**: Found credentials medrecords / OCR{ftp_us3r_p4ssw0rd_l34k}
+1. **Identify**: Found credentials medrecords / <flag>
 2. **Document**: Username, password, timestamp, files accessed
 3. **Contain**: Disable compromised account immediately
 4. **Investigate**: Check if credentials used elsewhere
@@ -283,7 +283,7 @@ tshark -r captures/medical-records-ftp.pcap -Y 'ftp.request.command == "PASS"' -
 
 Output:
 ```
-OCR{ftp_us3r_p4ssw0rd_l34k}
+<flag>
 ```
 
 **Combined extraction** of all login attempts with results:

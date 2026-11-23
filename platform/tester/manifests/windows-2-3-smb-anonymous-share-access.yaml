@@ -25,7 +25,7 @@ solver:
     command: smbclient //{target.target}/public -N -c 'get flag.txt -' 2>&1
     expect: OCR{
 expected_flag_count: 1
-expected_flag: OCR{smb_4n0n_sh4r3}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

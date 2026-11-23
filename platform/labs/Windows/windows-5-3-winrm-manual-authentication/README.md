@@ -110,7 +110,7 @@ Locate and view the flag file on the system.
 
 6. **Expected flag content:**
    ```
-   OCR{w1nrm_m4nu4l_4uth}
+   <flag>
    ```
 
 7. **Alternative: Search for flag content:**
@@ -133,7 +133,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{w1nrm_m4nu4l_4uth}
+<flag>
 ```
 
 **Verification checklist:**

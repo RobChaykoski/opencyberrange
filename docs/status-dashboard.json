@@ -6,7 +6,7 @@
     {
       "label": "OCR",
       "role": "production",
-      "url": "https://ctfd.swocts.com",
+      "url": "https://<platform-host>",
       "up": true,
       "api_ok": true,
       "version": "5.30.2",
@@ -32,7 +32,7 @@
     {
       "label": "OCR dev",
       "role": "development",
-      "url": "https://172.16.16.44",
+      "url": "https://<dev-host-ip>",
       "up": true,
       "api_ok": true,
       "version": "5.30.2",

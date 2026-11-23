@@ -1,7 +1,7 @@
 # System administrator review - server settings
 
 Date: 12 November 2026
-Scope: development host `172.16.16.44` (`ocrv2`), compose environment, Admin >
+Scope: development host `<dev-host-ip>` (`<dev-user>`), compose environment, Admin >
 Settings, Admin > System, backups, sessions, mail, VPN, and module controls.
 Release: `2.7.0`.
 

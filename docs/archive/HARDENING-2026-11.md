@@ -1,6 +1,6 @@
 # Hardening and refactor — November 2026
 
-Status: **implemented and deployed to development (`172.16.16.44`)** on
+Status: **implemented and deployed to development (`<dev-host-ip>`)** on
 12 November 2026. Production was not changed.
 
 ## What changed

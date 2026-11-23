@@ -163,7 +163,7 @@ production.** Platform
 - **Topology engine:** `network-12-2-device-topology-engine` spawned `h1`, `r1`,
   and `svc`; the node status endpoints reported host/router/service; `h1` had a
   default route via `r1`; `r1` reported `ip_forward=1` and both connected
-  `/29` links; `h1` fetched `OCR{t0p0l0gy_r0ut3d}` from the service link
+  `/29` links; `h1` fetched `<flag>` from the service link
   address.
 - **Topology progression:** 12.2 → 12.3 → 12.4 → 12.5 unlocked and completed in
   order. 12.3 forwarded across two routers; 12.4 dropped TCP 8080 and still
@@ -222,7 +222,7 @@ overrode the button's white text. The rule is now scoped to
 `.public-about a:not(.btn)`.
 
 Verified with `platform/frontend/ui-about-contrast.mjs` against production
-`172.16.16.41`: white text on `rgb(37, 99, 235)`, contrast **5.17:1** (WCAG AA
+`<prod-host-ip>`: white text on `rgb(37, 99, 235)`, contrast **5.17:1** (WCAG AA
 requires 4.5:1 for normal text).
 
 ## Advanced DNA Insights preview (development)
@@ -334,8 +334,8 @@ pending.**
 ## 2.7.0 release verification
 
 Released and deployed on **11 November 2026**. Tag `v2.7.0` points at
-`ce7c25bb` and the same commit runs on development (`172.16.16.44`) and
-production (`172.16.16.41` / `https://ctfd.swocts.com`).
+`ce7c25bb` and the same commit runs on development (`<dev-host-ip>`) and
+production (`<prod-host-ip>` / `https://<platform-host>`).
 
 - **Version and health:** both hosts report `2.7.0` with
   `{"status":"healthy","database":"up"}`, the frontend and backend containers
@@ -367,7 +367,7 @@ production (`172.16.16.41` / `https://ctfd.swocts.com`).
 ## 2.6.0 combined exercise workspace
 
 Checked on **11 November 2026** with a dedicated test student and test
-instructor account against production (`https://ctfd.swocts.com`):
+instructor account against production (`https://<platform-host>`):
 
 - Desktop RangeBox exercise (`RangeBox First Steps`) rendered the combined
   workspace: RangeBox top-left, scenario/details and flag form on the right, and
@@ -401,8 +401,8 @@ newer starting/running session and leaves the live environment alone.
 
 Deployment on **11 November 2026**:
 
-- Production `172.16.16.41` / `https://ctfd.swocts.com` and development
-  `172.16.16.44` run `2.6.0` and are healthy. Production is on `2835303b`; the
+- Production `<prod-host-ip>` / `https://<platform-host>` and development
+  `<dev-host-ip>` run `2.6.0` and are healthy. Production is on `2835303b`; the
   development checkout advanced to `f3234e80`, which contains documentation and
   test additions only.
 - The wiki builder published 13 sites. The WEB01 page
@@ -417,7 +417,7 @@ Deployment on **11 November 2026**:
   checks against the student account: API version, mobile shell, profile tabs,
   events, RangeBox tab, and no page errors.
 
-Development rerun on **11 November 2026** against `https://172.16.16.44`
+Development rerun on **11 November 2026** against `https://<dev-host-ip>`
 (`f3234e80` checkout, app reports `2.6.0`):
 
 - `scripts/ui-workspace-regression.mjs` passed **44/44 checks** for the seeded
@@ -475,8 +475,8 @@ compilation, not a live browser session:
   code, then asserts the A4 landscape page size (841.89 x 595.28 pt) and at
   least five embedded images. Result: **1 passed**.
 - Mobile and desktop verification form behaviour was checked in a browser on
-  **11 November 2026** against production (`https://ctfd.swocts.com`) and
-  development (`https://172.16.16.44`). `scripts/ui-verify-public.mjs` passed
+  **11 November 2026** against production (`https://<platform-host>`) and
+  development (`https://<dev-host-ip>`). `scripts/ui-verify-public.mjs` passed
   **60/60 checks**: the page loads without sign-in, malformed IDs are rejected
   before submit, a well-formed unknown ID returns the generic invalid result
   without account details, there is no horizontal overflow at 390 px, and no
@@ -496,8 +496,8 @@ compilation, not a live browser session:
 
 Deployment smoke on **2026-11-10**:
 
-- Development (`172.16.16.44`) and production (`172.16.16.41`,
-  `https://ocr.swocts.com`) both report `2.6.0`.
+- Development (`<dev-host-ip>`) and production (`<prod-host-ip>`,
+  `https://<platform-host>`) both report `2.6.0`.
 - `/health` is healthy, lab discovery reports 162 labs with 0 errors, and both
   frontends serve `index-Dx733NF9.js`.
 - `GET /api/competitions/1/certificates` without a token returns `401`, so the
@@ -507,7 +507,7 @@ Deployment smoke on **2026-11-10**:
 
 ## 2.6.0 fresh student journey
 
-Run on **11 November 2026** against development (`https://172.16.16.44`) with a
+Run on **11 November 2026** against development (`https://<dev-host-ip>`) with a
 temporary approved student account. The account was created for the run and
 deleted afterwards, so no seeded demo or learner data was changed.
 
@@ -534,7 +534,7 @@ deleted afterwards, so no seeded demo or learner data was changed.
 
 ## 2.6.0 account security and VPN verification
 
-Run on **11 November 2026** against development (`https://172.16.16.44`).
+Run on **11 November 2026** against development (`https://<dev-host-ip>`).
 
 ### Registration and account security
 
@@ -552,7 +552,7 @@ Run on **11 November 2026** against development (`https://172.16.16.44`).
 ### VPN and VPN-only lab
 
 - `/api/labs/vpn-config` generated a config (`10.255.0.227/32`, endpoint
-  `172.16.16.44:51820`, route `10.100.218.0/24`) and registered the peer.
+  `<dev-host-ip>:51820`, route `10.100.218.0/24`) and registered the peer.
   The WireGuard handshake succeeded from a client.
 - Initial target access failed because the server had no route to the
   `10.255.0.0/16` client pool, so return traffic went to the LAN gateway.
@@ -573,7 +573,7 @@ Run on **11 November 2026** against development (`https://172.16.16.44`).
   `10.100.223.93` for `cyberchef-b64.lab`, while a RangeBox session returned no
   IPs.
 - Applied to both hosts on **11 November 2026**: the runtime route is active on
-  development (`172.16.16.44`) and production (`172.16.16.41`), and persisted in
+  development (`<dev-host-ip>`) and production (`<prod-host-ip>`), and persisted in
   each host's `/etc/wireguard/wg0.conf` (backup `wg0.conf.bak-20261111`).
 - Deployed the target-IP change to production on **11 November 2026**: the
   backend was rebuilt and restarted healthy. A VPN-only Web lab panel passed
@@ -595,7 +595,7 @@ Run on **11 November 2026** against development (`https://172.16.16.44`).
   `sudo bash scripts/fix-wireguard-client-route.sh`. It adds the runtime route,
   backs up `wg0.conf`, and persists the route in `PostUp`/`PostDown`.
 - The Base64 message was downloaded over the tunnel, decoded to
-  `OCR{b4s364_is_encoding_not_encryption}`, and submitted through the UI. The
+  `<flag>`, and submitted through the UI. The
   lab completed and the next CyberChef lab unlocked.
 - **Stage 1 completed end to end.** The remaining CyberChef and digital-safety
   labs were launched VPN-only and their targets read over WireGuard: ROT13
@@ -710,7 +710,7 @@ hostnames. Timings for the new labs remain provisional.
 ## 2.5.4 deployment smoke
 
 Run **2026-11-10** against the public OCR deployment at
-`https://ocr.swocts.com` on **2.5.4**:
+`https://<platform-host>` on **2.5.4**:
 
 - Workflow: **UI smoke** (`42741914124`)
 - Result: **success**
@@ -843,7 +843,7 @@ at desktop and 390 px mobile widths. It needs no account or token and writes
 `ui-verify-artifacts/verify-public.json` plus screenshots:
 
 ```bash
-UI_VERIFY_URLS=https://ctfd.swocts.com,https://172.16.16.44 \
+UI_VERIFY_URLS=https://<platform-host>,https://<dev-host-ip> \
 node scripts/ui-verify-public.mjs
 ```
 
@@ -856,7 +856,7 @@ Required repository configuration:
 - optional variable `UI_EXPECTED_VERSION` — for example `2.5.3`
 
 The scheduled workflow is configured for the public production URL
-`https://ctfd.swocts.com` with a dedicated `smoke_tester` student account. It
+`https://<platform-host>` with a dedicated `smoke_tester` student account. It
 runs daily at 03:30 UTC and on manual dispatch.
 
 Run it locally with:

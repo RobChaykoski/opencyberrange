@@ -32,7 +32,7 @@ assemble the complete flag.
 ## Tokens
 
 Three tokens are hidden on the filesystem. Students must find all three and
-combine them in the format `OCR{token1_token2_token3}`.
+combine them in the format `OCR{<token1>_<token2>_<token3>}`.
 
 ## Duration
 

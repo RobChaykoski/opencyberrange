@@ -22,9 +22,9 @@ solver:
     expect: /people/dana.whitfield/notes
   - name: Flag is present in the notes page source
     command: curl -s http://{target.intranet}:8080/people/dana.whitfield/notes | grep -o 'OCR{[^}]*}'
-    expect: OCR{r0b0ts_txt_1s_n0t_4_s3cr3t}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{r0b0ts_txt_1s_n0t_4_s3cr3t}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

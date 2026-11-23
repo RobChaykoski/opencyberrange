@@ -39,10 +39,10 @@ solver:
     command: sshpass -p '{cred.webadmin.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.webadmin.user}@{target.target} 'grep -o "AegisCracker/[a-zA-Z0-9_]*" /var/log/nginx/access.log | head -1 | cut -d/ -f2' 2>&1
     expect: bl0ck
   - name: Assemble and verify complete flag
-    command: echo 'OCR{brut3_d3t3ct_bl0ck}'
+    command: echo '{flag}'
     expect: OCR{
 expected_flag_count: 1
-expected_flag: OCR{brut3_d3t3ct_bl0ck}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

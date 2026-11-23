@@ -115,7 +115,7 @@ Execute SQL queries to explore the database and locate the flag.
    +----+------------------------------------------+
    | id | flag                                     |
    +----+------------------------------------------+
-   |  1 | OCR{mssql_qu3ry}      |
+   |  1 | <flag>      |
    +----+------------------------------------------+
    1 row in set (0.00 sec)
    ```
@@ -138,7 +138,7 @@ Extract the flag from the query results.
 
 1. **The flag is in the query output:**
    ```
-   OCR{mssql_qu3ry}
+   <flag>
    ```
 
 2. **Copy the flag:**
@@ -156,7 +156,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{mssql_qu3ry}
+<flag>
 ```
 
 **Verification checklist:**

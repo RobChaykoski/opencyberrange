@@ -22,9 +22,9 @@ solver:
     expect: 89504e470d0a1a0a
   - name: Extractor recovers the hidden flag
     command: curl -s http://{target.intranet}:8080/assets/badge.png -o /tmp/badge.png && curl -s http://{target.intranet}:8080/tools/extract_lsb.py -o /tmp/extract_lsb.py && python3 /tmp/extract_lsb.py /tmp/badge.png
-    expect: OCR{lsb_st3g0_h1d3s_1n_pl41n_s1ght}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{lsb_st3g0_h1d3s_1n_pl41n_s1ght}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

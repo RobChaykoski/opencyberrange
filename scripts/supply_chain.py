@@ -139,6 +139,7 @@ COVERED_FILES = [
     "platform/backend/app/data/competency-contract.schema.json",
     "scripts/generate-lab-manifests.py",
     "scripts/lab_harness.py",
+    "scripts/audit-publication.py",
     "platform/tester/Dockerfile",
     "platform/tester/manifest.schema.json",
     "platform/frontend/package.json",

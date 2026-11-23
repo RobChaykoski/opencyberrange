@@ -124,7 +124,7 @@ The flag is served via HTTP, accessible after identifying the service.
 
 2. **Expected output:**
    ```
-   OCR{v3rs10n_d3t3ct10n}
+   <flag>
    ```
 
 **Alternative: via SMB**
@@ -159,7 +159,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{v3rs10n_d3t3ct10n}
+<flag>
 ```
 
 **Verification checklist:**

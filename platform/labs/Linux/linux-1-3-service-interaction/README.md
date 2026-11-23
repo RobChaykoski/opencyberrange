@@ -73,7 +73,7 @@ Connected to 10.10.{user_id}.10.
 220-This server is for authorized use only
 220-
 220-Server: ProFTPD 1.3.5
-220-Flag: OCR{ftp_1nt3r4ct}
+220-Flag: <flag>
 220-
 220-For support contact: it@techstart.local
 220-======================================
@@ -91,7 +91,7 @@ Name (10.10.{user_id}.10:user):
 **Key information extracted:**
 1. Service name: "TechStart file transfer service"
 2. Server type: ProFTPD 1.3.5
-3. **Flag**: `OCR{ftp_1nt3r4ct}`
+3. **Flag**: `<flag>`
 4. Contact: it@techstart.local
 
 ### Step 4: Disconnect

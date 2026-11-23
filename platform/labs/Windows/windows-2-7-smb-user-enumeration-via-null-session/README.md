@@ -44,7 +44,7 @@ Start by listing shares to see server information. The flag is in the server str
    ```
    Sharename       Type      Comment
    ---------       ----      -------
-   IPC$            IPC       IPC Service (DC01 - Users Enumerable: OCR{smb_us3r_3num})
+   IPC$            IPC       IPC Service (DC01 - Users Enumerable: <flag>)
    
    Workgroup            Master
    ---------            -------
@@ -120,7 +120,7 @@ Alternative method using enum4linux for comprehensive enumeration.
 
 **Flag format:**
 ```
-OCR{smb_us3r_3num}
+<flag>
 ```
 
 **Success Criteria:**

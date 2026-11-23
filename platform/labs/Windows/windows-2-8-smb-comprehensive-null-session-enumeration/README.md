@@ -45,7 +45,7 @@ Use enum4linux for complete null session enumeration. The flag is in the server 
    **Server Information (contains flag):**
    ```
    [+] Server Information
-   Server Comment: WIN-DC01 - Full Enum: OCR{smb_c0mpl3t3_null}
+   Server Comment: WIN-DC01 - Full Enum: <flag>
    ```
 
    **Workgroup/Domain:**
@@ -86,7 +86,7 @@ Sharename       Type      Comment
 ---------       ----      -------
 public          Disk      Public Share
 data            Disk      Data Share
-IPC$            IPC       IPC Service (WIN-DC01 - Full Enum: OCR{smb_c0mpl3t3_null})
+IPC$            IPC       IPC Service (WIN-DC01 - Full Enum: <flag>)
 
 Workgroup            Master
 ---------            -------
@@ -126,7 +126,7 @@ rpcclient $> exit
 
 **Flag format:**
 ```
-OCR{smb_c0mpl3t3_null}
+<flag>
 ```
 
 **Success Criteria:**

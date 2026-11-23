@@ -358,3 +358,31 @@ modules:
       - "Identify encrypted or deleted evidence and state what cannot be recovered."
       - "Recommend containment, recovery, notification, and lessons learned."
       - "Defend the timeline and confidence in a peer review."
+
+  - id: DFIR-13
+    title: "Enterprise Endpoint Hunting with Velociraptor"
+    difficulty: advanced
+    estimated_minutes: 150
+    prerequisites: [DFIR-04, DFIR-08, DFIR-10]
+    datasets: [velociraptor-hunt.md]
+    external_datasets: [velociraptor-artifact-exchange]
+    existing_labs: []
+    planned_labs: [forensics-5-1-velociraptor-endpoint-hunt]
+    competencies:
+      - {id: FOR-005, weight: 0.25}
+      - {id: FOR-012, weight: 0.25}
+      - {id: FOR-013, weight: 0.20}
+      - {id: IR-003, weight: 0.15}
+      - {id: TH-004, weight: 0.15}
+    evidence: [analyst_report, evidence_artifact, hashed_acquisition_record]
+    report_required: true
+    analyst_finding_required: true
+    assessment:
+      deterministic: false
+      validation: "artifact selection, scoped hunt results, collection hashes, and a peer-reviewed endpoint hunt report"
+    outcomes:
+      - "Distinguish EDR telemetry, endpoint posture, and DFIR collection."
+      - "Select and parameterize a Velociraptor artifact for a scoped hunt."
+      - "Collect endpoint evidence without over-collection and record its hash."
+      - "Correlate VQL hunt results with the case timeline."
+      - "Document scope, authorization, custody, and limitations."

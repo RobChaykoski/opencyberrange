@@ -20,9 +20,9 @@ solver:
     expect: '200'
   - name: Flag found in PCAP file
     command: curl -s http://{target.target}/capture.pcap | strings | grep -o 'OCR{[^}]*}' | head -1
-    expect: OCR{http_cr3d3nt14ls}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{http_cr3d3nt14ls}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

@@ -19,9 +19,9 @@ solver:
     expect: S3rv1ce!Pass
   - name: Retrieve the evidence token from the share
     command: smbclient //{target.files}/evidence -U 'svc-backup%S3rv1ce!Pass' -c 'get flag.txt /tmp/flag.txt' >/dev/null 2>&1; cat /tmp/flag.txt
-    expect: OCR{ad_t0_smb_p4th}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{ad_t0_smb_p4th}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

@@ -82,7 +82,7 @@ The flag is embedded in the SMB server string. Use SMB enumeration to discover i
    ```
    Sharename       Type      Comment
    ---------       ----      -------
-   IPC$            IPC       IPC Service (Windows Server 2019 DC - Comprehensive Enum Complete: OCR{c0mpr3h3ns1v3_3num})
+   IPC$            IPC       IPC Service (Windows Server 2019 DC - Comprehensive Enum Complete: <flag>)
    ```
 
 3. **Alternative: Use enum4linux:**
@@ -101,7 +101,7 @@ The flag is embedded in the SMB server string. Use SMB enumeration to discover i
 
 **Flag format:**
 ```
-OCR{c0mpr3h3ns1v3_3num}
+<flag>
 ```
 
 **Success Criteria:**

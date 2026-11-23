@@ -41,10 +41,10 @@ solver:
     command: snmpwalk -v2c -c public {target.kestrel-fs} 1.3.6.1.2.1.1.4.0 2>&1 | grep -o 'token=t4lon'
     expect: token=t4lon
   - name: Verify assembled flag
-    command: echo 'OCR{dr4ft_bluepr1nt_t4lon}'
-    expect: OCR{dr4ft_bluepr1nt_t4lon}
+    command: echo '{flag}'
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{dr4ft_bluepr1nt_t4lon}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

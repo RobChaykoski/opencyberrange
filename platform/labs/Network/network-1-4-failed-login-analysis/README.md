@@ -171,10 +171,10 @@ grep "OCR{" auth.log
 # Unique usernames tried: 57
 # Attack pattern: Dictionary-based SSH brute-force
 # Recommendation: Block IP immediately, review fail2ban configuration
-# Flag: OCR{brut3_f0rc3_d3t3ct3d}
+# Flag: <flag>
 ```
 
-**Flag:** `OCR{brut3_f0rc3_d3t3ct3d}`
+**Flag:** `<flag>`
 
 ## Attack Analysis Summary
 
@@ -320,7 +320,7 @@ You successfully identified and analyzed an SSH brute-force attack by:
 - Understanding of brute-force attack techniques
 - Knowledge of SSH security best practices
 
-**Flag:** `OCR{brut3_f0rc3_d3t3ct3d}`
+**Flag:** `<flag>`
 
 ---
 

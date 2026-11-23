@@ -96,7 +96,7 @@ Execute various commands to explore the system and locate the flag.
 
    **Expected output:**
    ```
-   OCR{w1nrm_cmd_3x3c}
+   <flag>
    ```
 
 5. **Additional useful commands:**
@@ -127,7 +127,7 @@ Extract and copy the flag from the system.
 
 2. **Expected flag content:**
    ```
-   OCR{w1nrm_cmd_3x3c}
+   <flag>
    ```
 
 3. **Alternative: If flag is in different location:**
@@ -152,7 +152,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{w1nrm_cmd_3x3c}
+<flag>
 ```
 
 **Verification checklist:**

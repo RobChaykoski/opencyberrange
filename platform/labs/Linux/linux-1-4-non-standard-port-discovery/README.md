@@ -205,7 +205,7 @@ cat flag.txt
 
 **Expected output:**
 ```
-OCR{n0n_st4nd4rd}
+<flag>
 ```
 
 **Key observations:**

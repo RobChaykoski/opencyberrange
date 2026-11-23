@@ -332,7 +332,7 @@ Ensure all flags are in the correct format before submission.
 
 **Flag formats:**
 ```
-OCR{cme_smb_cr3d3nt14l_t3st}
+<flag>
 ```
 
 **Verification checklist:**

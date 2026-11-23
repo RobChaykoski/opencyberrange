@@ -161,7 +161,7 @@ Still to do: a Canvas or Brightspace staging test.
 
 ## Development deployment
 
-`172.16.16.44` (`ocrv2`, `~/opencyberrange`) now tracks `main` at the `v5.14.0`
+`<dev-host-ip>` (`<dev-user>`, `~/opencyberrange`) now tracks `main` at the `v5.14.0`
 release (`1c5a0d9e`).
 
 - `/api/version` = **5**, health = **healthy**, Alembic = **0030**.
@@ -180,7 +180,7 @@ release (`1c5a0d9e`).
   the app bar.
 - The Desktop uses a single RangeBox toolbar (no duplicate pane header), and
   left/right arrow keys move between tabs.
-- Workbooks are served from `https://172.16.16.44:8443` (the `wiki_origin`
+- Workbooks are served from `https://<dev-host-ip>:8443` (the `wiki_origin`
   setting). The separate origin lets the workbook use its own storage/search
   and removes the sandbox CORS/localStorage errors; the SPA CSP allows that
   frame via `frame-src`. Port 8443 must stay reachable from browsers.
@@ -226,7 +226,7 @@ Production also runs Release 5 (`v5.17.2`); see the deployment record in
   verification (`'NoneType' object has no attribute 'decode'`). The local stack
   therefore verifies the platform, content, wiki, and pages but does not
   complete a live RangeBox launch. Live workspace regression is run on
-  development (`172.16.16.44`), where host isolation works.
+  development (`<dev-host-ip>`), where host isolation works.
 - The local stack uses HTTP on port 18081. Production keeps TLS and the
   custom-hostname settings.
 

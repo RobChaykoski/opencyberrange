@@ -1,11 +1,15 @@
-# Staging Moodle for `moodle.swocts.com`
+# Staging Moodle for `<moodle-host>`
 
 This is a separate, internet-facing **staging** Moodle for demonstrating the
 OpenCyberRange LTI 1.3 integration. It is not the disposable training lab and
 must never be connected to OpenCyberRange production
-(`https://ctfd.swocts.com`) or a production identity provider.
+(`https://<platform-host>`) or a production identity provider.
 
 Use fake courses, fake learners, and fake evidence only.
+
+> **Placeholders.** `<moodle-host>`, `<prod-host-ip>`, and `<npm-host-ip>` are
+> intentionally generic. Take the real values from the private deployment
+> inventory and never commit them.
 
 ## Shape
 
@@ -21,7 +25,7 @@ stack's database, volumes, or `.env`.
 
 ## Prerequisites
 
-- DNS `A`/`AAAA` record for `moodle.swocts.com` pointing at the staging host.
+- DNS `A`/`AAAA` record for `<moodle-host>` pointing at the staging host.
 - Inbound TCP 80 and 443 to that host, so Caddy can obtain and renew the
   certificate. If another proxy terminates TLS, put this stack behind it and
   adjust the Caddy/port mapping.
@@ -40,7 +44,7 @@ docker compose logs -f caddy
 docker compose exec -T -u daemon moodle php /harden.php
 ```
 
-Open `https://moodle.swocts.com/login/index.php`.
+Open `https://<moodle-host>/login/index.php`.
 
 The hardening step disables self-registration, guest access, and debug output,
 sets a strong password policy, makes session cookies HTTPS-only, and keeps
@@ -53,10 +57,10 @@ changed to forward the internal host name instead.
 ## Validate
 
 ```bash
-curl -sSI https://moodle.swocts.com/login/index.php
+curl -sSI https://<moodle-host>/login/index.php
 # expect HTTP/2 200, HSTS, X-Content-Type-Options, Referrer-Policy
 
-curl -s https://moodle.swocts.com/login/index.php | grep -i 'create new account'
+curl -s https://<moodle-host>/login/index.php | grep -i 'create new account'
 # expect no match
 
 docker compose exec -T moodle php /admin/cli/cfg.php --name=registerauth
@@ -83,7 +87,7 @@ API tokens.
 ## LTI integration
 
 Register this Moodle only against a **staging** OpenCyberRange instance. Do not
-register it in `ctfd.swocts.com`.
+register it in `<platform-host>`.
 
 Use the seed from the repository root with the staging containers and URLs, for
 example:
@@ -91,8 +95,8 @@ example:
 ```bash
 MOODLE_CONTAINER=moodle-staging-moodle-1 \
 OCR_CONTAINER=<staging-ocr-backend-container> \
-MOODLE_ISSUER=https://moodle.swocts.com \
-MOODLE_INTERNAL_URL=https://moodle.swocts.com \
+MOODLE_ISSUER=https://<moodle-host> \
+MOODLE_INTERNAL_URL=https://<moodle-host> \
 OCR_PUBLIC_URL=https://<staging-ocr-host> \
 OCR_INTERNAL_URL=https://<staging-ocr-host> \
 bash scripts/ecosystem_seed/seed_lti.sh
@@ -113,16 +117,16 @@ forwards plain HTTP to the staging Moodle:
 
 | NPM setting | Value |
 |---|---|
-| Domain | `moodle.swocts.com` |
+| Domain | `<moodle-host>` |
 | Scheme | `http` |
-| Forward host | `172.16.16.29` |
+| Forward host | `<staging-host-ip>` |
 | Forward port | `8092` |
 | Preserve Host header | enabled |
 | Websockets | not required |
 | SSL | Let's Encrypt, Force SSL |
 
 Do not use an `https` upstream and do not point the proxy back at
-`moodle.swocts.com`; both cause timeouts or a loop.
+`<moodle-host>`; both cause timeouts or a loop.
 
 Restrict direct access to the upstream port to the NPM host if the network
 allows it. On a Windows staging host:
@@ -130,7 +134,7 @@ allows it. On a Windows staging host:
 ```powershell
 New-NetFirewallRule -DisplayName "Moodle staging from NPM" `
   -Direction Inbound -Protocol TCP -LocalPort 8092 `
-  -RemoteAddress 172.16.16.11 -Action Allow
+  -RemoteAddress <npm-host-ip> -Action Allow
 ```
 
 Add HSTS in the NPM proxy host's advanced configuration:
@@ -170,7 +174,7 @@ docker compose -f docker-compose.yml -f docker-compose.local.yml down -v
 
 ## Explicitly out of scope
 
-- Production OpenCyberRange at `ctfd.swocts.com`.
+- Production OpenCyberRange at `<platform-host>`.
 - Production SSO, SMTP, API tokens, or database dumps.
 - Real learner, staff, or institutional data.
 - Using the training-lab default password on the public hostname.

@@ -28,9 +28,9 @@ solver:
     expect: '1'
   - name: URL decoding reveals the training token
     command: curl -s http://{target.portal}:8080/message.txt | python3 -c 'import sys,urllib.parse; print(urllib.parse.unquote(sys.stdin.read()))' | grep -o 'OCR{[^}]*}'
-    expect: OCR{read_the_host_not_the_wrapper}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{read_the_host_not_the_wrapper}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

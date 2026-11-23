@@ -33,9 +33,9 @@ solver:
     expect: blocked
   - name: Allowed HTTP path still returns the flag
     command: IP=$(curl -s --connect-timeout 5 http://{target.fw}:8080/status | jq -r '.links[] | select(.peer=="svc") | .peer_ip'); sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.h1} "wget -qO- http://$IP/flag" 2>&1
-    expect: OCR{f1r3w4ll_p4th}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{f1r3w4ll_p4th}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

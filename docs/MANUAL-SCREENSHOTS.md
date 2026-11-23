@@ -23,7 +23,7 @@ images do not drift when the interface changes.
 ## Run it
 
 ```bash
-export UI_BASE_URL=https://172.16.16.44
+export UI_BASE_URL=https://<dev-host-ip>
 export UI_STUDENT_USERNAME="..." UI_STUDENT_PASSWORD="..."
 export UI_INSTRUCTOR_USERNAME="..." UI_INSTRUCTOR_PASSWORD="..."
 export UI_ADMIN_USERNAME="..." UI_ADMIN_PASSWORD="..."

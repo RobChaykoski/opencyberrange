@@ -28,10 +28,10 @@ solver:
     command: sshpass -p 'Bl4ckr0ck_D3v#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null devops@{target.target} 'cat /home/devops/flag.txt' 2>&1
     expect: ch41n
   - name: Verify assembled flag
-    command: echo 'OCR{h4sh_r3l4y_ch41n}'
+    command: echo '{flag}'
     expect: OCR{
 expected_flag_count: 1
-expected_flag: OCR{h4sh_r3l4y_ch41n}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

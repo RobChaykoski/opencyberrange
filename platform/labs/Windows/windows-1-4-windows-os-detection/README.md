@@ -66,7 +66,7 @@ The flag is served by a web server running on the target. Use curl or a browser 
 
    **Expected output:**
    ```
-   OCR{0s_d3t3ct10n}
+   <flag>
    ```
 
 2. **Alternative discovery method: SMB server string enumeration.**
@@ -79,7 +79,7 @@ The flag is served by a web server running on the target. Use curl or a browser 
    ```
    Sharename       Type      Comment
    ---------       ----      -------
-   IPC$            IPC       IPC Service (Windows Server 2019 - Flag: OCR{0s_d3t3ct10n})
+   IPC$            IPC       IPC Service (Windows Server 2019 - Flag: <flag>)
    ```
 
 3. **Alternative: Use enum4linux for detailed enumeration:**
@@ -93,7 +93,7 @@ The flag is served by a web server running on the target. Use curl or a browser 
 
 **Flag format:**
 ```
-OCR{0s_d3t3ct10n}
+<flag>
 ```
 
 **Verification checklist:**

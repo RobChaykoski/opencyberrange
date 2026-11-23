@@ -20,9 +20,9 @@ solver:
     expect: SSH
   - name: SSH login and retrieve flag from bash history
     command: sshpass -p '{cred.ssh-user.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.ssh-user.user}@{target.target} 'grep OCR ~/.bash_history 2>/dev/null' 2>&1
-    expect: OCR{h1st0ry_l34k}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{h1st0ry_l34k}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

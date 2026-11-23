@@ -187,14 +187,14 @@ PORT   STATE SERVICE
 |     password
 |     publickey
 |   TechStart SSH Server - Secure Access Only
-|_  Enumeration flag: OCR{nse_scr1pt}
+|_  Enumeration flag: <flag>
 ```
 
 **Analysis:**
 - **password**: Password authentication is enabled (allows brute force)
 - **publickey**: Public key authentication is supported
 - **Custom message**: Server identifies as "TechStart SSH Server"
-- **Flag**: `OCR{nse_scr1pt}` appears in the script output!
+- **Flag**: `<flag>` appears in the script output!
 
 ### Step 6: Comprehensive SSH Enumeration (Alternative)
 
@@ -221,7 +221,7 @@ PORT   STATE SERVICE
 |     password
 |     publickey
 |   TechStart SSH Server - Secure Access Only
-|_  Enumeration flag: OCR{nse_scr1pt}
+|_  Enumeration flag: <flag>
 | ssh2-enum-algos:
 |   [algorithm information]
 ```
@@ -231,12 +231,12 @@ PORT   STATE SERVICE
 The flag is revealed in the NSE script output:
 
 ```
-OCR{nse_scr1pt}
+<flag>
 ```
 
 **Flag location**:
 - Script: `ssh-auth-methods`
-- Line: `Enumeration flag: OCR{nse_scr1pt}`
+- Line: `Enumeration flag: <flag>`
 - Context: Appears after supported authentication methods
 
 ## Key Takeaways
@@ -525,7 +525,7 @@ PORT   STATE SERVICE
 |     password
 |     publickey
 |   TechStart SSH Server - Secure Access Only
-|_  Enumeration flag: OCR{nse_scr1pt}
+|_  Enumeration flag: <flag>
 ```
 
 **Information gathered:**
@@ -534,7 +534,7 @@ PORT   STATE SERVICE
 - Authentication: password AND publickey
 - Server identification: TechStart SSH Server
 - Custom message present
-- **FLAG FOUND**: OCR{nse_scr1pt}
+- **FLAG FOUND**: <flag>
 
 ### Value Added by NSE
 

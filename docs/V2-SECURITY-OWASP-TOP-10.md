@@ -332,7 +332,7 @@ note naming the role check.
   instructor-scoped report exports remain covered.
 - The CTFd-hosted OCR stack at `.41` was performance-tuned without changing
   CTFd or weakening isolation.
-- UI smoke passed against `https://ocr.swocts.com` on 2.5.4.
+- UI smoke passed against `https://<platform-host>` on 2.5.4.
 - CI, Quality, CodeQL, and Trivy are green on the release commits.
 - The 10 November code-scanning pass resolved the full paginated alert set
   (595 alerts: 69 CodeQL, 526 Trivy). Platform path handling, stack-trace

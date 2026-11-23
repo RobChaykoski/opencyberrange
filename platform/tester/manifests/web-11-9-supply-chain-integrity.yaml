@@ -17,12 +17,12 @@ solver:
     expect: ''
   - name: Recover the assessment token
     command: curl -s http://{target.webapp}/api/sbom | grep -o 'OCR{[^}]*}'
-    expect: OCR{sb0m_s1gn4tur3}
+    expect: '{flag}'
   - name: Confirm the token
-    command: echo OCR{sb0m_s1gn4tur3}
-    expect: OCR{sb0m_s1gn4tur3}
+    command: echo {flag}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{sb0m_s1gn4tur3}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

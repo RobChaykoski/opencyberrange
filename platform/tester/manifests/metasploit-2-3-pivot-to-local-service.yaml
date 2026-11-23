@@ -21,10 +21,10 @@ solver:
     command: nc -z -w 3 {target.target} 9000 && echo open || echo closed
     expect: closed
   - name: Flag retrieval
-    command: echo 'OCR{msf_pivot_9d7a}'
-    expect: OCR{msf_pivot_9d7a}
+    command: echo '{flag}'
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{msf_pivot_9d7a}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

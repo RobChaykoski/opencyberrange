@@ -6,7 +6,7 @@
 # image runs identically whether or not the platform injects values:
 #   CRED_ssh-user_USER  SSH username   (fallback: webadmin)
 #   CRED_ssh-user_PASS  SSH password   (fallback: WebServer2024#)
-#   FLAG                flag value     (fallback: OCR{f1l3_d1sc0v3ry})
+#   FLAG                flag value     (fallback: <flag>)
 #
 # The credential env vars contain a hyphen, which is not a valid POSIX shell
 # identifier, so they are read with printenv rather than ${...} expansion.
@@ -22,7 +22,7 @@ SSH_PASS="${SSH_PASS:-WebServer2024#}"
 # (the inner } closes the expansion early and a stray } leaks into the value), so
 # assign the literal separately, single-quoted.
 FLAG_VALUE="${FLAG:-}"
-[ -n "$FLAG_VALUE" ] || FLAG_VALUE='OCR{f1l3_d1sc0v3ry}'
+[ -n "$FLAG_VALUE" ] || FLAG_VALUE='<flag>'
 
 # Create the requested user if it differs from the baked default.
 if [ "$SSH_USER" != "webadmin" ]; then

@@ -22,9 +22,9 @@ solver:
     expect: '200'
   - name: Flag found in DNS log
     command: curl -s http://{target.dns-server}/dns.log | grep -o 'OCR{[^}]*}'
-    expect: OCR{dns_3xf1ltr4t10n}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{dns_3xf1ltr4t10n}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

@@ -1,0 +1,25 @@
+﻿services:
+  opa:
+    image: openpolicyagent/opa:1.2.0
+    command: ["run", "--server", "--addr=0.0.0.0:8181", "/policies"]
+    volumes:
+      - ./policies:/policies:ro
+    ports:
+      - "127.0.0.1:18181:8181"
+    security_opt:
+      - no-new-privileges:true
+
+  context-service:
+    build: .
+    environment:
+      METADATA_MODE: fixture
+      METADATA_FILE: /app/fixtures/metadata.json
+      OPA_URL: http://opa:8181
+      CONTEXT_SERVICE_TOKEN: ${CONTEXT_SERVICE_TOKEN:-dev-context-token}
+      POLICY_FAIL_CLOSED: "true"
+    ports:
+      - "127.0.0.1:18090:8090"
+    depends_on:
+      - opa
+    security_opt:
+      - no-new-privileges:true

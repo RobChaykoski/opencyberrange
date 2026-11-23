@@ -99,7 +99,7 @@ Nmap scan report for 10.10.{user_id}.10
 Host is up (0.00050s latency).
 
 PORT   STATE SERVICE VERSION
-22/tcp open  ssh     OpenSSH 8.2p1 Ubuntu-4ubuntu0.5 (Ubuntu Linux; protocol 2.0; flag: OCR{ssh_d3t3ct3d})
+22/tcp open  ssh     OpenSSH 8.2p1 Ubuntu-4ubuntu0.5 (Ubuntu Linux; protocol 2.0; flag: <flag>)
 
 Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 ```
@@ -109,14 +109,14 @@ Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 - **Version**: OpenSSH 8.2p1
 - **OS**: Ubuntu Linux
 - **Protocol**: SSH protocol 2.0
-- **Flag**: OCR{ssh_d3t3ct3d} (embedded in banner)
+- **Flag**: <flag> (embedded in banner)
 
 ### Step 4: Capture the Flag
 
 The flag is visible in the service banner from step 3:
 
 ```
-OCR{ssh_d3t3ct3d}
+<flag>
 ```
 
 **Alternative method - Direct banner grab:**

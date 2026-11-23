@@ -18,10 +18,10 @@ solver:
     command: curl -s -o /dev/null -w '%{http_code}' http://{target.logs}:8080/access.log
     expect: '200'
   - name: Log contains the training token
-    command: curl -s http://{target.logs}:8080/access.log | grep -o 'OCR{l0gs_t3ll_th3_st0ry}'
-    expect: OCR{l0gs_t3ll_th3_st0ry}
+    command: curl -s http://{target.logs}:8080/access.log | grep -o '{flag}'
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{l0gs_t3ll_th3_st0ry}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

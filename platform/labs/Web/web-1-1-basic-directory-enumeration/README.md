@@ -267,7 +267,7 @@ Extract and verify the flag from the discovered location.
 
 2. **Expected flag output:**
    ```
-   OCR{d1r3ct0ry_3num3r4t10n_b4s1c}
+   <flag>
    ```
 
 3. **Verify flag format:**
@@ -290,7 +290,7 @@ Extract and verify the flag from the discovered location.
    ```
 
 **Flag format verification:**
-- ✅ Correct: `OCR{d1r3ct0ry_3num3r4t10n_b4s1c}`
+- ✅ Correct: `<flag>`
 - ❌ Wrong: `d1r3ct0ry_3num3r4t10n_b4s1c` (missing OCR{} wrapper)
 - ❌ Wrong: `OCR{d1r3ct0ry_3num3r4t10n_b4s1c` (missing closing brace)
 

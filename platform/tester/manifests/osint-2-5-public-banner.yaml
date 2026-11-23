@@ -22,12 +22,12 @@ solver:
     expect: build.kestrel-ridge.example
   - name: Product query returns the flag banner
     command: curl -s 'http://{target.shodan}:8080/?q=product:Jenkins' | grep -o 'OCR{[^}]*}'
-    expect: OCR{sh0d4n_b4nn3r_l34k}
+    expect: '{flag}'
   - name: JSON API returns the flag
     command: curl -s 'http://{target.shodan}:8080/api/hosts?q=product:Jenkins' | grep -o 'OCR{[^}]*}'
-    expect: OCR{sh0d4n_b4nn3r_l34k}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{sh0d4n_b4nn3r_l34k}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

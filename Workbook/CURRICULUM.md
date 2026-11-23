@@ -22,7 +22,7 @@ Framework alignment is selective. See [Framework alignment](FRAMEWORKS.md).
 | `osint` | OSINT | Beginner-to-intermediate learners who want public-source investigation skills. | beginner | NET00 | 8 | 4h 05m | Browser and RangeBox; public-source simulation | `identity` | OSINT Analyst; Threat Intelligence Analyst; Investigator | published |
 | `identity` | Identity & Access | Intermediate learners interested in authentication, federation, account lifecycle, and non-human identity. | intermediate | NET00 | 4 | 3h 10m | RangeBox with browser and identity lab targets | `forensics` | IAM Analyst; SOC Analyst; Identity Engineer | published |
 | `ot` | OT/ICS Security | Intermediate learners interested in industrial control systems and Modbus. | intermediate | NET00 | 2 | 1h 25m | RangeBox with terminal and Modbus lab target | `ai` | OT Security Analyst; ICS Engineer; SOC Analyst | published |
-| `ai` | AI Hacking | Intermediate learners exploring prompt injection, agent hijacking, and AI-assisted security. | intermediate | WEB02 | 4 | 2h 45m | RangeBox with browser and mock AI lab target | `winpt` | AI Security Analyst; Red Team Operator; Secure AI Developer | published |
+| `ai` | AI Hacking | Intermediate learners exploring prompt injection, agent hijacking, and AI-assisted security. | intermediate | WEB02 | 5 | 4h 15m | RangeBox with browser and mock AI lab target | `winpt` | AI Security Analyst; Red Team Operator; Secure AI Developer | published |
 | `winpt` | Windows Penetration Testing | Intermediate learners who have completed the beginner pathway or have equivalent terminal and networking experience. | intermediate | BEG04, NET00 | 51 | 102h 00m | RangeBox with terminal, browser, and Windows lab targets | `linpt` | Penetration Tester; Red Team Operator; SOC Analyst | published |
 | `linpt` | Linux Fundamentals | Intermediate learners building Linux enumeration, SSH access, privilege escalation, and detection skills. | intermediate | WIN09 | 30 | 38h 45m | RangeBox with terminal and Linux lab targets | `webpt` | Penetration Tester; Linux Administrator; Incident Responder | published |
 
@@ -55,7 +55,7 @@ Framework alignment is selective. See [Framework alignment](FRAMEWORKS.md).
 | `OT01` | Modbus Fundamentals | `CH_OT01_Modbus_Fundamentals` | intermediate | NET00 | 1 | 40m | `OT02` | published |
 | `OT02` | S7comm and PLC Data Blocks | `CH_OT02_S7comm_Data_Blocks` | intermediate | OT01 | 1 | 45m | `AI01` | published |
 | `AI01` | AI Security Foundations | `CH_AI01_AI_Foundations` | intermediate | WEB02 | 3 | 1h 50m | `AI02` | published |
-| `AI02` | Agentic AI Security | `CH_AI02_Agentic_AI_Security` | intermediate | AI01, WEB02 | 1 | 55m | `WIN01` | published |
+| `AI02` | Agentic AI Security | `CH_AI02_Agentic_AI_Security` | intermediate | AI01, WEB02 | 2 | 2h 25m | `WIN01` | published |
 | `WIN01` | Enumeration | `CH01_Enumeration` | beginner | None | 5 | 10h 00m | `WIN02` | published |
 | `WIN02` | SMB Reconnaissance | `CH02_SMB_Reconnaissance` | beginner | WIN01 | 8 | 16h 00m | `WIN03` | published |
 | `WIN03` | SMB Credential Attacks | `CH03_SMB_Credential_Attacks` | intermediate | WIN02 | 5 | 10h 00m | `WIN04` | published |

@@ -38,10 +38,10 @@ solver:
     command: mysql -h {target.datastore} -u zenith_app -p'Z3n_DB_Pr0d#' zenith -N -e 'SELECT value FROM flags WHERE name="assessment"' 2>&1
     expect: v1ct0ry
   - name: Verify complete flag
-    command: echo 'OCR{z3n1th_pwn3d_v1ct0ry}'
-    expect: OCR{z3n1th_pwn3d_v1ct0ry}
+    command: echo '{flag}'
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{z3n1th_pwn3d_v1ct0ry}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

@@ -30,10 +30,10 @@ solver:
     command: mysql -h {target.dbserver} -u {cred.db.user} -p'{cred.db.pass}' vertex_portal -N -e 'SELECT value FROM audit_flags WHERE name="assessment"' 2>&1
     expect: 3xtr4ct
   - name: Assemble and verify complete flag
-    command: echo 'OCR{sql1_un10n_3xtr4ct}'
+    command: echo '{flag}'
     expect: OCR{
 expected_flag_count: 1
-expected_flag: OCR{sql1_un10n_3xtr4ct}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

@@ -144,7 +144,7 @@ Connect via RDP using the provided credentials to access the flag.
 
 6. **Expected flag content:**
    ```
-   OCR{rdp_v3rs10n}
+   <flag>
    ```
 
 **Troubleshooting:**
@@ -158,7 +158,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{rdp_v3rs10n}
+<flag>
 ```
 
 **Verification checklist:**

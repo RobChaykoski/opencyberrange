@@ -154,7 +154,7 @@ The flag is located at `/tmp/private/flag.txt` and can be retrieved via SSH usin
 
 3. **Expected flag content:**
    ```
-   OCR{cr3d_ch41n}
+   <flag>
    ```
 
 4. **Exit the SSH session:**
@@ -168,7 +168,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{cr3d_ch41n}
+<flag>
 ```
 
 **Verification checklist:**

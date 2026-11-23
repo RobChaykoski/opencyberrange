@@ -84,8 +84,8 @@ kept as a fallback for existing installations.
 Both hostnames must resolve to the frontend and have a valid certificate for
 the browser. On the SWOCTS deployment:
 
-- app: `ctfd.swocts.com` (Let's Encrypt)
-- wiki: `ocr.swocts.com` (Let's Encrypt)
+- app: `<platform-host>` (Let's Encrypt)
+- wiki: `<platform-host>` (Let's Encrypt)
 
 No additional port or service is needed. The frontend already serves any host.
 

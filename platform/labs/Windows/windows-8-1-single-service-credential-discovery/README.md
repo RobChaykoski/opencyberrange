@@ -141,7 +141,7 @@ Use the discovered credentials to access share2 and retrieve the flag.
 
    **Expected output:**
    ```
-   OCR{cr3d_r3us3_s4m3}
+   <flag>
    ```
 
 ### Step 4: Verify Flag Format
@@ -150,7 +150,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{cr3d_r3us3_s4m3}
+<flag>
 ```
 
 **Verification checklist:**

@@ -3,7 +3,7 @@
 ## Overview
 Midterm assessment covering multi-host network enumeration. Students discover three machines on their subnet, enumerate services on each, and collect three flag parts from different protocols and techniques.
 
-**Flag:** `OCR{p1nn4cl3_d1sc0v3ry_3xp0s3d}`
+**Flag:** `<flag>`
 
 ## Target Machines
 
@@ -85,7 +85,7 @@ The file contains: `Flag 3: 3xp0s3d`
 ### Step 6: Assemble the Flag
 Combine all three parts:
 ```
-OCR{p1nn4cl3_d1sc0v3ry_3xp0s3d}
+<flag>
 ```
 
 ## Common Mistakes

@@ -62,7 +62,7 @@ Use smbclient to test null session connectivity. The flag is in the server strin
    ```
    Sharename       Type      Comment
    ---------       ----      -------
-   IPC$            IPC       IPC Service (Windows Server - Null Session: OCR{smb_null_c0nn3ct})
+   IPC$            IPC       IPC Service (Windows Server - Null Session: <flag>)
    
    Workgroup            Master
    ---------            -------
@@ -100,7 +100,7 @@ Use smbclient to test null session connectivity. The flag is in the server strin
 
 **Flag format:**
 ```
-OCR{smb_null_c0nn3ct}
+<flag>
 ```
 
 **Success Criteria:**

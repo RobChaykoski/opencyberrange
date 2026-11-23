@@ -186,7 +186,7 @@ In Wireshark:
 4. Look for the flag in the response JSON
 
 **Flag Location**: The flag appears in:
-- The SESSIONID cookie value itself: `SESSIONID=abc123def456OCR{s3ss10n_c00k13_st0l3n}xyz789`
+- The SESSIONID cookie value itself: `SESSIONID=abc123def456<flag>xyz789`
 - The server's response to the attacker's hijacked request
 
 ### Step 9: Evidence Summary
@@ -202,7 +202,7 @@ tshark -r captures/session-hijack.pcap -Y "(http.set_cookie contains SESSIONID) 
 
 **Attack Timeline**:
 1. **T+0**: Legitimate user `10.0.1.15` logs in to portal
-2. **T+0.1s**: Server sends `Set-Cookie: SESSIONID=abc123def456OCR{s3ss10n_c00k13_st0l3n}xyz789`
+2. **T+0.1s**: Server sends `Set-Cookie: SESSIONID=abc123def456<flag>xyz789`
 3. **T+10s**: Legitimate user accesses dashboard using cookie
 4. **T+45s**: Legitimate user accesses appointments using cookie
 5. **T+7min**: **ATTACKER** `10.0.1.87` uses the same cookie to access medical records!
@@ -286,7 +286,7 @@ docker-compose down
 
 ## Flag Format
 
-The flag follows the format: `OCR{s3ss10n_c00k13_st0l3n}`
+The flag follows the format: `<flag>`
 
 **Where to find it**:
 - Embedded in the stolen SESSIONID cookie value

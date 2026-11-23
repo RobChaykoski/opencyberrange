@@ -20,9 +20,9 @@ solver:
     expect: '200'
   - name: Flag found in auth log
     command: curl -s http://{target.target}/auth.log | grep -o 'OCR{[^}]*}'
-    expect: OCR{brut3_f0rc3_d3t3ct3d}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{brut3_f0rc3_d3t3ct3d}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

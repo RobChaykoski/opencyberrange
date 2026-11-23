@@ -168,7 +168,7 @@ The flag is hosted on the nginx web server discovered during reconnaissance.
 curl http://<target_ip>/flag.txt
 ```
 
-The flag is displayed: `OCR{n3tw0rk_3num}`
+The flag is displayed: `<flag>`
 
 **Alternative: Access the flag via SMB**
 
@@ -300,5 +300,5 @@ In actual penetration tests:
 ## Flag
 
 ```
-OCR{n3tw0rk_3num}
+<flag>
 ```

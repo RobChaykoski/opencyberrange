@@ -28,5 +28,5 @@ interact with its services to extract a three-part composite flag.
 
 ## Flag
 
-Format: `OCR{token1_token2_token3}`: three tokens collected from
+Format: `OCR{<token1>_<token2>_<token3>}`: three tokens collected from
 target-charlie's web page, FTP server, and custom service.

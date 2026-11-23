@@ -170,7 +170,7 @@ The flag is accessible through any of the three services. HTTP is typically the 
 
    **Expected output:**
    ```
-   OCR{mult1pl3_p0rts}
+   <flag>
    ```
 
 3. **Alternative: Use browser:**
@@ -239,7 +239,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{mult1pl3_p0rts}
+<flag>
 ```
 
 **Verification checklist:**

@@ -73,7 +73,7 @@ exec ./lynis "$@"
 ```
 
 Installed this way: Syft/Grype `v1.57.1`, Lynis `3.1.7` on development
-(`172.16.16.44`) and production (`172.16.16.41`).
+(`<dev-host-ip>`) and production (`<prod-host-ip>`).
 
 ## Image findings
 

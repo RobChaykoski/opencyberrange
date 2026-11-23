@@ -15,9 +15,9 @@ solver:
     expect: ok
   - name: DB1 contains the analyst marker
     command: python3 -c "import snap7;c=snap7.client.Client();c.connect('{target.plc}',0,1);d=c.db_read(1,0,96);print(d[32:].split(bytes([0]))[0].decode())"
-    expect: OCR{s7c0mm_db_r34d_3xp0s3d}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{s7c0mm_db_r34d_3xp0s3d}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

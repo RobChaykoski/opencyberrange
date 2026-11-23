@@ -65,7 +65,7 @@ Community Cloud. The marker is in the public About section. The assessed path is
 the local mirror; there is no live LinkedIn target, no QR code, and no phone
 requirement. The lab collects no personal data.
 
-**Flag:** `OCR{f1ct10n4l_pr0f1l3_0s1nt_2026}`
+**Flag:** `<flag>`
 
 **Setup:** none. The lab image contains the fictional profile and the flag. Do
 not add a real profile URL or regenerate a QR code for a real person.

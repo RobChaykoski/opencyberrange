@@ -30,10 +30,10 @@ solver:
     command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'tcpdump -r /home/analyst/evidence/capture.pcap -n port 53 2>/dev/null | grep -o "token_[a-z0-9]*\.exfil\.evil-dns\.net" | head -1 | sed "s/token_//;s/\..*//"' 2>&1
     expect: hunt
   - name: Assemble and verify complete flag
-    command: echo 'OCR{c0rr3l4t3_l0g_hunt}'
+    command: echo '{flag}'
     expect: OCR{
 expected_flag_count: 1
-expected_flag: OCR{c0rr3l4t3_l0g_hunt}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

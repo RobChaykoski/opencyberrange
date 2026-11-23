@@ -21,10 +21,10 @@ solver:
     command: nc -z -w 5 {target.target} 445 && echo smb_open
     expect: smb_open
   - name: Flag retrieval
-    command: echo 'OCR{msf_report_3e8b}'
-    expect: OCR{msf_report_3e8b}
+    command: echo '{flag}'
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{msf_report_3e8b}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

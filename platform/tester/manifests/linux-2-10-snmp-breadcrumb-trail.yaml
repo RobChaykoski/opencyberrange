@@ -30,7 +30,7 @@ solver:
     command: sshpass -p 'R1dg3_0ps_2024#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ops_user@{target.target} 'cat ~/flag.txt' 2>&1
     expect: OCR{
 expected_flag_count: 1
-expected_flag: OCR{snmp_ch41n_l0g1n}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

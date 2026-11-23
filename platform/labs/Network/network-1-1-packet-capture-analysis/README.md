@@ -91,7 +91,7 @@ Look for: `3xf1l.data.evil-c2.net`: the first subdomain label is the IOC.
 ### Step 6: Assemble Flag
 
 ```
-OCR{p4ck3t_4n4lyz3_3xf1l}
+<flag>
 ```
 
 ## Common Mistakes

@@ -20,9 +20,9 @@ solver:
     expect: '200'
   - name: Flag found in firewall log
     command: curl -s http://{target.target}/firewall.log | grep -o 'OCR{[^}]*}'
-    expect: OCR{p0rt_sc4n_d3t3ct3d}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{p0rt_sc4n_d3t3ct3d}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

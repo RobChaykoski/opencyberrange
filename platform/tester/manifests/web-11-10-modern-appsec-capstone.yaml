@@ -17,12 +17,12 @@ solver:
     expect: ''
   - name: Recover the assessment token
     command: curl -s http://{target.webapp}/api/admin/audit | grep -o 'OCR{[^}]*}'
-    expect: OCR{m0d3rn_4pp53c_c4p}
+    expect: '{flag}'
   - name: Confirm the token
-    command: echo OCR{m0d3rn_4pp53c_c4p}
-    expect: OCR{m0d3rn_4pp53c_c4p}
+    command: echo {flag}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{m0d3rn_4pp53c_c4p}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

@@ -104,7 +104,7 @@ grep "AegisCracker" /var/log/nginx/access.log | head -1
 ### Step 8: Assemble Flag
 
 ```
-OCR{brut3_d3t3ct_bl0ck}
+<flag>
 ```
 
 ## Common Mistakes

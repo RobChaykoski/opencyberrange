@@ -62,7 +62,7 @@ This spawns a shell with effective UID 0 (root).
 ```bash
 whoami       # root
 cat /root/flag.txt
-# OCR{su1d_pr1v3sc_r00t3d}
+# <flag>
 ```
 
 ## Common Mistakes

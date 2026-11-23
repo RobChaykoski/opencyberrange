@@ -19,9 +19,9 @@ solver:
     expect: '200'
   - name: Log contains the challenge flag
     command: curl -s http://{target.challenge}:8080/access.log | grep -o 'OCR{[^}]*}'
-    expect: OCR{3v1d3nc3_b3f0r3_act10n}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{3v1d3nc3_b3f0r3_act10n}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

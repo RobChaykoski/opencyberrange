@@ -20,9 +20,9 @@ solver:
     expect: '200'
   - name: Flag file on admin subdomain
     command: curl -s http://{target.admin}/flag.txt
-    expect: OCR{subd0m41n_d1sc0v3ry_b4s1c}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{subd0m41n_d1sc0v3ry_b4s1c}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

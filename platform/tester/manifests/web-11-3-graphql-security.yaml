@@ -17,12 +17,12 @@ solver:
     expect: ''
   - name: Recover the assessment token
     command: curl -s http://{target.webapp}/graphql | grep -o 'OCR{[^}]*}'
-    expect: OCR{gr4phql_1ntr0sp3ct}
+    expect: '{flag}'
   - name: Confirm the token
-    command: echo OCR{gr4phql_1ntr0sp3ct}
-    expect: OCR{gr4phql_1ntr0sp3ct}
+    command: echo {flag}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{gr4phql_1ntr0sp3ct}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

@@ -156,7 +156,7 @@ Download the flag file from the private share.
 
    **Expected output:**
    ```
-   OCR{smb_mult1_4uth}
+   <flag>
    ```
 
 ### Step 5: Verify Flag Format
@@ -165,7 +165,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{smb_mult1_4uth}
+<flag>
 ```
 
 **Verification checklist:**

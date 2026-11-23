@@ -20,9 +20,9 @@ solver:
     expect: enabled
   - name: Flag in X-Secret-Key header on headers endpoint
     command: curl -sI http://{target.webserver}/headers.php | grep -o 'OCR{[^}]*}'
-    expect: OCR{h34d3r_4n4lys1s_b4s1c}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{h34d3r_4n4lys1s_b4s1c}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

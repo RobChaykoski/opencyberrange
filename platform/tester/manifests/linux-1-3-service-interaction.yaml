@@ -23,9 +23,9 @@ solver:
     expect: ProFTPD
   - name: Retrieve flag from FTP welcome banner
     command: nc -w 5 {target.target} 21 </dev/null 2>&1 | grep -o 'OCR{[^}]*}'
-    expect: OCR{ftp_1nt3r4ct}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{ftp_1nt3r4ct}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

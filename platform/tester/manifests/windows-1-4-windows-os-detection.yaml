@@ -22,7 +22,7 @@ solver:
     command: smbclient -L //{target.target} -N 2>&1
     expect: OCR{
 expected_flag_count: 1
-expected_flag: OCR{0s_d3t3ct10n}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

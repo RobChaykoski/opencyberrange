@@ -121,9 +121,15 @@ image:
    hijack and origin-authentication labs pair directly with the network tap.
 2. **containerlab.** Declares FRR/cEOS/SR Linux topologies as data; needs
    privileged containers, so borrow its topology format for a compose extension.
-3. **CAN bus (python-can, cantools, ICSim).** A virtual interface makes one
-   container a whole bus; supports spoofing, replay, and IDS labs.
-4. **OpenPLC / pyModbus.** Extends the OT track with a debrief-friendly target.
+3. **CAN bus (python-can, userspace broker, cantools).** Use a TCP CAN broker
+   and synthetic ECUs in hosted labs; `vcan`/ICSIM need kernel privileges and
+   are benchtop-only. Supports spoofing, replay, and IDS labs.
+4. **pyModbus PLC + lightweight HMI.** The maintained OT path: the original
+   pymodbus controller plus an HMI/SCADA layer. OpenPLC v4 was evaluated and
+   deferred because the runtime image exposes no Modbus registers without an
+   editor-generated program ZIP; OpenPLC v3 is archived. ScadaBR is a legacy
+   Java/Tomcat stack; use it only as an optional, pinned benchtop target, not a
+   hosted production dependency.
 5. **Mininet.** SDN/OpenFlow labs; heavier and more niche than the options above.
 6. **FirmAE/Firmadyne.** IoT firmware emulation; needs KVM, so schedule it after
    the others.

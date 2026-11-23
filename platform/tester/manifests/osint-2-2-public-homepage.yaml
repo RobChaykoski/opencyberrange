@@ -19,9 +19,9 @@ solver:
     expect: '200'
   - name: Flag is present in the page metadata
     command: curl -s http://{target.publicsite}:8080/ | grep -o 'OCR{[^}]*}'
-    expect: OCR{swocts_v13w_s0urc3}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{swocts_v13w_s0urc3}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

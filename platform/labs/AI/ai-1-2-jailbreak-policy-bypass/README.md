@@ -25,7 +25,7 @@ curl -s -X POST \
   http://safechat.lab:8080/api/chat
 ```
 
-The response contains `OCR{j41lbr34k_p0l1cy_byp4ss}`.
+The response contains `<flag>`.
 
 ## Why it works
 

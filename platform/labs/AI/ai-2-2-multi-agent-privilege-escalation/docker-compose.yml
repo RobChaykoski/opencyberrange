@@ -1,0 +1,75 @@
+services:
+  intake:
+    mem_limit: 192m
+    cpus: 0.25
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 192M
+    build:
+      context: ../_shared
+      dockerfile: Dockerfile
+    hostname: trailguard-intake
+    labels:
+      ip_offset: "74"
+    networks:
+      - default
+      - control
+    environment:
+      LAB_MODE: "agent_chain"
+      # Stage 1: a debug route on the public intake service leaks this marker
+      # together with the service token. It is evidence, not the graded flag.
+      FLAG_1: "OCR{n0n_hum4n_1d3nt1ty_l34k_01}"
+      AGENT_TOKEN: "nhi_live_98f7a6d5e4c3b2a1_intake_bot"
+      VAULT_URL: "http://trailguard-vault:8001/agent/execute"
+      BOT_NAME: "TrailGuard Intake"
+      COMPANY: "Trailline Security & GRC"
+      PORT: "8080"
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped
+
+  vault:
+    mem_limit: 160m
+    cpus: 0.20
+    deploy:
+      resources:
+        limits:
+          cpus: "0.20"
+          memory: 160M
+    build:
+      context: ../_shared
+      dockerfile: Dockerfile
+    hostname: trailguard-vault
+    labels:
+      # Keep the audit vault off the student lab bridge. The intake service
+      # reaches it only across the internal control network.
+      ocr_lab_net: "false"
+    networks:
+      - control
+    environment:
+      LAB_MODE: "vault"
+      FLAG: "OCR{c0nfus3d_d3puty_ag3nt_h1jack_2026}"
+      EXPECTED_TOKEN: "nhi_live_98f7a6d5e4c3b2a1_intake_bot"
+      BOT_NAME: "TrailGuard Vault Agent"
+      COMPANY: "Trailline Security & GRC"
+      PORT: "8001"
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped
+
+networks:
+  default:
+  control:
+    internal: true

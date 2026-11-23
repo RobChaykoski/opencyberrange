@@ -156,7 +156,7 @@ Exit the SMB client and view the downloaded flag file.
 
    **Expected output:**
    ```
-   OCR{smb_f1l3_r3tr13v3}
+   <flag>
    ```
 
 4. **Alternative viewing methods:**
@@ -183,7 +183,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{smb_f1l3_r3tr13v3}
+<flag>
 ```
 
 **Verification checklist:**

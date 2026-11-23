@@ -248,12 +248,12 @@ services:
 
 ### Flag Format
 
-All flags use the format: `OCR{descriptive_flag_name}`
+All flags use the format: `OCR{<descriptive_flag_name>}`
 
 Examples:
-- `OCR{b4s1c_p0rt_sc4n}`
-- `OCR{smb_c0nn3ct}`
-- `OCR{rdp_brut3_f0rc3}`
+- `<flag>`
+- `<flag>`
+- `<flag>`
 
 ## Learning Progression Summary
 

@@ -235,7 +235,7 @@ Use the discovered password to connect to the SMB share and retrieve the flag.
 
    **Expected output:**
    ```
-   OCR{smb_s1ngl3_brut3}
+   <flag>
    ```
 
 ### Step 6: Verify Flag Format
@@ -244,7 +244,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{smb_s1ngl3_brut3}
+<flag>
 ```
 
 **Verification checklist:**

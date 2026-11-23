@@ -22,9 +22,9 @@ solver:
     expect: Northstar Community Cloud
   - name: Training mirror contains the marker
     command: curl -s http://{target.profile}:8080/ | grep -o 'OCR{[^}]*}'
-    expect: OCR{f1ct10n4l_pr0f1l3_0s1nt_2026}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{f1ct10n4l_pr0f1l3_0s1nt_2026}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

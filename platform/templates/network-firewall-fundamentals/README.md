@@ -34,7 +34,7 @@ Declared in `template.yaml` under `cosmetic_schema`:
 |---------------------|-------------------------|
 | `CRED_analyst_USER` | `analyst`               |
 | `CRED_analyst_PASS` | `M3r1d14n_Fw#`          |
-| `FLAG`              | `OCR{tr4ff1c_c0ntr0ll3d}` |
+| `FLAG`              | `<flag>` |
 
 The flag is written to `/root/flag.txt` and revealed only by `sudo check-rules`
 once the student's FORWARD rules are correct. All passwords use `#`, never `!`.

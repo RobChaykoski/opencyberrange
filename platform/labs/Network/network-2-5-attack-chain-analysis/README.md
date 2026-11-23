@@ -359,7 +359,7 @@ tshark -r captures/full-attack.pcap -q -z follow,tcp,ascii,<stream>
 - **Source**: 10.0.10.25 (compromised workstation)
 - **Destination**: 198.51.100.42 (external FTP server)
 - **Protocol**: FTP (port 21)
-- **File**: `patient-records-OCR{full_4tt4ck_ch41n_m4pp3d}.zip`
+- **File**: `patient-records-<flag>.zip`
 - **Size**: ~15 MB
 - **FLAG LOCATION**: Embedded in the FTP STOR command filename!
 - **Technique**: MITRE ATT&CK T1048.002 - Exfiltration Over Alternative Protocol
@@ -371,7 +371,7 @@ tshark -r captures/full-attack.pcap -q -z follow,tcp,ascii,<stream>
 tshark -r captures/full-attack.pcap -Y 'ftp.request.command == "STOR"' \
   -T fields -e ftp.request.arg
 
-# The output will show: patient-records-OCR{full_4tt4ck_ch41n_m4pp3d}.zip
+# The output will show: patient-records-<flag>.zip
 ```
 
 **IOC Documentation:**
@@ -383,7 +383,7 @@ Context: Data exfiltration destination
 Timestamp: [T+180 min]
 
 IOC Type: Filename
-Value: patient-records-OCR{full_4tt4ck_ch41n_m4pp3d}.zip
+Value: patient-records-<flag>.zip
 Context: Exfiltrated patient database
 Timestamp: [T+180 min]
 MITRE ATT&CK: T1048 - Exfiltration Over Alternative Protocol
@@ -438,7 +438,7 @@ c2-server.tk
 ```
 # Malicious Files
 system-update.exe  # Initial payload
-patient-records-OCR{full_4tt4ck_ch41n_m4pp3d}.zip  # Exfiltrated data
+patient-records-<flag>.zip  # Exfiltrated data
 ```
 
 ### Behavioral Indicators
@@ -538,7 +538,7 @@ patient-records-OCR{full_4tt4ck_ch41n_m4pp3d}.zip  # Exfiltrated data
 Once you've identified all attack stages and found the flag in the exfiltration traffic, submit it in the format:
 
 ```
-OCR{full_4tt4ck_ch41n_m4pp3d}
+<flag>
 ```
 
 ## Resources

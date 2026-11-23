@@ -1,0 +1,114 @@
+{
+  "dataset:public-demo": {
+    "classification": "public",
+    "owner": "curriculum",
+    "contains_pii": false,
+    "frameworks": ["nist"],
+    "training_data": true
+  },
+  "reports:instructor:all": {
+    "classification": "confidential",
+    "owner": "compliance",
+    "steward": "grc",
+    "contains_pii": true,
+    "jurisdiction": "canada",
+    "retention": "7 years",
+    "frameworks": ["pipeda", "nist"],
+    "controls": ["PR.DS-01"],
+    "training_data": false
+  },
+  "dataset:lumenpay-audit": {
+    "classification": "restricted",
+    "owner": "finance",
+    "steward": "grc",
+    "contains_pii": true,
+    "contains_pci": true,
+    "jurisdiction": "canada",
+    "retention": "7 years",
+    "frameworks": ["pci", "pipeda"],
+    "controls": ["PR.DS-01", "CC6.1"],
+    "training_data": false
+  },
+  "repo:public-docs": {
+    "classification": "confidential",
+    "owner": "security",
+    "steward": "grc",
+    "contains_pii": false,
+    "contains_infrastructure_metadata": true,
+    "contains_assessment_answer_key": true,
+    "contains_secrets": false,
+    "publication_safe": false,
+    "jurisdiction": "canada",
+    "retention": "reviewed release",
+    "frameworks": ["pipeda", "nist"],
+    "controls": ["PR.DS-01", "PR.DS-02"],
+    "training_data": false
+  },
+  "repo:lab-definition": {
+    "classification": "restricted",
+    "owner": "curriculum",
+    "steward": "curriculum",
+    "contains_pii": false,
+    "contains_infrastructure_metadata": false,
+    "contains_assessment_answer_key": true,
+    "contains_secrets": false,
+    "publication_safe": false,
+    "jurisdiction": "canada",
+    "frameworks": ["nist"],
+    "controls": ["PR.DS-01"],
+    "training_data": true
+  },
+  "repo:release-notes": {
+    "classification": "confidential",
+    "owner": "release",
+    "steward": "security",
+    "contains_pii": false,
+    "contains_infrastructure_metadata": true,
+    "contains_assessment_answer_key": false,
+    "contains_secrets": false,
+    "publication_safe": false,
+    "jurisdiction": "canada",
+    "frameworks": ["nist"],
+    "controls": ["PR.DS-01"],
+    "training_data": false
+  },
+  "repo:workbook": {
+    "classification": "internal",
+    "owner": "curriculum",
+    "steward": "curriculum",
+    "contains_pii": false,
+    "contains_infrastructure_metadata": false,
+    "contains_assessment_answer_key": false,
+    "contains_secrets": false,
+    "publication_safe": true,
+    "jurisdiction": "canada",
+    "frameworks": ["nist"],
+    "controls": ["PR.DS-01"],
+    "training_data": true
+  },
+  "dataset:training-pii": {
+    "classification": "internal",
+    "owner": "curriculum",
+    "contains_pii": true,
+    "jurisdiction": "canada",
+    "frameworks": ["pipeda"],
+    "controls": ["PR.DS-01"],
+    "training_data": true
+  },
+  "lab:ai-2-1-agent-hijacking": {
+    "classification": "internal",
+    "owner": "curriculum",
+    "contains_pii": false,
+    "jurisdiction": "canada",
+    "frameworks": ["nist"],
+    "training_data": true
+  },
+  "lab:identity-1-3-nhi-oauth-abuse": {
+    "classification": "internal",
+    "owner": "curriculum",
+    "contains_pii": false,
+    "jurisdiction": "canada",
+    "frameworks": ["nist"],
+    "training_data": true
+  }
+}

@@ -1,6 +1,6 @@
 # Release 4 hotfix 4.0.2: RangeBox workspace tabs
 
-Status: **deployed to production** `172.16.16.41` on 2026-11-14.
+Status: **deployed to production** `<prod-host-ip>` on 2026-11-14.
 
 ## What changed
 

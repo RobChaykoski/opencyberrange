@@ -1,8 +1,8 @@
-# Staging Moodle for https://moodle.swocts.com.
+# Staging Moodle for https://<moodle-host>.
 #
 # This is a separate stack with its own database and volumes. It is not the
 # disposable training lab and must not be connected to OpenCyberRange production
-# (https://ctfd.swocts.com) or any production identity provider.
+# (https://<platform-host>) or any production identity provider.
 #
 #   cd deploy/moodle-staging
 #   cp .env.example .env

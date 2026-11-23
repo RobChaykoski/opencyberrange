@@ -29,9 +29,9 @@ solver:
     expect: ssh
   - name: SSH login and retrieve flag
     command: sshpass -p '{cred.ssh-user.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p 22222 {cred.ssh-user.user}@{target.target} 'cat /home/techstart/flag.txt' 2>&1
-    expect: OCR{n0n_st4nd4rd}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{n0n_st4nd4rd}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

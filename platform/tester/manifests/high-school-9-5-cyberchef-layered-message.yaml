@@ -22,9 +22,9 @@ solver:
     expect: '200'
   - name: Layered message decodes in the taught order
     command: curl -s http://{target.portal}:8080/message.txt | base64 -d | tr 'A-Za-z' 'N-ZA-Mn-za-m' | grep -o 'OCR{[^}]*}'
-    expect: OCR{l4y3r5_ar3_not_s3curity}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{l4y3r5_ar3_not_s3curity}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

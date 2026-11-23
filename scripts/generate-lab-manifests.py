@@ -161,14 +161,24 @@ def build_manifest(lab_dir: Path) -> dict:
             "steps": [
                 {
                     "name": str(step.get("name") or "unnamed"),
-                    "command": str(step.get("command") or ""),
-                    "expect": str(step.get("expect") or ""),
+                    "command": (
+                        str(step.get("command") or "").replace(flag, "{flag}")
+                        if flag
+                        else str(step.get("command") or "")
+                    ),
+                    "expect": (
+                        str(step.get("expect") or "").replace(flag, "{flag}")
+                        if flag
+                        else str(step.get("expect") or "")
+                    ),
                 }
                 for step in steps
             ],
         },
         "expected_flag_count": 1 if flag else 0,
-        "expected_flag": flag,
+        # The manifest is public. Keep the answer key in lab.yaml and resolve
+        # {flag} in the harness, not in the committed test contract.
+        "expected_flag": "{flag}" if flag else "",
         "forbidden_networks": list(
             (data.get("test") or {}).get("forbidden_networks")
             or DEFAULT_FORBIDDEN_NETWORKS

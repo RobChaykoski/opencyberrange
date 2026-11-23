@@ -25,9 +25,9 @@ solver:
     expect: '200'
   - name: Apply correct firewall rules and validate
     command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.firewall} 'sudo iptables -F FORWARD && sudo iptables -A FORWARD -p tcp --dport 80 -j ACCEPT && sudo iptables -A FORWARD -p tcp --dport 443 -j ACCEPT && sudo iptables -A FORWARD -j DROP && sleep 3 && sudo check-rules' 2>&1
-    expect: OCR{tr4ff1c_c0ntr0ll3d}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{tr4ff1c_c0ntr0ll3d}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

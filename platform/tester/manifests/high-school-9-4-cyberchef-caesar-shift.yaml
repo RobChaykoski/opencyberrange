@@ -22,9 +22,9 @@ solver:
     expect: '200'
   - name: ROT13 message decodes to the training token
     command: curl -s http://{target.portal}:8080/message.txt | tr 'A-Za-z' 'N-ZA-Mn-za-m' | grep -o 'OCR{[^}]*}'
-    expect: OCR{r0t13_is_not_s3cur3}
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{r0t13_is_not_s3cur3}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

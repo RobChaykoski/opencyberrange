@@ -20,12 +20,12 @@ solver:
     expect: email-exfiltration.pcap
   - name: Flag found in PCAP captures
     command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst-workstation} 'strings /home/analyst/captures/*.pcap 2>&1 | grep -o "OCR{[^}]*}" | head -1'
-    expect: OCR{smtp_d4t4_3xf1ltr4t10n}
+    expect: '{flag}'
   - name: Echo confirmed flag
-    command: echo 'OCR{smtp_d4t4_3xf1ltr4t10n}'
-    expect: OCR{smtp_d4t4_3xf1ltr4t10n}
+    command: echo '{flag}'
+    expect: '{flag}'
 expected_flag_count: 1
-expected_flag: OCR{smtp_d4t4_3xf1ltr4t10n}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

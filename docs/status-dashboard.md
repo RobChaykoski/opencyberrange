@@ -6,8 +6,8 @@ Generated: `2026-11-23T00:42:05+00:00`
 
 | Environment | Role | URL | Up | API | Version | Expected | Users | Setup | Build asset | Response |
 |---|---|---|---:|---:|---|---|---:|---|---|---:|
-| OCR | production | https://ctfd.swocts.com | yes | yes | `5.30.2` | `5.30.2 (OCR production deployment)` | yes | yes | `index-BVKF_BDO.js` | 77 ms |
-| OCR dev | development | https://172.16.16.44 | yes | yes | `5.30.2` | `5.30.2 (OCR development deployment)` | yes | yes | `index-BVKF_BDO.js` | 46 ms |
+| OCR | production | https://<platform-host> | yes | yes | `5.30.2` | `5.30.2 (OCR production deployment)` | yes | yes | `index-BVKF_BDO.js` | 77 ms |
+| OCR dev | development | https://<dev-host-ip> | yes | yes | `5.30.2` | `5.30.2 (OCR development deployment)` | yes | yes | `index-BVKF_BDO.js` | 46 ms |
 
 Checks use public endpoints only: `/api/version`, `/api/setup/status`, and `/`.
 No login, learner records, secrets, or private data are read.

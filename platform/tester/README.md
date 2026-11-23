@@ -26,7 +26,8 @@ solver:
       command: nc -z -w 5 {target.target} 22 && echo 'port_open'
       expect: port_open
 expected_flag_count: 1
-expected_flag: OCR{ssh_d3t3ct3d}
+# The answer key stays in lab.yaml; the harness resolves {flag} at run time.
+expected_flag: "{flag}"
 forbidden_networks: [control-plane, database, other-learners]
 max_memory_mb: 768
 max_cpu: 0.75

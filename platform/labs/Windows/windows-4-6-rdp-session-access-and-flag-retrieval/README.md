@@ -120,7 +120,7 @@ Extract and copy the flag from the desktop.
 
 2. **Expected flag content:**
    ```
-   OCR{rdp_s3ss10n_4cc3ss}
+   <flag>
    ```
 
 3. **Copy flag to clipboard:**
@@ -139,7 +139,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{rdp_s3ss10n_4cc3ss}
+<flag>
 ```
 
 **Verification checklist:**

@@ -97,12 +97,12 @@ non-root user where the service does not need root, and add
   - `ocr-db`, `ocr-redis`, `ocr-mailpit`: not privileged, no added
     capabilities.
 - The development backend also has a writable bind mount of the repository
-  backend directory (`/home/ocrv2/opencyberrange/backend:/app:rw`). That is a
+  backend directory (`/home/<dev-user>/opencyberrange/backend:/app:rw`). That is a
   development convenience and must not be copied to production. It is inside
   the trusted backend container, not a lab container.
 - `DockerManager.audit_lab_network_isolation()` reported **all checks OK**:
   - `10.100.0.0/14`, `10.104.0.0/13`, `10.112.0.0/12`, `10.128.0.0/9`, and
-    `10.50.0.0/16` blocked from the host management LAN (`172.16.16.0/24`);
+    `10.50.0.0/16` blocked from the host management LAN (`<private-subnet>`);
   - inbound DROP rules present for the external interface (`ens18`).
 
 ## Residual risk: egress

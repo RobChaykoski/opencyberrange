@@ -132,7 +132,7 @@ The flag is located in /tmp/flag.txt on the LDAP server.
 
 3. **Expected flag content:**
    ```
-   OCR{ldap_4n0n_b1nd}
+   <flag>
    ```
 
 4. **Alternative: Check if flag is in LDAP directory:**
@@ -151,7 +151,7 @@ Ensure the flag is in the correct format before submission.
 
 **Flag format:**
 ```
-OCR{ldap_4n0n_b1nd}
+<flag>
 ```
 
 **Verification checklist:**
