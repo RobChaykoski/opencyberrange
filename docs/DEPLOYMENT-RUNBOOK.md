@@ -54,7 +54,20 @@ This is the current production layout: the repository contains the deployable
 `scripts/deploy-updates.sh` targets the older split layout and fails here with
 `docker-compose.yml not found`. Do not run it on this layout.
 
-Run the signed gate manually:
+Run the in-place updater:
+
+```bash
+cd ~/opencyberrange
+bash scripts/deploy-inplace.sh --dry-run
+bash scripts/deploy-inplace.sh
+```
+
+It verifies the signed tag and supply-chain lock, takes a backup, tags rollback
+images, rebuilds backend and frontend, rebuilds the wiki volume, and verifies
+`/api/version` and nginx. It does not need sudo when the deploy user owns the
+checkout and is in the `docker` group.
+
+Manual fallback:
 
 ```bash
 cd ~/opencyberrange
@@ -67,12 +80,8 @@ python3 scripts/supply_chain.py --check \
   --signature supply-chain.lock.json.asc \
   --gpg-public-key docs/release-signing-key.asc \
   --gpg-fingerprint 68A817762C831475F00DB54E775050A4C4921814
-```
 
-Then rebuild and recreate only the application containers:
-
-```bash
-cd ~/opencyberrange/platform
+cd platform
 COMPOSE="docker compose --env-file .env \
   -f docker-compose.prod.yml \
   -f docker-compose.adopt.yml \
