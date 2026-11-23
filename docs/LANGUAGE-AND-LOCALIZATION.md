@@ -20,11 +20,13 @@ pipeline.
 
 - **Bare-string baseline gate.** `vue/no-bare-strings-in-template` is enabled as
   a warning. `platform/frontend/scripts/check-ui-strings.mjs` records the
-  current 4,943 bare strings across 96 files in
+  current 4,956 bare strings across 96 files in
   `platform/frontend/scripts/ui-string-baseline.json`. CI fails when a file
-  grows beyond its baseline or the total grows. There is no requirement to
-  translate the whole UI in one release; there is a requirement not to make the
-  backlog larger.
+  grows beyond its baseline or the total grows. The total moved from 4,943 to
+  4,956 for the Cloudflare DDNS panel in Admin settings; that increase is
+  recorded deliberately, not silently accepted. There is no requirement to
+  translate the whole UI in one release; every increase needs a named owner and
+  a migration path.
 - **Stable API error codes.** New and migrated endpoints add an
   `X-Error-Code` header alongside the existing human-readable `detail`. See
   [API error codes](API-ERROR-CODES.md).

@@ -4,7 +4,7 @@ The public SWOCTS hostnames depend on a firewall WAN address that can change
 after a firewall reboot. This stack keeps the Cloudflare `A` records pointed at
 the current public IPv4 address.
 
-## Two supported approaches
+## Three supported approaches
 
 ### A. Firewall built-in DDNS (preferred)
 
@@ -14,11 +14,35 @@ change and starts before the application containers.
 
 Use the same scoped Cloudflare token and the same record list described below.
 
-### B. This container (portable fallback)
+### B. Platform settings (single-host fallback)
+
+When the OpenCyberRange host is the always-on machine behind the firewall, the
+platform can run the update itself. In **Admin -> Settings -> Network**:
+
+1. Create a dedicated Cloudflare token with `Zone:DNS:Edit` for one zone.
+2. Set the zone, the explicit A records, the TTL, and the check interval.
+3. Save the token and enable **Cloudflare Dynamic DNS**.
+4. Use **Test without writing** to validate the token and current records, then
+   **Check and update now** to apply the address.
+
+The scheduler checks the public IPv4 through Cloudflare's trace endpoint and
+refuses private or non-public addresses. It updates only records inside the
+configured zone, refuses wildcards, and refuses a name with more than one A
+record. The token is stored with the same encrypted secret handling as the SMTP
+password and is never returned to the browser. Errors and the last address are
+shown in the same panel.
+
+This updater manages `A` records only. It does not replace a firewall DDNS
+client, does not handle IPv6, and does not change NPM upstreams or certificates.
+
+### C. This container (separate host)
 
 Run this stack on an always-on host behind the firewall, preferably the Nginx
 Proxy Manager host. It checks the public address every five minutes and after
 every container restart, and only updates Cloudflare when the value changes.
+
+Do not run this container and the platform updater against the same records.
+Two writers produce confusing flap and make the last-change audit meaningless.
 
 ## Cloudflare token
 
@@ -35,7 +59,7 @@ Recommended token name: `swocts-ddns-npm`.
 
 Rotate the token after the event and record the change.
 
-## Configure
+## Configure the container (approach C)
 
 ```bash
 cd deploy/cloudflare-ddns

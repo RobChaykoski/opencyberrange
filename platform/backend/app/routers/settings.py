@@ -19,6 +19,7 @@ from app.schemas import (
     SettingsChangeRevert, ProductionCutoverRequest,
 )
 from app.services import mail, settings_service
+from app.services import ddns
 from app.services import production_control
 from app.services import reauth as reauth_service
 from app.services import rangebox_capacity
@@ -424,13 +425,52 @@ async def get_settings_by_category(
     admin: User = Depends(get_current_admin_user)
 ):
     """Return settings for a specific category."""
-    valid_categories = ["general", "security", "labs", "vpn", "email", "appearance", "modules"]
+    valid_categories = ["general", "security", "labs", "vpn", "network", "email", "appearance", "modules"]
     if category not in valid_categories:
         raise HTTPException(
             status_code=400,
             detail=f"Invalid category. Must be one of: {valid_categories}"
         )
     return settings_service.get_settings_by_category(db, category)
+
+
+@router.get("/ddns/status")
+async def get_ddns_status(
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user),
+):
+    """Return the Cloudflare DDNS configuration summary and last result."""
+    return ddns.status(db)
+
+
+@router.post("/ddns/test")
+@limiter.limit("6/minute")
+async def test_ddns(
+    request: Request,
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user),
+):
+    """Validate the token and records without writing DNS."""
+    try:
+        return ddns.sync(db, dry_run=True)
+    except ddns.DDNSError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.post("/ddns/sync")
+@limiter.limit("6/minute")
+async def sync_ddns(
+    request: Request,
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user),
+):
+    """Run the updater now and reconcile the configured A records."""
+    try:
+        result = ddns.sync(db)
+    except ddns.DDNSError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    return {"result": result, "status": ddns.status(db)}
 
 
 @router.post("/mail/test")
@@ -494,6 +534,99 @@ async def update_settings(
     for key in ("wiki_origin", "wiki_cookie_domain", "wiki_frame_ancestor"):
         if key in clean:
             _validate_wiki_setting(key, str(clean[key]))
+
+    ddns_keys = {
+        "ddns_enabled",
+        "ddns_api_token",
+        "ddns_zone",
+        "ddns_domains",
+        "ddns_proxied",
+        "ddns_ttl",
+        "ddns_interval_minutes",
+    }
+
+    if ddns_keys & set(clean):
+        if "ddns_zone" in clean:
+            zone = str(clean["ddns_zone"]).strip().lower().strip(".")
+            if zone and not re.fullmatch(
+                r"[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+",
+                zone,
+            ):
+                raise HTTPException(
+                    status_code=400,
+                    detail="ddns_zone must be a zone name such as example.edu, without a wildcard or path.",
+                )
+            clean["ddns_zone"] = zone
+
+        for key in ("ddns_enabled", "ddns_proxied"):
+            if key in clean:
+                clean[key] = "true" if str(clean[key]).strip().lower() in {"1", "true", "yes", "on"} else "false"
+
+        zone = str(clean.get("ddns_zone") or settings_service.get_setting_fresh(db, "ddns_zone", "") or "").strip().lower().strip(".")
+
+        if "ddns_domains" in clean:
+            try:
+                records = ddns.domains(str(clean["ddns_domains"]))
+            except ddns.DDNSError as exc:
+                raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+            for record in records:
+                if zone and record != zone and not record.endswith("." + zone):
+                    raise HTTPException(
+                        status_code=400,
+                        detail=f"{record} is outside ddns_zone {zone}. Update the zone or remove the record.",
+                    )
+
+            clean["ddns_domains"] = ", ".join(records)
+
+        if "ddns_ttl" in clean:
+            try:
+                ttl = int(str(clean["ddns_ttl"]).strip())
+            except (TypeError, ValueError) as exc:
+                raise HTTPException(
+                    status_code=400,
+                    detail="ddns_ttl must be a number of seconds between 60 and 86400.",
+                ) from exc
+            if ttl < ddns.MIN_TTL_SECONDS or ttl > ddns.MAX_TTL_SECONDS:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"ddns_ttl must be between {ddns.MIN_TTL_SECONDS} and {ddns.MAX_TTL_SECONDS} seconds.",
+                )
+            clean["ddns_ttl"] = str(ttl)
+
+        if "ddns_interval_minutes" in clean:
+            try:
+                interval = int(str(clean["ddns_interval_minutes"]).strip())
+            except (TypeError, ValueError) as exc:
+                raise HTTPException(
+                    status_code=400,
+                    detail="ddns_interval_minutes must be a whole number between 1 and 1440.",
+                ) from exc
+            if interval < 1 or interval > 1440:
+                raise HTTPException(
+                    status_code=400,
+                    detail="ddns_interval_minutes must be between 1 and 1440.",
+                )
+            clean["ddns_interval_minutes"] = str(interval)
+
+        enabled = str(clean.get("ddns_enabled", settings_service.get_setting_fresh(db, "ddns_enabled", "false"))).lower() == "true"
+        token = clean.get("ddns_api_token")
+        if token is None:
+            token = settings_service.get_setting_fresh(db, "ddns_api_token", "") or ""
+
+        if enabled and not str(token).strip():
+            raise HTTPException(
+                status_code=400,
+                detail="Set a Cloudflare API token before enabling dynamic DNS.",
+            )
+
+        if enabled:
+            saved_domains = str(clean.get("ddns_domains") or settings_service.get_setting_fresh(db, "ddns_domains", "") or "")
+            if not zone or not saved_domains.strip():
+                raise HTTPException(
+                    status_code=400,
+                    detail="Set ddns_zone and at least one record before enabling dynamic DNS.",
+                )
 
     if "rangebox_capacity_percent" in clean:
         try:

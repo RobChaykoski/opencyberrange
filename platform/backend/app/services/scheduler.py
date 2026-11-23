@@ -6,6 +6,7 @@ Handles periodic cleanup tasks like terminating expired lab sessions
 import asyncio
 import logging
 from datetime import datetime, timedelta, timezone
+from typing import Optional
 from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app.models import LabSession
@@ -23,6 +24,7 @@ _revocation_cleanup_task = None
 _metrics_task = None
 _consent_jobs_task = None
 _security_ops_task = None
+_ddns_task = None
 _module_tasks = {}   # label -> asyncio.Task, one per discovered module tick
 
 
@@ -274,10 +276,44 @@ async def collect_system_metrics_loop():
         await asyncio.sleep(60)
 
 
+def _ddns_once() -> Optional[dict]:
+    """Run one Cloudflare DDNS pass when the configured interval is due."""
+    from app.services import ddns
+
+    db: Session = SessionLocal()
+    try:
+        if not ddns.is_due(db):
+            return None
+        try:
+            return ddns.sync(db)
+        except ddns.DDNSError as exc:
+            ddns.record_failure(db, str(exc))
+            logger.warning("Cloudflare DDNS check skipped: %s", exc)
+            return None
+    finally:
+        db.close()
+
+
+async def ddns_loop():
+    """Check the public address on the configured interval.
+
+    The loop wakes every minute but only calls Cloudflare when
+    ``ddns_interval_minutes`` has elapsed. A disabled setting is a no-op.
+    """
+    while True:
+        try:
+            await asyncio.to_thread(_ddns_once)
+        except asyncio.CancelledError:
+            raise
+        except Exception as exc:
+            logger.warning("Cloudflare DDNS loop failed: %s", exc)
+        await asyncio.sleep(60)
+
+
 def start_scheduler():
     """Start the background scheduler tasks"""
     global _session_cleanup_task, _backup_task, _revocation_cleanup_task, _metrics_task
-    global _consent_jobs_task, _security_ops_task
+    global _consent_jobs_task, _security_ops_task, _ddns_task
 
     logger.info("Starting background scheduler...")
 
@@ -308,6 +344,10 @@ def start_scheduler():
         _security_ops_task = asyncio.create_task(security_operations_loop())
         logger.info("Started security operations loop")
 
+    if _ddns_task is None or _ddns_task.done():
+        _ddns_task = asyncio.create_task(ddns_loop())
+        logger.info("Started Cloudflare DDNS loop")
+
     # Start each present module's background tick. Editions with no
     # optional modules installed have none to start.
     # Adding a module with a scheduler_tick needs no edit to this file.
@@ -326,7 +366,7 @@ async def shutdown_scheduler():
     ``run_until_complete`` would raise "event loop is already running".
     """
     global _session_cleanup_task, _backup_task, _revocation_cleanup_task, _metrics_task
-    global _consent_jobs_task, _security_ops_task
+    global _consent_jobs_task, _security_ops_task, _ddns_task
 
     logger.info("Shutting down background scheduler...")
 
@@ -343,6 +383,8 @@ async def shutdown_scheduler():
         tasks.append(_consent_jobs_task)
     if _security_ops_task and not _security_ops_task.done():
         tasks.append(_security_ops_task)
+    if _ddns_task and not _ddns_task.done():
+        tasks.append(_ddns_task)
     tasks.extend(t for t in _module_tasks.values() if t and not t.done())
 
     for t in tasks:
@@ -357,5 +399,6 @@ async def shutdown_scheduler():
     _metrics_task = None
     _consent_jobs_task = None
     _security_ops_task = None
+    _ddns_task = None
     _module_tasks.clear()
 

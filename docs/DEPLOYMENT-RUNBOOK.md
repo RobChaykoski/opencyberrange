@@ -201,6 +201,32 @@ docker exec -e PYTHONPATH=/app ocr-backend \
 The script is idempotent and replaces the questions for each level while
 leaving attempts intact.
 
+## Public DNS (Cloudflare DDNS)
+
+Public A records must follow the firewall's WAN address. In order of preference:
+
+1. The firewall's built-in Cloudflare DDNS client, when it owns the WAN address.
+2. **Admin -> Settings -> Network** on a single-host deployment where the
+   platform is the always-on machine. Set the zone and an explicit record list,
+   store a token scoped to `Zone:DNS:Edit` for that zone, then use **Test without
+   writing** before **Check and update now**.
+3. The `deploy/cloudflare-ddns` container on a separate NPM host.
+
+The platform setting stores the token encrypted and refuses private addresses,
+records outside the configured zone, wildcards, and a name with more than one A
+record. It manages IPv4 `A` records only. Do not run the container and the
+platform updater against the same records.
+
+Verify from an external resolver after a WAN change:
+
+```bash
+dig +short <platform-host> @1.1.1.1
+curl -sS https://<platform-host>/api/version
+```
+
+See [`deploy/cloudflare-ddns/README.md`](../deploy/cloudflare-ddns/README.md)
+for token scope, proxied versus DNS-only records, and the container fallback.
+
 ## Health and status
 
 ```bash

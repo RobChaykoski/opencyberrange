@@ -2273,6 +2273,12 @@
                 empty to keep the wiki same-origin. Changes apply without a
                 rebuild.
               </p>
+              <p v-if="activeSettingsCategory === 'network'" class="section-desc">
+                Keep public A records pointed at this host. A firewall's built-in
+                DDNS client is preferable when it owns the WAN address; this
+                updater covers a single-host deployment behind the firewall. Use
+                an explicit record list and a token scoped to one zone.
+              </p>
               <p v-if="activeSettingsCategory === 'exports'" class="section-desc">
                 Add a data-classification label and handling note to exported
                 PDFs, CSV files, and download responses. The label is written to
@@ -2374,6 +2380,73 @@
                   </span>
                 </div>
               </div>
+              <div v-if="activeSettingsCategory === 'network'" class="capacity-card">
+                <div class="capacity-card__header">
+                  <div>
+                    <h3 class="capacity-card__title">Cloudflare dynamic DNS</h3>
+                    <p class="capacity-card__desc">
+                      The scheduler checks the public IPv4 on the configured
+                      interval and updates the listed records only when the
+                      address or record settings change. Use the buttons below
+                      to run a check now.
+                    </p>
+                  </div>
+                  <button
+                    class="btn btn--secondary btn--sm"
+                    @click="fetchDdnsStatus"
+                    :disabled="ddnsBusy"
+                  >
+                    Refresh
+                  </button>
+                </div>
+                <div class="capacity-grid">
+                  <div class="capacity-stat">
+                    <span>Last check</span>
+                    <strong>{{ ddnsStatus?.last_checked_at ? new Date(ddnsStatus.last_checked_at).toLocaleString() : 'never' }}</strong>
+                    <small>scheduler or manual run</small>
+                  </div>
+                  <div class="capacity-stat">
+                    <span>Public IPv4</span>
+                    <strong>{{ ddnsStatus?.last_ip || '-' }}</strong>
+                    <small>last address seen</small>
+                  </div>
+                  <div class="capacity-stat">
+                    <span>Zone</span>
+                    <strong>{{ ddnsStatus?.zone || '-' }}</strong>
+                    <small>records must stay inside it</small>
+                  </div>
+                  <div class="capacity-stat">
+                    <span>Last result</span>
+                    <strong>{{ ddnsStatus?.last_result || 'not checked' }}</strong>
+                    <small>{{ ddnsStatus?.enabled ? 'scheduler enabled' : 'scheduler disabled' }}</small>
+                  </div>
+                </div>
+                <p v-if="ddnsStatus?.last_error" class="capacity-note" role="alert">
+                  <strong>Last error:</strong> {{ ddnsStatus.last_error }}
+                </p>
+                <p v-else class="capacity-note">
+                  The token, zone and records must be saved before the scheduled
+                  check can run. Test validates the token and current records
+                  without writing DNS.
+                </p>
+                <div class="capacity-actions">
+                  <button
+                    class="btn btn--outline btn--sm"
+                    @click="runDdns(true)"
+                    :disabled="ddnsBusy"
+                  >
+                    {{ ddnsBusy ? 'Checking...' : 'Test without writing' }}
+                  </button>
+                  <button
+                    class="btn btn--primary btn--sm"
+                    @click="runDdns(false)"
+                    :disabled="ddnsBusy"
+                  >
+                    {{ ddnsBusy ? 'Checking...' : 'Check and update now' }}
+                  </button>
+                  <span v-if="ddnsNotice" class="capacity-last">{{ ddnsNotice }}</span>
+                </div>
+              </div>
               <template v-for="row in visibleSettingRows" :key="row.id">
                 <div v-if="row.type === 'header'" class="settings-group__header">
                   <h3 class="settings-group__title">{{ row.title }}</h3>
@@ -2442,7 +2515,7 @@
                         <option value="none">None (usually port 25, not recommended)</option>
                       </select>
                     </template>
-                    <template v-else-if="row.key === 'mail_password'">
+                    <template v-else-if="row.key === 'mail_password' || row.key === 'ddns_api_token'">
                       <div class="setting-input-group">
                         <input
                           v-model="settingsEdits[row.key]"
@@ -2451,6 +2524,30 @@
                           :aria-label="friendlyLabel(row.key)"
                           class="form-input form-input--sm"
                         />
+                      </div>
+                    </template>
+                    <template v-else-if="row.key === 'ddns_domains'">
+                      <textarea
+                        v-model="settingsEdits[row.key]"
+                        rows="3"
+                        :placeholder="settingPlaceholder(row.key)"
+                        :aria-label="friendlyLabel(row.key)"
+                        class="form-input settings-textarea"
+                        spellcheck="false"
+                      ></textarea>
+                    </template>
+                    <template v-else-if="row.key === 'ddns_ttl' || row.key === 'ddns_interval_minutes'">
+                      <div class="setting-input-group">
+                        <input
+                          v-model.number="settingsEdits[row.key]"
+                          type="number"
+                          :min="row.key === 'ddns_ttl' ? 60 : 1"
+                          :max="row.key === 'ddns_ttl' ? 86400 : 1440"
+                          step="1"
+                          class="form-input form-input--sm"
+                          :aria-label="friendlyLabel(row.key)"
+                        />
+                        <span v-if="settingUnit(row.key)" class="setting-unit">{{ settingUnit(row.key) }}</span>
                       </div>
                     </template>
                     <template v-else-if="row.key.endsWith('_body')">
@@ -5576,7 +5673,7 @@ const settingsCategories = computed(() => {
   // Only show a category tab if it has at least one visible setting (so an
   // emptied category -- e.g. General after platform_name/deployment_mode were
   // removed -- doesn't render as a blank tab).
-  const order = ['general', 'exports', 'security', 'wiki', 'labs', 'vpn', 'email', 'notifications', 'email-templates', 'features']
+  const order = ['general', 'exports', 'security', 'wiki', 'labs', 'vpn', 'network', 'email', 'notifications', 'email-templates', 'features']
   const populated = new Set(
     Object.entries(allSettings.value)
       .filter(([key]) => !hiddenSettingKeys.value.has(key))
@@ -5600,7 +5697,7 @@ const settingsCategories = computed(() => {
   if (Object.keys(modules.value || {}).length > 0) base.push('modules')
   return base
 })
-const categoryLabels = { general: 'General', exports: 'Data labels', security: 'Security', wiki: 'Wiki', labs: 'Exercises', vpn: 'VPN', email: 'Email', notifications: 'Notifications', 'email-templates': 'Email templates', features: 'Features', modules: 'Modules', achievements: 'Achievements', 'question-banks': 'Question banks', identity: 'Identity providers', 'open-badges': 'Open Badges', lti: 'LTI platforms' }
+const categoryLabels = { general: 'General', exports: 'Data labels', security: 'Security', wiki: 'Wiki', labs: 'Exercises', vpn: 'VPN', network: 'Network', email: 'Email', notifications: 'Notifications', 'email-templates': 'Email templates', features: 'Features', modules: 'Modules', achievements: 'Achievements', 'question-banks': 'Question banks', identity: 'Identity providers', 'open-badges': 'Open Badges', lti: 'LTI platforms' }
 const categoryLabel = (cat) => categoryLabels[cat] || cat.charAt(0).toUpperCase() + cat.slice(1)
 
 function onSettingsTabKeydown(event, index) {
@@ -5818,8 +5915,44 @@ const capacityPreviewMax = computed(() => {
   return Math.max(1, Math.floor(ceiling * percent / 100))
 })
 
+// --- Cloudflare dynamic DNS ---
+const ddnsStatus = ref(null)
+const ddnsBusy = ref(false)
+const ddnsNotice = ref('')
+
+const fetchDdnsStatus = async () => {
+  try {
+    const { data } = await axios.get('/settings/ddns/status')
+    ddnsStatus.value = data
+  } catch {
+    ddnsStatus.value = null
+  }
+}
+
+const runDdns = async (dryRun = false) => {
+  ddnsBusy.value = true
+  ddnsNotice.value = ''
+  try {
+    const { data } = await axios.post(dryRun ? '/settings/ddns/test' : '/settings/ddns/sync')
+    const result = data.result || data
+    if (result.ok) {
+      ddnsNotice.value = dryRun
+        ? `Test passed for ${result.actions?.length || 0} record(s).`
+        : 'Cloudflare is current.'
+    } else {
+      ddnsNotice.value = (result.errors || []).join('; ') || 'The check did not complete.'
+    }
+    await fetchDdnsStatus()
+  } catch (error) {
+    ddnsNotice.value = error.response?.data?.detail || 'The Cloudflare check failed.'
+  } finally {
+    ddnsBusy.value = false
+  }
+}
+
 watch(activeSettingsCategory, (category) => {
   if (category === 'labs') fetchRangeboxCapacity()
+  if (category === 'network') fetchDdnsStatus()
 })
 
 const settingMeta = {
@@ -5851,6 +5984,13 @@ const settingMeta = {
   vpn_public_key:            { label: 'VPN Server Public Key',  desc: 'The WireGuard server public key included in student config files.', ph: 'xTIBA5rboUvnH4htodjb6e697QjLERt1NAB4mZqp8Dg=' },
   vpn_wstunnel_enabled:      { label: 'WebSocket Tunnel',       desc: 'Wraps WireGuard traffic in a WebSocket tunnel, useful for Cloudflare Tunnel deployments.' },
   vpn_wstunnel_url:          { label: 'WebSocket Tunnel URL',   desc: 'The WSS URL for the WebSocket tunnel (e.g. wss://vpn.yourdomain.com).', ph: 'wss://vpn.yourdomain.com' },
+  ddns_enabled:              { label: 'Cloudflare Dynamic DNS', desc: 'Keep the configured Cloudflare A records pointed at this host\'s public IPv4 address. A firewall DDNS client is preferable when it owns the WAN address.' },
+  ddns_api_token:            { label: 'Cloudflare API Token',   desc: 'Token scoped to Zone:DNS:Edit for the configured zone only. Stored encrypted; leave the masked value to keep the current token.', ph: 'Cloudflare API token' },
+  ddns_zone:                 { label: 'Cloudflare Zone',        desc: 'The zone that contains the records, for example example.edu. Records outside this zone are refused.', ph: 'example.edu' },
+  ddns_domains:              { label: 'Dynamic DNS Records',    desc: 'Explicit A records to follow the public IPv4 address, separated by commas. Wildcards are not accepted.', ph: 'range.example.edu, vpn.example.edu' },
+  ddns_proxied:              { label: 'Cloudflare Proxy',       desc: 'Proxy the records through Cloudflare. Leave off when Nginx Proxy Manager terminates TLS and manages certificates.' },
+  ddns_ttl:                  { label: 'DNS TTL',                desc: 'TTL in seconds for the A records. Proxied records use Cloudflare\'s edge TTL.', unit: 'seconds' },
+  ddns_interval_minutes:     { label: 'Check Interval',         desc: 'How often the platform checks the public address. Cloudflare is written only when the address or record settings change.', unit: 'minutes' },
 }
 
 // --- Module panel state ---
@@ -6290,7 +6430,7 @@ const hiddenSettingKeys = computed(() => {
   // Removed dead settings: platform_name (branding is fixed to OCR) and
   // deployment_mode (only ever toggled a cosmetic banner). Hide them if an
   // older DB still carries the rows.
-  const s = new Set(['setup_complete', 'platform_name', 'deployment_mode', 'rangebox_stress_max', 'rangebox_stress_tested_at'])
+  const s = new Set(['setup_complete', 'platform_name', 'deployment_mode', 'rangebox_stress_max', 'rangebox_stress_tested_at', 'ddns_last_checked_at', 'ddns_last_ip', 'ddns_last_result', 'ddns_last_error'])
   // API docs (Swagger /docs + ReDoc /redoc) is a developer surface and a real
   // exposure if a non-technical admin enables it. Hide the toggle off-dev; it
   // stays settable via the ENABLE_API_DOCS env var for dev/integration.
@@ -6624,6 +6764,7 @@ const saveSettings = async () => {
     await fetchChangeControl()
     showAlert('Settings saved as a tracked change set.')
     if (activeSettingsCategory.value === 'labs') fetchRangeboxCapacity()
+    if (activeSettingsCategory.value === 'network') fetchDdnsStatus()
   } catch (e) {
     const detail = e.response?.data?.detail
     showAlert(
