@@ -11,7 +11,7 @@ same defect applies.
 
 | Version | Supported |
 |---|---|
-| `v5.19.x` | Yes — current Community / Academic release |
+| `v5.30.x` | Yes — current Community / Academic release |
 | `v5` / `main` | Yes |
 | `v4` | Security fixes only - upgrade to `v5` |
 | `v2.7.0` | Security fixes only - upgrade to `v5` |

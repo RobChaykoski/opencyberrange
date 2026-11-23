@@ -92,6 +92,29 @@ represent. It exists because the history contains several naming eras.
 `68A817762C831475F00DB54E775050A4C4921814`. The public key is
 `docs/release-signing-key.asc`.
 
+## Release 5.30.1 tag record
+
+| Item | Value |
+|---|---|
+| Tag | `v5.30.1` (signed annotated tag) |
+| Commit | `b9c662ff` |
+| Signature | **Good**, key `68A817762C831475F00DB54E775050A4C4921814` |
+| Released | 22 November 2026 |
+| CI | CI, Quality checks, CodeQL, Trivy, Security delta review, and OpenSSF Scorecard passed |
+| Deployed | Dev and production on `5.30.1`, Alembic `0050_child_privacy_defaults` |
+| Cleanup | `sso_enabled=false`; Moodle cURL blocked hosts narrowed to the NPM JWKS host; Cyber DNA v3 backfilled and gate-verified |
+
+## Release 5.30.0 tag record
+
+| Item | Value |
+|---|---|
+| Tag | `v5.30.0` (signed annotated tag) |
+| Commit | `298ef1e1` |
+| Signature | **Good**, key `68A817762C831475F00DB54E775050A4C4921814` |
+| Released | 22 November 2026 |
+| CI | CI, Quality checks, CodeQL, Trivy, Security delta review, and OpenSSF Scorecard passed |
+| Deployed | Dev and production on `5.30.0`, Alembic `0050_child_privacy_defaults` |
+
 ## Release 5.26.0 tag record
 
 | Item | Value |
