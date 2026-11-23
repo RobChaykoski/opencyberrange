@@ -70,6 +70,7 @@ Release 6 builds on shipped pieces; it is not a blank page.
 | Competency taxonomy | 212 competencies in domains and categories (`app/data/competency-taxonomy.yaml`) |
 | Lab contracts | 214 labs mapped; 25 reviewed, 189 baseline derived, awaiting subject-matter review |
 | Scoring model | Five dimensions: knowledge 20%, execution 30%, troubleshooting 20%, documentation 15%, communication 15% |
+| Rubric registry | Three versioned rubrics: blue-team timeline, vulnerability report, capstone brief (`app/data/rubrics/`) |
 | Pathways | 13 curriculum roles, including SOC Analyst, Incident Responder, and Detection Engineer |
 | Evidence | Flag attempts, lab completions, quiz attempts, workbook answers, learner snapshots, review requests |
 | Cyber DNA | Evidence ledger, eight-axis radar, six traits, gated affinity, immutable snapshots |

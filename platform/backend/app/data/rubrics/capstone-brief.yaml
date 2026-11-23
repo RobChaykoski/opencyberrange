@@ -1,0 +1,43 @@
+rubric: capstone-brief
+version: "1.0"
+title: Capstone executive brief
+description: >
+  A decision brief for a non-technical owner. It must translate evidence into
+  risk, options, and a dated recommendation without hiding uncertainty.
+evidence_types:
+  - artifact
+  - analyst_answer
+  - capstone
+criteria:
+  - id: findings
+    label: Findings
+    weight: 0.30
+    levels:
+      0: No findings, or findings are unsupported.
+      1: Findings are listed without evidence or priority.
+      2: Findings are supported but not consistently prioritized.
+      3: Findings are supported, prioritized, and tied to affected assets.
+  - id: risk
+    label: Risk translation
+    weight: 0.25
+    levels:
+      0: No risk statement.
+      1: Risk is a severity label with no consequence.
+      2: Consequence and likelihood are described with weak support.
+      3: Consequence, likelihood, and uncertainty are explicit.
+  - id: options
+    label: Options and recommendation
+    weight: 0.30
+    levels:
+      0: No options or recommendation.
+      1: One option is asserted as the only choice.
+      2: Options are listed but trade-offs are thin.
+      3: Options include cost, operational impact, and a dated recommendation.
+  - id: communication
+    label: Executive communication
+    weight: 0.15
+    levels:
+      0: Unusable outside the technical team.
+      1: Dense or ambiguous for the intended audience.
+      2: Understandable, with minor jargon.
+      3: Concise, decision-ready, and honest about limits.

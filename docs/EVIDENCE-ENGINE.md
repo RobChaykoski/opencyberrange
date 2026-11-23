@@ -107,6 +107,22 @@ Rules:
 - Two reviewers calibrate a sample each term; agreement is reported.
 - A rubric can be shared through federation, but learner evidence cannot.
 
+### Rubric registry
+
+Versioned rubric files live in
+`platform/backend/app/data/rubrics/`. The loader is
+`app/services/rubrics.py`; it exposes `get_rubric(id, version)` and
+`rubric_reference(id, version)` for evidence records. Validate the registry
+before release:
+
+```bash
+python scripts/validate-rubrics.py
+```
+
+The initial registry contains `blue-team-timeline`,
+`vulnerability-report`, and `capstone-brief`. Add a new version as a new file;
+never edit a published version in place.
+
 ## Automated collection
 
 Adapters normalize existing signals into evidence records:

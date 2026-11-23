@@ -1,0 +1,42 @@
+rubric: blue-team-timeline
+version: "1.0"
+title: Blue-team timeline
+description: >
+  A defensible incident timeline built from logs, packet capture, or host
+  evidence. The learner must separate observation from inference.
+evidence_types:
+  - artifact
+  - analyst_answer
+criteria:
+  - id: accuracy
+    label: Timeline accuracy
+    weight: 0.30
+    levels:
+      0: No credible timeline, or events are invented.
+      1: Partial timeline with material gaps or wrong ordering.
+      2: Mostly accurate timeline with minor gaps.
+      3: Accurate, ordered, and consistent with the cited sources.
+  - id: evidence
+    label: Evidence and provenance
+    weight: 0.30
+    levels:
+      0: No source is cited; the artifact cannot be reproduced.
+      1: Some sources are named but not tied to events.
+      2: Most events cite a source, with minor gaps.
+      3: Every material event cites a source and the collection method.
+  - id: analysis
+    label: Analysis and conclusions
+    weight: 0.25
+    levels:
+      0: No analysis, or conclusions contradict the evidence.
+      1: Conclusions are asserted without support.
+      2: Reasonable conclusions with some unsupported inference.
+      3: Conclusions follow from the evidence and state uncertainty.
+  - id: communication
+    label: Communication
+    weight: 0.15
+    levels:
+      0: Unreadable or unusable for the intended audience.
+      1: Understandable only with significant effort.
+      2: Clear, with minor ambiguity.
+      3: Clear, concise, and usable by an incident lead.
