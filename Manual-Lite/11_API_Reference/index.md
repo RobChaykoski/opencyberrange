@@ -264,6 +264,7 @@ owner-only unless an explicit share or break-glass grant exists.
 | `POST` | `/api/analytics/pulse/{lab_id}` | Submit Pulse | OAuth2PasswordBearer |
 | `GET` | `/api/analytics/reaction/{lab_id}` | Get Exercise Reaction | OAuth2PasswordBearer |
 | `POST` | `/api/analytics/reaction/{lab_id}` | Set Exercise Reaction | OAuth2PasswordBearer |
+| `GET` | `/api/analytics/reports/activity` | Reports Activity | OAuth2PasswordBearer |
 | `GET` | `/api/analytics/reports/curriculum-demand` | Curriculum Demand | OAuth2PasswordBearer |
 | `POST` | `/api/analytics/reports/export-audit` | Audit Report Export | OAuth2PasswordBearer |
 | `GET` | `/api/analytics/reports/export.pdf` | Reports Export Pdf | OAuth2PasswordBearer |
@@ -423,6 +424,7 @@ owner-only unless an explicit share or break-glass grant exists.
 | `GET` | `/api/dashboard/instructor/feed` | Instructor Feed | OAuth2PasswordBearer |
 | `GET` | `/api/dashboard/instructor/filter-options` | Instructor Filter Options | OAuth2PasswordBearer |
 | `GET` | `/api/dashboard/instructor/ics-coverage` | Ics Attack Coverage | OAuth2PasswordBearer |
+| `GET` | `/api/dashboard/instructor/learning` | Instructor Learning | OAuth2PasswordBearer |
 | `GET` | `/api/dashboard/instructor/pulse` | Instructor Pulse | OAuth2PasswordBearer |
 | `GET` | `/api/dashboard/instructor/report` | Instructor Report | OAuth2PasswordBearer |
 | `GET` | `/api/dashboard/instructor/stats` | Instructor Stats | OAuth2PasswordBearer |
@@ -2726,6 +2728,26 @@ Create, change, or clear a learner's reaction to an exercise.  One reaction is k
 - `200`: Successful Response
 - `422`: Validation Error — `HTTPValidationError`
 
+### `GET /api/analytics/reports/activity`
+
+**Reports Activity**
+
+Period-scoped aggregate activity across the visible courses.  This is separate from the all-time catalog snapshot. It answers "what happened in this window?" and never names or ranks a learner. Small cohorts are suppressed using the same minimum as the course analytics.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `start` | query | string or null | no |  |
+| `end` | query | string or null | no |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
 ### `GET /api/analytics/reports/curriculum-demand`
 
 **Curriculum Demand**
@@ -2772,6 +2794,9 @@ Download the cross-course report as a PDF.
 
 | Parameter | In | Type | Required | Description |
 |---|---|---|---|---|
+| `range_label` | query | string or null | no |  |
+| `start` | query | string or null | no |  |
+| `end` | query | string or null | no |  |
 | `reason` | query | string | yes | Why this export is needed (recorded in the audit log) |
 
 **Responses**
@@ -5716,6 +5741,28 @@ ICS ATT&CK coverage matrix per track, computed from lab ics_techniques tags.  Fo
 - `200`: Successful Response
 - `422`: Validation Error — `HTTPValidationError`
 
+### `GET /api/dashboard/instructor/learning`
+
+**Instructor Learning**
+
+Range-scoped learning metrics for the selected period and scope.  The response states its own window and the number of students in scope so the UI never presents a count without a denominator.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `start` | query | string or null | no | ISO 8601 start datetime |
+| `end` | query | string or null | no | ISO 8601 end datetime |
+| `course_id` | query | integer or null | no | Filter to a specific course |
+| `user_id` | query | integer or null | no | Filter to a specific user |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
 ### `GET /api/dashboard/instructor/pulse`
 
 **Instructor Pulse**
@@ -6729,13 +6776,21 @@ List students not yet enrolled in this course (for enrollment dropdown). Only co
 
 **List Available Labs**
 
-List labs available for course assignment.  Returns public and course-visible labs, plus any labs created by this instructor. Admins see all labs.
+List labs available for course assignment.  Returns public and course-visible labs, plus any labs created by this instructor. Admins see all labs. When ``start`` or ``end`` is supplied, each lab also carries activity counts for the instructor's visible students in that window.
 
 **Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `start` | query | string or null | no | ISO 8601 start datetime for activity |
+| `end` | query | string or null | no | ISO 8601 end datetime for activity |
 
 **Responses**
 
 - `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
 
 ### `GET /api/instructor/labs/assignments`
 
