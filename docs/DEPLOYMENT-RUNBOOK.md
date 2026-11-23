@@ -37,7 +37,65 @@ as `canonical/main`; its `origin` remote points at the same repository.
 
 ## Pull the reviewed tree
 
-Production updates go through the signed-tag gate:
+Production has two layouts. Check which one this host uses before updating:
+
+```bash
+cd ~/opencyberrange
+test -f platform/docker-compose.prod.yml && echo in-place || echo split
+```
+
+### In-place `<platform-dir>` layout
+
+This is the current production layout: the repository contains the deployable
+`platform/` tree, and Compose runs from `platform/` with
+`docker-compose.prod.yml`, `docker-compose.adopt.yml`, and
+`docker-compose.override.yml`.
+
+`scripts/deploy-updates.sh` targets the older split layout and fails here with
+`docker-compose.yml not found`. Do not run it on this layout.
+
+Run the signed gate manually:
+
+```bash
+cd ~/opencyberrange
+git fetch --tags origin
+gpg --import docs/release-signing-key.asc
+git verify-tag v5.36.0
+git checkout --detach v5.36.0
+
+python3 scripts/supply_chain.py --check \
+  --signature supply-chain.lock.json.asc \
+  --gpg-public-key docs/release-signing-key.asc \
+  --gpg-fingerprint 68A817762C831475F00DB54E775050A4C4921814
+```
+
+Then rebuild and recreate only the application containers:
+
+```bash
+cd ~/opencyberrange/platform
+COMPOSE="docker compose --env-file .env \
+  -f docker-compose.prod.yml \
+  -f docker-compose.adopt.yml \
+  -f docker-compose.override.yml \
+  --project-name opencyberrange"
+
+$COMPOSE build backend frontend
+$COMPOSE up -d backend frontend
+$COMPOSE --profile tools run --rm wiki-builder
+```
+
+Verify:
+
+```bash
+curl -sk https://localhost/api/version
+docker ps | grep ocr-
+docker exec ocr-frontend nginx -t
+```
+
+### Split layout
+
+If the host has a root `docker-compose.yml` and deployed `backend/`/`frontend/`
+directories, use the signed-tag script:
 
 ```bash
 cd ~/opencyberrange
@@ -46,8 +104,10 @@ sudo bash scripts/deploy-updates.sh
 
 The script fetches tags, checks the release public key against the pinned
 fingerprint, verifies the signed tag, checks it out, and only then runs the
-supply-chain check and applies the update. Do not `git pull` production
-directly; that bypasses the tag gate.
+supply-chain check and applies the update.
+
+For both layouts, do not `git pull` production directly; that bypasses the tag
+gate. Tag rollback images and take a backup before rebuilding.
 
 To inspect the target manually without applying it:
 
