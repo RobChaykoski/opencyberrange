@@ -14,10 +14,11 @@ bearer token. It exposes a fixed operation list:
 - `logs`.
 
 `GET /v1/status/<lab_id>` is implemented read-only: it validates the lab id and
-runs a fixed `docker inspect` on `ocr-lab-<lab_id>`. Every other mutating route
-returns `501 not_implemented`. The agent never exposes arbitrary `exec`, image
-build, volume, or host-filesystem operations, and the lab id never reaches a
-shell.
+runs a fixed `docker inspect` on `ocr-lab-<lab_id>`. `POST /v1/stop` is
+implemented but **disabled by default**; it requires `--enable-stop`. Spawn,
+isolation, and mirror routes return `501 not_implemented`. The agent never
+exposes arbitrary `exec`, image build, volume, or host-filesystem operations,
+and the lab id never reaches a shell.
 
 ## Run locally
 
@@ -29,7 +30,15 @@ curl -s -H "Authorization: Bearer $OCR_LABD_TOKEN" \
   http://127.0.0.1:8099/v1/capabilities
 curl -s -H "Authorization: Bearer $OCR_LABD_TOKEN" \
   http://127.0.0.1:8099/v1/status/linux-1
+curl -s -X POST -H "Authorization: Bearer $OCR_LABD_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"lab_id": "linux-1"}' http://127.0.0.1:8099/v1/stop
 ```
+
+`stop` returns `200` when the container is stopped (including an already-stopped
+container), `404` when it does not exist, `400` for an invalid lab id or body,
+and `503` when Docker cannot answer. It is refused with `501` unless the agent
+started with `--enable-stop`.
 
 `status` returns `state`, `running`, `paused`, `restarting`, `oom_killed`,
 `exit_code`, `started_at`, and `finished_at`. It returns `404` when the container
@@ -64,9 +73,9 @@ python scripts/check-labd-agent.py
 ```
 
 The check starts the server on an ephemeral port, verifies `/health`, rejects a
-missing token, verifies `/v1/capabilities`, exercises `status` with a fake
-provider and with mocked `docker inspect` results, and confirms mutating routes
-return `501`.
+missing token, verifies `/v1/capabilities`, exercises `status` and `stop` with a fake runtime and with mocked `docker
+inspect`/`docker stop` results, and confirms spawn still returns `501` and stop
+is refused unless enabled.
 
 ## Validation record
 
@@ -82,10 +91,22 @@ container on 24 November 2026 with `--container-prefix ocr-`:
 | `/v1/status/Bad_ID` | `400` |
 | Audit log | Denial, not-found, and invalid-id lines written |
 
+`stop` was then exercised against a disposable `ocr-lab-selftest` container
+with `--enable-stop`:
+
+| Request | Result |
+|---|---|
+| `/v1/status/selftest` before stop | `200`, `state: running` |
+| `/v1/capabilities` | `implemented: [status, stop]`, `read_only: false` |
+| `/v1/stop` with `selftest` | `200`, `stopped: true` |
+| `/v1/status/selftest` after stop | `404` (the container was removed) |
+| `/v1/stop` with `missing` | `404` |
+| Audit log | `stop:selftest` stopped and `stop:missing` not-found lines written |
+
 ## Next steps
 
-1. Validate `status` against a real lab container, then replace the 501
-   handlers one operation at a time, starting with `stop`.
+1. Validate `stop` against a disposable lab container, then add the harness
+   checks for network, ICS, and RangeBox labs before enabling it on a host.
 2. Authenticate the backend with a short-lived token or mTLS.
 3. Add idempotency keys and per-operation audit fields.
 4. Add response schemas and a client adapter in `docker_manager.py`.

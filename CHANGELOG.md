@@ -7,8 +7,9 @@ All notable changes to OpenCyberRange are recorded here.
 ### Host agent
 
 - Implemented read-only `GET /v1/status/<lab_id>` in `ocr-labd`: validated lab id, fixed `docker inspect`, mapped state, and audited denials/failures.
-- Expanded the CI smoke check with fake-provider and mocked-Docker cases, including invalid ids, missing containers, and runtime failures.
-- Mutating routes remain `501` until validated against the lab harness.
+- Implemented `POST /v1/stop` behind an explicit `--enable-stop` flag; it is refused with `501` by default and treats an already-stopped container as idempotent success.
+- Expanded the CI smoke check with fake-runtime and mocked-Docker cases for status, stop, invalid ids, missing containers, disabled mutations, and runtime failures.
+- Spawn, isolation, and mirror routes remain `501` until validated against the lab harness.
 
 ## [5.46.2] - 2026-11-24
 

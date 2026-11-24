@@ -247,10 +247,10 @@
       "sha256": "2af94f01e1971686c7dd0ca2b94552cd6537f1802a3c3ccf0974fce6611d951e"
     },
     "platform/labd/README.md": {
-      "sha256": "22b5adde2bec5c452c8c226390d25598c9a2eb3d21b48c19eb75afad85a79342"
+      "sha256": "545cb4f5b504e5e7cc6d5c761faf538c2892e41a66e8da0b9acb9f028452bfa3"
     },
     "platform/labd/ocr_labd.py": {
-      "sha256": "b6eb87773dd7a8e80ba200c76d6a2fd83e52423cef0f86453d7b780f4b6fc11c"
+      "sha256": "87ed73e6ed9543ec90f27541ec7c3d964e2614d60eb1e3febf828d5a373c3fe1"
     },
     "platform/labs/High School/_shared/app.py": {
       "sha256": "e379a1840c4f522e34ba54d72b409ae8464b5babb10e08a409dbedd267b9dfd8"
@@ -316,7 +316,7 @@
       "sha256": "6836a51290b66c4888e35d7b4e4dbf6ce7e46180ce5bd6914f6bfaa349a408e0"
     },
     "scripts/check-labd-agent.py": {
-      "sha256": "e8a4cb593c05ca7a2009ac38c28264c163d07a751ef34f5fe1380d31a30b6bbb"
+      "sha256": "2b3d02f5dbf6f0cb431b2c346be1aabc48b8737aba5567ed7c15a992ac6aa585"
     },
     "scripts/check-licences.py": {
       "sha256": "535634890ffc65b0dc4a35f4f36dd6a62ca27b6ae350233b17332894ca71f7a1"
