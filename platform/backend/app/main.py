@@ -43,6 +43,7 @@ from app.routers import governance as governance_router
 from app.routers import lti as lti_router
 from app.routers import accommodations as accommodations_router
 from app.routers import reviews as reviews_router
+from app.routers import evidence as evidence_router
 from app.routers import audit as audit_router
 from app.routers import planning as planning_router
 from app.routers import open_badges as open_badges_router
@@ -294,6 +295,13 @@ def _ensure_security_event_rls() -> None:
     from app.services import security_events as _security_events
 
     _security_events.ensure_rls(schema_engine)
+
+
+def _ensure_evidence_guard() -> None:
+    from app.services import evidence as _evidence
+
+    with schema_engine.begin() as conn:
+        _evidence.ensure_append_only(conn)
 
 
 @asynccontextmanager
@@ -1011,6 +1019,10 @@ async def lifespan(app: FastAPI):
     _run_startup_step("RBAC catalog seed", _seed_rbac_catalog)
     _run_startup_step("Security event RLS", _ensure_security_event_rls)
 
+    # Evidence content is append-only; review outcomes move only the workflow
+    # fields. The guard is idempotent and re-applied on every start.
+    _run_startup_step("Evidence append-only guard", _ensure_evidence_guard)
+
     # Enterprise deployments can fail fast when a protected route has no
     # authentication dependency. The default is a loud warning so a legacy
     # public endpoint does not take a running platform down during upgrade.
@@ -1486,6 +1498,12 @@ app.include_router(sso_router.router, prefix="/api/auth/sso", tags=["Single Sign
 app.include_router(lti_router.router, prefix="/api/lti", tags=["LTI 1.3"])
 app.include_router(accommodations_router.router, prefix="/api", tags=["Accommodations"])
 app.include_router(reviews_router.router, prefix="/api", tags=["Human review"])
+app.include_router(evidence_router.router, prefix="/api/evidence", tags=["Evidence"])
+app.include_router(
+    evidence_router.competency_router,
+    prefix="/api/competencies",
+    tags=["Competencies"],
+)
 app.include_router(audit_router.router, prefix="/api", tags=["Audit"])
 app.include_router(planning_router.router, prefix="/api", tags=["Course planning"])
 app.include_router(open_badges_router.router, prefix="/api", tags=["Open Badges"])

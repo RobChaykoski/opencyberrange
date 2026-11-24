@@ -46,6 +46,8 @@ _PROTECTED_PREFIXES = (
     "/api/profile",
     "/api/dna",
     "/api/cyber-dna",
+    "/api/evidence",
+    "/api/competencies",
     "/api/identity",
     "/api/lti",
     "/api/setup",

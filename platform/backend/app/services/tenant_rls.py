@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
 # controls. Course-owned content tables without a user owner (cohorts,
 # assignments, requirements, attachments, report exports) remain service- and
 # course-scoped; see docs/TENANT-ISOLATION-STATUS.md for the classification.
-TENANT_TABLES: dict[str, dict[str, str | None]] = {
+TENANT_TABLES: dict[str, dict] = {
     "courses": {"owner": "instructor_id", "course": None},
     "course_enrollments": {"owner": "user_id", "course": "course_id"},
     "lab_sessions": {"owner": "user_id", "course": None},
@@ -61,6 +61,11 @@ TENANT_TABLES: dict[str, dict[str, str | None]] = {
     "activity_events": {"owner": "actor_id", "course": None},
     "readiness_student_notes": {"owner": "learner_id", "course": "course_id"},
     "readiness_lab_reviews": {"owner": "owner_id", "course": "course_id"},
+    # Release 6 evidence ledger. The record owns the tenant; links and reviews
+    # derive it from the evidence record so a client cannot choose a tenant.
+    "evidence_records": {"owner": "learner_id", "course": None},
+    "evidence_competencies": {"parent": ("evidence_records", "evidence_id")},
+    "evidence_reviews": {"parent": ("evidence_records", "evidence_id")},
 }
 
 _RLS_USING = (
@@ -88,22 +93,32 @@ def _table_exists(conn, table: str) -> bool:
         return True
 
 
-def _owner_function(table: str, owner: str, course: str | None) -> str:
+def _owner_function(table: str, spec: dict) -> str:
     function = f"ocr_{table}_tenant()"
-    if course:
+    parent = spec.get("parent")
+    if parent:
+        parent_table, parent_column = parent
         body = f"""
         SELECT institution_id INTO NEW.institution_id
-          FROM courses WHERE id = NEW.{course};
-        IF NEW.institution_id IS NULL OR NEW.institution_id = '' THEN
-          SELECT institution_id INTO NEW.institution_id
-            FROM users WHERE id = NEW.{owner};
-        END IF;
+          FROM {parent_table} WHERE id = NEW.{parent_column};
         """
     else:
-        body = f"""
-        SELECT institution_id INTO NEW.institution_id
-          FROM users WHERE id = NEW.{owner};
-        """
+        owner = str(spec["owner"])
+        course = spec.get("course")
+        if course:
+            body = f"""
+            SELECT institution_id INTO NEW.institution_id
+              FROM courses WHERE id = NEW.{course};
+            IF NEW.institution_id IS NULL OR NEW.institution_id = '' THEN
+              SELECT institution_id INTO NEW.institution_id
+                FROM users WHERE id = NEW.{owner};
+            END IF;
+            """
+        else:
+            body = f"""
+            SELECT institution_id INTO NEW.institution_id
+              FROM users WHERE id = NEW.{owner};
+            """
     return f"""
     CREATE OR REPLACE FUNCTION {function}
     RETURNS trigger AS $$
@@ -126,8 +141,16 @@ def ensure_tenant_schema(conn) -> None:
         if not _table_exists(conn, table):
             logger.info("Tenant schema skipped for absent table %s", table)
             continue
-        owner = str(spec["owner"])
+        parent = spec.get("parent")
         course = spec.get("course")
+        owner = str(spec["owner"]) if spec.get("owner") else None
+        if parent and not _table_exists(conn, parent[0]):
+            logger.info(
+                "Tenant schema skipped for %s: parent %s is absent",
+                table,
+                parent[0],
+            )
+            continue
         conn.execute(
             text(
                 f"ALTER TABLE {table} ADD COLUMN IF NOT EXISTS "
@@ -140,7 +163,16 @@ def ensure_tenant_schema(conn) -> None:
                 "SET DEFAULT 'default'"
             )
         )
-        if course:
+        if parent:
+            parent_table, parent_column = parent
+            conn.execute(
+                text(
+                    f"UPDATE {table} AS t SET institution_id = p.institution_id "
+                    f"FROM {parent_table} p WHERE p.id = t.{parent_column} "
+                    "AND (t.institution_id IS NULL OR t.institution_id = '')"
+                )
+            )
+        elif course:
             conn.execute(
                 text(
                     f"UPDATE {table} AS t SET institution_id = c.institution_id "
@@ -148,13 +180,14 @@ def ensure_tenant_schema(conn) -> None:
                     "AND (t.institution_id IS NULL OR t.institution_id = '')"
                 )
             )
-        conn.execute(
-            text(
-                f"UPDATE {table} AS t SET institution_id = u.institution_id "
-                f"FROM users u WHERE u.id = t.{owner} "
-                "AND (t.institution_id IS NULL OR t.institution_id = '')"
+        if owner:
+            conn.execute(
+                text(
+                    f"UPDATE {table} AS t SET institution_id = u.institution_id "
+                    f"FROM users u WHERE u.id = t.{owner} "
+                    "AND (t.institution_id IS NULL OR t.institution_id = '')"
+                )
             )
-        )
         conn.execute(
             text(
                 f"UPDATE {table} SET institution_id = 'default' "
@@ -170,7 +203,7 @@ def ensure_tenant_schema(conn) -> None:
                 f"ON {table} (institution_id)"
             )
         )
-        conn.execute(text(_owner_function(table, owner, course)))
+        conn.execute(text(_owner_function(table, spec)))
         conn.execute(text(f"DROP TRIGGER IF EXISTS ocr_{table}_tenant ON {table}"))
         conn.execute(
             text(

@@ -107,6 +107,11 @@ from app.models.security import (
     ServiceCredential,
 )
 from app.models.readiness import ReadinessStudentNote, ReadinessLabReview
+from app.models.evidence import (
+    EvidenceCompetency,
+    EvidenceRecord,
+    EvidenceReview,
+)
 from app.models.nice import (
     LabNiceComponent,
     LabNiceMetadata,
@@ -160,6 +165,9 @@ __all__ = [
     "CustomAchievement",
     "DataIntegrityLedger",
     "DataIntegrityReview",
+    "EvidenceCompetency",
+    "EvidenceRecord",
+    "EvidenceReview",
     "ExerciseGenItem",
     "ExerciseGenJob",
     "ExercisePulseSurvey",

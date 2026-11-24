@@ -51,6 +51,20 @@ message and the status in the same change.
 | `security_version_stale` | 401 | The account security version changed; sign in again |
 | `impersonation_read_only` | 403 | A mutating action was blocked during View As |
 | `consent_required` | 403 | A consent gate blocks the requested derived-data service |
+| `evidence_not_found` | 404 | The evidence record does not exist or is outside the caller's scope |
+| `evidence_forbidden` | 403 | The caller cannot review or read this evidence |
+| `evidence_learner_not_found` | 404 | The learner id does not exist |
+| `evidence_rubric_unknown` | 400 | The rubric id or version is not in the registry |
+| `evidence_competency_unknown` | 400 | A competency id is not in the taxonomy |
+| `evidence_competency_invalid` | 400 | A competency link has no criteria, a duplicate, or an invalid weight |
+| `evidence_source_type_invalid` | 400 | The evidence source type is not supported |
+| `evidence_source_not_allowed` | 400 | The rubric does not accept this evidence type |
+| `evidence_source_invalid` | 400 | The source id is missing |
+| `evidence_confidence_invalid` | 400 | Confidence is not low, medium, or high |
+| `evidence_visibility_invalid` | 400 | Visibility is not learner, instructor, or both |
+| `evidence_artifact_invalid` | 400 | The artifact metadata is incomplete or the SHA-256 is malformed |
+| `evidence_review_invalid` | 400 | A decision is missing scores, notes, or a next step |
+| `evidence_review_conflict` | 409 | The evidence already has a final decision |
 
 The existing `X-Reauth-Required`, `X-Session-Invalid`, `X-Security-Version`, and
 `X-Impersonating` headers remain. Do not duplicate them with a code unless the

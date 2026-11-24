@@ -1,6 +1,8 @@
 # Evidence Engine
 
-Status: **Release 6 foundation, planning.**
+Status: **Release 6.0 foundation implemented.** The append-only ledger,
+competency links, review records, tenant backstop, and read/review API are in
+place. Capstones, analytics, federation, and AI remain.
 
 Most platforms measure completion. OpenCyberRange already records more than a
 flag: attempts, hints, time, quiz scores, workbook answers, and review
@@ -219,6 +221,33 @@ Data model additions:
 
 Existing tables remain the activity source; the evidence ledger does not replace
 `flag_attempts`, `lab_completions`, or `quiz_attempts`.
+
+### Implemented foundation
+
+Release 6.0 ships the first vertical slice:
+
+- `evidence_records`, `evidence_competencies`, and `evidence_reviews`
+  (migration `0052_evidence_engine`).
+- Tenant scope on all three tables. The record derives its tenant from the
+  learner; the link and review tables derive it from the record, so a client
+  cannot choose a tenant.
+- A PostgreSQL guard that rejects in-place changes to evidence content. Only
+  `status`, `reviewer_id`, and `review_notes` may change when a review is
+  recorded; deletion remains available to the account-erasure flow.
+- Idempotent creation keyed by learner, source, rubric version, competencies,
+  and artifact hash.
+- Service rules for the rubric registry, taxonomy ids, artifact SHA-256,
+  confidence, visibility, and review scoring.
+- API endpoints: `POST /api/evidence`, `GET /api/evidence`,
+  `GET /api/evidence/{id}`, `POST /api/evidence/{id}/review`,
+  `GET /api/evidence/queue`, and
+  `GET /api/competencies/{id}/evidence`.
+- Tests for idempotency, tenant and course scope, scoring, queue filtering,
+  unknown rubric/competency rejection, and append-only content.
+
+Not yet implemented: artifact upload and storage, appeals, asynchronous
+adapters that create evidence from flags or workbook saves, and a reviewer UI.
+Those are the next increments.
 
 ## Privacy and security
 

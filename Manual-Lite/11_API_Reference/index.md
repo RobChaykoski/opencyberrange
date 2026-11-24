@@ -329,6 +329,7 @@ owner-only unless an explicit share or break-glass grant exists.
 | `GET` | `/api/badges/issuer/jwks` | Issuer Jwks | Public |
 | `GET` | `/api/badges/mine` | My Badges | OAuth2PasswordBearer |
 | `POST` | `/api/badges/{badge_id}/consent` | Badge Consent | OAuth2PasswordBearer |
+| `GET` | `/api/competencies/{competency_id}/evidence` | Competency Evidence | OAuth2PasswordBearer |
 | `GET` | `/api/competitions` | List Competitions | OAuth2PasswordBearer |
 | `POST` | `/api/competitions` | Create Competition | OAuth2PasswordBearer |
 | `GET` | `/api/competitions/public/{competition_id}` | Public Competition | Public |
@@ -439,6 +440,11 @@ owner-only unless an explicit share or break-glass grant exists.
 | `GET` | `/api/dna/v3/snapshots` | List Cyber DNA snapshots | OAuth2PasswordBearer |
 | `POST` | `/api/dna/v3/snapshots` | Record a Cyber DNA snapshot | OAuth2PasswordBearer |
 | `GET` | `/api/dna/v3/snapshots/{snapshot_id}` | Cyber DNA snapshot | OAuth2PasswordBearer |
+| `GET` | `/api/evidence` | List Evidence | OAuth2PasswordBearer |
+| `POST` | `/api/evidence` | Create Evidence | OAuth2PasswordBearer |
+| `GET` | `/api/evidence/queue` | Review Queue | OAuth2PasswordBearer |
+| `GET` | `/api/evidence/{evidence_id}` | Get Evidence | OAuth2PasswordBearer |
+| `POST` | `/api/evidence/{evidence_id}/review` | Review Evidence | OAuth2PasswordBearer |
 | `GET` | `/api/exercises/labs/{lab_id}` | Get Lab Details | OAuth2PasswordBearer |
 | `GET` | `/api/exercises/labs/{lab_id}/hint` | Get Hint | OAuth2PasswordBearer |
 | `POST` | `/api/exercises/labs/{lab_id}/submit-flag` | Submit Flag | OAuth2PasswordBearer |
@@ -3606,6 +3612,29 @@ Chapter directories of a course wiki this user may open right now.  Feeds the wo
 - `200`: Successful Response
 - `422`: Validation Error — `HTTPValidationError`
 
+## Competencies
+
+### `GET /api/competencies/{competency_id}/evidence`
+
+**Competency Evidence**
+
+Evidence linked to one competency, scoped to the caller.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `competency_id` | path | string | yes |  |
+| `learner_id` | query | integer or null | no |  |
+| `limit` | query | integer | no |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
 ## Competitions
 
 ### `GET /api/competitions`
@@ -5853,6 +5882,134 @@ Student dashboard: next objective, progress, VPN, rank.
 **Responses**
 
 - `200`: Successful Response
+
+## Evidence
+
+### `GET /api/evidence`
+
+**List Evidence**
+
+List evidence visible to the caller.  Learners see their own records. Reviewers see learners in courses they own or staff. Tenant-wide roles see their institution, and a platform administrator sees the system.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `learner_id` | query | integer or null | no |  |
+| `status` | query | string or null | no |  |
+| `source_type` | query | string or null | no |  |
+| `competency_id` | query | string or null | no |  |
+| `limit` | query | integer | no |  |
+| `offset` | query | integer | no |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `POST /api/evidence`
+
+**Create Evidence**
+
+Record evidence from a reviewed rubric and competency contract.  Replaying the same learner, source, rubric, competencies, and artifact hash returns the existing record instead of creating a duplicate.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Request body** (`application/json`)
+
+**Schema:** `EvidenceCreate`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `learner_id` | integer | yes |  |
+| `source_type` | string | yes |  |
+| `source_id` | string | yes |  |
+| `competencies` | array[`CompetencyLinkIn`] | yes |  |
+| `rubric_id` | string | yes |  |
+| `rubric_version` | string | yes |  |
+| `confidence` | string | no |  |
+| `confidence_reason` | string or null | no |  |
+| `collected_at` | string or null | no |  |
+| `provenance` | string | no |  |
+| `provenance_version` | string or null | no |  |
+| `visibility` | string | no |  |
+| `formula_version` | string | no |  |
+| `artifact` | `ArtifactIn` or null | no |  |
+
+**Responses**
+
+- `201`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `GET /api/evidence/queue`
+
+**Review Queue**
+
+Evidence awaiting a first review or more evidence.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `limit` | query | integer | no |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `GET /api/evidence/{evidence_id}`
+
+**Get Evidence**
+
+Read one record with its competencies, reviews, and artifact hash.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `evidence_id` | path | integer | yes |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `POST /api/evidence/{evidence_id}/review`
+
+**Review Evidence**
+
+Score, accept, reject, or request more evidence.  The decision is appended; the record's content is never edited.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `evidence_id` | path | integer | yes |  |
+
+**Request body** (`application/json`)
+
+**Schema:** `EvidenceReviewIn`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `decision` | string | yes |  |
+| `criterion_scores` | map[string, integer] | no |  |
+| `notes` | string or null | no |  |
+| `next_step` | string or null | no |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
 
 ## Exercise Quizzes
 
