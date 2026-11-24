@@ -6,6 +6,17 @@ All notable changes to OpenCyberRange are recorded here.
 
 No unreleased changes.
 
+## [5.46.1] - 2026-11-24
+
+Threat-awareness panel design-system alignment.
+
+### Design
+
+- Replaced ad-hoc surfaces with the platform tokens (`--bg-secondary`, `--border-color`, `--text-secondary`, `--accent-bg`, `--warning-bg`) so the panel renders correctly in dark, light, and high-contrast themes.
+- Bars now scale to the largest row for legibility and expose `role="progressbar"` with `aria-valuenow`, `aria-valuemin`, `aria-valuemax`, and a per-row label.
+- Added an empty state, a 1080px reading column, a 640px responsive rule, focus-visible outlines, and reduced-motion handling.
+- Moved counts and percentages to readable text roles instead of muted body copy.
+
 ## [5.46.0] - 2026-11-24
 
 Host-agent spike, aggregated threat awareness, restore-drift gate, and

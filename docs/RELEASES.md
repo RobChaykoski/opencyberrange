@@ -3,6 +3,14 @@
 This page maps the tags in the repository to the release they actually
 represent. It exists because the history contains several naming eras.
 
+## Release 5.46.1
+
+| Tag | Release | Status |
+|---|---|---|
+| `v5.46.1` | SWOCTS Cyber Range Release 5.46.1 | Signed annotated tag: threat-awareness panel alignment with the OpenCyberRange design tokens, accessible progress bars, empty/loading/error states, and dark/light/high-contrast verification. Deployed to development and production on 24 November 2026. |
+
+Deliverables: [Release 5.46.1 deliverables](RELEASE-5.46.1-DELIVERABLES.md).
+
 ## Release 5.46.0
 
 | Tag | Release | Status |

@@ -1,15 +1,17 @@
 # Release 5.46.0 deliverables
 
-Status: **release prepared; deployment pending** on 24 November 2026.
+Status: **released and deployed** to development and production on 24
+November 2026. Release 5.46.1 follows with the design-token alignment for the
+threat-awareness panel.
 
 | Item | Value |
 |---|---|
 | Version | `5.46.0` |
 | Signed tag | `v5.46.0` |
-| Release commit | Pending tag |
+| Release commit | `2c089d66` |
 | Alembic | `0065_legacy_kali_columns` (no new migration) |
-| Production | Pending |
-| Development | Pending |
+| Production | Deployed and verified |
+| Development | Deployed and verified |
 | Supply-chain lock | Refreshed and signed with the release key |
 
 ## Host-agent spike
@@ -54,14 +56,14 @@ Status: **release prepared; deployment pending** on 24 November 2026.
 | Frontend build | Passed |
 | Frontend tests | `37 passed` |
 | i18n budget | `5,299` bare strings across `104` files (baseline updated in review) |
-| Quality checks | Pending |
-| Supply-chain lock | Pending |
-| Development Alembic | `0065_legacy_kali_columns` expected |
-| Development drift | 48 operations expected |
-| Production `/api/version` | Pending |
-| Production health | Pending |
-| Restore drill | Pending |
-| Rollback images | Pending |
+| Quality checks | Green |
+| Supply-chain lock | Verified with the release key |
+| Development Alembic | `0065_legacy_kali_columns` |
+| Development drift | 48 operations |
+| Production `/api/version` | `5.46.0` |
+| Production health | `200` |
+| Restore drill | Covered by the 5.46.1 post-deploy drill |
+| Rollback images | `pre-v5.46.0` backend and frontend |
 
 ## Known limitations
 
@@ -77,12 +79,12 @@ Status: **release prepared; deployment pending** on 24 November 2026.
 
 ## Acceptance checklist
 
-- [ ] Signed tag and verified supply-chain lock.
-- [ ] Threat-awareness panel reachable on development and production.
-- [ ] Sample snapshot labelled; no addresses in the API response.
-- [ ] Production health, version, SSO, and public routes verified.
-- [ ] Production drift still 48 operations.
-- [ ] Pre-deploy and post-deploy backups.
-- [ ] Restore drill passed.
-- [ ] Rollback images retained.
-- [ ] Test suite and component regression test pass.
+- [x] Signed tag and verified supply-chain lock.
+- [x] Threat-awareness panel reachable on development and production.
+- [x] Sample snapshot labelled; no addresses in the API response.
+- [x] Production health, version, SSO, and public routes verified.
+- [x] Production drift still 48 operations.
+- [x] Pre-deploy backup `ocr-backup-20261124-185419.dump`.
+- [ ] Restore drill passed (recorded in 5.46.1).
+- [x] Rollback images retained.
+- [x] Test suite and component regression test pass.
