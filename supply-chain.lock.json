@@ -316,7 +316,7 @@
       "sha256": "d265fb4bbaad00eb675c481258c84ab46af355e8de0f61ca6bf99db6a659b999"
     },
     "scripts/export-contract-reviews.py": {
-      "sha256": "cf25b21d792022085aab7ef8df41f2fc3935db0e7af91d78086b49f2e49d4f71"
+      "sha256": "65945aa34ece82cda4eb8aed0d47e10f7fc7bab91dce51b0c94f2ac50ce50b1a"
     },
     "scripts/fetch-external-datasets.py": {
       "sha256": "8860a9a4742af0c4d0962b36c5b46ebfadc856a22ee1bc7a02c473005ce2f386"
