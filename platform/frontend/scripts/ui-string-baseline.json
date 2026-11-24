@@ -1,5 +1,5 @@
 {
-  "total": 4964,
+  "total": 4965,
   "files": {
     "src/App.vue": 13,
     "src/components/AchievementStudio.vue": 54,
@@ -82,7 +82,7 @@
     "src/views/InstructorPanel.vue": 307,
     "src/views/Login.vue": 92,
     "src/views/Privacy.vue": 126,
-    "src/views/Profile.vue": 189,
+    "src/views/Profile.vue": 190,
     "src/views/PublicAbout.vue": 52,
     "src/views/RangeBoxHome.vue": 17,
     "src/views/RangeBoxView.vue": 4,

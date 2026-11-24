@@ -254,7 +254,7 @@ AFFINITIES: tuple[AffinitySpec, ...] = (
     AffinitySpec(
         "leadership",
         "Security Leadership / Education",
-        "Events, courses, advanced work, and teaching practice.",
+        "Events, teaching, and programme practice.",
         ("Security lead", "Security educator", "Programme coordinator"),
         "Add a communication, risk-register, or mentoring exercise to the technical work.",
     ),
@@ -263,6 +263,10 @@ AFFINITIES: tuple[AffinitySpec, ...] = (
 AFFINITY_BY_KEY = {spec.key: spec for spec in AFFINITIES}
 AFFINITY_LEVELS = ("no_evidence", "early", "growing", "strong")
 AFFINITY_LEVEL_RANK = {level: index for index, level in enumerate(AFFINITY_LEVELS)}
+# Affinities look at the last year first so a learner who changes direction is
+# not pinned to early practice. Older work still counts at half weight.
+AFFINITY_RECENT_DAYS = 365
+AFFINITY_OLDER_WEIGHT = 0.5
 
 
 def _track_slug(track: Track | None) -> str:
@@ -331,6 +335,9 @@ def _signals(db: Session, user_id: int, before: datetime | None = None) -> dict:
     lab_branches: dict[int, set[str]] = {}
     branch_last_at: dict[str, datetime] = {}
     evidence_weight: Counter[str] = Counter()
+    affinity_totals: Counter[str] = Counter()
+    affinity_recent: Counter[str] = Counter()
+    recent_cutoff = now - timedelta(days=AFFINITY_RECENT_DAYS)
 
     for row in completions:
         lab: Lab | None = getattr(row, "lab", None)
@@ -339,6 +346,8 @@ def _signals(db: Session, user_id: int, before: datetime | None = None) -> dict:
         track_slug = _track_slug(track)
         category = (getattr(lab, "category", None) or "general").strip().lower()
         branches = {"explorer", "builder"}
+        completed_at = getattr(row, "completed_at", None)
+        is_recent = bool(completed_at and completed_at >= recent_cutoff)
 
         if track_slug or track is not None:
             tracks.add(track_slug or (track.name or "").strip().lower())
@@ -347,11 +356,17 @@ def _signals(db: Session, user_id: int, before: datetime | None = None) -> dict:
         if category in DEFENDER_CATEGORIES or track_slug in DEFENDER_TRACKS:
             defender_labs += 1
             branches.add("defender")
+            affinity_totals["defensive"] += 1
+            if is_recent:
+                affinity_recent["defensive"] += 1
             if track_slug:
                 defender_tracks.add(track_slug)
         if category in INVESTIGATOR_CATEGORIES or track_slug in INVESTIGATOR_TRACKS:
             investigator_labs += 1
             branches.add("investigator")
+            affinity_totals["investigative"] += 1
+            if is_recent:
+                affinity_recent["investigative"] += 1
             if track_slug:
                 investigator_tracks.add(track_slug)
         if category in BUILDER_CATEGORIES:
@@ -363,11 +378,17 @@ def _signals(db: Session, user_id: int, before: datetime | None = None) -> dict:
             offensive_categories.add(category)
             if category in OFFENSIVE_CORE_CATEGORIES:
                 offensive_core_labs += 1
+                affinity_totals["offensive"] += 1
+                if is_recent:
+                    affinity_recent["offensive"] += 1
             if (row.hints_used or 0) == 0:
                 offensive_no_hint_labs += 1
         if category == "assessment":
             assessment_labs += 1
             branches.add("tester")
+            affinity_totals["offensive"] += 1
+            if is_recent:
+                affinity_recent["offensive"] += 1
 
         total_minutes += row.time_spent_minutes or 0
         if (row.hints_used or 0) == 0:
@@ -443,6 +464,25 @@ def _signals(db: Session, user_id: int, before: datetime | None = None) -> dict:
     instructed = (
         db.query(func.count(Course.id))
         .filter(Course.instructor_id == user_id)
+        .scalar()
+        or 0
+    )
+    event_recent = (
+        db.query(func.count(Achievement.id))
+        .filter(
+            Achievement.user_id == user_id,
+            Achievement.achievement_type.like("comp_%"),
+            Achievement.awarded_at >= recent_cutoff,
+        )
+        .scalar()
+        or 0
+    )
+    instructed_recent = (
+        db.query(func.count(Course.id))
+        .filter(
+            Course.instructor_id == user_id,
+            Course.created_at >= recent_cutoff,
+        )
         .scalar()
         or 0
     )
@@ -556,6 +596,12 @@ def _signals(db: Session, user_id: int, before: datetime | None = None) -> dict:
         + strength_weights["leader_like"] * int(likes_given)
     )
 
+    # Leadership affinity is teaching and event practice, not course enrolment
+    # or advanced technical work. Those already count in other branches; removing
+    # the overlap stops an active learner from looking like a leader by accident.
+    affinity_totals["leadership"] = int(instructed) * 2 + int(event_achievements)
+    affinity_recent["leadership"] = int(instructed_recent) * 2 + int(event_recent)
+
     last_at = max(
         (row.completed_at for row in completions if row.completed_at),
         default=None,
@@ -601,6 +647,8 @@ def _signals(db: Session, user_id: int, before: datetime | None = None) -> dict:
         "evidence_weight": {
             key: round(value, 2) for key, value in evidence_weight.items()
         },
+        "affinity_totals": dict(affinity_totals),
+        "affinity_recent": dict(affinity_recent),
         "branch_last_activity": branch_last_at,
     }
 
@@ -719,21 +767,49 @@ def _affinity_level(count: int) -> str:
 
 
 def _affinity_counts(signals: dict) -> dict[str, int]:
+    totals = signals.get("affinity_totals")
+    if totals:
+        return {
+            key: int(totals.get(key, 0))
+            for key in ("offensive", "defensive", "investigative", "leadership")
+        }
+    # Fallback for callers that build a partial signal dict in a test or a
+    # one-off script. Production signals always carry the explicit counters.
     return {
         "offensive": signals["offensive_core_labs"] + signals["assessment_labs"],
         "defensive": signals["defender_labs"],
         "investigative": signals["investigator_labs"],
         "leadership": (
-            signals["event_achievements"]
-            + signals["courses"]
-            + signals["instructed_courses"]
-            + signals["advanced_labs"]
+            signals["event_achievements"] + signals["instructed_courses"]
         ),
     }
 
 
-def _affinity_evidence(spec: AffinitySpec, signals: dict) -> str:
+def _affinity_recent_counts(signals: dict) -> dict[str, int]:
+    recent = signals.get("affinity_recent")
+    if recent:
+        return {
+            key: int(recent.get(key, 0))
+            for key in ("offensive", "defensive", "investigative", "leadership")
+        }
+    return _affinity_counts(signals)
+
+
+def _affinity_recent_note(total: int, recent: int) -> str:
+    if total <= 0:
+        return ""
+    if recent <= 0:
+        return " · no practice in the last year"
+    return f" · {recent} in the last year"
+
+
+def _affinity_evidence(
+    spec: AffinitySpec, signals: dict, recent: int = 0
+) -> str:
     if spec.key == "offensive":
+        total = int(signals.get("affinity_totals", {}).get("offensive", 0)) or (
+            signals["offensive_core_labs"] + signals["assessment_labs"]
+        )
         parts = [
             f"{signals['offensive_core_labs']} core offensive labs",
             f"{signals['offensive_labs']} offensive labs total",
@@ -746,55 +822,83 @@ def _affinity_evidence(spec: AffinitySpec, signals: dict) -> str:
             parts.append(
                 f"{len(signals['offensive_categories'])} offensive categories"
             )
-        return " · ".join(parts)
+        return " · ".join(parts) + _affinity_recent_note(total, recent)
     if spec.key == "defensive":
+        total = signals["defender_labs"]
         return (
-            f"{signals['defender_labs']} defensive labs · "
+            f"{total} defensive labs · "
             f"{len(signals['defender_tracks'])} tracks"
+            + _affinity_recent_note(total, recent)
         )
     if spec.key == "investigative":
+        total = signals["investigator_labs"]
         return (
-            f"{signals['investigator_labs']} analysis labs · "
+            f"{total} analysis labs · "
             f"{len(signals['investigator_tracks'])} tracks"
+            + _affinity_recent_note(total, recent)
         )
+    total = int(signals.get("affinity_totals", {}).get("leadership", 0))
     return (
-        f"{signals['event_achievements']} event awards · "
-        f"{signals['courses']} courses · "
         f"{signals['instructed_courses']} courses taught · "
-        f"{signals['advanced_labs']} advanced labs"
+        f"{signals['event_achievements']} event awards"
+        + _affinity_recent_note(total, recent)
     )
 
 
 def _affinities(signals: dict) -> list[dict]:
     counts = _affinity_counts(signals)
+    recent_counts = _affinity_recent_counts(signals)
     rows = []
     for spec in AFFINITIES:
         count = counts[spec.key]
-        level = _affinity_level(count)
+        recent = min(count, recent_counts.get(spec.key, count))
+        older = max(0, count - recent)
+        rank_count = recent + older * AFFINITY_OLDER_WEIGHT
+        level = _affinity_level(rank_count)
         rows.append({
             "key": spec.key,
             "label": spec.label,
             "summary": spec.summary,
             "roles": list(spec.roles),
             "evidence_level": level,
-            "evidence": _affinity_evidence(spec, signals),
+            "evidence": _affinity_evidence(spec, signals, recent),
             "next_step": spec.next_step,
             "recommended": False,
-            "_count": count,
+            "primary": False,
             "evidence_count": count,
+            "recent_count": recent,
+            "rank_count": round(rank_count, 2),
+            "_rank": rank_count,
         })
 
     rows.sort(
         key=lambda row: (
             -AFFINITY_LEVEL_RANK[row["evidence_level"]],
-            -row["_count"],
+            -row["_rank"],
+            -row["evidence_count"],
             row["key"],
         )
     )
-    if rows and rows[0]["_count"] > 0:
-        rows[0]["recommended"] = True
+    # A learner can have more than one strong direction. Mark every branch with
+    # growing or strong recent evidence, not only the single highest count. If
+    # every branch is still early, keep one next step so a beginner is not left
+    # without a prompt.
+    recommended_keys = {
+        row["key"]
+        for row in rows
+        if row["evidence_count"] > 0
+        and row["evidence_level"] in ("growing", "strong")
+    }
+    if not recommended_keys and rows and rows[0]["evidence_count"] > 0:
+        recommended_keys = {rows[0]["key"]}
     for row in rows:
-        row.pop("_count", None)
+        row["recommended"] = row["key"] in recommended_keys
+    for row in rows:
+        if row["recommended"]:
+            row["primary"] = True
+            break
+    for row in rows:
+        row.pop("_rank", None)
     return rows
 
 

@@ -132,12 +132,14 @@ examples, not a job ontology.
 
 ```text
 match = min(100,
-    60 × min(affinity_evidence_count, 6) / 6
+    60 × min(recency_weighted_affinity_count, 6) / 6
   + 40 × average(dimension scores for the family) / 100
 )
 ```
 
-- `affinity_evidence_count` comes from the existing Cyber DNA affinity evidence.
+- `recency_weighted_affinity_count` is `recent_count + 0.5 × older_count` from
+  the affinity model. Recent practice moves a family; older practice still
+  contributes at half weight.
 - `dimension scores` are the existing 0–100 Cyber DNA branch scores.
 - A family with no affinity uses the dimension term only.
 
@@ -149,8 +151,10 @@ Unlock states:
 | One step away | 15 <= match < 35 | A small amount of additional practice moves the node. |
 | Locked | match < 15 | The branch has little or no evidence. The node remains readable. |
 
-The recommended family is the highest match with a non-zero score. It is a
-practice suggestion, not a prediction.
+The atlas shows every family and branch, so a learner can compare several
+directions. The recommended family is the highest match with a non-zero score;
+it is a practice suggestion, not a prediction or an instruction to specialise.
+A learner can select any other family or role to explore it.
 
 ### Salary bands
 

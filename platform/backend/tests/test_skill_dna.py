@@ -324,6 +324,89 @@ def test_offensive_affinity_recognises_pentest_practice(db_session, test_user):
     assert offensive["next_step"]
 
 
+def test_multiple_affinities_can_be_recommended(db_session, test_user):
+    web = _track(db_session, "Web Application Security", "web")
+    forensics = _track(db_session, "Digital Forensics", "forensics")
+    for index in range(6):
+        offensive = _lab(
+            db_session,
+            web,
+            name=f"Multi Offensive {index}",
+            category="exploitation",
+        )
+        _complete(db_session, test_user, offensive)
+        defensive = _lab(
+            db_session,
+            forensics,
+            name=f"Multi Forensics {index}",
+            category="forensics",
+        )
+        _complete(db_session, test_user, defensive)
+
+    dna = build_skill_dna(db_session, test_user)
+    affinities = {row["key"]: row for row in dna["affinities"]}
+
+    recommended = {key for key, row in affinities.items() if row["recommended"]}
+    assert {"offensive", "defensive", "investigative"} <= recommended
+    assert sum(1 for row in dna["affinities"] if row["primary"]) == 1
+    assert all(
+        row["recent_count"] == row["evidence_count"]
+        for row in dna["affinities"]
+    )
+
+
+def test_recent_practice_outranks_old_practice(db_session, test_user):
+    web = _track(db_session, "Web Application Security", "web")
+    forensics = _track(db_session, "Digital Forensics", "forensics")
+    old = datetime.now(timezone.utc) - timedelta(days=730)
+
+    for index in range(2):
+        lab = _lab(
+            db_session,
+            forensics,
+            name=f"Old Forensics {index}",
+            category="forensics",
+        )
+        _complete(db_session, test_user, lab, completed_at=old)
+    for index in range(6):
+        lab = _lab(
+            db_session,
+            web,
+            name=f"Recent Offensive {index}",
+            category="exploitation",
+        )
+        _complete(db_session, test_user, lab)
+
+    dna = build_skill_dna(db_session, test_user)
+    affinities = {row["key"]: row for row in dna["affinities"]}
+
+    assert affinities["offensive"]["primary"] is True
+    assert affinities["offensive"]["recommended"] is True
+    assert affinities["investigative"]["recent_count"] == 0
+    assert affinities["investigative"]["evidence_count"] == 2
+    assert affinities["investigative"]["rank_count"] < 2
+
+
+def test_advanced_labs_do_not_create_leadership_affinity(db_session, test_user):
+    forensics = _track(db_session, "Digital Forensics", "forensics")
+    lab = _lab(
+        db_session,
+        forensics,
+        name="Advanced Forensics Only",
+        category="forensics",
+        difficulty="advanced",
+    )
+    _complete(db_session, test_user, lab)
+
+    dna = build_skill_dna(db_session, test_user)
+    leadership = next(
+        row for row in dna["affinities"] if row["key"] == "leadership"
+    )
+
+    assert leadership["evidence_count"] == 0
+    assert "advanced labs" not in leadership["evidence"]
+
+
 def test_titles_unlock_and_equip(db_session, test_user):
     _seed_activity(db_session, test_user)
 

@@ -638,12 +638,16 @@ def _match_score(family: dict, dna: dict) -> tuple[int, int, float]:
     dimensions = {row["key"]: row for row in dna.get("dimensions", [])}
     affinity = affinities.get(family.get("affinity_key") or "")
     evidence_count = int((affinity or {}).get("evidence_count") or 0)
+    # Recent practice drives the match; lifetime evidence is the tie-breaker
+    # and stays visible in the payload. A learner who changes direction can
+    # unlock a new family without erasing the old one.
+    rank_count = float((affinity or {}).get("rank_count") or evidence_count)
     dimension_scores = [
         float((dimensions.get(key) or {}).get("score") or 0)
         for key in family["dimension_keys"]
     ]
     dimension_avg = mean(dimension_scores) if dimension_scores else 0.0
-    evidence_points = min(evidence_count, 6) / 6 * 60
+    evidence_points = min(rank_count, 6) / 6 * 60
     score = round(min(100.0, evidence_points + dimension_avg * 0.4))
     return score, evidence_count, dimension_avg
 

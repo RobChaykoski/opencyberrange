@@ -400,6 +400,9 @@
                 <h3>{{ topAffinity?.label || 'Start your first exercise' }}</h3>
                 <p>{{ topAffinity?.next_step || 'Complete one exercise to give your skill tree its first branch.' }}</p>
                 <p v-if="topAffinity?.evidence" class="overview-card__evidence">{{ topAffinity.evidence }}</p>
+                <p v-if="otherAffinities.length" class="overview-card__evidence">
+                  Also strong: {{ otherAffinities.map((item) => item.label).join(' · ') }}
+                </p>
                 <router-link v-if="!topAffinity" to="/exercises" class="btn btn--secondary btn--sm">
                   Find your first exercise
                 </router-link>
@@ -1839,7 +1842,25 @@ const advancedCompletions = computed(() =>
 const topAffinity = computed(() => {
   if (!hasCareerEvidence.value) return null
   const affinities = summary.value?.skill_dna?.affinities || []
-  return affinities.find((item) => item.recommended) || affinities[0] || null
+  return (
+    affinities.find((item) => item.primary) ||
+    affinities.find((item) => item.recommended) ||
+    affinities[0] ||
+    null
+  )
+})
+
+const otherAffinities = computed(() => {
+  const affinities = summary.value?.skill_dna?.affinities || []
+  const top = topAffinity.value
+  return affinities
+    .filter(
+      (item) =>
+        item.recommended &&
+        item.key !== top?.key &&
+        Number(item.evidence_count || 0) > 0
+    )
+    .slice(0, 3)
 })
 const recentAchievements = computed(() => achievements.value.slice(0, 4))
 const haveDimensions = computed(() =>

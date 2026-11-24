@@ -47,12 +47,26 @@ the traits.
 | Offensive Security / Penetration Testing | Web, exploitation, privilege-escalation, post-exploitation, credential-attack, and supporting reconnaissance or enumeration labs | Penetration tester, red team operator, security consultant |
 | Defensive Security / SOC | Forensics, network-analysis, and OT labs | SOC analyst, detection engineer, network security analyst |
 | DFIR / Investigation | OSINT, forensics, malware, and evidence-handling labs | DFIR analyst, forensic examiner, threat intelligence analyst |
-| Security Leadership / Education | Event success, courses, advanced work, and teaching | Security lead, security educator, programme coordinator |
+| Security Leadership / Education | Event success and teaching practice | Security lead, security educator, programme coordinator |
 
 Each affinity reports an evidence level (`no_evidence`, `early`, `growing`,
-`strong`) and the raw evidence behind it. The strongest positive affinity is
-marked `recommended`. A learner with no offensive labs sees "No direct evidence
-yet" for penetration testing, not a negative label.
+`strong`) and the raw evidence behind it. A learner with no offensive labs sees
+"No direct evidence yet" for penetration testing, not a negative label.
+
+A learner can have more than one strong direction. Every affinity with
+`growing` or `strong` evidence is marked `recommended`, and the first
+recommended row is also marked `primary` for the compact overview card. The
+profile shows the primary direction and names the other strong directions
+instead of collapsing the learner to one label.
+
+The ranking is recency-aware. Practice in the last 365 days counts at full
+weight; older practice counts at half weight. `evidence_count` remains the
+lifetime count, `recent_count` is the last-year count, and `rank_count` is the
+weighted value used for ordering and for Career Atlas matching. A learner who
+changes direction can move a new affinity to the top without losing the history
+of the old one. Leadership affinity counts teaching and event success, not
+course enrolment or advanced technical labs, so an active student is not
+misread as a programme lead.
 
 ### Recognising a penetration-testing direction positively
 
@@ -297,9 +311,11 @@ evidence also exposes `offensive_labs`, `offensive_core_labs`,
 UI and exports use the same numbers.
 
 The JSON profile includes an `affinities` array. Each item has `key`, `label`,
-`summary`, `roles`, `evidence_level`, `evidence`, `next_step`, and
-`recommended`. The array is ordered by evidence strength, then count, so the first
-positive match is the recommended next direction.
+`summary`, `roles`, `evidence_level`, `evidence`, `next_step`, `recommended`,
+`primary`, `evidence_count`, `recent_count`, and `rank_count`. The array is
+ordered by recency-weighted evidence level, then weighted count, then lifetime
+count. Multiple items can be `recommended`; the first is `primary`. The array is
+a set of directions, not a ranking of the learner.
 
 ## Privacy and limits
 
