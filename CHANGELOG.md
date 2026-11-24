@@ -36,6 +36,10 @@ All notable changes to OpenCyberRange are recorded here.
 - Added the [SFIA 9 ingestion plan](docs/SFIA-9-INGESTION.md): licensing gate,
   proposed data model, mapping rules, review criteria, and the requirement for a
   licensed snapshot before any SFIA content or mapping is committed.
+- Recorded that the SFIA **Personal Licence** does not permit product use,
+  redistribution, or published mappings. The RDF converter repository's MIT
+  licence covers the converter code, not the SFIA content. SFIA integration is
+  blocked until a commercial or academic product licence is recorded.
 
 ## [5.38.0] - 2026-11-24
 

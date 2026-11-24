@@ -1,6 +1,7 @@
 # SFIA 9 ingestion plan
 
-Status: **planning. No SFIA content or mappings are included yet.**
+Status: **blocked by licensing. No SFIA content or mappings are included, and
+none may be added under the personal licence.**
 
 SFIA 9 is the current version of the Skills Framework for the Information Age,
 published in October 2024. It defines seven levels of responsibility, a
@@ -26,6 +27,38 @@ crosswalks:
 SFIA is **not** a certification, a grade, or a claim that a learner is ready for
 a role. A SFIA level describes responsibility and accountability; it is not a
 score on a lab.
+
+## Licence decision (24 November 2026)
+
+The project owner supplied the SFIA **Personal Licence**. It permits personal
+use for information and personal development only. It expressly prohibits:
+
+- use in a product or service that is specifically dependent on SFIA;
+- distributing SFIA, or a significant extract, in electronic or printed form;
+- publishing mappings of SFIA to qualifications or credentials;
+- use across a large organisation;
+- external certification or credentials;
+- using SFIA to sell, market, or promote a product or service.
+
+This platform is a product with a public manual and would publish competency and
+lab mappings. The personal licence is therefore **not sufficient** for this
+repository, the platform, the manual, or a deployment.
+
+The [`Semantic-partners/sfia-rdf`](https://github.com/Semantic-partners/sfia-rdf)
+repository is an MIT-licensed RDF *converter*. Its README and `SFIA_LICENSE_NOTE`
+state that the rights to the SFIA content remain with the SFIA Foundation. The
+MIT licence covers the converter code, not the SFIA data. Converting SFIA to RDF
+does not create a redistribution right.
+
+No SFIA content, spreadsheet rows, RDF data, skill definitions, level
+descriptors, or mappings may be committed, displayed, or exported until the
+institution holds a commercial or academic licence (or written permission) that
+covers:
+
+1. embedding SFIA content or mappings in the product;
+2. publishing the mapping in the manual and web UI;
+3. use across the institution, if the deployment is institution-wide;
+4. any externally issued credential or badge that references SFIA.
 
 ## Licensing gate
 
@@ -133,7 +166,9 @@ job guarantee.
 
 ## Current blocker
 
-The repository does not yet have a licensed SFIA 9 snapshot or a recorded
-permission to redistribute the skill definitions. The next action is to obtain
-that snapshot or permission, then draft the first mapping set for the cyber
-security view.
+The repository does not have a product licence, academic licence, or written
+permission that allows embedding SFIA content or publishing mappings. The
+personal licence supplied by the project owner does not permit those uses. The
+next action is a licensing decision with the SFIA Foundation, not an import
+task. Do not add the attached SFIA PDFs, the RDF output, or a mapping until the
+licence is recorded here.

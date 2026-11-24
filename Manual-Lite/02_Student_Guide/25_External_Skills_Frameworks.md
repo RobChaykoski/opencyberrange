@@ -12,7 +12,7 @@ a job guarantee.
 | **NICE / NIST Workforce Framework** | Work roles, tasks, and knowledge/skill statements for the cyber workforce | Referenced in the competency crosswalks and role profiles |
 | **ACM/IEEE CS2023** | Computing knowledge areas for curriculum alignment | Referenced where the competency is a computing knowledge area |
 | **CAE-CD outcomes** | Institutional cyber-defence programme outcomes | Referenced in programme and accreditation evidence |
-| **SFIA 9** | Seven levels of responsibility plus a professional-skills catalogue for the digital world | **Planned.** Licensing and mapping gate in the [SFIA 9 ingestion plan](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/SFIA-9-INGESTION.md) |
+| **SFIA 9** | Seven levels of responsibility plus a professional-skills catalogue for the digital world | **Blocked pending a product licence.** The personal licence does not permit product use or published mappings. See the [SFIA 9 ingestion plan](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/SFIA-9-INGESTION.md) |
 
 ## How the platform uses a mapping
 
@@ -40,14 +40,19 @@ scope, autonomy, influence, and accountability expected at that level. It is not
 a percentage, a badge, or a pass mark.
 
 The platform has not imported SFIA skill definitions or published a lab-to-SFIA
-mapping yet. The SFIA Foundation's content is subject to its licence and
-attribution terms, and the official documentation requires registration. The
-repository will not copy skill definitions or invent mappings before a licensed
-snapshot is recorded.
+mapping. The SFIA Foundation's content is subject to its licence and attribution
+terms. The personal licence permits personal information and development use
+only; it does not permit product use, redistribution, or published mappings.
 
-When the mapping is available, the platform will show it as a read-only
-crosswalk beside competency coverage. It will not change a learner's score,
-grade, or readiness label.
+The platform is a product with a public manual, so it needs a commercial or
+academic licence (or written permission) that covers embedding SFIA content and
+publishing mappings. Until that licence is recorded, no SFIA definitions,
+RDF output, PDFs, or mappings will be added to the repository, the platform, or
+this manual.
+
+When a suitable licence is available, the platform will show the mapping as a
+read-only crosswalk beside competency coverage. It will not change a learner's
+score, grade, or readiness label.
 
 ## Why the licensing gate matters
 

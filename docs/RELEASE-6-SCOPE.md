@@ -134,9 +134,10 @@ Release 6 is designed for the questions an academic review actually asks.
   plans, and executive briefs, not only a flag.
 - **Accreditation evidence.** Competency mappings support NICE/NIST work roles,
   ACM/IEEE CS2023 knowledge areas, CAE-CD outcomes, SFIA 9 skills and
-  responsibility levels, and programme-level accreditation evidence. SFIA 9
-  follows the licensing and review gate in
-  [SFIA 9 ingestion](SFIA-9-INGESTION.md).
+  responsibility levels, and programme-level accreditation evidence. SFIA 9 is
+  blocked until a commercial or academic product licence permits embedding the
+  content and publishing the mapping; the personal licence is not sufficient.
+  See [SFIA 9 ingestion](SFIA-9-INGESTION.md).
 - **Competency-based transcripts.** Evidence produces defensible competency
   statements and Open Badges 3.0 credentials.
 - **Privacy and sovereignty.** Institutions keep learner data; federation is a

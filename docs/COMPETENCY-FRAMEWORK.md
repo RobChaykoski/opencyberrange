@@ -169,7 +169,8 @@ subject-matter review:
   exists; gaps are explicit.
 - SFIA 9 content follows the licensing and review gates in
   [SFIA 9 ingestion](SFIA-9-INGESTION.md); no skill definitions or mappings are
-  fabricated before a licensed snapshot is available.
+  added before a commercial or academic product licence permits embedding SFIA
+  content and publishing the mapping. The personal licence is not sufficient.
 - No competency score can be produced without evidence, and no validated score
   can be produced from one completion.
 - CI fails on an unmapped object, an unknown competency, or a stale contract.

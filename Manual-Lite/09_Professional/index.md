@@ -29,9 +29,10 @@ profile. That is the Enterprise preview profile. Professional also keeps the Com
 Academic privacy stance: analytics are descriptive, aggregate views show totals
 rather than learner names, and the platform does not rank or predict learners.
 
-SFIA 9 is a planned external crosswalk, not a Professional feature yet. It
-follows the licensing and review gate in
-[SFIA 9 ingestion](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/SFIA-9-INGESTION.md)
+SFIA 9 is not a Professional feature. The personal licence does not permit
+product use or published mappings; a commercial or academic licence is required
+before any SFIA content or mapping can be added. See the
+[SFIA 9 ingestion plan](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/SFIA-9-INGESTION.md)
 and the [External Skills Frameworks](../02_Student_Guide/25_External_Skills_Frameworks.md)
 page.
 
