@@ -44,10 +44,11 @@ filesystem operations.
 ## Decision
 
 Accepted for a spike on 24 November 2026. The skeleton lives in
-`platform/labd/` and exposes only a token-authenticated capability list;
-mutating routes return `501`. Production keeps the pre-baked helper image and
-restricted socket proxy until the lab harness passes on network, ICS, and
-RangeBox labs.
+`platform/labd/`. `GET /v1/status/<lab_id>` is implemented read-only with a
+validated id and a fixed `docker inspect`, and has been checked against a live
+container on development; mutating routes still return `501`.
+Production keeps the pre-baked helper image and restricted socket proxy until
+the lab harness passes on network, ICS, and RangeBox labs.
 
 ## Security properties
 

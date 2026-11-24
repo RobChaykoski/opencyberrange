@@ -2,14 +2,22 @@
 """Host-side lab agent spike.
 
 This is the control-plane boundary proposed in ADR 0007. It exposes a narrow,
-token-authenticated API for lab lifecycle and network operations. The spike is
-read-only: mutating routes return 501 until the implementation is validated.
+token-authenticated API for lab lifecycle and network operations.
+
+Implemented read-only:
+
+- ``GET /v1/capabilities``
+- ``GET /v1/status/<lab_id>``
+
+Mutations (``spawn``, ``stop``, ``ensure_isolation``, ``mirror_gretap``) still
+return ``501`` until each operation is validated against the lab harness.
 
 Security rules:
 - bind to loopback by default;
 - require a bearer token for everything except /health;
 - never expose arbitrary exec, image build, volume, or host filesystem calls;
-- write an audit line for every mutating request and every denial.
+- validate the lab id before it reaches the runtime;
+- write an audit line for every denial and every failed read.
 """
 
 from __future__ import annotations
@@ -18,6 +26,8 @@ import argparse
 import hmac
 import json
 import os
+import re
+import subprocess
 import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -25,14 +35,74 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
 
-VERSION = "0.1.0"
+VERSION = "0.2.0"
 MAX_BODY = 64 * 1024
 AUDIT_LOCK = threading.Lock()
 MUTATING_ROUTES = {"/v1/spawn", "/v1/stop", "/v1/isolation", "/v1/mirror"}
+LAB_ID = re.compile(r"^[a-z0-9][a-z0-9-]{0,62}$")
+STATUS_PREFIX = "/v1/status/"
 
 
 def _now() -> str:
     return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+
+
+class StatusUnavailable(Exception):
+    """The runtime could not answer a status request."""
+
+
+class DockerStatusProvider:
+    """Read-only container status via a fixed ``docker inspect`` call.
+
+    The lab id is validated by the handler and the container name is built from
+    a fixed prefix. No shell is used and no user-controlled argument reaches the
+    command line.
+    """
+
+    def __init__(self, prefix: str = "ocr-lab-", timeout: float = 5.0) -> None:
+        self.prefix = prefix
+        self.timeout = timeout
+
+    def status(self, lab_id: str) -> dict[str, Any] | None:
+        name = f"{self.prefix}{lab_id}"
+        try:
+            result = subprocess.run(
+                ["docker", "inspect", "--format", "{{json .State}}", name],
+                capture_output=True,
+                text=True,
+                timeout=self.timeout,
+                check=False,
+                env=os.environ.copy(),
+            )
+        except (OSError, subprocess.SubprocessError) as exc:
+            raise StatusUnavailable("docker is unavailable") from exc
+
+        if result.returncode != 0:
+            stderr = (result.stderr or "").lower()
+            if "no such object" in stderr or "no such container" in stderr:
+                return None
+            raise StatusUnavailable("docker inspect failed")
+
+        try:
+            state = json.loads(result.stdout)
+        except ValueError as exc:
+            raise StatusUnavailable("docker returned unreadable state") from exc
+        if not isinstance(state, dict):
+            raise StatusUnavailable("docker returned unreadable state")
+
+        exit_code = state.get("ExitCode")
+        started_at = state.get("StartedAt")
+        finished_at = state.get("FinishedAt")
+        return {
+            "state": str(state.get("Status") or "unknown"),
+            "running": bool(state.get("Running")),
+            "paused": bool(state.get("Paused")),
+            "restarting": bool(state.get("Restarting")),
+            "oom_killed": bool(state.get("OOMKilled")),
+            "exit_code": exit_code if isinstance(exit_code, int) else None,
+            "started_at": started_at if isinstance(started_at, str) else None,
+            "finished_at": finished_at if isinstance(finished_at, str) else None,
+        }
 
 
 class LabdHandler(BaseHTTPRequestHandler):
@@ -40,6 +110,7 @@ class LabdHandler(BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
     token = ""
     audit_log: str | None = None
+    status_provider: DockerStatusProvider | None = None
 
     def log_message(self, fmt: str, *args) -> None:  # keep the systemd journal quiet
         return
@@ -91,6 +162,31 @@ class LabdHandler(BaseHTTPRequestHandler):
             raise TypeError("request body must be a JSON object")
         return payload
 
+    def _status(self, path: str) -> None:
+        lab_id = path[len(STATUS_PREFIX):].strip("/")
+        if not LAB_ID.match(lab_id):
+            self._audit("status", "rejected", lab_id)
+            self._json(
+                400,
+                {
+                    "error": "invalid_lab_id",
+                    "message": "lab id must be lower-case letters, digits, and hyphens",
+                },
+            )
+            return
+        provider = self.status_provider or DockerStatusProvider()
+        try:
+            state = provider.status(lab_id)
+        except StatusUnavailable as exc:
+            self._audit(f"status:{lab_id}", "unavailable", str(exc))
+            self._json(503, {"error": "runtime_unavailable"})
+            return
+        if state is None:
+            self._audit(f"status:{lab_id}", "not_found")
+            self._json(404, {"error": "not_found"})
+            return
+        self._json(200, {"lab_id": lab_id, **state})
+
     def do_GET(self) -> None:
         path = urlparse(self.path).path
         if path == "/health":
@@ -107,6 +203,14 @@ class LabdHandler(BaseHTTPRequestHandler):
                     "version": VERSION,
                     "mode": "spike",
                     "read_only": True,
+                    "implemented": ["status"],
+                    "pending": [
+                        "spawn",
+                        "stop",
+                        "ensure_isolation",
+                        "mirror_gretap",
+                        "logs",
+                    ],
                     "operations": [
                         "spawn",
                         "stop",
@@ -118,14 +222,8 @@ class LabdHandler(BaseHTTPRequestHandler):
                 },
             )
             return
-        if path.startswith("/v1/status/"):
-            self._json(
-                501,
-                {
-                    "error": "not_implemented",
-                    "message": "status is reserved for the validated agent",
-                },
-            )
+        if path.startswith(STATUS_PREFIX):
+            self._status(path)
             return
         self._json(404, {"error": "not_found"})
 
@@ -150,20 +248,28 @@ class LabdHandler(BaseHTTPRequestHandler):
             {
                 "error": "not_implemented",
                 "message": (
-                    "the spike validates the API boundary only; wire this route "
-                    "after the host-agent design is accepted"
+                    "this mutation is not wired yet; validate it against the lab "
+                    "harness before enabling it on a host"
                 ),
             },
         )
 
 
 def create_server(
-    host: str, port: int, token: str, audit_log: str | None = None
+    host: str,
+    port: int,
+    token: str,
+    audit_log: str | None = None,
+    status_provider: DockerStatusProvider | None = None,
 ) -> ThreadingHTTPServer:
     handler = type(
         "BoundLabdHandler",
         (LabdHandler,),
-        {"token": token, "audit_log": audit_log},
+        {
+            "token": token,
+            "audit_log": audit_log,
+            "status_provider": status_provider,
+        },
     )
     return ThreadingHTTPServer((host, port), handler)
 
@@ -186,6 +292,7 @@ def main() -> int:
     parser.add_argument("--port", type=int, default=8099)
     parser.add_argument("--token-file", default="/etc/ocr-labd/token")
     parser.add_argument("--audit-log", default="/var/log/ocr-labd/audit.jsonl")
+    parser.add_argument("--container-prefix", default="ocr-lab-")
     args = parser.parse_args()
     if args.host not in {"127.0.0.1", "::1", "localhost"}:
         parser.error("the spike only binds to loopback")
@@ -193,7 +300,8 @@ def main() -> int:
     audit_log = args.audit_log or None
     if audit_log:
         Path(audit_log).parent.mkdir(parents=True, exist_ok=True)
-    server = create_server(args.host, args.port, token, audit_log)
+    provider = DockerStatusProvider(prefix=args.container_prefix)
+    server = create_server(args.host, args.port, token, audit_log, provider)
     print(f"ocr-labd {VERSION} listening on {args.host}:{args.port}")
     try:
         server.serve_forever()

@@ -13,8 +13,11 @@ bearer token. It exposes a fixed operation list:
 - `mirror_gretap`;
 - `logs`.
 
-The spike is read-only: mutating routes return `501 not_implemented`. It never
-exposes arbitrary `exec`, image build, volume, or host-filesystem operations.
+`GET /v1/status/<lab_id>` is implemented read-only: it validates the lab id and
+runs a fixed `docker inspect` on `ocr-lab-<lab_id>`. Every other mutating route
+returns `501 not_implemented`. The agent never exposes arbitrary `exec`, image
+build, volume, or host-filesystem operations, and the lab id never reaches a
+shell.
 
 ## Run locally
 
@@ -24,7 +27,13 @@ python3 platform/labd/ocr_labd.py --host 127.0.0.1 --port 8099
 curl -s http://127.0.0.1:8099/health
 curl -s -H "Authorization: Bearer $OCR_LABD_TOKEN" \
   http://127.0.0.1:8099/v1/capabilities
+curl -s -H "Authorization: Bearer $OCR_LABD_TOKEN" \
+  http://127.0.0.1:8099/v1/status/linux-1
 ```
+
+`status` returns `state`, `running`, `paused`, `restarting`, `oom_killed`,
+`exit_code`, `started_at`, and `finished_at`. It returns `404` when the container
+does not exist, `400` for an invalid lab id, and `503` when Docker cannot answer.
 
 The token can come from `OCR_LABD_TOKEN` or `--token-file` (default
 `/etc/ocr-labd/token`). Every mutating request and denial is appended to
@@ -55,12 +64,28 @@ python scripts/check-labd-agent.py
 ```
 
 The check starts the server on an ephemeral port, verifies `/health`, rejects a
-missing token, verifies `/v1/capabilities`, and confirms mutating routes return
-`501`.
+missing token, verifies `/v1/capabilities`, exercises `status` with a fake
+provider and with mocked `docker inspect` results, and confirms mutating routes
+return `501`.
+
+## Validation record
+
+`status` was exercised on the development host against a live `ocr-backend`
+container on 24 November 2026 with `--container-prefix ocr-`:
+
+| Request | Result |
+|---|---|
+| `/health` | `200` |
+| `/v1/status/backend` without a token | `401` |
+| `/v1/status/backend` with a token | `200`, `state: running`, `running: true` |
+| `/v1/status/does-not-exist` | `404` |
+| `/v1/status/Bad_ID` | `400` |
+| Audit log | Denial, not-found, and invalid-id lines written |
 
 ## Next steps
 
-1. Replace the 501 handlers with the validated operations, one at a time.
+1. Validate `status` against a real lab container, then replace the 501
+   handlers one operation at a time, starting with `stop`.
 2. Authenticate the backend with a short-lived token or mTLS.
 3. Add idempotency keys and per-operation audit fields.
 4. Add response schemas and a client adapter in `docker_manager.py`.
