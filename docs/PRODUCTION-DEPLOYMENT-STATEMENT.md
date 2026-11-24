@@ -9,6 +9,22 @@ another document disagrees, this page and the signed tag win.
 > replaced with placeholders. The private deployment inventory holds the live
 > values. See [`PUBLICATION-METADATA-POLICY.md`](PUBLICATION-METADATA-POLICY.md).
 
+## 5.45.0 deployment verification
+
+| Check | Result |
+|---|---|
+| `/api/version` | `5.45.0` on production |
+| Alembic | **`0065_legacy_kali_columns` (head)** |
+| Health | `200` |
+| Schema cleanup | Legacy Kali columns: `0`; missing FK indexes: `10` |
+| Alembic drift | `48` operations (down from `93`) |
+| Existing routes | `/contract-review`, `/my-evidence`, `/evidence-review`, `/journey`, `/impact`, `/practice` return `200` |
+| SSO | Authentik OIDC provider present; `sso_enabled` is true |
+| Pre-deploy backup | `~/backups/ocr-backup-20261124-181940.dump` |
+| Post-deploy backup | `~/backups/ocr-backup-20261124-182316.dump` |
+| Rollback images | `opencyberrange-backend:pre-v5.45.0`, `ocr-frontend:pre-v5.45.0` |
+| Restore drill | **PASSED** (69 users, 215 labs, 2 courses, 64 enrollments, 134 completions, 497 achievements, 1,575 activity events) |
+
 ## 5.44.0 deployment verification
 
 | Check | Result |
@@ -109,14 +125,16 @@ another document disagrees, this page and the signed tag win.
 | Item | Value |
 |---|---|
 | Edition | **Community / Academic** (`lite` entitlement, single-host) |
-| Release | **5.44.0** |
-| Signed tag | **`v5.44.0`** |
-| Runtime code commit | `47146529` (signed tag `v5.44.0`) |
-| Previous release | `5.43.1` (signed tag `v5.43.1` at `34b3cbd9`) |
-| Alembic revision | **`0062_index_dedupe`** |
+| Release | **5.45.0** |
+| Signed tag | **`v5.45.0`** |
+| Runtime code commit | `a50305fb` (signed tag `v5.45.0`) |
+| Previous release | `5.44.0` (signed tag `v5.44.0` at `47146529`) |
+| Alembic revision | **`0065_legacy_kali_columns`** |
 | Development host | `<dev-host-ip>` |
 | Production host | `<prod-host-ip>` / `https://<platform-host>` |
 | Repository | `RobChaykoski/opencyberrange` (`main`) |
+| Pre-5.45.0 backup | `~/backups/ocr-backup-20261124-181940.dump` |
+| Post-5.45.0 backup | `~/backups/ocr-backup-20261124-182316.dump` |
 | Pre-5.44.0 backup | `~/backups/ocr-backup-20261124-173551.dump` |
 | Post-5.44.0 backup | `~/backups/ocr-backup-20261124-173923.dump` |
 | Pre-5.43.1 backup | `~/backups/ocr-backup-20261124-170800.dump` |

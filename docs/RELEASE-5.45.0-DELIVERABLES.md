@@ -1,16 +1,18 @@
 # Release 5.45.0 deliverables
 
-Status: **release prepared; deployment pending** on 24 November 2026.
+Status: **released and deployed** to development and production on 24 November
+2026.
 
 | Item | Value |
 |---|---|
 | Version | `5.45.0` |
 | Signed tag | `v5.45.0` |
-| Release commit | Pending tag |
+| Release commit | `a50305fb` |
 | Alembic | `0065_legacy_kali_columns` |
-| Production | Pending |
-| Development | Pending |
+| Production | Deployed and verified |
+| Development | Deployed and verified |
 | Supply-chain lock | Refreshed and signed with the release key |
+| Backups | Pre-deploy and post-deploy dumps, plus a passed restore drill |
 
 ## Schema alignment
 
@@ -21,7 +23,7 @@ Status: **release prepared; deployment pending** on 24 November 2026.
 | WebSocket tickets | `WebSocketTicket` model and migration `0064_ws_tickets`; startup DDL removed |
 | Legacy Kali columns | Migration `0065_legacy_kali_columns` drops six unused columns; downgrade restores their types |
 | Descending indexes | `awarded_at`, `started_at`, and `completed_at` expressions now declare `DESC` to match the database |
-| Drift inventory | Classified 93 production operations down to 48 on development |
+| Drift inventory | Classified 93 production operations down to 48 on development and production |
 | Host isolation | ADR 0007 records the `ocr-labd` host-agent recommendation and options |
 
 Remaining drift after 0065:
@@ -39,17 +41,23 @@ are documented in [Alembic drift inventory](ALEMBIC-DRIFT-INVENTORY.md).
 | Check | Result |
 |---|---|
 | Backend tests | `1,182 passed` |
-| Frontend build and tests | Pending |
-| Quality checks | Pending |
-| Supply-chain lock | Pending |
+| Frontend build and tests | Build passed; `35` component tests passed |
+| Quality checks | Green |
+| Supply-chain lock | Verified with the release key |
 | Development Alembic | `0065_legacy_kali_columns` |
+| Production Alembic | `0065_legacy_kali_columns` |
 | Development drift | 48 operations (down from 93) |
-| Development Kali columns | `0` |
-| Production `/api/version` | Pending |
-| Production health | Pending |
-| Production drift | Pending |
-| Restore drill | Pending |
-| Rollback images | Pending |
+| Production drift | 48 operations (down from 93) |
+| Legacy Kali columns | `0` on production |
+| Missing FK indexes | `10` present on production |
+| Production `/api/version` | `5.45.0` |
+| Production health | `200` |
+| Existing routes | `/contract-review`, `/my-evidence`, `/evidence-review`, `/journey`, `/impact`, `/practice` return `200` |
+| SSO | Authentik OIDC provider present; `sso_enabled` true |
+| Pre-deploy backup | `~/backups/ocr-backup-20261124-181940.dump` |
+| Post-deploy backup | `~/backups/ocr-backup-20261124-182316.dump` |
+| Rollback images | `opencyberrange-backend:pre-v5.45.0`, `ocr-frontend:pre-v5.45.0` |
+| Restore drill | `69` users, `215` labs, `2` courses, `64` enrollments, `134` completions, `497` achievements, `1,575` activity events |
 
 ## Known limitations
 
@@ -63,11 +71,11 @@ are documented in [Alembic drift inventory](ALEMBIC-DRIFT-INVENTORY.md).
 
 ## Acceptance checklist
 
-- [ ] Signed tag and verified supply-chain lock.
-- [ ] Migrations `0063`-`0065` applied on production.
-- [ ] Production health, version, SSO, and public routes verified.
-- [ ] Production drift re-checked.
-- [ ] Pre-deploy and post-deploy backups.
-- [ ] Restore drill passed.
-- [ ] Rollback images retained.
-- [ ] Test suite and component regression test pass.
+- [x] Signed tag and verified supply-chain lock.
+- [x] Migrations `0063`-`0065` applied on production.
+- [x] Production health, version, SSO, and public routes verified.
+- [x] Production drift re-checked at 48 operations.
+- [x] Pre-deploy and post-deploy backups.
+- [x] Restore drill passed.
+- [x] Rollback images retained.
+- [x] Test suite and component regression test pass.

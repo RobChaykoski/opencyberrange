@@ -7,7 +7,7 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.45.0` | SWOCTS Cyber Range Release 5.45.0 | Signed annotated tag: database schema alignment with migrations `0063`-`0065`, removal of 24 redundant `id` index declarations, the 10 missing FK indexes, WebSocket ticket table ownership, legacy Kali column removal, descending index alignment, and the Docker host-isolation ADR and Alembic drift inventory. Deployment pending. |
+| `v5.45.0` | SWOCTS Cyber Range Release 5.45.0 | Signed annotated tag: database schema alignment with migrations `0063`-`0065`, removal of 24 redundant `id` index declarations, the 10 missing FK indexes, WebSocket ticket table ownership, legacy Kali column removal, descending index alignment, and the Docker host-isolation ADR and Alembic drift inventory. Deployed to development and production on 24 November 2026; post-deploy backup and restore drill passed. |
 
 Deliverables: [Release 5.45.0 deliverables](RELEASE-5.45.0-DELIVERABLES.md).
 
