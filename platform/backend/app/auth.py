@@ -306,9 +306,9 @@ def _check_token_revocation(
     or by a per-user mass revocation issued after the token's iat.
 
     Pass the request's session when one is available so authentication does
-    not open a second pooled connection on every request. Fails open with a
-    logged warning if the revoked_tokens table is missing, so a half-deployed
-    schema does not lock everyone out."""
+    not open a second pooled connection on every request. Fails closed: if the
+    revocation store errors, the caller receives 503 rather than a token that
+    might be revoked."""
     from app.database import SessionLocal
     from app.models import RevokedToken
     keys = [_revocation_sentinel(username)]
@@ -941,7 +941,11 @@ def validate_ws_ticket(ticket: str) -> Optional[int]:
         if row is None:
             return None
         user_id, expires_at = row
-        if datetime.now(timezone.utc) > expires_at.replace(tzinfo=timezone.utc):
+        if datetime.now(timezone.utc) > (
+            expires_at.replace(tzinfo=timezone.utc)
+            if expires_at.tzinfo is None
+            else expires_at.astimezone(timezone.utc)
+        ):
             return None
         db.commit()
         return user_id

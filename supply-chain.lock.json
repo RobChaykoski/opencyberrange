@@ -223,7 +223,7 @@
       "sha256": "5a594eec5e17a2e2471da59dcb7647a6ddfa5e1103230a094e23b1be3f2a4a15"
     },
     "platform/frontend/nginx.conf": {
-      "sha256": "854506e5efcc601a6d55dcbf69031382666f0682086ef0159ff98e444898e475"
+      "sha256": "f808eb1e3d730c8d87db3a9888de8cabf6a63bcf09e828d56228313f1b7f7942"
     },
     "platform/frontend/package-lock.json": {
       "sha256": "f72bb14cd72fe1e16b843812975b8780665072b402132c741cdd3b287f6d1c89"

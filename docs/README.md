@@ -51,6 +51,7 @@ scale, federation, then the AI mentor.
 - [Program layer: organizations, scenarios, transcript, and analytics](PROGRAM-LAYER.md)
 - [The Age of Foundations](FOUNDATIONS.md)
 - [The Living Archive](LIVING-ARCHIVE.md)
+- [Security review log, 24 November 2026](SECURITY-REVIEW-2026-11-24.md)
 - [Competency contract review guide](COMPETENCY-REVIEW-GUIDE.md)
 - [Competency review cycle](COMPETENCY-REVIEW-CYCLE.md)
 - [Learner-visible scores](LEARNER-VISIBLE-SCORES.md)
