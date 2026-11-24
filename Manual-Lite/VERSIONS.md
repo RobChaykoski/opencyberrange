@@ -2,9 +2,10 @@
 
 The core manual in this folder describes the workflows shared by the
 **Community / Academic**, **Professional**, and **Enterprise** edition profiles
-on platform **Release 5**, plus the **Advanced DNA Insights** feature (enabled
-under Admin settings). Professional and Enterprise are cumulative: every page
-here still applies, and each edition adds the pages in its own supplement.
+on platform **Release 5.38.0**, plus the **Advanced DNA Insights** feature
+(enabled under Admin settings). Professional and Enterprise are cumulative:
+every page here still applies, and each edition adds the pages in its own
+supplement.
 
 !!! note "Development preview"
     Momentum, the Career Atlas, and the extended career dossier are gated by
@@ -14,13 +15,15 @@ here still applies, and each edition adds the pages in its own supplement.
 
 | Edition profile | Platform release | Manual | What it adds |
 |---|---|---|---|
-| Community / Academic | Release 5 | This manual | Single-host teaching platform, labs, workbooks, courses, certificates, privacy, and administration |
-| Professional | Release 5 | [Professional supplement](09_Professional/index.md) | Analytics and reporting, competency evidence, feedback, exercise health, and intervention signals |
-| Enterprise | Release 5 (SSO; HA preview) | [Enterprise supplement](10_Enterprise/index.md) | Multi-host HA lab pool, OIDC/SAML/LDAP SSO, enterprise reporting, and compliance reporting |
+| Community / Academic | Release 5.38.0 | This manual | Single-host teaching platform, labs, workbooks, evidence review, courses, certificates, privacy, and administration |
+| Professional | Release 5.38.0 | [Professional supplement](09_Professional/index.md) | Analytics and reporting, competency evidence, feedback, exercise health, and intervention signals |
+| Enterprise | Release 5.38.0 (SSO; HA preview) | [Enterprise supplement](10_Enterprise/index.md) | Multi-host HA lab pool, OIDC/SAML/LDAP SSO, LTI 1.3, enterprise reporting, and compliance reporting |
 
 Release 5 remains a single-tenant appliance: one deployment serves one
-institution. Multi-tenancy and LMS/LTI deep integration are not part of this
-release. Confirm the edition-specific limits in
+institution. LTI 1.3 is implemented; full multi-tenancy is deferred. SFIA 9
+crosswalks are planned under the licensing gate in
+[SFIA 9 ingestion](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/SFIA-9-INGESTION.md).
+Confirm the edition-specific limits in
 [Admin Panel Overview](04_Admin_Guide/01_Admin_Panel_Overview.md).
 
 ## How to use the manuals

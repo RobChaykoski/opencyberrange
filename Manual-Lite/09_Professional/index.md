@@ -1,9 +1,9 @@
 # SWOCTS Cyber Range Professional profile - manual supplement
 
 Professional is the **Community / Academic profile plus learning analytics,
-reporting, cohort analysis, competency evidence, and research exports** on
-platform **Release 3**. Read the [core manual](../index.md) first.
-Everything in it still applies to Professional.
+reporting, cohort analysis, competency evidence, evidence review, and research
+exports** on platform **Release 5.38.0**. Read the [core manual](../index.md)
+first. Everything in it still applies to Professional.
 
 ## What is different in Professional
 
@@ -14,6 +14,7 @@ Everything in it still applies to Professional.
 | Course analytics | Course overview, exercise drill-down, pulse feedback, learning hours, and aggregate reactions | **Course -> Analytics** |
 | Cross-course reports | Red/amber/green teaching signals, completion and abandonment, learning hours, feedback, skill-tree coverage, and CSV/PDF exports | **Reports & analytics** |
 | Competency evidence | Six-domain competency profile with evidence levels (`no evidence`, `early`, `growing`, `strong`) | Learner profile and course analytics |
+| Evidence review | Queue, learner answer, rubric criteria and levels, prior decisions, and accept / request-more / reject | **Evidence review** |
 | Feedback | Exercise like/dislike and opt-in pulse surveys with aggregate reporting | Active exercise and course analytics |
 | Research exports | Cross-course CSV/PDF and the survey package for approved studies | Reports and the REB survey package in `docs/research/REB-SURVEY-PACKAGE.md` |
 
@@ -27,6 +28,12 @@ Professional is not the HA, SSO, multi-tenant, LMS, or compliance-reporting
 profile. That is the Enterprise preview profile. Professional also keeps the Community /
 Academic privacy stance: analytics are descriptive, aggregate views show totals
 rather than learner names, and the platform does not rank or predict learners.
+
+SFIA 9 is a planned external crosswalk, not a Professional feature yet. It
+follows the licensing and review gate in
+[SFIA 9 ingestion](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/SFIA-9-INGESTION.md)
+and the [External Skills Frameworks](../02_Student_Guide/25_External_Skills_Frameworks.md)
+page.
 
 ## Learner quick start
 

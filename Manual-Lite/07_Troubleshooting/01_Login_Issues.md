@@ -1,6 +1,12 @@
 # Login Issues
 
-Use this page when you cannot sign in to the platform. The login form takes your **username** and **password**, and a failed attempt returns a single generic message regardless of the underlying cause, so the steps below walk through the cases you cannot tell apart from the screen alone.
+Use this page when you cannot sign in to the platform. The local form takes your **username** and **password**, and a failed attempt returns a single generic message regardless of the underlying cause, so the steps below walk through the cases you cannot tell apart from the screen alone.
+
+!!! note "Institution SSO"
+    If your institution enables single sign-on, use the **Sign in with
+    Institution SSO** button instead of the local form. The institution, not the
+    platform, controls that account's password and any MFA. The local form is the
+    break-glass path and is covered by the table below.
 
 ## Prerequisites
 

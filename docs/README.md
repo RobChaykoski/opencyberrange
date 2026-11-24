@@ -10,7 +10,7 @@ The signed tag and [`versions.yaml`](../versions.yaml) win over any page.
 | [Production deployment statement](PRODUCTION-DEPLOYMENT-STATEMENT.md) | The deployed release, cutover state, and evidence |
 | [Deployment runbook](DEPLOYMENT-RUNBOOK.md) | Operating the development and production hosts |
 | [Validation report](VALIDATION-REPORT.md) | Reproducible test, build, lab, and smoke evidence |
-| [Lab and content counts](COUNTS.md) | The canonical 210-lab definitions and counts |
+| [Lab and content counts](COUNTS.md) | The canonical 215-lab definitions and counts |
 | [Deployment topology and sizing](DEPLOYMENT-TOPOLOGY-AND-SIZING.md) | Supported shape, ports, and database budget |
 
 ## Browse by area
@@ -40,8 +40,10 @@ The signed tag and [`versions.yaml`](../versions.yaml) win over any page.
 
 ## Release 6 planning
 
-Release 6 is a plan, not a shipped release. The order is competency, evidence,
-capstones and analytics, scale, federation, then the AI mentor.
+Release 6.0 is in progress. The competency review tooling and the evidence
+ledger are implemented; capstones, analytics, scale, federation, and the AI
+mentor remain. The order is competency, evidence, capstones and analytics,
+scale, federation, then the AI mentor.
 
 - [Release 6 scope](RELEASE-6-SCOPE.md)
 - [Competency Framework](COMPETENCY-FRAMEWORK.md)
@@ -125,6 +127,7 @@ capstones and analytics, scale, federation, then the AI mentor.
 - [Community events calendar](COMMUNITY-EVENTS-CALENDAR.md)
 - [2027 curriculum tracks](CURRICULUM-TRACKS-2027.md)
 - [NICE Framework ingestion](NICE-FRAMEWORK-INGESTION.md)
+- [SFIA 9 ingestion plan](SFIA-9-INGESTION.md)
 - [Role capability and reporting model](ROLE-CAPABILITY-MODEL.md)
 - [Reporting roadmap](REPORTING-ROADMAP.md)
 - [Procurement requirements](PROCUREMENT-REQUIREMENTS.md) and [compliance](COMPLIANCE.md)

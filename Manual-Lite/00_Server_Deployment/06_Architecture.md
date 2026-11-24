@@ -62,6 +62,12 @@ flowchart TB
 | `ocr-dex` (optional) | Dex | internal 5556, behind `/idp` | Local OIDC test IdP |
 | `ocr-ldap` (optional) | OpenLDAP | internal 389 | Local directory for the Dex test stack |
 
+!!! note "Production identity"
+    The production deployment uses **TrailGuard Authentik OIDC** for
+    single sign-on. Dex and OpenLDAP are the optional local test profile, not the
+    production identity provider. The local platform login remains the
+    break-glass path.
+
 !!! note "Pinned images are recorded separately"
     The diagram and table name each service by role, not by base image. Exact
     image tags and digests are recorded in `versions.yaml` and the supported
@@ -208,8 +214,8 @@ idempotently at startup, then Alembic stamps a fresh database or upgrades an
 existing one to head. A normal upgrade does not require manual SQL.
 
 Tracked revisions live in `platform/backend/alembic/versions/`; the current head
-is **`0014_performance_indexes`**. The earlier avatars change is
-`0004_user_avatar_data`.
+is **`0053_workbook_answers`**. The evidence ledger was added in
+`0052_evidence_engine`; the earlier avatars change is `0004_user_avatar_data`.
 
 Do **not** run `alembic upgrade head` by hand while the backend is serving; the
 startup path already does it under a lock. Back up before any upgrade. There is

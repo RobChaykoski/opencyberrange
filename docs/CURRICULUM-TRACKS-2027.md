@@ -170,6 +170,8 @@ mapping.
 
 SFIA, ECSF, and CISA are the next mapping layer. Do not add free-text framework
 names to a lab; add a validated component set when those catalogs are ingested.
+SFIA 9 follows the licensing and review plan in
+[SFIA 9 ingestion](SFIA-9-INGESTION.md).
 
 ## Content lifecycle
 

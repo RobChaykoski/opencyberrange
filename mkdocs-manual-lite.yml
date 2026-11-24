@@ -91,6 +91,8 @@ nav:
     - "Viewing Your Profile": 02_Student_Guide/16_Viewing_Your_Profile.md
     - "Navigating your Cyber DNA": 02_Student_Guide/22_Navigating_Your_Cyber_DNA.md
     - "Career Atlas and Momentum": 02_Student_Guide/21_Career_Atlas_And_Momentum.md
+    - "Workbook Answers": 02_Student_Guide/24_Workbook_Answers.md
+    - "External Skills Frameworks": 02_Student_Guide/25_External_Skills_Frameworks.md
     - "Changing Your Password": 02_Student_Guide/17_Changing_Your_Password.md
     - "Privacy, Consent, and Your Data": 02_Student_Guide/18_Privacy_And_Your_Data.md
     - "Using a Mobile Device": 02_Student_Guide/19_Using_a_Mobile_Device.md
@@ -137,6 +139,7 @@ nav:
     - "Deleting a Course": 03_Instructor_Guide/14_Deleting_a_Course.md
     - "Creating and Managing Assignments": 03_Instructor_Guide/15_Creating_and_Managing_Assignments.md
     - "Course Assessments": 03_Instructor_Guide/16_Course_Assessments.md
+    - "Evidence Review": 03_Instructor_Guide/17_Evidence_Review.md
   - "Server Deployment":
     - "Prerequisites": 00_Server_Deployment/01_Prerequisites.md
     - "Docker Compose Manual": 00_Server_Deployment/08_Docker_Deploy_Manual.md
@@ -147,8 +150,8 @@ nav:
     - "Upgrade and Verify": 00_Server_Deployment/07_Upgrade_And_Verify.md
     - "Architecture": 00_Server_Deployment/06_Architecture.md
   - "Manual editions": VERSIONS.md
-  - "Professional 2.1 supplement": 09_Professional/index.md
-  - "Enterprise 3.0 supplement": 10_Enterprise/index.md
+  - "Professional supplement": 09_Professional/index.md
+  - "Enterprise supplement": 10_Enterprise/index.md
   - "Admin Guide":
     - "Admin Panel Overview": 04_Admin_Guide/01_Admin_Panel_Overview.md
     - "Approving New Users": 04_Admin_Guide/02_Approving_New_Users.md

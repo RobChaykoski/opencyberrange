@@ -67,7 +67,7 @@ That is expected on a deployment without demo data.
 - Confirm the served release and catalogue before capturing:
   `curl -k -s "$UI_BASE_URL/api/version"` must return the current version, and
   the student dashboard must show the current **public** exercise total (**170**;
-  the database has 210 registered labs, of which 40 are course-scoped). A footer
+  the database has 215 registered labs, of which 45 are course-scoped). A footer
   that shows only `v5`, or an old total such as 149, means the capture is stale.
 - The script turns **Privacy Mode** off by default so names are readable. On a
   host that mirrors production users, set `UI_MANUAL_PRIVACY=1` and keep it on;

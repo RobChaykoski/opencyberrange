@@ -1,25 +1,25 @@
 # SWOCTS Cyber Range Enterprise - manual supplement
 
-Enterprise is a **Release 4 profile** and adds HA, SSO, enterprise reporting,
-and compliance reporting. Multi-tenant support, LMS/SIS integration, and the
-per-student accommodation engine are Release 5. Read the [core manual](../index.md) and the
+Enterprise is a **Release 5.38.0 profile** and adds HA, SSO, enterprise reporting,
+and compliance reporting. LTI 1.3 and the per-student accommodation engine are
+implemented; full multi-tenancy remains deferred. Read the [core manual](../index.md) and the
 [Professional supplement](../09_Professional/index.md) first. Enterprise is
 cumulative too.
 
 ## Delivery status
 
-| Capability | State in Release 4 |
+| Capability | State in Release 5.38.0 |
 |---|---|
 | Professional analytics and reporting | Inherited |
 | SSO / OIDC | **Implemented and tested** |
 | SSO / LDAP / SAML | **Implemented and tested** |
 | Multi-host HA lab pool | Reference implementation in the separate HA repository; not a supported production deployment yet |
-| Multi-tenancy | Planned for Release 5 |
-| LMS / SIS integration (LTI 1.3 Advantage) | Planned for Release 5 |
+| Multi-tenancy | Deferred; the single-tenant RLS backstop is in place |
+| LMS / SIS integration (LTI 1.3 Advantage) | **Implemented and tested** |
 | Enterprise and compliance reporting | Partial; the procurement evidence pack is in `docs/COMPLIANCE.md` and `docs/HECVAT.md` |
 
-OIDC, SAML 2.0, and LDAP/Active Directory login are implemented and tested in
-Release 4. A formal SSO security review and the full multi-host HA failure
+OIDC, SAML 2.0, and LDAP/Active Directory login are implemented and tested.
+The production deployment uses TrailGuard Authentik OIDC. A formal SSO security review and the full multi-host HA failure
 matrix remain. See `docs/EDITIONS.md`, `docs/V3-HA-LAB-POOL.md`, and
 `docs/V3-PARKING-LOT.md`.
 
@@ -43,7 +43,7 @@ deployment shape, not a checkbox in the single-host installer.
 
 ## Single sign-on (OIDC, SAML, LDAP)
 
-Release 4 adds OIDC, SAML 2.0, and LDAP/Active Directory sign-in. The login page
+The platform supports OIDC, SAML 2.0, and LDAP/Active Directory sign-in. The login page
 shows a button for each enabled OIDC or SAML provider, and an
 institution-account form for each LDAP provider.
 
@@ -110,7 +110,7 @@ claim mapping, and troubleshooting, see
 
 - **Identity providers:** the settings screen stores LDAP, OIDC, and SAML
   configuration and encrypts bind passwords, client secrets, and private keys.
-  OIDC, SAML, and LDAP login are active in Release 4.
+  OIDC, SAML, and LDAP login are active in Release 5.38.0.
 - **API documentation:** `/docs`, `/redoc`, and `/openapi.json` are not proxied
   on the public origin; nginx returns 404. The backend gate is default-off as
   defense in depth for direct localhost access.

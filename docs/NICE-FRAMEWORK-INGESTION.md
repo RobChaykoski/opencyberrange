@@ -96,4 +96,5 @@ a reviewer can see whether it was made against v2.2.0 or a later release.
 
 SFIA, ECSF, and the CISA Workforce Framework are the next catalogs. They should
 follow the same pattern: an official source, a versioned snapshot, validated
-codes, and a refresh path.
+codes, and a refresh path. The SFIA 9 licensing, data model, mapping rules, and
+review gate are defined in [SFIA 9 ingestion](SFIA-9-INGESTION.md).

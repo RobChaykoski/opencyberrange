@@ -34,7 +34,7 @@ attack-and-remediation pathway), Linux Fundamentals, Web Application Security
 (with the modern application-security pathway: API, GraphQL, JWT, OAuth,
 DevSecOps, containers, Kubernetes, and supply chain), Network Security, Malware
 Analysis, OT/ICS Security, OSINT, Digital Forensics, Identity and Access, and AI
-Security. Release 5.36 ships **214 lab definitions**; **169** are in the public
+Security. Release 5.38 ships **215 lab definitions**; **170** are in the public
 catalogue and **45** are scoped to an assigned course. The available set also
 depends on the edition and content enabled on your server.
 

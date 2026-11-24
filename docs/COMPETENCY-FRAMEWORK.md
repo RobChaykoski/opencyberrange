@@ -41,7 +41,7 @@ A stable, versioned vocabulary. Every competency has:
 | `definition` | What a learner must be able to do |
 | `observable_verbs` | Verifiable actions (identify, extract, correlate, document, remediate) |
 | `proficiency_levels` | Descriptors for each level |
-| `crosswalks` | NICE work role, CS2023 knowledge area, CAE-CD outcome where applicable |
+| `crosswalks` | NICE work role, CS2023 knowledge area, CAE-CD outcome, and SFIA 9 skill/level where applicable |
 | `version` | Semantic version of the definition |
 
 ### 2. Skill hierarchy
@@ -164,8 +164,12 @@ subject-matter review:
   owner and a date.
 - 100% of workbooks, quizzes, assessments, capstones, and badges have a mapping.
 - A read API exposes the taxonomy and mappings with a version and a change log.
-- Crosswalks exist for NICE work roles, CS2023 knowledge areas, and CAE-CD
-  outcomes where a credible mapping exists; gaps are explicit.
+- Crosswalks exist for NICE work roles, CS2023 knowledge areas, CAE-CD
+  outcomes, and SFIA 9 skills and responsibility levels where a credible mapping
+  exists; gaps are explicit.
+- SFIA 9 content follows the licensing and review gates in
+  [SFIA 9 ingestion](SFIA-9-INGESTION.md); no skill definitions or mappings are
+  fabricated before a licensed snapshot is available.
 - No competency score can be produced without evidence, and no validated score
   can be produced from one completion.
 - CI fails on an unmapped object, an unknown competency, or a stale contract.

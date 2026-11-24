@@ -47,29 +47,35 @@ pages live in the [Professional supplement](09_Professional/index.md) and the
 [Enterprise supplement](10_Enterprise/index.md). See
 [Manual editions](VERSIONS.md) for the feature matrix.
 
-## What's new in Release 5.17
+## What's new in Release 5.38
 
-- **Edition:** Community / Academic (`lite` entitlement, single-host). The
-  Professional and Enterprise profiles remain separate licence tiers on the same
-  release line.
-- **214 lab definitions:** the catalogue includes a nine-lab **Active
-  Directory** pathway (domain enumeration, Kerberoasting, AS-REP roasting,
-  ACL/DACL abuse, delegation, AD CS, DCSync/tickets, GPO/LAPS defence, capstone),
-  a ten-lab **modern application-security** pathway (API inventory, BOLA/BFLA,
-  GraphQL, JWT, OAuth/OIDC, DevSecOps, containers, Kubernetes, supply chain,
-  capstone), and an eight-lab **Metasploit** pathway.
-- **Tenant isolation:** forced PostgreSQL row-level security covers 25
+- **215 lab definitions.** The catalogue now includes the OSINT03
+  **Canary Tokens and Deception** chapter and the lab **Noise in the Nest**.
+  The Active Directory, modern application-security, Metasploit, and network
+  engineering pathways remain in the catalogue.
+- **Evidence ledger.** A correct flag, a passed exercise knowledge check, and a
+  saved workbook answer each create a structured evidence record. The record
+  keeps the rubric version, competencies, provenance, and artifact hash.
+- **Instructor evidence review.** Instructors and administrators can open
+  **Evidence review** to see the queue, the learner's answer, the rubric
+  criteria, prior decisions, and the accept / request-more / reject form.
+- **Workbook answers.** Learners can open **Workbook answers** to write a short
+  analyst answer for any workbook exercise. Each distinct version is snapshotted
+  into the evidence ledger for review; editing does not rewrite the old version.
+- **Multi-path career affinity.** The profile can show more than one strong
+  practice direction. Recent work counts more than old work, so a learner can
+  change direction without losing their history.
+- **Authentik SSO.** Production sign-in uses the TrailGuard Authentik OIDC
+  provider. The local login remains available as the break-glass path.
+- **Tenant isolation.** Forced PostgreSQL row-level security covers 32
   learner-owned tables. The Community / Academic deployment runs one `default`
   institution, so the backstop is transparent in normal use.
-- **Re-authentication fix:** the re-authentication dialog now calls the correct
-  API path, unblocking exports, role changes, consent revocation, and the
-  production cutover.
-- **Production is cut over:** `deployment_mode=production`,
-  `data_collection_mode=production`, and settings changes require a ticket.
 
 See the
+[release tags](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/RELEASES.md)
+for the signed release history and the
 [production deployment statement](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/PRODUCTION-DEPLOYMENT-STATEMENT.md)
-for the authoritative release and deployment record.
+for the deployment record.
 
 ## Where to start
 
@@ -78,6 +84,10 @@ for the authoritative release and deployment record.
   and the [VPN Setup Guide](05_VPN_Setup_Guide/01_VPN_Overview.md).
 - Tracking completion, certificates, and your PDF transcript? See
   [Viewing Your Profile](02_Student_Guide/16_Viewing_Your_Profile.md).
+- Writing an analyst answer for an exercise? See
+  [Workbook Answers](02_Student_Guide/24_Workbook_Answers.md).
+- Reviewing learner evidence? See
+  [Evidence Review](03_Instructor_Guide/17_Evidence_Review.md).
 - Want the full guide to the six Cyber DNA branches, decay and repair, the
   40-hour continuing-education target, and the trend arrows? See
   [Navigating your Cyber DNA](02_Student_Guide/22_Navigating_Your_Cyber_DNA.md).
@@ -93,6 +103,8 @@ for the authoritative release and deployment record.
   [Lab Workflow Reference](06_Lab_Workflow_Reference/01_Lab_Lifecycle_Overview.md).
 - Looking for a term or the MISP-aligned definition? See the
   [Glossary](08_Glossary/01_Glossary.md).
+- Want to understand how the platform relates to NICE, CS2023, CAE-CD, and
+  SFIA 9? See [External Skills Frameworks](02_Student_Guide/25_External_Skills_Frameworks.md).
 - Something not working? See [Troubleshooting](07_Troubleshooting/01_Login_Issues.md).
 - Teaching a course? See the [Instructor Guide](03_Instructor_Guide/01_Instructor_Dashboard.md).
 - Running the server? See [Server Deployment](00_Server_Deployment/01_Prerequisites.md)

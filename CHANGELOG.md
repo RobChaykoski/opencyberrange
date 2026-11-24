@@ -22,6 +22,17 @@ All notable changes to OpenCyberRange are recorded here.
 - Updated the i18n baseline for the new review surface, workbook answer page,
   and navigation entries.
 
+### User manual and frameworks
+
+- Updated the manual for 5.38.0: current install prerequisites, 215-lab and
+  170-public counts, Authentik production identity, LTI 1.3 status, tenant
+  isolation count, and the new evidence and workbook workflows.
+- Added **Workbook Answers**, **Evidence Review**, and **External Skills
+  Frameworks** pages to the manual navigation.
+- Added the [SFIA 9 ingestion plan](docs/SFIA-9-INGESTION.md): licensing gate,
+  proposed data model, mapping rules, review criteria, and the requirement for a
+  licensed snapshot before any SFIA content or mapping is committed.
+
 ## [5.38.0] - 2026-11-24
 
 ### Release 6 evidence ledger
