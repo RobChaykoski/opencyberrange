@@ -385,12 +385,13 @@
                     <div
                       class="capability-row__bar"
                       role="progressbar"
-                      :aria-valuenow="axis.score ?? 0"
+                      :aria-valuenow="axis.score ?? undefined"
                       aria-valuemin="0"
                       aria-valuemax="100"
+                      :aria-valuetext="axis.score == null ? 'No evidence' : `${axis.score} out of 100`"
                       :aria-label="`${axis.label} capability`"
                     >
-                      <span :style="{ width: `${axis.score ?? 0}%` }"></span>
+                      <span v-if="axis.score != null" :style="{ width: `${axis.score}%` }"></span>
                     </div>
                     <strong>{{ axis.score == null ? 'No evidence' : axis.score }}</strong>
                   </div>

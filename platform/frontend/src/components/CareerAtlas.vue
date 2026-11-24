@@ -77,7 +77,8 @@
         <span class="atlas-core__sigil" aria-hidden="true">{{ classInitial }}</span>
         <div>
           <strong>{{ dna?.class?.class_name || 'Recruit' }}</strong>
-          <span>{{ dna?.overall ?? 0 }}/99 · {{ dna?.tier || 'Unranked' }}</span>
+          <span v-if="dna?.overall != null">{{ dna.overall }}/99 · {{ dna?.tier || 'Unranked' }}</span>
+          <span v-else>No practice evidence yet</span>
         </div>
       </div>
 

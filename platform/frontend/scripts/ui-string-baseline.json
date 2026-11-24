@@ -1,5 +1,5 @@
 {
-  "total": 5177,
+  "total": 5180,
   "files": {
     "src/App.vue": 13,
     "src/components/AchievementStudio.vue": 54,
@@ -8,7 +8,7 @@
     "src/components/AuditHistory.vue": 18,
     "src/components/AvailableSurveys.vue": 9,
     "src/components/CareerAssessmentPanel.vue": 8,
-    "src/components/CareerAtlas.vue": 47,
+    "src/components/CareerAtlas.vue": 48,
     "src/components/CareerGps.vue": 38,
     "src/components/CommunityEventsCalendar.vue": 19,
     "src/components/CompetencyRadar.vue": 30,
@@ -19,7 +19,7 @@
     "src/components/CourseHealthOverview.vue": 39,
     "src/components/CoursePlanningPanel.vue": 45,
     "src/components/CurriculumDemand.vue": 21,
-    "src/components/CyberDiscoveryPanel.vue": 37,
+    "src/components/CyberDiscoveryPanel.vue": 38,
     "src/components/CyberDnaBand.vue": 15,
     "src/components/CyberDnaV3Panel.vue": 46,
     "src/components/ExerciseHeatmap.vue": 20,
@@ -40,7 +40,7 @@
     "src/components/NiceMappingPicker.vue": 6,
     "src/components/OpenBadgesPanel.vue": 16,
     "src/components/PeriodFilter.vue": 5,
-    "src/components/PortfolioPanel.vue": 37,
+    "src/components/PortfolioPanel.vue": 38,
     "src/components/PrebuildBanner.vue": 4,
     "src/components/PrivacyAcknowledgement.vue": 14,
     "src/components/PrivacyDataPanel.vue": 29,

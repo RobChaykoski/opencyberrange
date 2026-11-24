@@ -112,7 +112,10 @@
           </div>
           <p v-else class="discovery-empty">Complete an investigation to start your Cyber DNA.</p>
           <p class="discovery-note">
-            Overall {{ data.dna?.overall ?? 0 }} / 99 · {{ data.dna?.tier || 'Unranked' }}.
+            <template v-if="data.dna?.overall != null">
+              Overall {{ data.dna.overall }} / 99 · {{ data.dna?.tier || 'Unranked' }}.
+            </template>
+            <template v-else>No practice score yet. This is unmeasured, not a zero.</template>
             This is a descriptive practice signal, not a grade.
           </p>
         </section>

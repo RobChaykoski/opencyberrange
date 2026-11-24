@@ -10,8 +10,11 @@
           {{ data?.identity?.display_name || 'Your evidence record' }}
         </h2>
         <p class="portfolio-hero__subtitle">
-          {{ data?.cyber_dna?.class?.class_name || 'Recruit' }} ·
-          {{ data?.cyber_dna?.overall ?? 0 }}/99 · {{ data?.cyber_dna?.tier || 'Unranked' }}
+          {{ data?.cyber_dna?.class?.class_name || 'Recruit' }}
+          <template v-if="data?.cyber_dna?.overall != null">
+            · {{ data.cyber_dna.overall }}/99 · {{ data?.cyber_dna?.tier || 'Unranked' }}
+          </template>
+          <template v-else>· practice score unmeasured</template>
           <span v-if="data?.generated_at"> · generated {{ formatDate(data.generated_at) }}</span>
         </p>
         <p class="portfolio-hero__headline">{{ data?.headline }}</p>
@@ -171,12 +174,13 @@
             <div
               class="portfolio-skill__bar"
               role="progressbar"
-              :aria-valuenow="skill.score || 0"
+              :aria-valuenow="skill.score ?? undefined"
               aria-valuemin="0"
               aria-valuemax="100"
+              :aria-valuetext="skill.score == null ? 'No evidence' : `${skill.score} out of 100`"
               :aria-label="`${skill.label}: ${skill.score ?? 'no score'} out of 100`"
             >
-              <span :style="{ width: (skill.score || 0) + '%' }"></span>
+              <span v-if="skill.score != null" :style="{ width: skill.score + '%' }"></span>
             </div>
             <p>{{ skill.description }}</p>
             <div class="portfolio-skill__meta">

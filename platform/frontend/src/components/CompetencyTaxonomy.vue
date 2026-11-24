@@ -84,7 +84,7 @@
                   >
                     <span>{{ dimension.label }}</span>
                     <div class="taxonomy-dimension__bar">
-                      <span :style="{ width: (dimension.score || 0) + '%' }"></span>
+                      <span v-if="dimension.score != null" :style="{ width: dimension.score + '%' }"></span>
                     </div>
                     <small>{{ dimension.score !== null ? dimension.score : '—' }}</small>
                   </div>
