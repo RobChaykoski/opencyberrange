@@ -199,3 +199,20 @@ def test_node_count_and_link_count_are_bounded():
     }
     with pytest.raises(topology_engine.TopologyError):
         _expand(_compose(nodes=nodes))
+
+def test_security_opt_must_be_a_list_of_strings():
+    compose = _compose()
+    compose["services"]["svc"]["security_opt"] = "no-new-privileges:true"
+    with pytest.raises(topology_engine.TopologyError, match="security_opt"):
+        _expand(compose)
+
+
+@pytest.mark.parametrize("port", [0, 65536, -1, True, "abc"])
+def test_http_port_must_be_a_valid_port(port):
+    nodes = {
+        "h1": {"service": "h1", "role": "host"},
+        "r1": {"service": "r1", "role": "router"},
+        "svc": {"service": "svc", "role": "service", "http_port": port},
+    }
+    with pytest.raises(topology_engine.TopologyError, match="http_port"):
+        _expand(_compose(nodes=nodes))

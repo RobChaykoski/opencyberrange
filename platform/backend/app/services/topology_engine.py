@@ -71,7 +71,25 @@ def _node_spec(raw, node_id: str) -> dict:
         raise TopologyError(
             f"topology node {node_id!r} has unsupported keys: {sorted(unknown)}"
         )
-    return {**spec, "service": service, "role": role}
+    normalized = dict(spec)
+    if "http_port" in normalized:
+        raw_port = normalized["http_port"]
+        if isinstance(raw_port, bool):
+            raise TopologyError(
+                f"topology node {node_id!r} http_port must be an integer port"
+            )
+        try:
+            port = int(raw_port)
+        except (TypeError, ValueError) as exc:
+            raise TopologyError(
+                f"topology node {node_id!r} http_port must be an integer port"
+            ) from exc
+        if not 1 <= port <= 65535:
+            raise TopologyError(
+                f"topology node {node_id!r} http_port must be between 1 and 65535"
+            )
+        normalized["http_port"] = port
+    return {**normalized, "service": service, "role": role}
 
 
 def _validate_service(compose_data: dict, service_name: str, node_id: str) -> None:
@@ -92,12 +110,18 @@ def _validate_service(compose_data: dict, service_name: str, node_id: str) -> No
             raise TopologyError(
                 f"topology service {service_name!r} must not set {forbidden}"
             )
-    if service.get("security_opt") and "no-new-privileges:true" not in service.get(
-        "security_opt", []
-    ):
-        raise TopologyError(
-            f"topology service {service_name!r} security_opt must keep no-new-privileges"
-        )
+    security_opt = service.get("security_opt")
+    if security_opt is not None:
+        if not isinstance(security_opt, list) or not all(
+            isinstance(item, str) for item in security_opt
+        ):
+            raise TopologyError(
+                f"topology service {service_name!r} security_opt must be a list of strings"
+            )
+        if "no-new-privileges:true" not in security_opt:
+            raise TopologyError(
+                f"topology service {service_name!r} security_opt must keep no-new-privileges"
+            )
     caps = set(service.get("cap_add") or [])
     if caps - {"NET_ADMIN", "NET_RAW"}:
         raise TopologyError(
