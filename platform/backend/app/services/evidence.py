@@ -583,6 +583,57 @@ def review_record(
     return review
 
 
+def auto_accept_record(
+    db: Session,
+    record: EvidenceRecord,
+    *,
+    note: str,
+) -> EvidenceReview | None:
+    """Accept a deterministically verified record without a human reviewer.
+
+    This is the system-review path for flags and quizzes. It appends a normal
+    review row so the audit trail is complete, and it uses the recorded rubric
+    version rather than the current one.
+    """
+
+    if record.status == "accepted":
+        return None
+    rubric = get_rubric(record.rubric_id, record.rubric_version)
+    if rubric is None:
+        raise EvidenceError(
+            "evidence_rubric_unknown",
+            f"The recorded rubric {record.rubric_id} version "
+            f"{record.rubric_version} is not available.",
+        )
+    weights = {
+        str(criterion.get("id")): float(criterion.get("weight") or 0)
+        for criterion in rubric.get("criteria") or []
+        if isinstance(criterion, dict) and criterion.get("id")
+    }
+    scores = {criterion_id: 3 for criterion_id in weights}
+    weighted_score = round(sum(weights.values()), 4) if weights else None
+    review = EvidenceReview(
+        institution_id=record.institution_id,
+        evidence_id=record.id,
+        reviewer_id=None,
+        rubric_id=record.rubric_id,
+        rubric_version=record.rubric_version,
+        decision="accepted",
+        criterion_scores=json.dumps(scores, sort_keys=True, separators=(",", ":")),
+        weighted_score=weighted_score,
+        notes=note[:1000],
+        next_step=None,
+        reviewed_at=_naive_utc_now(),
+    )
+    db.add(review)
+    record.status = "accepted"
+    record.review_notes = note[:1000]
+    db.commit()
+    db.refresh(review)
+    db.refresh(record)
+    return review
+
+
 def competency_summary(
     db: Session,
     viewer: User,

@@ -12,6 +12,9 @@ All notable changes to OpenCyberRange are recorded here.
 - Added `GET /api/evidence/rubrics` to expose the versioned rubric registry and
   included the learner identity in the evidence payload for authorized
   reviewers.
+- Added the `automatic-check` rubric and background adapters for correct flags
+  and passed exercise knowledge checks. The adapters use the reviewed lab
+  contract, append a system review, and are idempotent.
 - Updated the i18n baseline for the new review surface and navigation entry.
 
 ## [5.38.0] - 2026-11-24

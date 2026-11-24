@@ -1,0 +1,20 @@
+rubric: automatic-check
+version: "1.0"
+title: Automatic verification
+description: >
+  A deterministic check produced evidence that the learner met the stated
+  condition. It records what the platform verified, not a judgement about the
+  quality of the learner's write-up.
+evidence_types:
+  - flag
+  - validation_step
+  - quiz
+criteria:
+  - id: verified
+    label: Verified result
+    weight: 1.0
+    levels:
+      0: The condition was not verified.
+      1: The condition was partially verified or the result is inconclusive.
+      2: The condition was verified with a minor caveat.
+      3: The deterministic check verified the condition.

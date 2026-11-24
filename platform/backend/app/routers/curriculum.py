@@ -2065,6 +2065,29 @@ async def submit_flag(
                     dna_error,
                 )
 
+        # Record deterministic flag evidence in the Release 6 ledger. This is
+        # a background task with its own session so a ledger failure cannot
+        # turn a correct flag into an error response.
+        if completion_row is not None and completion_row.id is not None:
+            try:
+                from app.services.evidence_adapters import (
+                    record_flag_evidence_for_completion,
+                )
+
+                background_tasks.add_task(
+                    record_flag_evidence_for_completion,
+                    current_user.id,
+                    lab_id,
+                    completion_row.id,
+                )
+            except Exception as evidence_error:
+                logger.warning(
+                    "Could not schedule flag evidence for user %s lab %s: %s",
+                    current_user.id,
+                    lab_id,
+                    evidence_error,
+                )
+
         # Check and award course achievements in background
         # (uses its own DB session since the request session closes after response)
         def _run_achievement_check(user_id: int, lab_id_inner: int):

@@ -7,7 +7,7 @@ attempt, and explanations/references after submission.
 
 import logging
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.auth import get_current_active_user
@@ -70,12 +70,13 @@ async def submit_exercise_quiz(
     lab_slug: str,
     attempt_id: int,
     payload: ExerciseQuizSubmitRequest,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ):
     lab = _visible_lab_or_403(db, current_user, lab_slug)
     try:
-        return exercise_quiz.submit_attempt(
+        result = exercise_quiz.submit_attempt(
             db,
             current_user,
             lab,
@@ -85,6 +86,23 @@ async def submit_exercise_quiz(
         )
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
+    try:
+        from app.services.evidence_adapters import record_quiz_evidence_for_attempt
+
+        background_tasks.add_task(
+            record_quiz_evidence_for_attempt,
+            current_user.id,
+            lab.id,
+            attempt_id,
+        )
+    except Exception as exc:
+        logger.warning(
+            "Could not schedule quiz evidence for user %s lab %s: %s",
+            current_user.id,
+            lab.id,
+            exc,
+        )
+    return result
 
 
 @router.get("/labs/{lab_slug}/quiz/attempts")

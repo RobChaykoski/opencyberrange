@@ -122,8 +122,10 @@ python scripts/validate-rubrics.py
 ```
 
 The initial registry contains `blue-team-timeline`,
-`vulnerability-report`, and `capstone-brief`. Add a new version as a new file;
-never edit a published version in place.
+`vulnerability-report`, `capstone-brief`, and `automatic-check`. The automatic
+rubric is the system path for deterministic flags and passed knowledge checks;
+it records verification, not the quality of a learner's write-up. Add a new
+version as a new file; never edit a published version in place.
 
 ## Automated collection
 
@@ -246,12 +248,15 @@ Release 6.0 ships the first vertical slice:
   rubric criteria and levels, prior decisions, and the decision form. The
   rubric catalogue is loaded from the versioned registry, so an old record is
   judged by the version it was collected with.
+- Background adapters for correct flags and passed exercise knowledge checks.
+  They use the reviewed competency contract and the `automatic-check` rubric,
+  append a system review, and are idempotent per learner, lab, and source.
 - Tests for idempotency, tenant and course scope, scoring, queue filtering,
-  unknown rubric/competency rejection, and append-only content.
+  unknown rubric/competency rejection, automatic acceptance, and append-only
+  content.
 
-Not yet implemented: artifact upload and storage, appeals, and asynchronous
-adapters that create evidence from flags or workbook saves. Those are the next
-increments.
+Not yet implemented: artifact upload and storage, workbook-answer capture, and
+appeals. Those are the next increments.
 
 ## Privacy and security
 
