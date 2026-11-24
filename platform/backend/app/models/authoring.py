@@ -103,7 +103,6 @@ class TemplateInstance(Base):
     __table_args__ = (
         Index("ix_instance_template_instructor", "template_id", "instructor_id"),
         Index("ix_instance_course_status", "course_id", "status"),
-        Index("ix_instance_lab_id", "lab_id"),
         CheckConstraint("fork_type IN ('cosmetic', 'exposed', 'full_fork')", name="ck_instance_fork_type"),
         CheckConstraint("status IN ('draft', 'staged', 'published', 'rejected')", name="ck_instance_status"),
     )

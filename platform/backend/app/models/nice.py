@@ -41,7 +41,6 @@ class NiceComponent(Base):
 
     __table_args__ = (
         UniqueConstraint("component_type", "code", name="uq_nice_component_type_code"),
-        Index("ix_nice_components_type_code", "component_type", "code"),
     )
 
 

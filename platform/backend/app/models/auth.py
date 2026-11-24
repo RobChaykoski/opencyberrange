@@ -447,7 +447,6 @@ class RefreshToken(Base):
         String(36),
         ForeignKey("auth_sessions.id", ondelete="CASCADE"),
         nullable=False,
-        index=True,
     )
     user_id = Column(
         Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True

@@ -27,7 +27,9 @@ class Course(Base):
     semester = Column(String(20), nullable=False)
     description = Column(Text, nullable=True)
     invite_code = Column(String(20), unique=True, index=True, nullable=False)
-    instructor_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    instructor_id = Column(
+        Integer, ForeignKey("users.id"), nullable=False, index=True
+    )
     institution_id = Column(
         String(64),
         nullable=False,
