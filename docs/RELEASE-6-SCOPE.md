@@ -83,6 +83,45 @@ Release 6 builds on shipped pieces; it is not a blank page.
 The gap is not invention. It is **completeness, versioning, and a shared evidence
 model** across those pieces.
 
+## Status at 24 November 2026
+
+The foundation is ahead of the original plan; the review campaign is the
+critical path.
+
+| Area | State | What remains |
+|---|---|---|
+| Evidence Engine (6.0) | **Shipped** | Records, competency links, rubrics, reviews, appeals, flag/quiz adapters, workbook answers, replay-safe provenance |
+| Rubric registry | **Shipped** | Five versioned rubrics, including the capstone brief |
+| Evidence analytics (6.0) | **Shipped** | Status totals, backlog age, strongest/weakest competencies, documentation coverage, confidence trend, programme effectiveness, small-cohort suppression |
+| Competency contracts | **Partial** | 25 of 215 reviewed; 190 baseline-derived contracts await subject-matter review |
+| Coverage gate for every object | **Partial** | Labs have contracts; the quiz, assessment, capstone, and badge coverage gate is not yet enforced in CI |
+| Learner-visible score gate | **Partial** | Readiness already distinguishes unmeasured from weak; the remaining surfaces need the same rule verified |
+| Capstone Builder (6.1) | **Not started** | Rubric and scope exist; generation, edit, validation, publication, and evidence capture do not |
+| Six instructor dashboards (6.1) | **Not started** | Definitions exist; the evidence operations summary is not the class-competency dashboard |
+| HA and Kubernetes (6.2) | **Not started** | Single-host Compose remains the reference; no HA control plane or lab node pool |
+| Monitoring (6.2) | **Partial** | The external dashboard exists; the dead-man switch and lab-host agents are blocked on access and a ping URL |
+| Federation (6.3) | **Design only** | No signed bundles, import preview, trust registry, or boundary test |
+| AI Mentor (6.4) | **Design only** | No grounded mentor, citation harness, or evaluation |
+| Localization (6.5) | **Groundwork only** | Bare-string baseline and `X-Error-Code`; no locale catalogue or French UI |
+
+### Critical path to 6.0
+
+1. **Review the 190 baseline contracts.** This is the hard blocker. It needs
+   subject-matter time, not more code. Work in track-sized batches; the generated
+   review queue is the source of truth.
+2. **Enforce object coverage.** Add a CI gate and an admin report for every lab,
+   quiz, assessment, capstone, and badge that lacks a competency mapping.
+3. **Verify the learner-visible rule.** Every score surface must say
+   **unmeasured** when coverage is absent, not show a low score.
+4. **Prove analytics at cohort scale.** Load and suppress at 200 learners, with
+   the same denominators the dashboards publish.
+5. **Rehearse the 6.0 migration and release.** Signed tag, supply-chain lock,
+   restore drill, manual, and a clean-install check.
+
+The remaining pillars are sequential: capstone and dashboards (6.1), then HA
+(6.2), federation (6.3), the AI Mentor (6.4), and localization (6.5). Do not
+start federation before the competency and rubric versions are stable.
+
 ## Pillars
 
 | # | Pillar | Outcome | Depends on | Train |
