@@ -132,6 +132,7 @@ break authentication or remove a global security control.
 
 | Family | Tables | Why |
 |---|---|---|
+| Tenant source | `users` | The row that defines the tenant. Login reads it before a tenant context exists. Writes are scoped by the Authorization Service and admin query filters. RLS here would either block login or require a pre-auth bypass, so it stays outside the backstop by design. |
 | Authentication and identity | `auth_sessions`, `refresh_tokens`, `revoked_tokens`, `sso_sessions`, `sso_login_tickets`, `external_identities`, `rbac_user_roles`, `service_credentials`, `instructor_api_keys`, `wireguard_configs` | Read *before* a tenant context exists; the tenant is resolved from them. Protected by token, role, and secret handling. |
 | Security and platform operations | `security_events`, `data_integrity_ledger`, `production_cutovers`, `settings_change_requests`, `retention_runs`, `break_glass_grants`, `impersonation_sessions` | Global by design. `security_events` has its own forced RLS and append-only policies. |
 | Consent subsystem | `consent_states`, `consent_events`, `consent_audits`, `consent_jobs`, `consent_revocations`, `consent_suppressions`, `survey_consent_events` | Learner-owned, but the consent gate runs during onboarding and sign-in while the tenant is being established. Already protected by the revocation orchestrator, suppression ledger, and erasure path. Candidate for the next RLS wave after the consent read path is tenant-stamped. |
@@ -161,6 +162,16 @@ before a tenant context exists. See the classification table above.
 cd platform/backend
 pytest -q tests/test_tenant_rls.py tests/test_evidence_engine.py tests/test_workbook_answers.py tests/test_evidence_appeals.py tests/test_horizontal_privilege.py tests/test_idor_matrix.py
 ```
+
+Schema and cross-tenant control audit (runtime role, inside the backend
+container):
+
+```bash
+docker exec -i ocr-backend python - < scripts/check-tenant-isolation.py
+```
+
+A second institution is validated with the
+[two-tenant pilot](TWO-TENANT-PILOT.md) runbook.
 
 `tests/test_tenant_rls.py` checks every enforced table for the column, forced
 RLS, and the four policies, and proves cross-tenant `SELECT`/`DELETE` denial on
