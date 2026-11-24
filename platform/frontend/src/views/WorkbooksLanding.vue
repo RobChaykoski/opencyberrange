@@ -72,10 +72,20 @@ const canReorder = (() => {
 async function open(wb) {
   const url = wikiUrl(wb.start_url || wb.url)
   if (!url) return
-  // Open synchronously from the click. Awaiting the cookie call first lets
-  // browsers treat the later window.open as a popup and block it.
-  window.open(url, '_blank', 'noopener,noreferrer')
-  setWikiAuthCookie()
+  // Open a blank window synchronously so the browser does not block it, then
+  // refresh the HttpOnly wiki cookie before navigating. Opening the real URL
+  // first raced the cookie request and could land on the SPA login.
+  const popup = window.open('about:blank', '_blank')
+  if (popup) popup.opener = null
+  try {
+    await setWikiAuthCookie()
+  } finally {
+    if (popup && !popup.closed) {
+      popup.location.replace(url)
+    } else if (!popup) {
+      window.open(url, '_blank', 'noopener,noreferrer')
+    }
+  }
   api.post('/analytics/events/workbook-open', {
     title: wb.name,
     url,
