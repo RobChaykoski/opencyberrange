@@ -53,3 +53,11 @@ python scripts/check-alembic-safety.py
 
 It prints the single head, confirms the revision graph is linear, and scans
 `.github/workflows` and `scripts/` for autogenerate usage.
+
+The restore-drift release check restores the newest backup into a scratch
+database, migrates it to head, and fails if the drift count exceeds the known
+baseline:
+
+```bash
+SCHEMA_DRIFT_BASELINE=48 bash scripts/check-restore-drift.sh
+```

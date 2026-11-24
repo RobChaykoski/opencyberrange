@@ -4,7 +4,17 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
-No unreleased changes.
+### Operations
+
+- Added `scripts/check-restore-drift.sh`, which restores the newest backup into a scratch database, migrates it, and enforces the 48-operation drift budget.
+- Added the weekly dependency-currency report and documented the patch, base-image, and major-upgrade cadence.
+- Seeded 25 unsigned legacy contract drafts on development for subject-matter sign-off.
+
+### Host-agent spike
+
+- Added `platform/labd/ocr_labd.py`, a loopback, token-authenticated agent skeleton with a fixed operation list and no arbitrary exec. Mutating routes return `501` until validated.
+- Added the `ocr-labd.service` systemd unit, a CI boundary check, and ADR 0007 acceptance for the spike.
+- Production remains on the pre-baked helper image and restricted socket proxy until the lab harness passes.
 
 ## [5.45.0] - 2026-11-24
 

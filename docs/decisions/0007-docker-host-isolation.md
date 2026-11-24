@@ -1,6 +1,6 @@
 # 0007: Isolate the Docker lab control plane from the web tier
 
-Status: **proposed; decision pending**
+Status: **accepted for a spike**; production cutover pending validation
 Date: 24 November 2026
 
 ## Context
@@ -40,6 +40,14 @@ The agent should expose only the operations the platform needs:
 
 It must not expose arbitrary `exec`, image build, volume mount, or host
 filesystem operations.
+
+## Decision
+
+Accepted for a spike on 24 November 2026. The skeleton lives in
+`platform/labd/` and exposes only a token-authenticated capability list;
+mutating routes return `501`. Production keeps the pre-baked helper image and
+restricted socket proxy until the lab harness passes on network, ICS, and
+RangeBox labs.
 
 ## Security properties
 

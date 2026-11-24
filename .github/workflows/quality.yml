@@ -61,6 +61,9 @@ jobs:
       - name: Guard the Alembic revision graph
         run: python scripts/check-alembic-safety.py
 
+      - name: Smoke-check the host-agent spike
+        run: python scripts/check-labd-agent.py
+
       - name: Validate rubric registry
         run: python scripts/validate-rubrics.py
 

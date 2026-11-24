@@ -62,6 +62,7 @@ scale, federation, then the AI mentor.
 - [Alembic baseline and drift](ALEMBIC-BASELINE.md)
 - [Alembic drift inventory](ALEMBIC-DRIFT-INVENTORY.md)
 - [Docker host isolation ADR](decisions/0007-docker-host-isolation.md)
+- [Dependency and image workflow](DEPENDENCY-WORKFLOW.md)
 - [Competency contract review guide](COMPETENCY-REVIEW-GUIDE.md)
 - [Competency review cycle](COMPETENCY-REVIEW-CYCLE.md)
 - [Learner-visible scores](LEARNER-VISIBLE-SCORES.md)

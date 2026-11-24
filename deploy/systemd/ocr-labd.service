@@ -1,0 +1,22 @@
+[Unit]
+Description=OpenCyberRange host lab agent (spike)
+Documentation=https://github.com/RobChaykoski/opencyberrange/blob/main/docs/decisions/0007-docker-host-isolation.md
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ocr-labd
+Group=ocr-labd
+ExecStart=/usr/bin/python3 /opt/opencyberrange/platform/labd/ocr_labd.py --host 127.0.0.1 --port 8099 --token-file /etc/ocr-labd/token --audit-log /var/log/ocr-labd/audit.jsonl
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectHome=yes
+ProtectSystem=strict
+ReadWritePaths=/var/log/ocr-labd
+UMask=0027
+
+[Install]
+WantedBy=multi-user.target

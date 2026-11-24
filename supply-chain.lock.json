@@ -10,7 +10,7 @@
       "sha256": "528819da40419208ef852227581745b47d55b666c5fc6726eb5f47b2a9a4dcc5"
     },
     ".github/workflows/dependency-audit.yml": {
-      "sha256": "3c80161a5a1660a6441c55cdef5970d53cd58a3e465a04ff8c7b051d5c56993b"
+      "sha256": "2cc785a27ec18ff5a07edda88690a30f5064219bc6a572e19211d7a80b230c40"
     },
     ".github/workflows/docs-publish.yml": {
       "sha256": "007be2d1fcd0226ba8172b67671b00365eb0d52750c381c579da785a90bd8fe3"
@@ -19,7 +19,7 @@
       "sha256": "f4824fc426bbfbe23c5ad7c67be4a318dec48d662ad015bf9e9690e212c00232"
     },
     ".github/workflows/quality.yml": {
-      "sha256": "f2c355a7c3209dcc4982ea5e3b98921ed14eea4fa51225a647c7c021866851f5"
+      "sha256": "5a1f6f2566b011c373da29c711744f64d67479cc62d6e2b4ac330e9bdd1d423c"
     },
     ".github/workflows/trivy.yml": {
       "sha256": "4e33daf5440aa286d3144424e8dac52daf6536f36c42b8319e8ea77b635e26a0"
@@ -47,6 +47,9 @@
     },
     "deploy/systemd/ocr-db-integrity.timer": {
       "sha256": "a5cd21554c3df59a5b0b83f8cdac8132d50543a17b7183218a98994e899ffbe5"
+    },
+    "deploy/systemd/ocr-labd.service": {
+      "sha256": "d8c5e2c73f596d5e2dbdf8cbc533bfcd371a307842344d527e06ff9e3f25db68"
     },
     "platform/backend/Dockerfile": {
       "sha256": "972d9b7cba928f15c2619157acf42177ed359c6cdda90e420b2dbdee1f84cc19"
@@ -240,6 +243,12 @@
     "platform/frontend/src/composables/useToolPanel.js": {
       "sha256": "2af94f01e1971686c7dd0ca2b94552cd6537f1802a3c3ccf0974fce6611d951e"
     },
+    "platform/labd/README.md": {
+      "sha256": "861f3b8a3d5400d553c01cd4d251aed65864a65d15bba48ad46d71c39f5cb158"
+    },
+    "platform/labd/ocr_labd.py": {
+      "sha256": "c92a27dfc4f01684ab7d158c14d5c988bb25b611663e883c9e64192edb96c0f0"
+    },
     "platform/labs/High School/_shared/app.py": {
       "sha256": "e379a1840c4f522e34ba54d72b409ae8464b5babb10e08a409dbedd267b9dfd8"
     },
@@ -294,11 +303,17 @@
     "scripts/check-data-dictionary.py": {
       "sha256": "c89d73e5f83b86e67e7c3cba2f1b9b7c3781bbbdbdec1096217bee5bc2318b5b"
     },
+    "scripts/check-dependency-currency.py": {
+      "sha256": "62f7c1773a522f113cd70a067053e460b4df602abd48461a3376fb8773e88a9d"
+    },
     "scripts/check-external-datasets.py": {
       "sha256": "0b9f183fa72b30b350e4922cea486f51dba4333ffde61704ce396e9de23ac7a3"
     },
     "scripts/check-external-targets.py": {
       "sha256": "6836a51290b66c4888e35d7b4e4dbf6ce7e46180ce5bd6914f6bfaa349a408e0"
+    },
+    "scripts/check-labd-agent.py": {
+      "sha256": "07b35deefad36a6fb8b18032db74f92644b7ddce0fbae411893909840a03fe35"
     },
     "scripts/check-licences.py": {
       "sha256": "535634890ffc65b0dc4a35f4f36dd6a62ca27b6ae350233b17332894ca71f7a1"
@@ -308,6 +323,9 @@
     },
     "scripts/check-minor-safe.py": {
       "sha256": "59be07a3a748ecc99b2e7bd1216d2c6e3ea62209c4abe800500c3c2c176ba3e3"
+    },
+    "scripts/check-restore-drift.sh": {
+      "sha256": "e3fa0216539a08da5dd3534b7d76742a73addf54c5d45657728fc7cd105988aa"
     },
     "scripts/check_db_roles.py": {
       "sha256": "a188534ab5135c289a572edb7982b38e11d27deea8da9c421ed21af5ffada74b"
@@ -367,7 +385,7 @@
       "sha256": "c987b10bb1c70c4955d356acab83486123ee477513fa9272aaa8d566e8b100b8"
     },
     "scripts/supply_chain.py": {
-      "sha256": "dfb21fec0f37381df88cb6bb72b8b0f69c408a3166bbf940049fad5cdc804b21"
+      "sha256": "1e92e9b07a286163625903ae8d3617f5ccd7db24d358ff52dcf22d4492bfd709"
     },
     "scripts/sync-dev-bind-mount.sh": {
       "sha256": "726a5b5f259ee7a1a9e0c1e6cd51873ba4b77d66ffa19f27266da3c288ed3783"
