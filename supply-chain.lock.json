@@ -49,7 +49,7 @@
       "sha256": "a5cd21554c3df59a5b0b83f8cdac8132d50543a17b7183218a98994e899ffbe5"
     },
     "platform/backend/Dockerfile": {
-      "sha256": "62e3fa7fdc02cdc7db0d6aeb3c553882daeaa90967da2706106c0e59e752a3af"
+      "sha256": "972d9b7cba928f15c2619157acf42177ed359c6cdda90e420b2dbdee1f84cc19"
     },
     "platform/backend/app/data/ad-pathway.yaml": {
       "sha256": "ae7447af25af1e61ceb88a5743dd7c9cf58d75912acf39d94bedf542d25dbd69"
