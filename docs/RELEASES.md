@@ -7,7 +7,7 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.43.1` | SWOCTS Cyber Range Release 5.43.1 | Signed annotated tag: patch that makes the in-place deploy and installer run the pinned `ocr-lab/netprobe:1.0` helper build by path with bash, and marks the build script executable. Deployment pending. |
+| `v5.43.1` | SWOCTS Cyber Range Release 5.43.1 | Signed annotated tag: patch that makes the in-place deploy and installer run the pinned `ocr-lab/netprobe:1.0` helper build by path with bash, and marks the build script executable. Deployed to development and production on 24 November 2026; post-deploy backup and restore drill passed. |
 
 Deliverables: [Release 5.43.1 deliverables](RELEASE-5.43.1-DELIVERABLES.md).
 
@@ -15,7 +15,7 @@ Deliverables: [Release 5.43.1 deliverables](RELEASE-5.43.1-DELIVERABLES.md).
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.43.0` | SWOCTS Cyber Range Release 5.43.0 | Signed annotated tag: FastAPI 0.165.0, SQLAlchemy 2.1.9, Pydantic 2.14.4, and pydantic-settings 2.16.3, plus the pinned `ocr-lab/netprobe:1.0` helper image that removes runtime package installation from the privileged network helpers. Deployment pending. |
+| `v5.43.0` | SWOCTS Cyber Range Release 5.43.0 | Signed annotated tag: FastAPI 0.165.0, SQLAlchemy 2.1.9, Pydantic 2.14.4, and pydantic-settings 2.16.3, plus the pinned `ocr-lab/netprobe:1.0` helper image that removes runtime package installation from the privileged network helpers. Deployed to development and production; superseded by 5.43.1 for the helper build path. |
 
 Deliverables: [Release 5.43.0 deliverables](RELEASE-5.43.0-DELIVERABLES.md).
 

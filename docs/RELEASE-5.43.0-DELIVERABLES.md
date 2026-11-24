@@ -1,6 +1,9 @@
 # Release 5.43.0 deliverables
 
-Status: **release prepared; deployment pending** on 24 November 2026.
+Status: **superseded by 5.43.1**. 5.43.0 was deployed, then replaced by 5.43.1
+to fix the helper-image build path. See
+[Release 5.43.1 deliverables](RELEASE-5.43.1-DELIVERABLES.md) for the current
+deployment record.
 
 | Item | Value |
 |---|---|

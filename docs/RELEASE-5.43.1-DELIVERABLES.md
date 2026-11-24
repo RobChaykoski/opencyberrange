@@ -1,16 +1,18 @@
 # Release 5.43.1 deliverables
 
-Status: **release prepared; deployment pending** on 24 November 2026.
+Status: **released and deployed** to development and production on 24 November
+2026.
 
 | Item | Value |
 |---|---|
 | Version | `5.43.1` |
 | Signed tag | `v5.43.1` |
-| Release commit | Pending tag |
+| Release commit | `34b3cbd9` |
 | Alembic | `0062_index_dedupe` |
-| Production | Pending |
-| Development | Pending |
+| Production | Deployed and verified |
+| Development | Deployed and verified |
 | Supply-chain lock | Refreshed and signed with the release key |
+| Backups | Pre-deploy and post-deploy dumps, plus a passed restore drill |
 
 ## Fix
 
@@ -29,14 +31,19 @@ healthy, but a fresh deployment would have skipped the helper image.
 | Check | Result |
 |---|---|
 | Backend tests | Unchanged from 5.43.0 (`1,176 passed`) |
-| Frontend build and tests | Pending |
-| Quality checks | Pending |
-| Supply-chain lock | Pending |
-| Helper image on production | Present; `ip`, `iptables`, `bridge`, `tc`, `conntrack` verified |
-| Production `/api/version` | Pending |
-| Production health | Pending |
-| Alembic on production | Pending |
-| Restore drill | Pending |
+| Frontend build and tests | Build passed; `35` component tests passed |
+| Quality checks | Green |
+| Supply-chain lock | Verified with the release key |
+| Helper image on production | Present; `ip`, `iptables`, `bridge`, `tc`, and `conntrack` verified |
+| Production `/api/version` | `5.43.1` |
+| Production health | `200` |
+| Alembic on production | `0062_index_dedupe (head)` |
+| Existing routes | `/contract-review`, `/my-evidence`, `/evidence-review`, `/journey`, `/impact`, `/practice` return `200` |
+| SSO | Authentik OIDC provider present; `sso_enabled` true |
+| Pre-deploy backup | `~/backups/ocr-backup-20261124-170800.dump` |
+| Post-deploy backup | `~/backups/ocr-backup-20261124-171127.dump` |
+| Rollback images | `opencyberrange-backend:pre-v5.43.1`, `ocr-frontend:pre-v5.43.1` |
+| Restore drill | `69` users, `215` labs, `2` courses, `64` enrollments, `134` completions, `497` achievements, `1,575` activity events |
 
 ## Known limitations
 
@@ -48,10 +55,10 @@ healthy, but a fresh deployment would have skipped the helper image.
 
 ## Acceptance checklist
 
-- [ ] Signed tag and verified supply-chain lock.
-- [ ] Helper build runs on a fresh checkout without the executable bit.
-- [ ] Production health, version, SSO, and public routes verified.
-- [ ] Pre-deploy and post-deploy backups.
-- [ ] Restore drill passed.
-- [ ] Rollback images retained.
-- [ ] Test suite and component regression test pass.
+- [x] Signed tag and verified supply-chain lock.
+- [x] Helper build runs on a fresh checkout without the executable bit.
+- [x] Production health, version, SSO, and public routes verified.
+- [x] Pre-deploy and post-deploy backups.
+- [x] Restore drill passed.
+- [x] Rollback images retained.
+- [x] Test suite and component regression test pass.
