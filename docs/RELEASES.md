@@ -7,7 +7,7 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.41.0` | SWOCTS Cyber Range Release 5.41.0 | Signed annotated tag: the instructor contract-review dashboard with sign-off and a 6/12/24-month review cycle, the competency catalogue endpoint, evidence-review analytics and decision-flow corrections, lab framing and console fixes, and migration `0060_competency_reviews`. Deployment pending. |
+| `v5.41.0` | SWOCTS Cyber Range Release 5.41.0 | Signed annotated tag: the instructor contract-review dashboard with sign-off and a 6/12/24-month review cycle, the competency catalogue endpoint, evidence-review analytics and decision-flow corrections, lab framing and console fixes, and migration `0060_competency_reviews`. Deployed to development and production on 24 November 2026; post-deploy backup and restore drill passed. |
 
 Deliverables: [Release 5.41.0 deliverables](RELEASE-5.41.0-DELIVERABLES.md).
 
@@ -343,7 +343,7 @@ recorded in `versions.yaml` and returned by `/api/version`.
 
 Tags `v3.0.0` through `v3.1.2` belong to the experimental Enterprise/HA branch
 and are historical. They are **not** the supported single-host platform
-release. The current platform releases are the `v5.x` tags on `main`; `v5.40.0`
+release. The current platform releases are the `v5.x` tags on `main`; `v5.41.0`
 is the newest.
 Release 4 added OIDC, SAML, and LDAP SSO. Multi-tenancy, LMS/LTI,
 the per-student accommodation engine, and weekly Jeopardy-style challenge quizzes
@@ -351,7 +351,7 @@ that feed Cyber DNA are Release 5.
 
 ## Choosing a version
 
-1. Use `main` or the latest `v5.x` tag (currently `v5.40.0`) for new installs.
+1. Use `main` or the latest `v5.x` tag (currently `v5.41.0`) for new installs.
 2. Keep `1.1.x` only for an existing Community / Academic maintenance install.
 3. Do not deploy a `v2.2.x`, `v2.3.x`, or `v3.x` tag as the current platform.
 4. Check `docs/SUPPORTED-VERSIONS.md` before changing a dependency or host OS.

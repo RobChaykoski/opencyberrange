@@ -1,17 +1,18 @@
 # Release 5.41.0 deliverables
 
-Status: **release prepared; deployment pending** on 24 November 2026.
+Status: **released and deployed** to development and production on 24 November
+2026.
 
 | Item | Value |
 |---|---|
 | Version | `5.41.0` |
 | Signed tag | `v5.41.0` |
-| Release commit | Pending tag |
+| Release commit | `c8ca2ca5` |
 | Alembic | `0060_competency_reviews` |
-| Production | Pending |
-| Development | Pending |
+| Production | Deployed and verified |
+| Development | Deployed and verified |
 | Supply-chain lock | Refreshed and signed with the release key |
-| Backups | Pre-deploy and post-deploy dumps, plus a restore drill |
+| Backups | Pre-deploy and post-deploy dumps, plus a passed restore drill |
 
 ## Contract review operations
 
@@ -62,19 +63,19 @@ supply-chain lock.
 
 | Check | Result |
 |---|---|
-| Backend tests | Pending |
-| Frontend build and tests | Pending |
-| Quality checks | Pending |
-| Supply-chain lock | Pending |
-| Production `/api/version` | Pending |
-| Production health | Pending |
-| Alembic on production | Pending |
-| Public version and health | Pending |
-| Existing routes | Pending |
-| Review API | Pending |
-| SSO | Pending |
-| Restore drill | Pending |
-| Rollback images | Pending |
+| Backend tests | `1,164 passed` |
+| Frontend build and tests | Build passed; `35` component tests passed |
+| Quality checks | Green |
+| Supply-chain lock | Verified with the release key |
+| Production `/api/version` | `5.41.0` |
+| Production health | `200` |
+| Alembic on production | `0060_competency_reviews (head)` |
+| Public version and health | `5.41.0` and `200` |
+| Existing routes | `/journey`, `/impact`, `/practice`, `/my-evidence`, `/evidence-review`, `/contract-review` return `200` |
+| Review API | `/api/competency-reviews/catalogue` is gated (`401` unauthenticated) |
+| SSO | Authentik OIDC provider present; `sso_enabled` true |
+| Restore drill | 69 users, 215 labs, 2 courses, 64 enrollments, 134 completions, 497 achievements, 1,575 activity events |
+| Rollback images | `opencyberrange-backend:pre-v5.41.0`, `ocr-frontend:pre-v5.41.0` |
 
 ## Known limitations
 
@@ -84,6 +85,10 @@ supply-chain lock.
   platform-origin proxy.
 - The review export is still an operator step. The signed-review manifest and its
   CI gate are the next slice and are not part of this release.
+- The workbook popup refreshes the wiki cookie after opening the window. On a
+  slow connection the wiki can briefly land on the SPA login before the cookie
+  is present. The next slice will open a blank window and navigate after the
+  cookie is set.
 - 190 competency contracts remain baseline-derived. Subject-matter review is the
   Release 6.0 gate.
 
@@ -98,12 +103,12 @@ supply-chain lock.
 
 ## Acceptance checklist
 
-- [ ] Signed tag and verified supply-chain lock.
-- [ ] Migration `0060` applied on development and production.
-- [ ] Production health, version, SSO, and public routes verified.
-- [ ] Pre-deploy and post-deploy backups.
-- [ ] Restore drill passed.
-- [ ] Rollback images retained.
-- [ ] Manual and API reference regenerated.
-- [ ] Coverage audit passes structurally.
-- [ ] Test suite and component regression test pass.
+- [x] Signed tag and verified supply-chain lock.
+- [x] Migration `0060` applied on development and production.
+- [x] Production health, version, SSO, and public routes verified.
+- [x] Pre-deploy and post-deploy backups.
+- [x] Restore drill passed.
+- [x] Rollback images retained.
+- [x] Manual and API reference regenerated.
+- [x] Coverage audit passes structurally.
+- [x] Test suite and component regression test pass.

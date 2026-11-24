@@ -9,6 +9,21 @@ another document disagrees, this page and the signed tag win.
 > replaced with placeholders. The private deployment inventory holds the live
 > values. See [`PUBLICATION-METADATA-POLICY.md`](PUBLICATION-METADATA-POLICY.md).
 
+## 5.41.0 deployment verification
+
+| Check | Result |
+|---|---|
+| `/api/version` | `5.41.0` on production and development |
+| Alembic | **`0060_competency_reviews` (head)**; migration `0060` applied |
+| Health | `200` |
+| Contract review | `/contract-review` returns `200`; `/api/competency-reviews/catalogue` is gated (`401` unauthenticated) |
+| Existing routes | `/journey`, `/impact`, `/practice`, `/my-evidence`, `/evidence-review` return `200` |
+| SSO | Authentik OIDC provider present; `sso_enabled` is true |
+| Pre-deploy backup | `~/backups/ocr-backup-20261124-060903.dump` |
+| Post-deploy backup | `~/backups/ocr-backup-20261124-061257.dump` |
+| Rollback images | `opencyberrange-backend:pre-v5.41.0`, `ocr-frontend:pre-v5.41.0` |
+| Restore drill | **PASSED** (69 users, 215 labs, 2 courses, 64 enrollments, 134 completions, 497 achievements, 1,575 activity events) |
+
 ## 5.40.0 deployment verification
 
 | Check | Result |
@@ -44,14 +59,16 @@ another document disagrees, this page and the signed tag win.
 | Item | Value |
 |---|---|
 | Edition | **Community / Academic** (`lite` entitlement, single-host) |
-| Release | **5.40.0** |
-| Signed tag | **`v5.40.0`** |
-| Runtime code commit | `9e227983` (signed tag `v5.40.0`) |
-| Previous release | `5.39.0` (signed tag `v5.39.0` at `6b25be9b`) |
-| Alembic revision | **`0059_capstone_plans`** |
+| Release | **5.41.0** |
+| Signed tag | **`v5.41.0`** |
+| Runtime code commit | `c8ca2ca5` (signed tag `v5.41.0`) |
+| Previous release | `5.40.0` (signed tag `v5.40.0` at `9e227983`) |
+| Alembic revision | **`0060_competency_reviews`** |
 | Development host | `<dev-host-ip>` |
 | Production host | `<prod-host-ip>` / `https://<platform-host>` |
 | Repository | `RobChaykoski/opencyberrange` (`main`) |
+| Pre-5.41.0 backup | `~/backups/ocr-backup-20261124-060903.dump` |
+| Post-5.41.0 backup | `~/backups/ocr-backup-20261124-061257.dump` |
 | Pre-5.40.0 backup | `~/backups/ocr-backup-20261124-043101.dump` |
 | Post-5.40.0 backup | `~/backups/ocr-backup-20261124-043218.dump` |
 | Pre-5.39.0 backup | `~/backups/ocr-backup-20261124-033307.dump` |
