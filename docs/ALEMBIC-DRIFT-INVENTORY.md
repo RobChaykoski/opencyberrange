@@ -1,10 +1,9 @@
 # Alembic drift inventory
 
 Snapshot: `alembic check` against production 5.44.0 on 24 November 2026.
-Sequences were excluded; 93 schema operations remained. After the model
-cleanup, migration 0063, and migration 0064, development reports 57:
-0 added indexes, 0 removed tables, 24 removed columns, 3 nullability changes,
-3 changed index expressions, and 27 removed indexes.
+Sequences were excluded; 93 schema operations remained. After the model cleanups and migrations 0063-0065, development reports 48:
+0 added indexes, 0 removed tables, 18 removed columns, 3 nullability changes,
+0 changed index expressions, and 27 removed indexes.
 
 This is a classification, not a migration. Do not autogenerate from it.
 
@@ -12,7 +11,7 @@ This is a classification, not a migration. Do not autogenerate from it.
 
 | Category | Count | Action |
 |---|---:|---|
-| Runtime tenant DDL (`institution_id` columns, indexes, NULL changes) | ~21 columns/indexes, 3 nullability changes | Move into a dedicated tenant-baseline migration |
+| Runtime tenant DDL (`institution_id` columns, indexes, NULL changes) | 18 columns, 20 indexes, 3 nullability changes | Move into a dedicated tenant-baseline migration |
 | Runtime auth table `ws_tickets` | 1 table, 1 index | **Fixed:** model + migration `0064_ws_tickets`; runtime DDL removed |
 | Legacy Kali columns | 6 columns | **Fixed:** no code references; migration `0065_legacy_kali_columns` drops them |
 | Model `id` index declarations | 24 indexes | **Fixed:** removed `index=True` from 24 model IDs; migration 0061 already dropped the DB indexes |
@@ -102,6 +101,6 @@ bash scripts/restore-drill.sh
 ```
 
 The production snapshot was taken before the model cleanup, migration 0063, and
-migration 0064. Development after 0065 is expected to report about 48 operations: the remaining
-runtime tenant columns/nullability changes and the runtime/legacy indexes.
-Re-run against production after the 5.45.0 deploy to confirm.
+migration 0064. Development after 0065 reports 48 operations: 18 runtime tenant columns, 20
+tenant indexes, 3 nullability changes, and 7 runtime/legacy indexes. Re-run
+against production after the 5.45.0 deploy to confirm the same.
