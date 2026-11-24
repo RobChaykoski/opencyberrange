@@ -91,6 +91,9 @@ class ReviewRequest(Base):
     """Learner request for a human decision on a deterministic result."""
 
     __tablename__ = "review_requests"
+    institution_id = Column(
+        String(64), nullable=False, default="default", server_default="default", index=True
+    )
 
     id = Column(Integer, primary_key=True)
     user_id = Column(
@@ -139,6 +142,9 @@ class CourseCohort(Base):
 
 class CourseCohortMember(Base):
     __tablename__ = "course_cohort_members"
+    institution_id = Column(
+        String(64), nullable=False, default="default", server_default="default", index=True
+    )
 
     id = Column(Integer, primary_key=True)
     cohort_id = Column(
@@ -160,6 +166,9 @@ class CourseStaff(Base):
     """A mentor, teaching assistant, or co-instructor assigned to a course."""
 
     __tablename__ = "course_staff"
+    institution_id = Column(
+        String(64), nullable=False, default="default", server_default="default", index=True
+    )
 
     id = Column(Integer, primary_key=True)
     course_id = Column(
@@ -319,6 +328,9 @@ class CourseCompletionReset(Base):
     """Instructor-initiated reset of a lab completion within a course.
     Does NOT delete LabCompletion — just marks it stale for this course."""
     __tablename__ = "course_completion_resets"
+    institution_id = Column(
+        String(64), nullable=False, default="default", server_default="default", index=True
+    )
 
     id = Column(Integer, primary_key=True)
     course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False)

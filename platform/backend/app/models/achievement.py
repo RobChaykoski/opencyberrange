@@ -118,6 +118,9 @@ class OpenBadgeCredential(Base):
     """Hosted Open Badges 3.0 credential for a completed level certificate."""
 
     __tablename__ = "open_badge_credentials"
+    institution_id = Column(
+        String(64), nullable=False, default="default", server_default="default", index=True
+    )
 
     id = Column(Integer, primary_key=True)
     user_id = Column(

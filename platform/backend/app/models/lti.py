@@ -115,6 +115,9 @@ class LtiScore(Base):
     """Append-only record of a score passback attempt."""
 
     __tablename__ = "lti_scores"
+    institution_id = Column(
+        String(64), nullable=False, default="default", server_default="default", index=True
+    )
 
     id = Column(Integer, primary_key=True)
     link_id = Column(

@@ -532,6 +532,9 @@ class UserAccommodation(Base):
     """
 
     __tablename__ = "user_accommodations"
+    institution_id = Column(
+        String(64), nullable=False, default="default", server_default="default", index=True
+    )
 
     id = Column(Integer, primary_key=True)
     user_id = Column(
@@ -557,6 +560,9 @@ class AccommodationEvent(Base):
     """Append-only record of accommodation changes."""
 
     __tablename__ = "accommodation_events"
+    institution_id = Column(
+        String(64), nullable=False, default="default", server_default="default", index=True
+    )
 
     id = Column(Integer, primary_key=True)
     user_id = Column(

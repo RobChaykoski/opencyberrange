@@ -33,6 +33,9 @@ class PlatformSetting(Base):
 class ActivityEvent(Base):
     """Polymorphic event log for dashboard feeds and analytics."""
     __tablename__ = "activity_events"
+    institution_id = Column(
+        String(64), nullable=False, default="default", server_default="default", index=True
+    )
 
     id = Column(Integer, primary_key=True)
     event_type = Column(String(50), nullable=False, index=True)

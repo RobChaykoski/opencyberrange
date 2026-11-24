@@ -34,6 +34,7 @@ class ReadinessStudentNote(Base):
 
     __table_args__ = (
         Index("ix_readiness_notes_course_learner", "course_id", "learner_id"),
+        Index("ix_readiness_student_notes_institution_id", "institution_id"),
     )
 
 
@@ -56,4 +57,5 @@ class ReadinessLabReview(Base):
 
     __table_args__ = (
         Index("ix_readiness_lab_reviews_course_lab", "course_id", "lab_id"),
+        Index("ix_readiness_lab_reviews_institution_id", "institution_id"),
     )

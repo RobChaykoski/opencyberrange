@@ -54,6 +54,9 @@ class SurveyAttachment(Base):
 
 class SurveyResponse(Base):
     __tablename__ = "survey_responses"
+    institution_id = Column(
+        String(64), nullable=False, default="default", server_default="default", index=True
+    )
 
     id = Column(Integer, primary_key=True)
     survey_id = Column(Integer, ForeignKey("surveys.id", ondelete="CASCADE"), nullable=False)
@@ -81,6 +84,9 @@ class CourseFeedback(Base):
     them and never expose the author.
     """
     __tablename__ = "course_feedback"
+    institution_id = Column(
+        String(64), nullable=False, default="default", server_default="default", index=True
+    )
 
     id = Column(Integer, primary_key=True)
     course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False, index=True)
@@ -113,6 +119,9 @@ class ExercisePulseSurvey(Base):
     the right surveys without exposing free text to other learners.
     """
     __tablename__ = "exercise_pulse_surveys"
+    institution_id = Column(
+        String(64), nullable=False, default="default", server_default="default", index=True
+    )
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
@@ -146,6 +155,9 @@ class ExerciseReaction(Base):
     course context is stored so course reports do not mix cohorts.
     """
     __tablename__ = "exercise_reactions"
+    institution_id = Column(
+        String(64), nullable=False, default="default", server_default="default", index=True
+    )
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)

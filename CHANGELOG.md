@@ -4,7 +4,12 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
-No unreleased changes.
+### Tenant baseline
+
+- Added migration `0066_tenant_baseline`: idempotent `institution_id` columns, defaults, `NOT NULL`, and indexes for the 20 runtime tenant tables.
+- Added `institution_id` to the 18 models that lacked it and declared the two remaining readiness indexes.
+- Alembic drift is **0** on development and production; the restore-drift gate now defaults to 0.
+- Triggers and RLS policies remain runtime-managed pending the multi-tenant rollout.
 
 ## [5.47.0] - 2026-11-24
 

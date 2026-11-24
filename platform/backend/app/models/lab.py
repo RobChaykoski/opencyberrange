@@ -190,6 +190,9 @@ class QuizQuestion(Base):
 class QuizAttempt(Base):
     """A student's attempt at a level quiz."""
     __tablename__ = "quiz_attempts"
+    institution_id = Column(
+        String(64), nullable=False, default="default", server_default="default", index=True
+    )
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
@@ -342,6 +345,9 @@ class LearnerSnapshot(Base):
 class FlagAttempt(Base):
     """Log all flag submission attempts"""
     __tablename__ = "flag_attempts"
+    institution_id = Column(
+        String(64), nullable=False, default="default", server_default="default", index=True
+    )
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     lab_id = Column(Integer, ForeignKey("labs.id"), nullable=False, index=True)
@@ -366,6 +372,9 @@ class ExerciseQuizAttempt(Base):
     answers so results remain reproducible even if the bank is edited later.
     """
     __tablename__ = "exercise_quiz_attempts"
+    institution_id = Column(
+        String(64), nullable=False, default="default", server_default="default", index=True
+    )
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
@@ -398,6 +407,9 @@ class ExerciseQuizFeedback(Base):
     signals; the free-text comment is optional.
     """
     __tablename__ = "exercise_quiz_feedback"
+    institution_id = Column(
+        String(64), nullable=False, default="default", server_default="default", index=True
+    )
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)

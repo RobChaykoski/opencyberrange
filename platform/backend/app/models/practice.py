@@ -90,6 +90,9 @@ class PracticeSession(Base):
 
 class PracticeSessionQuestion(Base):
     __tablename__ = "practice_session_questions"
+    institution_id = Column(
+        String(64), nullable=False, default="default", server_default="default", index=True
+    )
 
     id = Column(Integer, primary_key=True)
     session_id = Column(
