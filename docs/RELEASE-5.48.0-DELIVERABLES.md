@@ -1,16 +1,17 @@
 # Release 5.48.0 deliverables
 
-Status: **release prepared; deployment pending** on 24 November 2026.
+Status: **released and deployed** to development and production on 24
+November 2026.
 
 | Item | Value |
 |---|---|
 | Version | `5.48.0` |
 | Signed tag | `v5.48.0` |
-| Release commit | Pending tag |
+| Release commit | `549ed440` |
 | Alembic | `0066_tenant_baseline` |
-| Production | Pending |
-| Development | Pending (schema at `0066`, drift `0`) |
-| Supply-chain lock | Refreshed and signed with the release key |
+| Production | Deployed and verified |
+| Development | Deployed and verified |
+| Supply-chain lock | Verified with the release key |
 
 ## Tenant baseline
 
@@ -32,10 +33,10 @@ Status: **release prepared; deployment pending** on 24 November 2026.
 | Frontend tests | `38 passed` |
 | Alembic safety guard | Single head `0066_tenant_baseline` |
 | Development drift | `0` operations |
-| Production drift | Pending |
-| Restore-drift gate | Pending at baseline `0` |
-| Production health | Pending |
-| Rollback images | Pending |
+| Production drift | `0` operations |
+| Restore-drift gate | **PASSED** at `0` operations |
+| Production health | `200` |
+| Rollback images | `pre-v5.48.0` backend and frontend |
 
 ## Known limitations
 
@@ -48,11 +49,11 @@ Status: **release prepared; deployment pending** on 24 November 2026.
 
 ## Acceptance checklist
 
-- [ ] Signed tag and verified supply-chain lock.
-- [ ] CI integrity gate passes on the release commit.
-- [ ] Production migration reaches `0066_tenant_baseline`.
-- [ ] Production drift is `0`.
-- [ ] Production health, version, SSO, and public routes verified.
-- [ ] Pre-deploy and post-deploy backups.
-- [ ] Restore drill and restore-drift gate at `0` passed.
-- [ ] Rollback images retained.
+- [x] Signed tag and verified supply-chain lock.
+- [x] CI integrity gate passes on the release commit.
+- [x] Production migration reaches `0066_tenant_baseline`.
+- [x] Production drift is `0`.
+- [x] Production health, version, SSO, and public routes verified.
+- [x] Pre-deploy and post-deploy backups.
+- [x] Restore drill and restore-drift gate at `0` passed.
+- [x] Rollback images retained.

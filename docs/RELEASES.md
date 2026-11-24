@@ -24,7 +24,7 @@ Releases 5.46.0 and 5.46.1 skipped step 3, so the committed manifest still said
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.48.0` | SWOCTS Cyber Range Release 5.48.0 | Signed annotated tag: migration `0066_tenant_baseline` moves the 20 runtime `institution_id` columns and indexes into the migration graph, the models declare the missing columns, and Alembic drift reaches **0** with the restore-drift gate defaulting to 0. Deployment pending. |
+| `v5.48.0` | SWOCTS Cyber Range Release 5.48.0 | Signed annotated tag: migration `0066_tenant_baseline` moves the 20 runtime `institution_id` columns and indexes into the migration graph, the models declare the missing columns, and Alembic drift reaches **0** with the restore-drift gate defaulting to 0. Deployed to development and production on 24 November 2026; post-deploy backup, restore drill, and restore-drift gate at 0 passed. |
 
 Deliverables: [Release 5.48.0 deliverables](RELEASE-5.48.0-DELIVERABLES.md).
 
