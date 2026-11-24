@@ -40,12 +40,16 @@ def _metadata(path: Path) -> tuple[str | None, list[str]]:
     revision = None
     down: list[str] = []
     for node in tree.body:
-        if not isinstance(node, ast.Assign) or len(node.targets) != 1:
+        if isinstance(node, ast.Assign) and len(node.targets) == 1:
+            target = node.targets[0]
+            value = _literal(node.value)
+        elif isinstance(node, ast.AnnAssign) and node.value is not None:
+            target = node.target
+            value = _literal(node.value)
+        else:
             continue
-        target = node.targets[0]
         if not isinstance(target, ast.Name):
             continue
-        value = _literal(node.value)
         if target.id == "revision" and isinstance(value, str):
             revision = value
         elif target.id == "down_revision":
