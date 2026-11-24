@@ -20,9 +20,13 @@ All notable changes to OpenCyberRange are recorded here.
   rubric and waits in the instructor review queue; the review surface shows the
   submitted text.
 - Added an evidence operations summary to the review surface: status totals,
-  backlog age, source and rubric mix, top competencies with accepted evidence,
-  and recent decisions. Aggregates below five learners are suppressed for
-  non-admin reviewers.
+  backlog age, source and rubric mix, strongest and weakest competencies,
+  workbook/documentation coverage, a 30-day confidence trend, accepted rate,
+  evidence per learner, and recent decisions. Aggregates below five learners are
+  suppressed for non-admin reviewers.
+- Added the program-layer design for persistent organizations, the scenario
+  engine, the Cyber Transcript, and programme analytics, with strongest/weakest
+  competency, graduation readiness, and programme-effectiveness definitions.
 - Added evidence appeals: a learner can request one second review of a rejected
   record; a reviewer accepts or rejects the appeal with notes, and an accepted
   appeal returns the evidence to `in_review`. Added the learner **My Evidence**

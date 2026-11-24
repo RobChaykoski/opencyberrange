@@ -52,8 +52,10 @@ The evidence review surface now carries an operational summary from
 - evidence totals by status;
 - review backlog and the oldest waiting record;
 - source and rubric mix;
-- the top competencies with accepted evidence;
-- recent decisions;
+- strongest and weakest competencies with acceptance rate and learner count;
+- workbook/documentation coverage;
+- a 30-day confidence trend;
+- accepted rate, evidence per learner, and recent decisions;
 - small-cohort suppression below five learners for non-admin reviewers.
 
 It is a queue and workload view, not the full class-competency dashboard. The

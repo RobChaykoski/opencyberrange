@@ -14,8 +14,9 @@ elsewhere in the product.
 
 Above the queue, the page shows the current workload: awaiting review, accepted,
 rejected, learners with evidence, and the age of the oldest waiting record. It
-also shows the source and rubric mix and the competencies with the most accepted
-evidence.
+also shows the source and rubric mix, the strongest and weakest competencies,
+workbook/documentation coverage, the 30-day confidence trend, and the accepted
+rate.
 
 For an instructor, aggregate breakdowns are hidden when the visible scope has
 fewer than five learners. The totals and the queue remain usable; the dashboard

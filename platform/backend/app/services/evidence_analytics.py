@@ -8,7 +8,7 @@ individual learner.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from sqlalchemy import distinct, func
 from sqlalchemy.orm import Session
@@ -83,7 +83,34 @@ def overview(db: Session, viewer: User) -> dict:
         "sources": [],
         "rubrics": [],
         "competencies": [],
+        "strongest_competencies": [],
+        "weakest_competencies": [],
+        "documentation": {
+            "total": 0,
+            "accepted": 0,
+            "acceptance_rate": 0.0,
+            "learners": 0,
+        },
+        "confidence_trend": {
+            "recent_average": None,
+            "prior_average": None,
+            "delta": None,
+            "recent_window_days": 30,
+        },
+        "program_effectiveness": {
+            "accepted_rate": 0.0,
+            "evidence_per_learner": 0.0,
+            "review_backlog": 0,
+        },
         "recent_reviews": [],
+    }
+    accepted_total = statuses.get("accepted", 0)
+    result["program_effectiveness"] = {
+        "accepted_rate": round(accepted_total / total * 100, 1) if total else 0.0,
+        "evidence_per_learner": (
+            round(total / learner_count, 1) if learner_count else 0.0
+        ),
+        "review_backlog": backlog_count,
     }
     if suppressed:
         return result
@@ -118,28 +145,130 @@ def overview(db: Session, viewer: User) -> dict:
         for rubric_id, version, count in rubric_rows
     ]
 
-    competency_rows = (
+    competency_status_rows = (
         base.join(
             EvidenceCompetency,
             EvidenceCompetency.evidence_id == EvidenceRecord.id,
         )
-        .filter(EvidenceRecord.status == "accepted")
         .with_entities(
             EvidenceCompetency.competency_id,
-            func.count(distinct(EvidenceCompetency.evidence_id)),
+            EvidenceRecord.status,
+            func.count(EvidenceRecord.id),
         )
-        .group_by(EvidenceCompetency.competency_id)
-        .order_by(
-            func.count(distinct(EvidenceCompetency.evidence_id)).desc(),
-            EvidenceCompetency.competency_id,
-        )
-        .limit(12)
+        .group_by(EvidenceCompetency.competency_id, EvidenceRecord.status)
         .all()
     )
+    competency_learner_rows = (
+        base.join(
+            EvidenceCompetency,
+            EvidenceCompetency.evidence_id == EvidenceRecord.id,
+        )
+        .with_entities(
+            EvidenceCompetency.competency_id,
+            func.count(distinct(EvidenceRecord.learner_id)),
+        )
+        .group_by(EvidenceCompetency.competency_id)
+        .all()
+    )
+    learners_by_competency = {
+        str(competency_id): int(count)
+        for competency_id, count in competency_learner_rows
+    }
+    competency_data: dict[str, dict] = {}
+    for competency_id, status, count in competency_status_rows:
+        row = competency_data.setdefault(
+            str(competency_id),
+            {
+                "competency_id": str(competency_id),
+                "total": 0,
+                "accepted": 0,
+                "rejected": 0,
+                "collected": 0,
+                "in_review": 0,
+                "learners": learners_by_competency.get(str(competency_id), 0),
+            },
+        )
+        key = str(status)
+        if key in row:
+            row[key] = int(count)
+        row["total"] += int(count)
+    for row in competency_data.values():
+        row["acceptance_rate"] = (
+            round(row["accepted"] / row["total"] * 100, 1) if row["total"] else 0.0
+        )
+    competencies = list(competency_data.values())
+    competencies.sort(
+        key=lambda row: (-row["accepted"], -row["learners"], row["competency_id"])
+    )
     result["competencies"] = [
-        {"competency_id": str(competency_id), "accepted": int(count)}
-        for competency_id, count in competency_rows
+        {"competency_id": row["competency_id"], "accepted": row["accepted"]}
+        for row in competencies[:12]
     ]
+    result["strongest_competencies"] = competencies[:12]
+    weakest = [row for row in competencies if row["total"] >= 2]
+    weakest.sort(
+        key=lambda row: (
+            row["acceptance_rate"],
+            -row["rejected"],
+            -row["total"],
+            row["competency_id"],
+        )
+    )
+    result["weakest_competencies"] = weakest[:12]
+
+    workbook_base = base.filter(EvidenceRecord.source_type == "workbook")
+    workbook_total = workbook_base.count()
+    workbook_accepted = workbook_base.filter(
+        EvidenceRecord.status == "accepted"
+    ).count()
+    workbook_learners = (
+        workbook_base.with_entities(
+            func.count(distinct(EvidenceRecord.learner_id))
+        ).scalar()
+        or 0
+    )
+    result["documentation"] = {
+        "total": workbook_total,
+        "accepted": workbook_accepted,
+        "acceptance_rate": (
+            round(workbook_accepted / workbook_total * 100, 1)
+            if workbook_total
+            else 0.0
+        ),
+        "learners": workbook_learners,
+    }
+
+    confidence_values = {"low": 1, "medium": 2, "high": 3}
+    now = datetime.now(timezone.utc).replace(tzinfo=None)
+    recent_cutoff = now - timedelta(days=30)
+    prior_cutoff = now - timedelta(days=60)
+
+    def _average_confidence(start, end=None):
+        query = base.with_entities(
+            EvidenceRecord.confidence, func.count(EvidenceRecord.id)
+        ).filter(EvidenceRecord.collected_at >= start)
+        if end is not None:
+            query = query.filter(EvidenceRecord.collected_at < end)
+        counts = query.group_by(EvidenceRecord.confidence).all()
+        weighted = sum(
+            confidence_values.get(str(confidence), 0) * int(count)
+            for confidence, count in counts
+        )
+        total_count = sum(int(count) for _confidence, count in counts)
+        return round(weighted / total_count, 2) if total_count else None
+
+    recent_average = _average_confidence(recent_cutoff)
+    prior_average = _average_confidence(prior_cutoff, recent_cutoff)
+    result["confidence_trend"] = {
+        "recent_average": recent_average,
+        "prior_average": prior_average,
+        "delta": (
+            round(recent_average - prior_average, 2)
+            if recent_average is not None and prior_average is not None
+            else None
+        ),
+        "recent_window_days": 30,
+    }
 
     review_query = apply_scope(
         db.query(EvidenceReview).join(

@@ -1,5 +1,5 @@
 {
-  "total": 5058,
+  "total": 5074,
   "files": {
     "src/App.vue": 13,
     "src/components/AchievementStudio.vue": 54,
@@ -75,7 +75,7 @@
     "src/views/Dashboard.vue": 155,
     "src/views/DeepLinkPicker.vue": 8,
     "src/views/Discover.vue": 24,
-    "src/views/EvidenceReview.vue": 58,
+    "src/views/EvidenceReview.vue": 74,
     "src/views/ExerciseQuiz.vue": 37,
     "src/views/ForgotPassword.vue": 7,
     "src/views/Governance.vue": 48,

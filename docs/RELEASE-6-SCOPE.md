@@ -199,8 +199,10 @@ Release 6 is designed for the questions an academic review actually asks.
 
 ## Documents
 
+- [Program layer: organizations, scenarios, transcript, and analytics](PROGRAM-LAYER.md)
 - [Competency Framework](COMPETENCY-FRAMEWORK.md) and [contract review queue](COMPETENCY-REVIEW-QUEUE.md)
 - [Evidence Engine](EVIDENCE-ENGINE.md)
+- [Digital Cyber Transcript](DIGITAL-CYBER-TRANSCRIPT.md)
 - [Capstone Builder](CAPSTONE-BUILDER.md)
 - [Instructor Analytics](INSTRUCTOR-ANALYTICS.md)
 - [HA and Kubernetes](HA-AND-KUBERNETES.md)

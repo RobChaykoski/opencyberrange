@@ -260,9 +260,10 @@ Release 6.0 ships the first vertical slice:
   each distinct version is snapshotted into the evidence ledger with the
   `analyst-answer` rubric and waits in the instructor review queue.
 - An evidence operations summary above the review queue: totals by status,
-  review backlog and oldest wait, source and rubric mix, top competencies with
-  accepted evidence, and recent decisions. Aggregates below five learners are
-  suppressed for non-admin reviewers.
+  review backlog and oldest wait, source and rubric mix, strongest and weakest
+  competencies, workbook/documentation coverage, a confidence trend, accepted
+  rate and evidence per learner, and recent decisions. Aggregates below five
+  learners are suppressed for non-admin reviewers.
 - Learner appeals: a rejected record can be appealed once; a reviewer accepts
   or rejects the appeal with notes, and an accepted appeal returns the evidence
   to `in_review` for a second decision. The learner sees the appeal history.

@@ -46,6 +46,8 @@ mentor remain. The order is competency, evidence, capstones and analytics,
 scale, federation, then the AI mentor.
 
 - [Release 6 scope](RELEASE-6-SCOPE.md)
+- [Program layer: organizations, scenarios, transcript, and analytics](PROGRAM-LAYER.md)
+- [Digital Cyber Transcript](DIGITAL-CYBER-TRANSCRIPT.md)
 - [Competency Framework](COMPETENCY-FRAMEWORK.md)
 - [Evidence Engine](EVIDENCE-ENGINE.md)
 - [Capstone Builder](CAPSTONE-BUILDER.md)

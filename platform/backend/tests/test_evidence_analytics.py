@@ -118,6 +118,13 @@ def test_overview_counts_accepted_evidence_and_backlog(client, db_session):
         assert body["sources"] == [{"source_type": "flag", "count": 6}]
         assert body["competencies"][0]["competency_id"] == "NET-001"
         assert body["competencies"][0]["accepted"] == 5
+        assert body["strongest_competencies"][0]["learners"] == 5
+        assert body["weakest_competencies"][0]["competency_id"] == "NET-001"
+        assert body["weakest_competencies"][0]["acceptance_rate"] == 83.3
+        assert body["documentation"]["total"] == 0
+        assert body["confidence_trend"]["recent_average"] == 3.0
+        assert body["program_effectiveness"]["accepted_rate"] == 83.3
+        assert body["program_effectiveness"]["evidence_per_learner"] == 1.2
     finally:
         db_session.query(CourseEnrollment).filter(
             CourseEnrollment.course_id == course.id
@@ -137,6 +144,10 @@ def test_overview_suppresses_a_small_cohort(db_session):
         assert body["suppressed"] is True
         assert body["sources"] == []
         assert body["competencies"] == []
+        assert body["strongest_competencies"] == []
+        assert body["weakest_competencies"] == []
+        assert body["documentation"]["total"] == 0
+        assert body["program_effectiveness"]["accepted_rate"] == 100.0
         assert "fewer than 5" in (body["suppression_note"] or "")
     finally:
         _cleanup(db_session, [learner])

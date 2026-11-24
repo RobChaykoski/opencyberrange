@@ -40,6 +40,14 @@
         <span>Oldest waiting</span>
         <strong>{{ analytics.backlog.oldest_age_days ?? 0 }}d</strong>
       </article>
+      <article>
+        <span>Accepted rate</span>
+        <strong>{{ analytics.program_effectiveness.accepted_rate }}%</strong>
+      </article>
+      <article>
+        <span>Evidence / learner</span>
+        <strong>{{ analytics.program_effectiveness.evidence_per_learner }}</strong>
+      </article>
     </section>
     <p v-if="analytics?.suppressed" class="evidence-review__note" role="status">
       {{ analytics.suppression_note }}
@@ -54,12 +62,37 @@
         </ul>
       </section>
       <section>
-        <h2>Top competencies with accepted evidence</h2>
+        <h2>Strongest competencies</h2>
         <ul>
-          <li v-for="item in analytics.competencies" :key="item.competency_id">
-            <span>{{ item.competency_id }}</span><strong>{{ item.accepted }}</strong>
+          <li v-for="item in analytics.strongest_competencies" :key="item.competency_id">
+            <span>{{ item.competency_id }}</span>
+            <strong>{{ item.accepted }} accepted · {{ item.learners }} learners</strong>
           </li>
         </ul>
+      </section>
+      <section>
+        <h2>Weakest competencies</h2>
+        <ul>
+          <li v-for="item in analytics.weakest_competencies" :key="item.competency_id">
+            <span>{{ item.competency_id }}</span>
+            <strong>{{ item.acceptance_rate }}% accepted · {{ item.total }} items</strong>
+          </li>
+        </ul>
+      </section>
+      <section>
+        <h2>Documentation evidence</h2>
+        <p>
+          {{ analytics.documentation.accepted }} accepted of
+          {{ analytics.documentation.total }} workbook submissions
+          ({{ analytics.documentation.acceptance_rate }}%) from
+          {{ analytics.documentation.learners }} learners.
+        </p>
+        <h2>Confidence trend</h2>
+        <p>
+          Recent {{ analytics.confidence_trend.recent_average ?? '—' }} /
+          prior {{ analytics.confidence_trend.prior_average ?? '—' }}
+          (delta {{ analytics.confidence_trend.delta ?? '—' }}).
+        </p>
       </section>
     </div>
     <p v-if="analyticsError" class="form-error" role="alert">{{ analyticsError }}</p>
