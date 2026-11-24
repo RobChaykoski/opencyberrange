@@ -22,7 +22,7 @@ another document disagrees, this page and the signed tag win.
 | Pre-deploy backup | `~/backups/ocr-backup-20261124-033307.dump` |
 | Post-deploy backup | `~/backups/ocr-backup-20261124-033536.dump` |
 | Rollback images | `opencyberrange-backend:pre-5.39.0`, `ocr-frontend:pre-5.39.0` |
-| Restore drill | Pending for 5.39.0 |
+| Restore drill | **PASSED** (69 users, 215 labs, 2 courses, 64 enrollments, 134 completions, 497 achievements, 1,575 activity events) |
 
 ## Release identity
 
@@ -73,7 +73,7 @@ another document disagrees, this page and the signed tag win.
 | 5.28.4 backup | `~/backups/ocr-backup-20261120-020748.dump` |
 | 5.28.5 backup | `~/backups/ocr-backup-20261120-025933.dump` |
 | 5.28.6 backup | `~/backups/ocr-backup-20261120-033403.dump` |
-| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 19 November deploy, 5.19.0, 5.20.0, 5.21.0, 5.22.0, 5.27.0, 5.27.1, 5.27.2, 5.27.3, 5.27.4, 5.27.5, 5.27.6, 5.27.7, 5.28.0, 5.28.1, 5.28.2, 5.28.3, 5.28.4, 5.28.5, 5.28.6, 5.29.0, 5.29.1, 5.30.0, 5.30.1, and 5.30.2) |
+| Restore drills | **PASSED** (pre-cutover through 5.39.0) |
 
 ## 5.30.1 deployment verification
 
