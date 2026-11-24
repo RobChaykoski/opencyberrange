@@ -55,6 +55,15 @@ The "Level N" chip on a track card and the per-level completion rings on the tra
 
 Drill labs are short, focused command exercises. They carry a blue "Drill" badge and often show their target IPs directly so you can practice commands without first discovering hosts.
 
+## Competency mapping status
+
+The skills credited for a lab come from its competency contract. A
+subject-matter reviewer signs that contract and sets the next review date. When
+the contract is pending, overdue, or changed after its review, the exercise page
+shows a notice and the lab row may show a **Mapping review** badge. Your work and
+evidence are still recorded. The notice means the skills credited may change; it
+does not lock the lab or turn your work into a grade.
+
 ## Labs you will not see in the main list
 
 !!! note "Course-only labs"

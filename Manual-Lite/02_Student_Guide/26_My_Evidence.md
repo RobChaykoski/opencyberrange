@@ -20,6 +20,14 @@ Automatically verified flags and knowledge checks appear as **accepted**.
 Workbook answers wait as **collected** or **in review** until an instructor
 decides.
 
+## Provisional competency mapping
+
+If the lab's competency contract is pending, overdue, stale, or changes-
+requested, the card says that the skills credited are provisional. The evidence
+record, its review state, and its score are unchanged. The notice means the
+competency mapping may change after subject-matter review; it is not a rejection
+and it does not remove the record.
+
 ## Request a second review
 
 If a record is **rejected**, a **Request second review** form appears on the card:

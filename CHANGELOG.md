@@ -4,6 +4,13 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
+No unreleased changes.
+
+## [5.42.0] - 2026-11-24
+
+Release 6 review operations, learner-visible contract state, workbook reliability,
+security hardening, and database index hygiene.
+
 ### Competency review export
 
 - Added `scripts/export-contract-reviews.py` with a pseudonymous signed-review
