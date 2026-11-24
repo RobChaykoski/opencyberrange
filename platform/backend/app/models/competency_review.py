@@ -100,5 +100,4 @@ class CompetencyContractReview(Base):
     __table_args__ = (
         Index("ix_contract_reviews_lab_status", "lab_slug", "status"),
         Index("ix_contract_reviews_tenant_status", "institution_id", "status"),
-        Index("ix_contract_reviews_next_review", "next_review_at"),
     )

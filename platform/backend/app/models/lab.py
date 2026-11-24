@@ -377,7 +377,6 @@ class ExerciseQuizAttempt(Base):
 
     __table_args__ = (
         Index("ix_exercise_quiz_user_lab", "user_id", "lab_id"),
-        Index("ix_exercise_quiz_course", "course_id"),
     )
 
 

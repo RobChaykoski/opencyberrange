@@ -413,7 +413,7 @@ class AuthSession(Base):
     user_id = Column(
         Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
     )
-    institution_id = Column(String(64), nullable=False, index=True)
+    institution_id = Column(String(64), nullable=False)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
     last_seen_at = Column(DateTime, server_default=func.now(), nullable=False)
     expires_at = Column(DateTime, nullable=False, index=True)
