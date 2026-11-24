@@ -65,6 +65,10 @@ message and the status in the same change.
 | `evidence_artifact_invalid` | 400 | The artifact metadata is incomplete or the SHA-256 is malformed |
 | `evidence_review_invalid` | 400 | A decision is missing scores, notes, or a next step |
 | `evidence_review_conflict` | 409 | The evidence already has a final decision |
+| `evidence_appeal_invalid` | 400 | The evidence is not rejected, or the appeal reason/decision is incomplete |
+| `evidence_appeal_conflict` | 409 | An appeal is already pending, or the appeal was already decided |
+| `evidence_appeal_not_found` | 404 | The appeal does not exist or is outside the caller's scope |
+| `evidence_appeal_forbidden` | 403 | The caller cannot appeal or decide this evidence |
 
 The existing `X-Reauth-Required`, `X-Session-Invalid`, `X-Security-Version`, and
 `X-Impersonating` headers remain. Do not duplicate them with a code unless the

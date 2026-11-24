@@ -142,6 +142,11 @@ class EvidenceRecord(Base):
         back_populates="evidence",
         order_by="EvidenceReview.id",
     )
+    appeals = relationship(
+        "EvidenceAppeal",
+        back_populates="evidence",
+        order_by="EvidenceAppeal.id",
+    )
 
     __table_args__ = (
         UniqueConstraint(
@@ -231,6 +236,66 @@ class EvidenceReview(Base):
 
     __table_args__ = (
         Index("ix_evidence_reviews_record_time", "evidence_id", "reviewed_at"),
+    )
+
+
+class EvidenceAppeal(Base):
+    """A learner's request for a second review of an adverse decision."""
+
+    __tablename__ = "evidence_appeals"
+
+    id = Column(Integer, primary_key=True)
+    institution_id = Column(
+        String(64),
+        nullable=False,
+        default="default",
+        server_default=text("'default'"),
+        index=True,
+    )
+    evidence_id = Column(
+        Integer,
+        ForeignKey("evidence_records.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    learner_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    reason = Column(Text, nullable=False)
+    status = Column(
+        String(20),
+        nullable=False,
+        default="pending",
+        server_default="pending",
+    )
+    reviewer_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    decision_notes = Column(Text, nullable=True)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    reviewed_at = Column(DateTime, nullable=True)
+
+    evidence = relationship("EvidenceRecord", back_populates="appeals")
+    learner = relationship("User", foreign_keys=[learner_id])
+    reviewer = relationship("User", foreign_keys=[reviewer_id])
+
+    __table_args__ = (
+        Index(
+            "ix_evidence_appeals_evidence_status",
+            "evidence_id",
+            "status",
+        ),
+        Index(
+            "ix_evidence_appeals_learner_time",
+            "learner_id",
+            "created_at",
+        ),
     )
 
 

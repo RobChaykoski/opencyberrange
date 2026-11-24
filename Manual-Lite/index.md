@@ -86,6 +86,8 @@ for the deployment record.
   [Viewing Your Profile](02_Student_Guide/16_Viewing_Your_Profile.md).
 - Writing an analyst answer for an exercise? See
   [Workbook Answers](02_Student_Guide/24_Workbook_Answers.md).
+- Checking your evidence or appealing a rejected record? See
+  [My Evidence](02_Student_Guide/26_My_Evidence.md).
 - Reviewing learner evidence? See
   [Evidence Review](03_Instructor_Guide/17_Evidence_Review.md).
 - Want the full guide to the six Cyber DNA branches, decay and repair, the

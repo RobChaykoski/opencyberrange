@@ -66,6 +66,17 @@ the platform. They use the `automatic-check` rubric and a system review, so they
 do not wait in the instructor queue. Workbook answers use the `analyst-answer`
 rubric and do wait for a human review.
 
+## Appeals
+
+A learner can appeal a **rejected** evidence record once. The appeal appears in
+the **Appeals awaiting review** list beside the queue. Open it to read the
+learner's reason and the original decision.
+
+Choose **accept** to return the evidence to `in review` for a second decision, or
+**reject** to uphold the original decision. Both choices require notes. An
+accepted appeal does not change the rubric score by itself; it reopens the record
+so a reviewer can score it again.
+
 ## What a decision means
 
 - **Accept** means the evidence meets the recorded rubric at the scored level.

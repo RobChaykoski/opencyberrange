@@ -102,6 +102,29 @@
             </button>
           </li>
         </ul>
+
+        <div v-if="appeals.length" class="evidence-review__appeals-queue">
+          <div class="evidence-review__queue-head">
+            <h2>Appeals awaiting review</h2>
+            <span class="evidence-review__count">{{ appeals.length }}</span>
+          </div>
+          <ul class="evidence-review__list">
+            <li v-for="appeal in appeals" :key="appeal.id">
+              <button
+                type="button"
+                class="evidence-review__queue-item"
+                @click="selectRecord(appeal.evidence_id)"
+              >
+                <span class="evidence-review__queue-top">
+                  <strong>{{ appeal.learner?.username || `Learner ${appeal.learner_id}` }}</strong>
+                  <span class="evidence-review__status evidence-review__status--in_review">pending</span>
+                </span>
+                <span class="evidence-review__queue-source">{{ appeal.reason }}</span>
+                <span class="evidence-review__queue-meta">{{ formatDate(appeal.created_at) }}</span>
+              </button>
+            </li>
+          </ul>
+        </div>
       </aside>
 
       <section class="evidence-review__detail" aria-labelledby="evidence-detail-title">
@@ -254,6 +277,44 @@
               <p v-if="review.next_step" class="evidence-review__note">Next step: {{ review.next_step }}</p>
             </article>
           </section>
+
+          <section v-if="record.appeals.length" class="evidence-review__block" aria-labelledby="evidence-appeals-title">
+            <h3 id="evidence-appeals-title">Appeals</h3>
+            <article v-for="appeal in record.appeals" :key="appeal.id" class="evidence-review__history">
+              <div class="evidence-review__history-head">
+                <strong>{{ statusLabel(appeal.status) }}</strong>
+                <span>{{ formatDate(appeal.created_at) }}</span>
+              </div>
+              <p>{{ appeal.reason }}</p>
+              <p v-if="appeal.decision_notes" class="evidence-review__note">
+                Decision: {{ appeal.decision_notes }}
+              </p>
+            </article>
+
+            <div v-if="pendingAppeal" class="evidence-review__appeal-decision">
+              <h4>Decide the pending appeal</h4>
+              <label class="evidence-review__field">
+                <span>Decision</span>
+                <select v-model="appealDecision" class="form-input">
+                  <option value="accepted">Accept and return for second review</option>
+                  <option value="rejected">Reject the appeal</option>
+                </select>
+              </label>
+              <label class="evidence-review__field">
+                <span>Notes</span>
+                <textarea v-model="appealNotes" class="form-input" rows="3" maxlength="2000" />
+              </label>
+              <p v-if="appealError" class="form-error" role="alert">{{ appealError }}</p>
+              <button
+                type="button"
+                class="btn btn--primary btn--sm"
+                :disabled="appealSubmitting || !appealNotes.trim()"
+                @click="decideAppeal"
+              >
+                {{ appealSubmitting ? 'Saving...' : 'Record appeal decision' }}
+              </button>
+            </div>
+          </section>
         </template>
       </section>
     </div>
@@ -265,6 +326,7 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import axios from '../api/axios'
 
 const queue = ref([])
+const appeals = ref([])
 const rubrics = ref([])
 const analytics = ref(null)
 const analyticsError = ref('')
@@ -280,6 +342,10 @@ const submitting = ref(false)
 const decision = ref('accepted')
 const notes = ref('')
 const nextStep = ref('')
+const appealDecision = ref('accepted')
+const appealNotes = ref('')
+const appealSubmitting = ref(false)
+const appealError = ref('')
 const scores = reactive({})
 
 const selectedRubric = computed(() => {
@@ -297,6 +363,10 @@ const canReview = computed(
   () => record.value && ['collected', 'in_review'].includes(record.value.status)
 )
 
+const pendingAppeal = computed(
+  () => (record.value?.appeals || []).find((appeal) => appeal.status === 'pending') || null
+)
+
 function statusLabel(status) {
   return String(status || '').replace('_', ' ')
 }
@@ -312,6 +382,9 @@ function resetForm() {
   notes.value = ''
   nextStep.value = ''
   reviewError.value = ''
+  appealDecision.value = 'accepted'
+  appealNotes.value = ''
+  appealError.value = ''
   Object.keys(scores).forEach((key) => delete scores[key])
   if (selectedRubric.value) {
     selectedRubric.value.criteria.forEach((criterion) => {
@@ -333,6 +406,35 @@ async function loadAnalytics() {
   } catch (error) {
     analyticsError.value =
       error.response?.data?.detail || 'Could not load the evidence summary.'
+  }
+}
+
+async function fetchAppeals() {
+  try {
+    const response = await axios.get('/evidence/appeals/queue')
+    appeals.value = response.data.appeals || []
+  } catch {
+    appeals.value = []
+  }
+}
+
+async function decideAppeal() {
+  if (!pendingAppeal.value) return
+  appealSubmitting.value = true
+  appealError.value = ''
+  try {
+    await axios.post(`/evidence/appeals/${pendingAppeal.value.id}/decision`, {
+      decision: appealDecision.value,
+      notes: appealNotes.value,
+    })
+    message.value = 'Appeal decision recorded.'
+    await Promise.all([refreshQueue(), loadAnalytics(), fetchAppeals()])
+    await selectRecord(record.value.id)
+  } catch (error) {
+    appealError.value =
+      error.response?.data?.detail || 'Could not record the appeal decision.'
+  } finally {
+    appealSubmitting.value = false
   }
 }
 
@@ -406,7 +508,7 @@ onMounted(async () => {
   } catch (error) {
     detailError.value = error.response?.data?.detail || 'Could not load the rubric registry.'
   }
-  await Promise.all([refreshQueue(), loadAnalytics()])
+  await Promise.all([refreshQueue(), loadAnalytics(), fetchAppeals()])
 })
 </script>
 
@@ -691,6 +793,16 @@ onMounted(async () => {
   border-radius: 0.6rem;
   padding: 0.75rem;
   margin-top: 0.6rem;
+}
+
+.evidence-review__appeals-queue {
+  margin-top: 1rem;
+}
+
+.evidence-review__appeal-decision {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 0.75rem;
 }
 
 .evidence-review__answer {

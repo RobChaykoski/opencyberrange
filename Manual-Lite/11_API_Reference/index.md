@@ -443,9 +443,12 @@ owner-only unless an explicit share or break-glass grant exists.
 | `GET` | `/api/evidence` | List Evidence | OAuth2PasswordBearer |
 | `POST` | `/api/evidence` | Create Evidence | OAuth2PasswordBearer |
 | `GET` | `/api/evidence/analytics` | Evidence Analytics Overview | OAuth2PasswordBearer |
+| `GET` | `/api/evidence/appeals/queue` | Appeal Queue | OAuth2PasswordBearer |
+| `POST` | `/api/evidence/appeals/{appeal_id}/decision` | Decide Appeal | OAuth2PasswordBearer |
 | `GET` | `/api/evidence/queue` | Review Queue | OAuth2PasswordBearer |
 | `GET` | `/api/evidence/rubrics` | List Evidence Rubrics | OAuth2PasswordBearer |
 | `GET` | `/api/evidence/{evidence_id}` | Get Evidence | OAuth2PasswordBearer |
+| `POST` | `/api/evidence/{evidence_id}/appeal` | Appeal Evidence | OAuth2PasswordBearer |
 | `POST` | `/api/evidence/{evidence_id}/review` | Review Evidence | OAuth2PasswordBearer |
 | `GET` | `/api/exercises/labs/{lab_id}` | Get Lab Details | OAuth2PasswordBearer |
 | `GET` | `/api/exercises/labs/{lab_id}/hint` | Get Hint | OAuth2PasswordBearer |
@@ -5961,6 +5964,46 @@ Aggregate evidence operations for the caller's scope.
 
 - `200`: Successful Response
 
+### `GET /api/evidence/appeals/queue`
+
+**Appeal Queue**
+
+Pending learner appeals for the caller's scope.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Responses**
+
+- `200`: Successful Response
+
+### `POST /api/evidence/appeals/{appeal_id}/decision`
+
+**Decide Appeal**
+
+Accept or reject an appeal. Acceptance returns evidence to review.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `appeal_id` | path | integer | yes |  |
+
+**Request body** (`application/json`)
+
+**Schema:** `EvidenceAppealDecisionIn`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `decision` | string | yes |  |
+| `notes` | string | yes |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
 ### `GET /api/evidence/queue`
 
 **Review Queue**
@@ -6009,6 +6052,33 @@ Read one record with its competencies, reviews, and artifact hash.
 **Responses**
 
 - `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `POST /api/evidence/{evidence_id}/appeal`
+
+**Appeal Evidence**
+
+Request a second review of a rejected evidence record.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `evidence_id` | path | integer | yes |  |
+
+**Request body** (`application/json`)
+
+**Schema:** `EvidenceAppealIn`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `reason` | string | yes |  |
+
+**Responses**
+
+- `201`: Successful Response
 - `422`: Validation Error — `HTTPValidationError`
 
 ### `POST /api/evidence/{evidence_id}/review`

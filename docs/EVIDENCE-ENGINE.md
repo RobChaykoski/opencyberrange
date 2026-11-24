@@ -245,7 +245,9 @@ Release 6.0 ships the first vertical slice:
 - API endpoints: `POST /api/evidence`, `GET /api/evidence`,
   `GET /api/evidence/{id}`, `POST /api/evidence/{id}/review`,
   `GET /api/evidence/queue`, `GET /api/evidence/rubrics`,
-  `GET /api/evidence/analytics`, and
+  `GET /api/evidence/analytics`, `POST /api/evidence/{id}/appeal`,
+  `GET /api/evidence/appeals/queue`,
+  `POST /api/evidence/appeals/{id}/decision`, and
   `GET /api/competencies/{id}/evidence`.
 - A reviewer surface at `/evidence-review` that shows the queue, the recorded
   rubric criteria and levels, prior decisions, and the decision form. The
@@ -261,12 +263,14 @@ Release 6.0 ships the first vertical slice:
   review backlog and oldest wait, source and rubric mix, top competencies with
   accepted evidence, and recent decisions. Aggregates below five learners are
   suppressed for non-admin reviewers.
+- Learner appeals: a rejected record can be appealed once; a reviewer accepts
+  or rejects the appeal with notes, and an accepted appeal returns the evidence
+  to `in_review` for a second decision. The learner sees the appeal history.
 - Tests for idempotency, tenant and course scope, scoring, queue filtering,
   unknown rubric/competency rejection, automatic acceptance, workbook answer
-  versioning, aggregate suppression, and append-only content.
+  versioning, aggregate suppression, appeals, and append-only content.
 
-Not yet implemented: artifact upload and storage and appeals. Those are the
-next increments.
+Not yet implemented: artifact upload and storage. That is the next increment.
 
 ## Privacy and security
 

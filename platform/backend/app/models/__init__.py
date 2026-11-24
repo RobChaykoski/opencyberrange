@@ -108,6 +108,7 @@ from app.models.security import (
 )
 from app.models.readiness import ReadinessStudentNote, ReadinessLabReview
 from app.models.evidence import (
+    EvidenceAppeal,
     EvidenceCompetency,
     EvidenceRecord,
     EvidenceReview,
@@ -166,6 +167,7 @@ __all__ = [
     "CustomAchievement",
     "DataIntegrityLedger",
     "DataIntegrityReview",
+    "EvidenceAppeal",
     "EvidenceCompetency",
     "EvidenceRecord",
     "EvidenceReview",

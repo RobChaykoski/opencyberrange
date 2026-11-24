@@ -31,6 +31,7 @@ from app.models.evidence import (
     EVIDENCE_DECISIONS,
     EVIDENCE_SOURCE_TYPES,
     EVIDENCE_VISIBILITIES,
+    EvidenceAppeal,
     EvidenceCompetency,
     EvidenceRecord,
     EvidenceReview,
@@ -427,6 +428,7 @@ def list_records(
     query = db.query(EvidenceRecord).options(
         selectinload(EvidenceRecord.competencies),
         selectinload(EvidenceRecord.reviews),
+        selectinload(EvidenceRecord.appeals),
         selectinload(EvidenceRecord.learner),
     )
     query = _apply_scope(query, db, viewer)
@@ -462,6 +464,7 @@ def get_record(db: Session, viewer: User, record_id: int) -> EvidenceRecord | No
         .options(
             selectinload(EvidenceRecord.competencies),
             selectinload(EvidenceRecord.reviews),
+            selectinload(EvidenceRecord.appeals),
             selectinload(EvidenceRecord.learner),
         )
         .filter(EvidenceRecord.id == int(record_id))
@@ -597,6 +600,177 @@ def review_record(
     db.refresh(review)
     db.refresh(record)
     return review
+
+
+def appeal_payload(appeal: EvidenceAppeal) -> dict:
+    learner = appeal.learner
+    evidence = appeal.evidence
+    return {
+        "id": appeal.id,
+        "evidence_id": appeal.evidence_id,
+        "learner_id": appeal.learner_id,
+        "learner": (
+            {
+                "id": learner.id,
+                "username": learner.username,
+                "display_name": learner.display_name,
+            }
+            if learner is not None
+            else None
+        ),
+        "reason": appeal.reason,
+        "status": appeal.status,
+        "reviewer_id": appeal.reviewer_id,
+        "decision_notes": appeal.decision_notes,
+        "created_at": _iso(appeal.created_at),
+        "reviewed_at": _iso(appeal.reviewed_at),
+        "evidence": (
+            {
+                "source_type": evidence.source_type,
+                "source_id": evidence.source_id,
+                "status": evidence.status,
+                "rubric_id": evidence.rubric_id,
+                "rubric_version": evidence.rubric_version,
+            }
+            if evidence is not None
+            else None
+        ),
+    }
+
+
+def create_appeal(
+    db: Session,
+    record: EvidenceRecord,
+    learner: User,
+    *,
+    reason: str,
+) -> EvidenceAppeal:
+    if record.learner_id != learner.id:
+        raise EvidenceError(
+            "evidence_appeal_forbidden",
+            "You can only appeal your own evidence.",
+            403,
+        )
+    if record.status != "rejected":
+        raise EvidenceError(
+            "evidence_appeal_invalid",
+            "Only a rejected evidence record can be appealed.",
+        )
+    reason = (reason or "").strip()[:2000]
+    if len(reason) < 10:
+        raise EvidenceError(
+            "evidence_appeal_invalid",
+            "An appeal needs a reason of at least 10 characters.",
+        )
+    pending = (
+        db.query(EvidenceAppeal)
+        .filter(
+            EvidenceAppeal.evidence_id == record.id,
+            EvidenceAppeal.status == "pending",
+        )
+        .first()
+    )
+    if pending is not None:
+        raise EvidenceError(
+            "evidence_appeal_conflict",
+            "An appeal is already pending for this evidence record.",
+            409,
+        )
+    appeal = EvidenceAppeal(
+        institution_id=record.institution_id,
+        evidence_id=record.id,
+        learner_id=learner.id,
+        reason=reason,
+        status="pending",
+    )
+    db.add(appeal)
+    db.commit()
+    db.refresh(appeal)
+    return appeal
+
+
+def list_appeals(
+    db: Session,
+    viewer: User,
+    *,
+    status: str | None = None,
+) -> list[EvidenceAppeal]:
+    query = (
+        db.query(EvidenceAppeal)
+        .options(
+            selectinload(EvidenceAppeal.learner),
+            selectinload(EvidenceAppeal.evidence),
+        )
+        .join(EvidenceRecord, EvidenceAppeal.evidence_id == EvidenceRecord.id)
+    )
+    query = apply_scope(query, db, viewer)
+    if status:
+        query = query.filter(EvidenceAppeal.status == status)
+    return query.order_by(EvidenceAppeal.created_at.desc(), EvidenceAppeal.id.desc()).limit(200).all()
+
+
+def get_appeal(db: Session, viewer: User, appeal_id: int) -> EvidenceAppeal | None:
+    query = (
+        db.query(EvidenceAppeal)
+        .options(
+            selectinload(EvidenceAppeal.learner),
+            selectinload(EvidenceAppeal.evidence),
+        )
+        .join(EvidenceRecord, EvidenceAppeal.evidence_id == EvidenceRecord.id)
+    )
+    query = apply_scope(query, db, viewer)
+    return query.filter(EvidenceAppeal.id == int(appeal_id)).first()
+
+
+def review_appeal(
+    db: Session,
+    appeal: EvidenceAppeal,
+    reviewer: User,
+    *,
+    decision: str,
+    notes: str,
+) -> EvidenceAppeal:
+    if reviewer.role not in REVIEW_ROLES:
+        raise EvidenceError(
+            "evidence_forbidden",
+            "This role cannot review an appeal.",
+            403,
+        )
+    if appeal.evidence is None or not _can_access(db, reviewer, appeal.evidence):
+        raise EvidenceError(
+            "evidence_forbidden",
+            "You do not have access to this appeal.",
+            403,
+        )
+    if appeal.status != "pending":
+        raise EvidenceError(
+            "evidence_appeal_conflict",
+            "This appeal has already been decided.",
+            409,
+        )
+    decision = str(decision or "").strip()
+    if decision not in ("accepted", "rejected"):
+        raise EvidenceError(
+            "evidence_appeal_invalid",
+            "Appeal decision must be accepted or rejected.",
+        )
+    notes = (notes or "").strip()[:2000]
+    if not notes:
+        raise EvidenceError(
+            "evidence_appeal_invalid",
+            "An appeal decision requires notes.",
+        )
+    appeal.status = decision
+    appeal.reviewer_id = reviewer.id
+    appeal.decision_notes = notes
+    appeal.reviewed_at = _naive_utc_now()
+    if decision == "accepted":
+        appeal.evidence.status = "in_review"
+        appeal.evidence.reviewer_id = reviewer.id
+        appeal.evidence.review_notes = f"Appeal accepted: {notes}"[:1000]
+    db.commit()
+    db.refresh(appeal)
+    return appeal
 
 
 def auto_accept_record(
@@ -763,6 +937,7 @@ def record_payload(record: EvidenceRecord) -> dict:
         ],
         "latest_review": review_payload(latest_review),
         "reviews": [review_payload(review) for review in reviews],
+        "appeals": [appeal_payload(appeal) for appeal in record.appeals],
         "created_at": _iso(record.created_at),
     }
 

@@ -174,6 +174,14 @@
           </svg>
           <span v-show="!collapsed" class="nav-item__label">Workbook answers</span>
         </router-link>
+        <router-link to="/my-evidence" aria-label="My evidence" title="My evidence" class="nav-item" :class="{ 'nav-item--active': isActive('/my-evidence') }">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
+            <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
+            <rect x="9" y="3" width="6" height="4" rx="1"/>
+            <path d="M9 12h6M9 16h4"/>
+          </svg>
+          <span v-show="!collapsed" class="nav-item__label">My evidence</span>
+        </router-link>
         <router-link to="/profile?tab=skill-tree" aria-label="Cyber DNA" title="Cyber DNA report" class="nav-item" :class="{ 'nav-item--active': isActive('/profile') && route.query.tab === 'skill-tree' }">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
             <path d="M7 3c0 6 10 6 10 12M17 3c0 6-10 6-10 12M7 21c0-1 10-1 10-6M17 21c0-1-10-1-10-6"/>

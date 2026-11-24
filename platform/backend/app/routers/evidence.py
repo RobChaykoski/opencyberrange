@@ -67,6 +67,15 @@ class EvidenceReviewIn(BaseModel):
     next_step: str | None = Field(None, max_length=500)
 
 
+class EvidenceAppealIn(BaseModel):
+    reason: str = Field(..., min_length=10, max_length=2000)
+
+
+class EvidenceAppealDecisionIn(BaseModel):
+    decision: str = Field(..., pattern="^(accepted|rejected)$")
+    notes: str = Field(..., min_length=1, max_length=2000)
+
+
 def _raise(exc: EvidenceError):
     raise api_error(exc.status_code, exc.code, exc.message) from exc
 
@@ -166,6 +175,43 @@ async def evidence_analytics_overview(
     return evidence_analytics.overview(db, current_user)
 
 
+@router.get("/appeals/queue")
+async def appeal_queue(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_reporting_user),
+):
+    """Pending learner appeals for the caller's scope."""
+    appeals = evidence_service.list_appeals(db, current_user, status="pending")
+    return {"appeals": [evidence_service.appeal_payload(row) for row in appeals]}
+
+
+@router.post("/appeals/{appeal_id}/decision")
+async def decide_appeal(
+    appeal_id: int,
+    payload: EvidenceAppealDecisionIn,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_reporting_user),
+):
+    """Accept or reject an appeal. Acceptance returns evidence to review."""
+    appeal = evidence_service.get_appeal(db, current_user, appeal_id)
+    if appeal is None:
+        raise api_error(404, "evidence_appeal_not_found", "Appeal not found.")
+    try:
+        evidence_service.review_appeal(
+            db,
+            appeal,
+            current_user,
+            decision=payload.decision,
+            notes=payload.notes,
+        )
+    except EvidenceError as exc:
+        _raise(exc)
+    return {
+        "appeal": evidence_service.appeal_payload(appeal),
+        "evidence": evidence_service.record_payload(appeal.evidence),
+    }
+
+
 @router.get("/queue")
 async def review_queue(
     limit: int = Query(50, ge=1, le=200),
@@ -225,6 +271,29 @@ async def review_evidence(
         "evidence": evidence_service.record_payload(record),
         "review": evidence_service.review_payload(review),
     }
+
+
+@router.post("/{evidence_id}/appeal", status_code=201)
+async def appeal_evidence(
+    evidence_id: int,
+    payload: EvidenceAppealIn,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Request a second review of a rejected evidence record."""
+    record = evidence_service.get_record(db, current_user, evidence_id)
+    if record is None:
+        raise api_error(404, "evidence_not_found", "Evidence record not found.")
+    try:
+        appeal = evidence_service.create_appeal(
+            db,
+            record,
+            current_user,
+            reason=payload.reason,
+        )
+    except EvidenceError as exc:
+        _raise(exc)
+    return {"appeal": evidence_service.appeal_payload(appeal)}
 
 
 @competency_router.get("/{competency_id}/evidence")

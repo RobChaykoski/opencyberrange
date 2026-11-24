@@ -23,6 +23,10 @@ All notable changes to OpenCyberRange are recorded here.
   backlog age, source and rubric mix, top competencies with accepted evidence,
   and recent decisions. Aggregates below five learners are suppressed for
   non-admin reviewers.
+- Added evidence appeals: a learner can request one second review of a rejected
+  record; a reviewer accepts or rejects the appeal with notes, and an accepted
+  appeal returns the evidence to `in_review`. Added the learner **My Evidence**
+  page and the reviewer appeal queue.
 - Updated the i18n baseline for the new review surface, workbook answer page,
   and navigation entries.
 

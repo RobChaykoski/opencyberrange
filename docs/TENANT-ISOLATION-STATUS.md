@@ -77,6 +77,7 @@ The lab container boundary and its negative tests are in
 - `evidence_records`
 - `evidence_competencies`
 - `evidence_reviews`
+- `evidence_appeals`
 - `workbook_answers`
 
 The evidence record derives its tenant from the learner. The competency-link
@@ -105,7 +106,7 @@ choose a tenant on a child row.
 - `readiness_student_notes`
 - `readiness_lab_reviews`
 
-That is **32 tables**. The tenant is derived from the owning user, course, or
+That is **33 tables**. The tenant is derived from the owning user, course, or
 parent evidence record by a trigger; a client cannot choose
 `institution_id`. Background jobs run as the
 system principal, an unauthenticated request sees only the default institution,
@@ -143,7 +144,7 @@ consent reads, then apply the same pattern.
 
 ```bash
 cd platform/backend
-pytest -q tests/test_tenant_rls.py tests/test_evidence_engine.py tests/test_workbook_answers.py tests/test_horizontal_privilege.py tests/test_idor_matrix.py
+pytest -q tests/test_tenant_rls.py tests/test_evidence_engine.py tests/test_workbook_answers.py tests/test_evidence_appeals.py tests/test_horizontal_privilege.py tests/test_idor_matrix.py
 ```
 
 `tests/test_tenant_rls.py` checks every enforced table for the column, forced

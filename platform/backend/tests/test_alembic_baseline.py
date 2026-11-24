@@ -19,7 +19,7 @@ def _script() -> ScriptDirectory:
 def test_alembic_head_is_the_metadata_revision():
     script = _script()
     heads = script.get_heads()
-    assert heads == ["0053_workbook_answers"]
+    assert heads == ["0054_evidence_appeals"]
 
 
 def test_revision_graph_is_linear():
@@ -62,6 +62,7 @@ def test_baseline_revision_exists():
     assert "0041_tenant_rls_legacy.py" in names
     assert "0052_evidence_engine.py" in names
     assert "0053_workbook_answers.py" in names
+    assert "0054_evidence_appeals.py" in names
 
 
 
