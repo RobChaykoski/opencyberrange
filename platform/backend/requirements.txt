@@ -1,7 +1,7 @@
 fastapi==0.165.0
 uvicorn[standard]==0.54.0
 sqlalchemy==2.1.9
-psycopg[binary]==3.3.8
+psycopg[binary]==3.3.9
 pyjwt[crypto]==2.15.1
 pwdlib[argon2]==0.3.1
 bcrypt==5.0.0
@@ -24,7 +24,7 @@ pywinrm>=0.5.0
 alembic==1.20.1
 pyotp==2.10.0
 # Backing store for shared rate-limit counters (RATELIMIT_STORAGE_URI=redis://)
-redis==8.1.0
+redis==8.2.0
 # Enterprise SSO adapters
 ldap3==2.9.1
 python3-saml==1.16.0

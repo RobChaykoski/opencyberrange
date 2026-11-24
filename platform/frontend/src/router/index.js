@@ -172,6 +172,12 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/threat-awareness',
+    name: 'ThreatAwareness',
+    component: () => import('../views/ThreatAwareness.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/certificate/event/:eventId/:award',
     name: 'EventCertificate',
     component: () => import('../views/Certificate.vue'),

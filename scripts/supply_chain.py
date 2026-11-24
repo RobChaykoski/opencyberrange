@@ -88,6 +88,8 @@ COVERED_FILES = [
     "scripts/check-alembic-safety.py",
     "scripts/check-restore-drift.sh",
     "scripts/check-dependency-currency.py",
+    "scripts/fetch-threat-feed.py",
+    "platform/backend/app/data/threat-awareness.json",
     "scripts/check_db_roles.py",
     "scripts/sync-dev-bind-mount.sh",
     "scripts/check-data-dictionary.py",

@@ -1,10 +1,10 @@
 {
-  "total": 5269,
+  "total": 5299,
   "files": {
     "src/App.vue": 13,
     "src/components/AchievementStudio.vue": 54,
     "src/components/AdminPendingTab.vue": 5,
-    "src/components/AppSidebar.vue": 128,
+    "src/components/AppSidebar.vue": 131,
     "src/components/AuditHistory.vue": 18,
     "src/components/AvailableSurveys.vue": 9,
     "src/components/CareerAssessmentPanel.vue": 8,
@@ -69,6 +69,7 @@
     "src/views/ChangePassword.vue": 12,
     "src/views/CompetitionDetail.vue": 38,
     "src/views/Competitions.vue": 61,
+    "src/views/ContractReview.vue": 61,
     "src/views/Course.vue": 17,
     "src/views/CourseList.vue": 17,
     "src/views/Curriculum.vue": 10,
@@ -79,10 +80,13 @@
     "src/views/ExerciseQuiz.vue": 37,
     "src/views/ForgotPassword.vue": 7,
     "src/views/Governance.vue": 48,
+    "src/views/Impact.vue": 40,
     "src/views/InstructorDashboard.vue": 79,
     "src/views/InstructorPanel.vue": 307,
+    "src/views/Journey.vue": 16,
     "src/views/Login.vue": 92,
     "src/views/MyEvidence.vue": 11,
+    "src/views/Practice.vue": 37,
     "src/views/Privacy.vue": 126,
     "src/views/Profile.vue": 190,
     "src/views/PublicAbout.vue": 52,
@@ -95,14 +99,11 @@
     "src/views/SsoCallback.vue": 4,
     "src/views/StudentDashboard.vue": 35,
     "src/views/Surveys.vue": 33,
+    "src/views/ThreatAwareness.vue": 27,
     "src/views/TrackDetail.vue": 161,
     "src/views/VerifyCertificate.vue": 63,
     "src/views/WorkbookAnswers.vue": 12,
     "src/views/WorkbooksLanding.vue": 6,
-    "src/views/YouthPrivacy.vue": 51,
-    "src/views/Impact.vue": 40,
-    "src/views/Journey.vue": 16,
-    "src/views/Practice.vue": 37,
-    "src/views/ContractReview.vue": 61
+    "src/views/YouthPrivacy.vue": 51
   }
 }

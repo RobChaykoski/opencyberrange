@@ -158,6 +158,24 @@ The handling rules are in `docs/SECURITY-DATASETS.md`. Malware-source rules are
 in `docs/MALWARE-SAMPLE-SOURCES.md`. Run
 `python scripts/check-external-datasets.py` after changing the registry.
 
+## Threat-awareness feeds
+
+The optional Threat Awareness panel reads an aggregated snapshot produced by
+`scripts/fetch-threat-feed.py`. The snapshot contains country-level counts only;
+no individual address, hostname, or attack path is stored or shown.
+
+- **FireHOL iplists** (<https://iplists.firehol.org/>). FireHOL publishes netset
+  feeds that aggregate many upstream blocklists. FireHOL's own tooling is
+  GPL-2.0; the feeds combine third-party sources, each with its own terms. The
+  platform does not redistribute the feeds or individual entries. Confirm the
+  current terms for every feed you enable and record the result in the
+  deployment change log before scheduling a refresh.
+- **`Cybersight-Security/Global-Threat-Map`** (GPL-3.0) is **not** used. See
+  [ADR 0008](docs/decisions/0008-threat-awareness.md): its licence cannot be
+  combined with the PolyForm Noncommercial platform licence, and it renders
+  individual addresses with simulated attack paths. A plain outbound link is
+  the only permitted use.
+
 ## 2.7.0 update
 
 - No new third-party runtime dependencies are shipped in 2.7.0. Level quizzes

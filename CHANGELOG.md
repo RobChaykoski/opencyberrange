@@ -4,6 +4,13 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
+No unreleased changes.
+
+## [5.46.0] - 2026-11-24
+
+Host-agent spike, aggregated threat awareness, restore-drift gate, and
+dependency currency.
+
 ### Operations
 
 - Added `scripts/check-restore-drift.sh`, which restores the newest backup into a scratch database, migrates it, and enforces the 48-operation drift budget.
@@ -15,6 +22,12 @@ All notable changes to OpenCyberRange are recorded here.
 - Added `platform/labd/ocr_labd.py`, a loopback, token-authenticated agent skeleton with a fixed operation list and no arbitrary exec. Mutating routes return `501` until validated.
 - Added the `ocr-labd.service` systemd unit, a CI boundary check, and ADR 0007 acceptance for the spike.
 - Production remains on the pre-baked helper image and restricted socket proxy until the lab harness passes.
+
+### Threat awareness
+
+- Added a first-party, aggregated Threat Awareness panel at `/threat-awareness` and `GET /api/threat-awareness`. It returns country and feed counts only, with no individual address, hostname, or simulated attack path.
+- Added `scripts/fetch-threat-feed.py` for offline refresh with a minimum bucket size, and [ADR 0008](docs/decisions/0008-threat-awareness.md) rejecting the GPL-3.0 Global Threat Map integration.
+- Ships with a labelled sample snapshot; a live refresh is an explicit operations action.
 
 ## [5.45.0] - 2026-11-24
 

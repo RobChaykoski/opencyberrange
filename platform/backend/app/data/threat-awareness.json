@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "mode": "sample",
+  "generated_at": "2026-11-24T00:00:00Z",
+  "window_hours": 24,
+  "source": {
+    "name": "FireHOL threat intelligence feeds",
+    "url": "https://iplists.firehol.org/",
+    "attribution": "Aggregated counts derived from the FireHOL iplists project. Individual addresses are not retained.",
+    "terms": "FireHOL aggregates third-party feeds and each feed keeps its own terms. Confirm them before enabling a refresh job."
+  },
+  "method": {
+    "aggregation": "country",
+    "minimum_bucket_size": 25,
+    "individual_addresses": false,
+    "geoip": "local-database",
+    "attack_paths": "not included"
+  },
+  "totals": {
+    "entries_observed": 18432,
+    "entries_reported": 17980,
+    "categories": 8,
+    "countries": 13,
+    "buckets_suppressed": 24
+  },
+  "categories": [
+    { "id": "firehol_level1", "label": "Level 1 - high risk", "count": 4210 },
+    { "id": "firehol_level2", "label": "Level 2 - moderate risk", "count": 3860 },
+    { "id": "firehol_level3", "label": "Level 3 - low risk", "count": 2990 },
+    { "id": "anonymous", "label": "Anonymous proxies", "count": 1580 },
+    { "id": "malicious_web", "label": "Malicious web clients", "count": 2140 },
+    { "id": "abusers_30d", "label": "30-day abusers", "count": 1260 },
+    { "id": "abusers_24h", "label": "24-hour abusers", "count": 940 },
+    { "id": "web_server", "label": "Web server threats", "count": 1000 }
+  ],
+  "countries": [
+    { "code": "US", "label": "United States", "count": 3120 },
+    { "code": "CN", "label": "China", "count": 2480 },
+    { "code": "RU", "label": "Russian Federation", "count": 2210 },
+    { "code": "BR", "label": "Brazil", "count": 1640 },
+    { "code": "IN", "label": "India", "count": 1490 },
+    { "code": "VN", "label": "Viet Nam", "count": 1320 },
+    { "code": "IR", "label": "Iran", "count": 1180 },
+    { "code": "ID", "label": "Indonesia", "count": 1010 },
+    { "code": "DE", "label": "Germany", "count": 940 },
+    { "code": "NL", "label": "Netherlands", "count": 890 },
+    { "code": "FR", "label": "France", "count": 760 },
+    { "code": "GB", "label": "United Kingdom", "count": 640 },
+    { "code": "UA", "label": "Ukraine", "count": 300 }
+  ],
+  "notes": [
+    "Sample snapshot. Run scripts/fetch-threat-feed.py on a host with feed and GeoIP access to replace it.",
+    "Counts are aggregated per country. No individual address, hostname, or attack path is included.",
+    "An entry can appear in more than one category, so category counts overlap."
+  ]
+}

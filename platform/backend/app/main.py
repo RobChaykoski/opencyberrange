@@ -35,6 +35,7 @@ from app.routers import settings as settings_router
 from app.routers import modules as modules_router
 from app.routers import rangebox as rangebox_router
 from app.routers import about as about_router
+from app.routers import threat_awareness as threat_awareness_router
 from app.routers import public_config as public_config_router
 from app.routers import public_usage as public_usage_router
 from app.routers import usage as usage_router
@@ -1548,6 +1549,11 @@ app.include_router(instructor.router, prefix="/api/instructor", tags=["Instructo
 app.include_router(modules_router.router, prefix="/api/modules", tags=["Modules"])
 app.include_router(rangebox_router.router, prefix="/api/rangebox", tags=["RangeBox"])
 app.include_router(about_router.router, prefix="/api/about", tags=["About"])
+app.include_router(
+    threat_awareness_router.router,
+    prefix="/api/threat-awareness",
+    tags=["Threat awareness"],
+)
 app.include_router(public_config_router.router, prefix="/api", tags=["Public config"])
 app.include_router(
     public_usage_router.router, prefix="/api/public", tags=["Public usage"]

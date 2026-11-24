@@ -3,6 +3,14 @@
 This page maps the tags in the repository to the release they actually
 represent. It exists because the history contains several naming eras.
 
+## Release 5.46.0
+
+| Tag | Release | Status |
+|---|---|---|
+| `v5.46.0` | SWOCTS Cyber Range Release 5.46.0 | Signed annotated tag: the `ocr-labd` host-agent spike, the first-party aggregated Threat Awareness panel with ADR 0008, the restore-drift gate, the weekly dependency-currency report, the 25 seeded legacy contract drafts, and the `psycopg 3.3.9` / `redis 8.2.0` patch bump. Deployed to development and production on 24 November 2026. |
+
+Deliverables: [Release 5.46.0 deliverables](RELEASE-5.46.0-DELIVERABLES.md).
+
 ## Release 5.45.0
 
 | Tag | Release | Status |

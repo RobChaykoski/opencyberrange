@@ -204,6 +204,14 @@
           </svg>
           <span v-show="!collapsed" class="nav-item__label">Practice exams</span>
         </router-link>
+        <router-link to="/threat-awareness" aria-label="Threat awareness" title="Global threat awareness" class="nav-item" :class="{ 'nav-item--active': isActive('/threat-awareness') }">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M3 12h18"/>
+            <path d="M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18z"/>
+          </svg>
+          <span v-show="!collapsed" class="nav-item__label">Threat awareness</span>
+        </router-link>
         <router-link to="/my-evidence" aria-label="My evidence" title="My evidence" class="nav-item" :class="{ 'nav-item--active': isActive('/my-evidence') }">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
             <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
