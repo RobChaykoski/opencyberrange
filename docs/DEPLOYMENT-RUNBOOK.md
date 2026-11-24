@@ -13,7 +13,7 @@ Operational commands for the two deployed environments.
 > [`MICROSOFT-LEGAL-NOTICE.md`](MICROSOFT-LEGAL-NOTICE.md) and
 > [`WINDOWS-ARTIFACT-POLICY.md`](WINDOWS-ARTIFACT-POLICY.md).
 
-**Current release:** `5.50.0` (signed tag `v5.50.0`, Alembic
+**Current release:** `5.50.1` (signed tag `v5.50.1`, Alembic
 `0062_index_dedupe`). The admin **System → Health → Release status**
 panel compares the installed version with the latest GitHub release or tag.
 The authoritative deployment state, including whether cutover has run, is in
@@ -73,8 +73,8 @@ Manual fallback:
 cd ~/opencyberrange
 git fetch --tags origin
 gpg --import docs/release-signing-key.asc
-git verify-tag v5.50.0
-git checkout --detach v5.50.0
+git verify-tag v5.50.1
+git checkout --detach v5.50.1
 
 python3 scripts/supply_chain.py --check \
   --signature supply-chain.lock.json.asc \

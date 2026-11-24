@@ -54,6 +54,9 @@ TERMS = (
     "Confirm them before enabling a refresh job."
 )
 UNKNOWN_COUNTRY = ("ZZ", "Unknown or unresolved")
+GEOIP_ATTRIBUTION = (
+    "IP geolocation by DB-IP (https://db-ip.com), CC BY 4.0."
+)
 
 
 def _now() -> str:
@@ -178,7 +181,9 @@ def _snapshot(
         "source": {
             "name": "FireHOL threat intelligence feeds",
             "url": "https://iplists.firehol.org/",
-            "attribution": ATTRIBUTION,
+            "attribution": (
+                f"{ATTRIBUTION} {GEOIP_ATTRIBUTION}" if geo.active else ATTRIBUTION
+            ),
             "terms": TERMS,
         },
         "method": {
@@ -216,6 +221,11 @@ def main() -> int:
     parser.add_argument("--max-entries-per-feed", type=int, default=250_000)
     parser.add_argument("--timeout", type=float, default=30.0)
     parser.add_argument("--geoip-db", default=None)
+    parser.add_argument(
+        "--require-geoip",
+        action="store_true",
+        help="Fail instead of writing a snapshot where every entry is unknown",
+    )
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
@@ -225,6 +235,10 @@ def main() -> int:
         parser.error("--window-hours must be at least 1")
 
     geo = GeoLookup(args.geoip_db)
+    if args.require_geoip and not geo.active:
+        raise SystemExit(
+            "--require-geoip needs --geoip-db and the maxminddb package"
+        )
     feeds = []
     try:
         for identifier, label, filename in FEEDS:

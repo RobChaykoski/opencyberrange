@@ -28,6 +28,17 @@ be integrated into this platform:
 4. **Operational fragility.** A cron-driven fetcher rewrites a JSON snapshot with
    no schema, no validation, no aggregation, and no offline path.
 
+## Geolocation
+
+Country attribution uses a **local MaxMind-format database**, never a lookup API
+in the request path and never a browser call. DB-IP Lite (CC BY 4.0, no account)
+is the default recommendation; a licensed MaxMind GeoLite2 database works with
+the same flag. HackerTarget and similar services are limited to ad-hoc spot
+checks (50 lookups a day on the free tier) and are not used for bulk refresh.
+
+The snapshot records the DB-IP attribution when it is used. Without a database,
+entries are counted as unknown and the panel says so.
+
 ## Decision
 
 Do not vendor, embed, or iframe the Global Threat Map. Do not copy its assets.

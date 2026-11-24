@@ -22,6 +22,14 @@ Steps 2 and 3 order matters: the manifest copies the lock's `release` field.
 Releases 5.46.0 and 5.46.1 skipped step 3, so the committed manifest still said
 `5.45.0` and the CI integrity gate failed.
 
+## Release 5.50.1
+
+| Tag | Release | Status |
+|---|---|---|
+| `v5.50.1` | SWOCTS Cyber Range Release 5.50.1 | Signed annotated tag: live FireHOL snapshot with DB-IP Lite country attribution (`469,828` entries across `148` countries), the `--require-geoip` guard, and the threat-awareness operations runbook. Deployment pending. |
+
+Deliverables: [Release 5.50.1 deliverables](RELEASE-5.50.1-DELIVERABLES.md).
+
 ## Release 5.50.0
 
 | Tag | Release | Status |

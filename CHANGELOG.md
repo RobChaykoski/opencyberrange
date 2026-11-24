@@ -6,6 +6,16 @@ All notable changes to OpenCyberRange are recorded here.
 
 No unreleased changes.
 
+## [5.50.1] - 2026-11-24
+
+Live threat-map snapshot.
+
+### Threat awareness
+
+- Refreshed the FireHOL snapshot with DB-IP Lite country attribution: 469,828 entries across 148 countries. The sample banner is gone for both sections.
+- Added `--require-geoip` to refuse an all-unknown snapshot and documented DB-IP Lite, GeoLite2, and the 50-lookup HackerTarget limit.
+- Recorded the DB-IP CC BY 4.0 attribution in the snapshot and third-party notices.
+
 ## [5.50.0] - 2026-11-24
 
 Tenant-isolation tooling, the competency review campaign, and a live ransomware

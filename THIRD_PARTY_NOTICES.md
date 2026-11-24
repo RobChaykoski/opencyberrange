@@ -175,6 +175,10 @@ no individual address, hostname, or attack path is stored or shown.
   combined with the PolyForm Noncommercial platform licence, and it renders
   individual addresses with simulated attack paths. A plain outbound link is
   the only permitted use.
+- **DB-IP Lite** (<https://db-ip.com/>). The IP-to-country Lite database is
+  **CC BY 4.0** and is downloaded monthly on an operations host. The database
+  file is not committed; only aggregated country counts are. Attribution:
+  "IP geolocation by DB-IP (https://db-ip.com), CC BY 4.0."
 - **RansomLook** (<https://www.ransomlook.io/>). Site content and API responses
   are **CC BY 4.0**; the tracker code is **AGPL-3.0** and is not used. The
   platform reads only `/api/stats` and `/api/hot` and stores aggregate totals
