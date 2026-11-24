@@ -177,6 +177,19 @@ def resolve_question(key: str) -> dict | None:
 
 
 def pathway_summary(pathway: dict) -> dict:
+    questions = list(pathway.get("questions") or [])
+    domains = []
+    for domain in pathway.get("domains") or []:
+        domains.append(
+            {
+                **domain,
+                "question_count": sum(
+                    1
+                    for question in questions
+                    if str(question.get("domain")) == str(domain.get("id"))
+                ),
+            }
+        )
     return {
         "id": pathway["id"],
         "name": pathway["name"],
@@ -184,9 +197,9 @@ def pathway_summary(pathway: dict) -> dict:
         "url": pathway.get("url"),
         "objectives_url": pathway.get("objectives_url"),
         "tracks": pathway.get("tracks", []),
-        "domains": pathway.get("domains", []),
+        "domains": domains,
         "careers": pathway.get("careers", []),
-        "question_count": len(pathway.get("questions", [])),
+        "question_count": len(questions),
     }
 
 

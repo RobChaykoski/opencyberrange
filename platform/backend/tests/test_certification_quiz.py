@@ -28,6 +28,16 @@ def test_banks_are_valid_and_have_a_review_date():
     assert result["reviewed_at"]
 
 
+def test_pathway_summary_counts_questions_by_domain():
+    pathway = certification_quiz.pathway_by_id("comptia-security-plus")
+    summary = certification_quiz.pathway_summary(pathway)
+    assert summary["question_count"] == len(pathway["questions"])
+    assert sum(domain["question_count"] for domain in summary["domains"]) == summary[
+        "question_count"
+    ]
+    assert all("question_count" in domain for domain in summary["domains"])
+
+
 def test_references_are_https_and_not_self_referencing():
     for pathway in certification_quiz.pathways():
         for question in pathway["questions"]:

@@ -34,6 +34,10 @@ The full bank is returned by admin-only endpoints:
 The learner endpoints never return `correct`, `explanation`, or `reference`
 before submission. The answer key is revealed only in the submitted attempt.
 
+The admin bank view shows a **per-domain question count** and highlights a
+domain with fewer than two reviewed items, so content work targets the thinnest
+area first rather than adding to the strongest one.
+
 ## Source policy
 
 - Items are **original** and written to published objectives. Do not paste

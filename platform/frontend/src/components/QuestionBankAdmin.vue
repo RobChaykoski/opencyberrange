@@ -70,9 +70,15 @@
             </header>
 
             <div class="qbank-domains">
-              <span v-for="domain in detail.domains" :key="domain.id" class="qbank-domain">
+              <span
+                v-for="domain in detail.domains"
+                :key="domain.id"
+                class="qbank-domain"
+                :class="{ 'qbank-domain--thin': domain.question_count < 2 }"
+              >
                 <b>{{ domain.id }}</b> {{ domain.name }}
                 <template v-if="domain.weight"> · {{ domain.weight }}%</template>
+                · {{ domain.question_count }} question{{ domain.question_count === 1 ? '' : 's' }}
               </span>
             </div>
 
@@ -369,6 +375,11 @@ onMounted(load)
 
 .qbank-domain b {
   color: var(--accent-text);
+}
+
+.qbank-domain--thin {
+  background: #fef3c7;
+  color: #92400e;
 }
 
 .qbank-questions {

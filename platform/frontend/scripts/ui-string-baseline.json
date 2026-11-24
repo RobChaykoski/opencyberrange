@@ -1,5 +1,5 @@
 {
-  "total": 5176,
+  "total": 5177,
   "files": {
     "src/App.vue": 13,
     "src/components/AchievementStudio.vue": 54,
@@ -47,7 +47,7 @@
     "src/components/PrivacyText.vue": 1,
     "src/components/ProgrammeOverview.vue": 49,
     "src/components/PulseSurveyModal.vue": 11,
-    "src/components/QuestionBankAdmin.vue": 16,
+    "src/components/QuestionBankAdmin.vue": 17,
     "src/components/RangeBox.vue": 39,
     "src/components/ReauthDialog.vue": 6,
     "src/components/RoleReadinessPanel.vue": 36,
