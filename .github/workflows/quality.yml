@@ -58,6 +58,9 @@ jobs:
       - name: Audit Release 6 object coverage
         run: python scripts/audit-release6-coverage.py --fail-on-gaps
 
+      - name: Guard the Alembic revision graph
+        run: python scripts/check-alembic-safety.py
+
       - name: Validate rubric registry
         run: python scripts/validate-rubrics.py
 

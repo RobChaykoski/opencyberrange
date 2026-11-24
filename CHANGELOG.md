@@ -4,6 +4,10 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
+### Alembic safety guard
+
+- Added `scripts/check-alembic-safety.py` and the Alembic baseline guide. CI rejects autogenerate usage and verifies one linear head.
+
 ### Shared login throttle
 
 - Login-failure backoff now uses the configured Valkey/Redis store with a bounded in-process fallback, so multiple workers share the same limit.

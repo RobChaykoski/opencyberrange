@@ -81,6 +81,7 @@ COVERED_FILES = [
     "platform/backend/app/security/policy_rules.py",
     "scripts/generate-rbac-matrix.py",
     "scripts/generate-competency-contracts.py",
+    "scripts/check-alembic-safety.py",
     "scripts/check_db_roles.py",
     "scripts/sync-dev-bind-mount.sh",
     "scripts/check-data-dictionary.py",
