@@ -95,6 +95,8 @@ for the deployment record.
   [Your Impact](02_Student_Guide/28_Your_Impact.md).
 - Wondering what the hidden achievements are? See
   [Recognition](02_Student_Guide/29_Recognition.md).
+- Preparing for a certification? See
+  [Practice Exams](02_Student_Guide/31_Practice_Exams.md).
 - Reviewing learner evidence? See
   [Evidence Review](03_Instructor_Guide/17_Evidence_Review.md).
 - Want the full guide to the six Cyber DNA branches, decay and repair, the

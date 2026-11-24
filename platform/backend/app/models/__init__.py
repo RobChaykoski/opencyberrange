@@ -117,6 +117,7 @@ from app.models.workbook import WorkbookAnswer
 from app.models.journey import LearnerJourney
 from app.models.impact import ImpactContribution, StewardshipEvent
 from app.models.recognition import RecognitionAward
+from app.models.practice import PracticeSession, PracticeSessionQuestion
 from app.models.nice import (
     LabNiceComponent,
     LabNiceMetadata,
@@ -193,6 +194,8 @@ __all__ = [
     "Lab",
     "LabCompletion",
     "LabSession",
+    "PracticeSession",
+    "PracticeSessionQuestion",
     "RecognitionAward",
     "ImpactContribution",
     "LearnerJourney",

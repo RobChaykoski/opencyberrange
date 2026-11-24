@@ -51,6 +51,11 @@ All notable changes to OpenCyberRange are recorded here.
   there is breadth, returns narrative notes and counts rather than percentages,
   and never changes a score or permission. Removed the tradition selector from
   the journey page and replaced it with the observed archive.
+- Added standalone certification practice at `/practice` and `/api/practice`:
+  timed mock exams, domain drills, per-question option shuffling, a server-held
+  answer key, spaced-repetition selection, attempt history, and per-domain
+  accuracy. A practice pass is a study signal, not a credential.
+- Added migration `0058_practice_sessions` with forced tenant RLS.
 - Added the **Cyber Legacy** frame: the Age of Foundations, the First
   Generation, the eight traditions, and historical markers, linked from the
   programme docs and the learner manual.

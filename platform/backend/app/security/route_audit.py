@@ -53,6 +53,7 @@ _PROTECTED_PREFIXES = (
     "/api/impact",
     "/api/recognition",
     "/api/archive",
+    "/api/practice",
     "/api/identity",
     "/api/lti",
     "/api/setup",

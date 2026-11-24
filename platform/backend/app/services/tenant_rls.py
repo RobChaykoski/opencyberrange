@@ -69,6 +69,8 @@ TENANT_TABLES: dict[str, dict] = {
     "impact_contributions": {"owner": "user_id", "course": None},
     "stewardship_events": {"owner": "user_id", "course": None},
     "achievement_awards": {"owner": "user_id", "course": None},
+    "practice_sessions": {"owner": "user_id", "course": None},
+    "practice_session_questions": {"parent": ("practice_sessions", "session_id")},
     "evidence_appeals": {"owner": "learner_id", "course": None},
     "evidence_competencies": {"parent": ("evidence_records", "evidence_id")},
     "evidence_reviews": {"parent": ("evidence_records", "evidence_id")},

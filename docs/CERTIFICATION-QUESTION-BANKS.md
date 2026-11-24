@@ -7,6 +7,10 @@ The exercise knowledge check draws three questions from a certification pathway
 that matches the exercise's track. The goal is a short, realistic drill tied to
 the work the learner just finished, not a second exam.
 
+The same bank also powers the standalone **Practice exams** page: a timed mock
+exam or a domain drill, with answer-key protection, option shuffling, attempt
+history, and per-domain accuracy. See [Certification practice](PRACTICE-EXAMS.md).
+
 ## What the learner sees
 
 - A three-question sample, shuffled, with no answers in the response.
@@ -36,7 +40,7 @@ before submission. The answer key is revealed only in the submitted attempt.
   copyrighted exam questions or braindumps.
 - Every item names the objective it tests and a career pathway.
 - Every pathway declares the career roles it supports.
-- The shared bank currently carries **81 items across 9 pathways**; source and
+- The shared bank currently carries **128 items across 9 pathways**; source and
   licence notes are in [QUESTION-BANK-SOURCES.md](QUESTION-BANK-SOURCES.md).
 - Every item has a public `https://` reference that is not the platform itself,
   a local host, a private address, or a placeholder domain.

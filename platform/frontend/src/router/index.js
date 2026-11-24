@@ -166,6 +166,12 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/practice',
+    name: 'Practice',
+    component: () => import('../views/Practice.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/certificate/event/:eventId/:award',
     name: 'EventCertificate',
     component: () => import('../views/Certificate.vue'),

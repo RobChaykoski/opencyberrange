@@ -95,6 +95,14 @@ message and the status in the same change.
 | `achievement_evidence_required` | 400 | A manual award needs an evidence reference |
 | `achievement_note_required` | 400 | A manual award needs a note of at least 10 characters |
 | `achievement_locked` | 400 | The previous stage of a hidden chain is not earned |
+| `practice_pathway_unknown` | 404 | The pathway is not in the reviewed question bank |
+| `practice_bank_empty` | 400 | The pathway has no reviewed questions |
+| `practice_mode_invalid` | 400 | Mode is not mock or domain |
+| `practice_domain_required` | 400 | A domain drill did not name a domain |
+| `practice_domain_unknown` | 404 | The domain is not in the pathway |
+| `practice_session_not_found` | 404 | The practice session does not exist or belongs to another learner |
+| `practice_session_submitted` | 409 | The practice session is already submitted |
+| `practice_answer_invalid` | 400 | An answer is missing, duplicated, out of range, or names an unknown position |
 
 The existing `X-Reauth-Required`, `X-Session-Invalid`, `X-Security-Version`, and
 `X-Impersonating` headers remain. Do not duplicate them with a code unless the

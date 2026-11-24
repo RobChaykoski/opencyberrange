@@ -49,6 +49,7 @@ from app.routers import journeys as journeys_router
 from app.routers import impact as impact_router
 from app.routers import recognition as recognition_router
 from app.routers import archive as archive_router
+from app.routers import practice as practice_router
 from app.routers import audit as audit_router
 from app.routers import planning as planning_router
 from app.routers import open_badges as open_badges_router
@@ -1533,6 +1534,11 @@ app.include_router(
     archive_router.router,
     prefix="/api/archive",
     tags=["Archive"],
+)
+app.include_router(
+    practice_router.router,
+    prefix="/api/practice",
+    tags=["Practice"],
 )
 app.include_router(audit_router.router, prefix="/api", tags=["Audit"])
 app.include_router(planning_router.router, prefix="/api", tags=["Course planning"])

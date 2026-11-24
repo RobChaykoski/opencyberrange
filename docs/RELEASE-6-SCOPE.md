@@ -202,6 +202,7 @@ Release 6 is designed for the questions an academic review actually asks.
 - [Program layer: organizations, scenarios, transcript, and analytics](PROGRAM-LAYER.md)
 - [The Age of Foundations](FOUNDATIONS.md)
 - [The Living Archive](LIVING-ARCHIVE.md)
+- [Certification practice](PRACTICE-EXAMS.md)
 - [Identity and Quests](IDENTITY-QUESTS.md)
 - [Impact and Legacy](IMPACT-AND-LEGACY.md)
 - [Achievements and recognition](ACHIEVEMENTS.md)

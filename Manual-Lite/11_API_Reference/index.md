@@ -553,6 +553,12 @@ owner-only unless an explicit share or break-glass grant exists.
 | `POST` | `/api/nice/labs/{lab_id}/review` | Review Lab Nice Mappings | OAuth2PasswordBearer |
 | `POST` | `/api/nice/refresh` | Refresh Nice Framework | OAuth2PasswordBearer |
 | `GET` | `/api/nice/status` | Nice Status | OAuth2PasswordBearer |
+| `GET` | `/api/practice/pathways` | Practice Pathways | OAuth2PasswordBearer |
+| `GET` | `/api/practice/progress` | Practice Progress | OAuth2PasswordBearer |
+| `GET` | `/api/practice/sessions` | Practice History | OAuth2PasswordBearer |
+| `POST` | `/api/practice/sessions` | Start Session | OAuth2PasswordBearer |
+| `GET` | `/api/practice/sessions/{session_id}` | Get Session | OAuth2PasswordBearer |
+| `POST` | `/api/practice/sessions/{session_id}/submit` | Submit Session | OAuth2PasswordBearer |
 | `GET` | `/api/profile/career-assessment` | Short career-direction questions | OAuth2PasswordBearer |
 | `POST` | `/api/profile/career-assessment` | Score a short career-direction check | OAuth2PasswordBearer |
 | `GET` | `/api/profile/career-dossier` | Career-profile dossier (JSON) | OAuth2PasswordBearer |
@@ -8523,6 +8529,111 @@ Return the installed NICE Framework version and component counts.
 | Parameter | In | Type | Required | Description |
 |---|---|---|---|---|
 | `token` | path | string | yes |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+## Practice
+
+### `GET /api/practice/pathways`
+
+**Practice Pathways**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Responses**
+
+- `200`: Successful Response
+
+### `GET /api/practice/progress`
+
+**Practice Progress**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Responses**
+
+- `200`: Successful Response
+
+### `GET /api/practice/sessions`
+
+**Practice History**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `limit` | query | integer | no |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `POST /api/practice/sessions`
+
+**Start Session**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Request body** (`application/json`)
+
+**Schema:** `SessionIn`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `pathway_id` | string | yes |  |
+| `mode` | string | no |  |
+| `domain_id` | string or null | no |  |
+| `question_count` | integer or null | no |  |
+| `duration_minutes` | integer or null | no |  |
+| `pass_mark` | integer or null | no |  |
+
+**Responses**
+
+- `201`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `GET /api/practice/sessions/{session_id}`
+
+**Get Session**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `session_id` | path | integer | yes |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `POST /api/practice/sessions/{session_id}/submit`
+
+**Submit Session**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `session_id` | path | integer | yes |  |
+
+**Request body** (`application/json`)
+
+**Schema:** `SubmitIn`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `answers` | array[`AnswerIn`] | no |  |
 
 **Responses**
 
