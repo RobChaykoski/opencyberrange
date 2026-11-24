@@ -6,6 +6,12 @@ All notable changes to OpenCyberRange are recorded here.
 
 No unreleased changes.
 
+## [5.43.1] - 2026-11-24
+
+Patch: the in-place deploy and installer now run the helper-image build script
+by path with bash, and the script is marked executable. A fresh deploy can no
+longer skip the pinned `ocr-lab/netprobe:1.0` image.
+
 ## [5.43.0] - 2026-11-24
 
 Dependency refresh and Docker helper hardening: current patch-level backend

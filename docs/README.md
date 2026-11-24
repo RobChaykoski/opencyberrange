@@ -51,6 +51,7 @@ scale, federation, then the AI mentor.
 - [Release 5.41.0 deliverables](RELEASE-5.41.0-DELIVERABLES.md)
 - [Release 5.42.0 deliverables](RELEASE-5.42.0-DELIVERABLES.md)
 - [Release 5.43.0 deliverables](RELEASE-5.43.0-DELIVERABLES.md)
+- [Release 5.43.1 deliverables](RELEASE-5.43.1-DELIVERABLES.md)
 - [Program layer: organizations, scenarios, transcript, and analytics](PROGRAM-LAYER.md)
 - [The Age of Foundations](FOUNDATIONS.md)
 - [The Living Archive](LIVING-ARCHIVE.md)
