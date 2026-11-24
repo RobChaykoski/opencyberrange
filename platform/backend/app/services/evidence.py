@@ -254,6 +254,7 @@ def _fingerprint(
     rubric_version: str,
     links: list[dict],
     artifact_sha256: str | None,
+    content_text: str | None = None,
 ) -> str:
     payload = {
         "learner_id": learner_id,
@@ -263,6 +264,11 @@ def _fingerprint(
         "rubric_version": rubric_version,
         "competencies": sorted(link["competency_id"] for link in links),
         "artifact_sha256": artifact_sha256 or "",
+        "content_sha256": (
+            hashlib.sha256(content_text.encode("utf-8")).hexdigest()
+            if content_text
+            else ""
+        ),
     }
     return hashlib.sha256(
         json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
@@ -289,6 +295,7 @@ def create_record(
     artifact_mime: str | None = None,
     artifact_size: int | None = None,
     artifact_sha256: str | None = None,
+    content_text: str | None = None,
 ) -> tuple[EvidenceRecord, bool]:
     learner = db.query(User).filter(User.id == learner_id).first()
     if learner is None:
@@ -340,6 +347,8 @@ def create_record(
         artifact_uri, artifact_mime, artifact_size, artifact_sha256
     )
 
+    content_text = (content_text or "").strip()[:20000] or None
+
     rubric_version = str(rubric.get("version"))
     fingerprint = _fingerprint(
         learner_id=learner.id,
@@ -349,6 +358,7 @@ def create_record(
         rubric_version=rubric_version,
         links=links,
         artifact_sha256=artifact_sha256,
+        content_text=content_text,
     )
     existing = (
         db.query(EvidenceRecord)
@@ -378,6 +388,7 @@ def create_record(
         artifact_mime=artifact_mime,
         artifact_size=artifact_size,
         artifact_sha256=artifact_sha256,
+        content_text=content_text,
     )
     db.add(record)
     db.flush()
@@ -736,6 +747,7 @@ def record_payload(record: EvidenceRecord) -> dict:
         "formula_version": record.formula_version,
         "supersedes_id": record.supersedes_id,
         "artifact": artifact,
+        "content_text": record.content_text,
         "competencies": [
             {
                 "competency_id": link.competency_id,
@@ -786,6 +798,7 @@ def ensure_append_only(connection) -> None:
                        OR NEW.artifact_mime IS DISTINCT FROM OLD.artifact_mime
                        OR NEW.artifact_size IS DISTINCT FROM OLD.artifact_size
                        OR NEW.artifact_sha256 IS DISTINCT FROM OLD.artifact_sha256
+                       OR NEW.content_text IS DISTINCT FROM OLD.content_text
                     THEN
                         RAISE EXCEPTION
                             'evidence content is append-only; create a new record';

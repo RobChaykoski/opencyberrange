@@ -64,6 +64,7 @@ TENANT_TABLES: dict[str, dict] = {
     # Release 6 evidence ledger. The record owns the tenant; links and reviews
     # derive it from the evidence record so a client cannot choose a tenant.
     "evidence_records": {"owner": "learner_id", "course": None},
+    "workbook_answers": {"owner": "user_id", "course": None},
     "evidence_competencies": {"parent": ("evidence_records", "evidence_id")},
     "evidence_reviews": {"parent": ("evidence_records", "evidence_id")},
 }

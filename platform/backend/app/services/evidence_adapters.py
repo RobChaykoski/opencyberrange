@@ -29,9 +29,14 @@ ADAPTER_VERSION = "1.0"
 AUTO_CRITERION = "verified"
 
 
-def _competency_links(contract: dict | None) -> list[dict]:
+def competency_links(
+    contract: dict | None, criteria: str | list[str]
+) -> list[dict]:
+    """Return evidence links from a lab contract for rubric criteria."""
+
     if not contract:
         return []
+    criteria_list = [criteria] if isinstance(criteria, str) else list(criteria)
     links = []
     for item in contract.get("competency_ids") or []:
         if not isinstance(item, dict):
@@ -46,11 +51,15 @@ def _competency_links(contract: dict | None) -> list[dict]:
         links.append(
             {
                 "competency_id": competency_id,
-                "criteria": [AUTO_CRITERION],
+                "criteria": criteria_list,
                 "weight": weight,
             }
         )
     return links
+
+
+def _competency_links(contract: dict | None) -> list[dict]:
+    return competency_links(contract, AUTO_CRITERION)
 
 
 def record_flag_evidence(

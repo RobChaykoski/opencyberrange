@@ -167,6 +167,13 @@
           </svg>
           <span v-show="!collapsed" class="nav-item__label">Workbooks</span>
         </router-link>
+        <router-link to="/workbook-answers" aria-label="Workbook answers" title="Workbook answers" class="nav-item" :class="{ 'nav-item--active': isActive('/workbook-answers') }">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
+            <path d="M12 20h9"/>
+            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/>
+          </svg>
+          <span v-show="!collapsed" class="nav-item__label">Workbook answers</span>
+        </router-link>
         <router-link to="/profile?tab=skill-tree" aria-label="Cyber DNA" title="Cyber DNA report" class="nav-item" :class="{ 'nav-item--active': isActive('/profile') && route.query.tab === 'skill-tree' }">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
             <path d="M7 3c0 6 10 6 10 12M17 3c0 6-10 6-10 12M7 21c0-1 10-1 10-6M17 21c0-1-10-1-10-6"/>

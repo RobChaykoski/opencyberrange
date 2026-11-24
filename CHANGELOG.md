@@ -15,7 +15,12 @@ All notable changes to OpenCyberRange are recorded here.
 - Added the `automatic-check` rubric and background adapters for correct flags
   and passed exercise knowledge checks. The adapters use the reviewed lab
   contract, append a system review, and are idempotent.
-- Updated the i18n baseline for the new review surface and navigation entry.
+- Added workbook answer capture at `/workbook-answers`. Each distinct answer
+  version is snapshotted into the evidence ledger with the `analyst-answer`
+  rubric and waits in the instructor review queue; the review surface shows the
+  submitted text.
+- Updated the i18n baseline for the new review surface, workbook answer page,
+  and navigation entries.
 
 ## [5.38.0] - 2026-11-24
 

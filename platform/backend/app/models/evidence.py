@@ -66,6 +66,7 @@ IMMUTABLE_EVIDENCE_FIELDS = frozenset(
         "artifact_mime",
         "artifact_size",
         "artifact_sha256",
+        "content_text",
     }
 )
 
@@ -123,6 +124,10 @@ class EvidenceRecord(Base):
     artifact_mime = Column(String(120), nullable=True)
     artifact_size = Column(Integer, nullable=True)
     artifact_sha256 = Column(String(64), nullable=True)
+    # Snapshot of a submitted analyst answer. Evidence is append-only, so the
+    # reviewer sees exactly the text that was collected, even if the learner
+    # edits the live workbook-answer row later.
+    content_text = Column(Text, nullable=True)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
 
     learner = relationship("User", foreign_keys=[learner_id])

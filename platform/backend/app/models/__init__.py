@@ -112,6 +112,7 @@ from app.models.evidence import (
     EvidenceRecord,
     EvidenceReview,
 )
+from app.models.workbook import WorkbookAnswer
 from app.models.nice import (
     LabNiceComponent,
     LabNiceMetadata,
@@ -231,4 +232,5 @@ __all__ = [
     "User",
     "UserAccommodation",
     "WireGuardConfig",
+    "WorkbookAnswer",
 ]

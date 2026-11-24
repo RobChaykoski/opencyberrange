@@ -597,6 +597,10 @@ owner-only unless an explicit share or break-glass grant exists.
 | `GET` | `/api/usage/public` | Public Usage | Public |
 | `GET` | `/api/usage/public.csv` | Public Usage Csv | Public |
 | `GET` | `/api/version` | Api Version | Public |
+| `GET` | `/api/workbook-answers` | List My Answers | OAuth2PasswordBearer |
+| `GET` | `/api/workbook-answers/options` | Answer Options | OAuth2PasswordBearer |
+| `GET` | `/api/workbook-answers/{lab_slug}` | Get My Answer | OAuth2PasswordBearer |
+| `PUT` | `/api/workbook-answers/{lab_slug}` | Save My Answer | OAuth2PasswordBearer |
 | `GET` | `/health` | Health | Public |
 
 ## Endpoint details
@@ -9991,6 +9995,81 @@ Upload a ZIP of markdown files for a workbook chapter.  - **file**: ZIP archive 
 | `chapter_dir` | string | yes |  |
 | `section_name` | string | no |  |
 | `auto_build` | boolean | no |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+## Workbook answers
+
+### `GET /api/workbook-answers`
+
+**List My Answers**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `lab_id` | query | integer or null | no |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `GET /api/workbook-answers/options`
+
+**Answer Options**
+
+Visible exercises that have a workbook page, for the answer selector.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Responses**
+
+- `200`: Successful Response
+
+### `GET /api/workbook-answers/{lab_slug}`
+
+**Get My Answer**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `lab_slug` | path | string | yes |  |
+| `prompt_key` | query | string | no |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `PUT /api/workbook-answers/{lab_slug}`
+
+**Save My Answer**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `lab_slug` | path | string | yes |  |
+
+**Request body** (`application/json`)
+
+**Schema:** `WorkbookAnswerIn`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `answer` | string | yes |  |
+| `prompt_key` | string | no |  |
 
 **Responses**
 

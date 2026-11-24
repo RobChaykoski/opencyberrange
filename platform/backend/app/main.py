@@ -44,6 +44,7 @@ from app.routers import lti as lti_router
 from app.routers import accommodations as accommodations_router
 from app.routers import reviews as reviews_router
 from app.routers import evidence as evidence_router
+from app.routers import workbook_answers as workbook_answers_router
 from app.routers import audit as audit_router
 from app.routers import planning as planning_router
 from app.routers import open_badges as open_badges_router
@@ -1503,6 +1504,11 @@ app.include_router(
     evidence_router.competency_router,
     prefix="/api/competencies",
     tags=["Competencies"],
+)
+app.include_router(
+    workbook_answers_router.router,
+    prefix="/api/workbook-answers",
+    tags=["Workbook answers"],
 )
 app.include_router(audit_router.router, prefix="/api", tags=["Audit"])
 app.include_router(planning_router.router, prefix="/api", tags=["Course planning"])

@@ -1,0 +1,44 @@
+rubric: analyst-answer
+version: "1.0"
+title: Analyst answer
+description: >
+  A written analyst answer that explains what the learner observed, how they
+  know it, what they concluded, and what they would do next. It is judged by an
+  instructor, not by an automatic checker.
+evidence_types:
+  - workbook
+  - analyst_answer
+  - artifact
+criteria:
+  - id: accuracy
+    label: Accuracy
+    weight: 0.30
+    levels:
+      0: The answer is missing or materially wrong.
+      1: Some facts are correct but the main conclusion is unsupported or wrong.
+      2: Mostly accurate, with a minor error or an unsupported detail.
+      3: Accurate and consistent with the evidence the learner cites.
+  - id: evidence
+    label: Evidence and provenance
+    weight: 0.30
+    levels:
+      0: No source or observation is cited.
+      1: A source is named but not tied to the claim.
+      2: Most claims cite a source, with one gap.
+      3: Every material claim cites a source and the collection method.
+  - id: analysis
+    label: Analysis and conclusions
+    weight: 0.25
+    levels:
+      0: No analysis, or the conclusion contradicts the evidence.
+      1: The conclusion is asserted without support.
+      2: A reasonable conclusion with some unsupported inference.
+      3: The conclusion follows from the evidence and states uncertainty.
+  - id: communication
+    label: Communication
+    weight: 0.15
+    levels:
+      0: Unclear or unusable for the intended audience.
+      1: Understandable only with significant effort.
+      2: Clear, with minor ambiguity.
+      3: Clear, concise, and usable by the intended audience.

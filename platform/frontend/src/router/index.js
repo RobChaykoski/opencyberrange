@@ -142,6 +142,12 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/workbook-answers',
+    name: 'WorkbookAnswers',
+    component: () => import('../views/WorkbookAnswers.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/certificate/event/:eventId/:award',
     name: 'EventCertificate',
     component: () => import('../views/Certificate.vue'),

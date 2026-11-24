@@ -102,6 +102,11 @@
             </p>
           </section>
 
+          <section v-if="record.content_text" class="evidence-review__block" aria-labelledby="evidence-answer-title">
+            <h3 id="evidence-answer-title">Learner answer</h3>
+            <p class="evidence-review__answer">{{ record.content_text }}</p>
+          </section>
+
           <section class="evidence-review__block" aria-labelledby="evidence-competencies-title">
             <h3 id="evidence-competencies-title">Competencies and criteria</h3>
             <ul class="evidence-review__competencies">
@@ -571,6 +576,14 @@ onMounted(async () => {
   border-radius: 0.6rem;
   padding: 0.75rem;
   margin-top: 0.6rem;
+}
+
+.evidence-review__answer {
+  white-space: pre-wrap;
+  line-height: 1.55;
+  background: var(--surface-muted, #f8fafc);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
 }
 
 .evidence-review__mono {
