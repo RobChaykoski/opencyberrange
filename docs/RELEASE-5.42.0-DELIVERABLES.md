@@ -84,8 +84,9 @@ signature. The gate reports them; it does not grandfather them.
   restores are outside the migration graph. Do not use autogenerate until the
   baseline is reconciled.
 - Admin institution scoping and shared login throttling remain open.
-- Host kernel, Docker, containerd, and systemd updates need a maintenance window
-  and sudo. Unattended security upgrades are active.
+- Host kernel 6.8.0-151 and Docker 29.10.0 were applied on 24 November; only a
+  non-security `libsqlite3-0` update remains. Unattended security upgrades are
+  active.
 - The 190 pending competency contracts and 25 legacy reviewed contracts still
   need subject-matter sign-off.
 

@@ -22,6 +22,7 @@ another document disagrees, this page and the signed tag win.
 | CSP | `frame-src` includes dynamic lab targets; `frame-ancestors 'self'` |
 | Database index hygiene | Duplicate exact index sets: `0`; hot indexes present: `2` |
 | Cross-worker state | `/app/run-state` exists with mode `750`, owned by `ocr` |
+| Host | Kernel `6.8.0-151`, Docker `29.10.0`; no reboot required |
 | Pre-deploy backup | `~/backups/ocr-backup-20261124-161705.dump` |
 | Post-deploy backup | `~/backups/ocr-backup-20261124-162049.dump` |
 | Rollback images | `opencyberrange-backend:pre-v5.42.0`, `ocr-frontend:pre-v5.42.0` |

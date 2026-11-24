@@ -41,7 +41,7 @@ currency, container bases, and host patch state. It follows the earlier
 | High | Admin tenant scope | Several non-platform admin actions use the platform-admin dependency without the institution filter used by the core user endpoints. | Open; audit every admin action and make platform-only actions explicit. |
 | High | Login throttling | Failure counters are in-process, so multiple workers multiply the limit. | Open; move counters to Valkey or another shared store. |
 | Medium | RLS gaps | `users` is the tenant root and has no RLS. `auth_sessions`, `refresh_tokens`, `rbac_user_roles`, and `service_credentials` also have no RLS; the last two carry `institution_id`. | Review before multi-tenant use; single-host `default` tenant is not exposed. |
-| Medium | Host patches | Production had 21 pending packages, including Docker 29.10.0, kernel 6.8.0-151, systemd 255.4-1ubuntu8.19, and containerd 2.4.2-4. Development had 35. | Unattended security upgrades are active and installed libssh-4, python3-oauthlib, and tzdata on 24 November. Kernel, Docker, and systemd need a maintenance window and a host reboot or Docker restart. |
+| Medium | Host patches | Production had 21 pending packages. On 24 November the host rebooted into kernel 6.8.0-151 and applied Docker 29.10.0, containerd, and systemd. Only `libsqlite3-0` remains. Development had 35 pending at review time. | Applied on production; unattended security upgrades remain active. |
 | Medium | Base-image pinning | `nginx:alpine` is unpinned. The current tag resolves to nginx 1.31.8, the same version already running. | Pin the digest in the next dependency wave. |
 | Low | Unindexed foreign keys | 54 FKs have no index. Most are actor/creator columns on small or audit tables. `lab_sessions.lab_id` and `courses.instructor_id` were the hot paths. | Fixed for the hot paths; the rest are low-cardinality and low-volume. |
 | Low | SQL f-string scanner hits | Bandit reports 12 `B608` hits in consent hooks, erasure, tenant RLS, and an export README. The SQL identifiers come from fixed tuples or pass an identifier regex; values are bound parameters. | Accepted; comments and tests document the boundary. |
@@ -82,8 +82,8 @@ vacuum timestamps and should be watched as usage grows.
 | Valkey | 9.1.3 | 9.1.3 | Current. |
 | nginx | 1.31.8 | 1.31.8 | Current tag; pin the digest. |
 | Node (builder) | 22.23.5 | 22.23.5 | Current LTS; 24 is the next target. |
-| Docker Engine | 29.9.3 | 29.10.0 | Maintenance-window patch. |
-| Ubuntu | 24.04.5 | 24.04 line | Kernel 6.8.0-151 pending; reboot needed. |
+| Docker Engine | 29.10.0 | 29.10.0 | Applied 24 November. |
+| Ubuntu | 24.04.5 | 24.04 line | Kernel 6.8.0-151 applied 24 November; no reboot required. |
 
 `pip-audit` found **no known vulnerabilities** in the pinned backend
 requirements. `npm audit --omit=dev` found **0 vulnerabilities**. The only
@@ -95,9 +95,9 @@ patch.
 
 No immediate major upgrade is required for the current release line.
 
-1. **Host patch window.** Apply `apt-get upgrade` for the kernel, Docker,
-   containerd, systemd, and compose packages. Reboot if `/var/run/reboot-required`
-   appears. Back up first and verify `/api/version`, health, and containers.
+1. **Host patch window.** Applied on 24 November: kernel 6.8.0-151 and
+   Docker 29.10.0/containerd/systemd. Only a non-security `libsqlite3-0` update
+   remains. Keep the backup-first cadence for the next window.
 2. **Dependency patch wave (5.42.0).** Update FastAPI, SQLAlchemy, and Pydantic
    within their minor lines, run the full backend and frontend suites, rebuild,
    and sign a new supply-chain lock.
