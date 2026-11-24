@@ -4,6 +4,14 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
+No unreleased changes.
+
+## [5.45.0] - 2026-11-24
+
+Database schema alignment: model index cleanup, missing FK indexes, the
+WebSocket ticket model, legacy Kali column removal, descending index alignment,
+and the host-isolation ADR and drift inventory.
+
 ### Alembic model alignment
 
 - Added the `WebSocketTicket` model and migration `0064_ws_tickets`; removed the runtime `ws_tickets` DDL from startup.
