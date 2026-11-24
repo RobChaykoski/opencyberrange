@@ -202,7 +202,7 @@
       "sha256": "deca8e8de24ddd6206831b4f52985e8153d6b4b4b888c479b43e6acc52a27b06"
     },
     "platform/backend/requirements.txt": {
-      "sha256": "558aa1f02bdeff86ae24cfa304fd6152e4ce3d8724a7c14072d140734df204f0"
+      "sha256": "9e0752df5390c85073d136c8a8833285ad10b3f82daf4530fa8ccd5c7863b970"
     },
     "platform/docker-compose.prod.yml": {
       "sha256": "f8d2850d116ffa4d8104f571024f0c687028da193fa4cdad2de2f2320b413093"
@@ -376,7 +376,7 @@
       "sha256": "f08f563a56860357a3c246993e4fd3da16cf1df35cce49f9890c0b09eb1ab769"
     },
     "versions.yaml": {
-      "sha256": "af8a4976d659c587dd0a3376ad22cbc4567aabebaac58ae102d929c149987f1a"
+      "sha256": "6bad8fb7c358ef57e8aec15d06f95ef1474511da169c7f7b7824c535e38742cc"
     }
   },
   "generator": "scripts/supply_chain.py",

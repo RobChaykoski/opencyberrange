@@ -73,9 +73,9 @@ vacuum timestamps and should be watched as usage grows.
 | Component | Running | Latest checked | Action |
 |---|---|---|---|
 | Python | 3.13.18 | 3.13 line | Current; 3.14 is the next target, no immediate upgrade. |
-| FastAPI | 0.162.2 | 0.165.0 | Patch/minor wave; no known advisory. |
-| SQLAlchemy | 2.1.8 | 2.1.9 | Patch wave. |
-| Pydantic | 2.14.3 | 2.14.4 | Patch wave. |
+| FastAPI | 0.162.2 | 0.165.0 | Updated on `main` for 5.43.0; no known advisory. |
+| SQLAlchemy | 2.1.8 | 2.1.9 | Updated on `main` for 5.43.0. |
+| Pydantic | 2.14.3 | 2.14.4 | Updated on `main` for 5.43.0. |
 | Uvicorn | 0.54.0 | 0.54.0 | Current. |
 | cryptography | 50.0.2 | 50.0.2 | Current. |
 | PostgreSQL | 15.19 | 15.19 | Current 15.x; 15→17 is a planned major upgrade. |

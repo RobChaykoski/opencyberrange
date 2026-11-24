@@ -4,7 +4,9 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
-No unreleased changes.
+### Dependency refresh
+
+- Updated FastAPI to `0.165.0`, SQLAlchemy to `2.1.9`, Pydantic to `2.14.4`, and pydantic-settings to `2.16.3` on `main` for 5.43.0. The full backend suite passes.
 
 ## [5.42.0] - 2026-11-24
 

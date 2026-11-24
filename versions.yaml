@@ -97,12 +97,12 @@ runtime:
     licence: "BSD-3-Clause"
 
 backend:
-  fastapi: "0.162.2"
+  fastapi: "0.165.0"
   uvicorn: "0.54.0"
-  sqlalchemy: "2.1.8"
+  sqlalchemy: "2.1.9"
   alembic: "1.20.1"
-  pydantic: "2.14.3"
-  pydantic-settings: "2.16.2"
+  pydantic: "2.14.4"
+  pydantic-settings: "2.16.3"
   psycopg: "3.3.8"
   pyjwt: "2.15.1"
   pwdlib: "0.3.1"
