@@ -310,11 +310,11 @@ onMounted(loadImpact)
 
 .impact__head p {
   margin: 0;
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted);
 }
 
 .impact__muted {
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted);
   font-size: 0.88rem;
 }
 
@@ -353,9 +353,9 @@ onMounted(loadImpact)
 
 .impact__score,
 .impact__dimensions article {
-  border: 1px solid var(--border, #dbe3ee);
+  border: 1px solid var(--border-color);
   border-radius: 0.8rem;
-  background: var(--surface, #fff);
+  background: var(--bg-secondary);
   padding: 0.9rem;
 }
 
@@ -366,7 +366,7 @@ onMounted(loadImpact)
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted);
 }
 
 .impact__score strong {
@@ -376,7 +376,7 @@ onMounted(loadImpact)
 .impact__score p {
   margin: 0;
   font-size: 0.85rem;
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted);
 }
 
 .impact__dimensions article {
@@ -402,15 +402,15 @@ onMounted(loadImpact)
 .impact__meaning li {
   display: flex;
   justify-content: space-between;
-  border-bottom: 1px solid var(--border, #dbe3ee);
+  border-bottom: 1px solid var(--border-color);
   padding: 0.35rem 0;
 }
 
 .impact__list li,
 .impact__award {
-  border: 1px solid var(--border, #dbe3ee);
+  border: 1px solid var(--border-color);
   border-radius: 0.8rem;
-  background: var(--surface, #fff);
+  background: var(--bg-secondary);
   padding: 0.9rem;
 }
 
@@ -474,7 +474,7 @@ onMounted(loadImpact)
   font-style: italic;
   border-left: 3px solid var(--accent, #2563eb);
   padding-left: 0.75rem;
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted);
 }
 
 @media (max-width: 640px) {

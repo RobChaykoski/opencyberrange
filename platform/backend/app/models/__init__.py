@@ -119,6 +119,7 @@ from app.models.impact import ImpactContribution, StewardshipEvent
 from app.models.recognition import RecognitionAward
 from app.models.practice import PracticeSession, PracticeSessionQuestion
 from app.models.capstone import CapstonePlan
+from app.models.competency_review import CompetencyContractReview
 from app.models.nice import (
     LabNiceComponent,
     LabNiceMetadata,
@@ -196,6 +197,7 @@ __all__ = [
     "LabCompletion",
     "LabSession",
     "CapstonePlan",
+    "CompetencyContractReview",
     "PracticeSession",
     "PracticeSessionQuestion",
     "RecognitionAward",

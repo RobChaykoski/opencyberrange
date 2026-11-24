@@ -52,6 +52,7 @@ scale, federation, then the AI mentor.
 - [The Age of Foundations](FOUNDATIONS.md)
 - [The Living Archive](LIVING-ARCHIVE.md)
 - [Competency contract review guide](COMPETENCY-REVIEW-GUIDE.md)
+- [Competency review cycle](COMPETENCY-REVIEW-CYCLE.md)
 - [Learner-visible scores](LEARNER-VISIBLE-SCORES.md)
 - [Certification practice](PRACTICE-EXAMS.md)
 - [Identity and Quests](IDENTITY-QUESTS.md)

@@ -169,9 +169,9 @@ onMounted(loadOptions)
   display: grid;
   gap: 1rem;
   padding: 1rem;
-  border: 1px solid var(--border, #dbe3ee);
+  border: 1px solid var(--border-color, #dbe3ee);
   border-radius: 0.8rem;
-  background: var(--surface, #fff);
+  background: var(--bg-secondary, #fff);
 }
 
 .workbook-answers__field {

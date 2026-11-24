@@ -9,7 +9,11 @@ recorded in one place.
 
 ## Where a decision goes
 
-Record the decision in:
+The preferred route is the contract-review API and dashboard form described in
+[Competency review cycle](COMPETENCY-REVIEW-CYCLE.md). The YAML override is the
+export artifact, not the sign-off record.
+
+For the current file-based workflow, record the decision in:
 
 `platform/backend/app/data/competency-contract-overrides.yaml`
 
@@ -97,6 +101,12 @@ have the measured values.
 - Do not review a lab you cannot inspect.
 - Do not edit the generated contract file; the next regeneration will overwrite
   it.
+
+## Review cycle
+
+A review is not permanent. The signed record carries a 6, 12, or 24 month
+cycle and a next-review date. A lab or taxonomy change makes the review stale.
+See [Competency review cycle](COMPETENCY-REVIEW-CYCLE.md).
 
 ## Related
 

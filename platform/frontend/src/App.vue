@@ -671,6 +671,31 @@ body {
 .btn--sm { padding: 0.375rem 0.75rem; font-size: 0.75rem; }
 .btn--xs { padding: 0.25rem 0.5rem; font-size: 0.6875rem; }
 
+/* Shared form primitives. Components may override them locally. */
+.form-group { display: grid; gap: 0.35rem; }
+.form-label { color: var(--text-secondary); font-size: 0.78rem; font-weight: 600; }
+.form-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.85rem;
+}
+.form-input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.form-input--sm { padding: 0.3rem 0.45rem; font-size: 0.78rem; }
+.form-error {
+  color: var(--danger);
+  background: var(--danger-bg);
+  border: 1px solid var(--danger);
+  border-radius: 6px;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.82rem;
+}
+
 /* App layout: sidebar + content + a footer that belongs to the content column.
    A flex row put the footer beside the main content, which pushed its logo to
    the far right; the grid keeps the footer below the content instead. */

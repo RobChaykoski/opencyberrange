@@ -173,7 +173,7 @@ onMounted(loadEvidence)
 
 .my-evidence__head p {
   margin: 0;
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted);
 }
 
 .my-evidence__list {
@@ -185,9 +185,9 @@ onMounted(loadEvidence)
 }
 
 .my-evidence__card {
-  border: 1px solid var(--border, #dbe3ee);
+  border: 1px solid var(--border-color);
   border-radius: 0.8rem;
-  background: var(--surface, #fff);
+  background: var(--bg-secondary);
   padding: 1rem;
   display: grid;
   gap: 0.6rem;
@@ -208,7 +208,7 @@ onMounted(loadEvidence)
 .my-evidence__source,
 .my-evidence__meta,
 .my-evidence__note {
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted);
   font-size: 0.85rem;
 }
 
@@ -241,7 +241,7 @@ onMounted(loadEvidence)
 .my-evidence__answer {
   white-space: pre-wrap;
   line-height: 1.5;
-  background: var(--surface-muted, #f8fafc);
+  background: var(--bg-tertiary);
   border-radius: 0.5rem;
   padding: 0.7rem;
   margin: 0;
@@ -256,7 +256,7 @@ onMounted(loadEvidence)
 .my-evidence__competencies span {
   padding: 0.15rem 0.45rem;
   border-radius: 999px;
-  background: var(--accent-soft, #e0ecff);
+  background: var(--accent-bg);
   color: var(--accent, #2563eb);
   font-size: 0.75rem;
   font-weight: 600;
@@ -264,7 +264,7 @@ onMounted(loadEvidence)
 
 .my-evidence__review,
 .my-evidence__appeals {
-  border-top: 1px solid var(--border, #dbe3ee);
+  border-top: 1px solid var(--border-color);
   padding-top: 0.5rem;
 }
 
@@ -276,7 +276,7 @@ onMounted(loadEvidence)
 .my-evidence__appeal-form {
   display: grid;
   gap: 0.5rem;
-  border-top: 1px solid var(--border, #dbe3ee);
+  border-top: 1px solid var(--border-color);
   padding-top: 0.6rem;
 }
 
@@ -293,7 +293,7 @@ onMounted(loadEvidence)
 }
 
 .my-evidence__empty {
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted);
   padding: 1rem 0;
 }
 </style>

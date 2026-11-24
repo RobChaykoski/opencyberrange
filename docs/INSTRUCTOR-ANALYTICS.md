@@ -55,13 +55,20 @@ The evidence review surface now carries an operational summary from
 - strongest and weakest competencies with acceptance rate and learner count;
 - workbook/documentation coverage;
 - a 30-day confidence trend;
-- accepted rate, evidence per learner, and recent decisions;
-- small-cohort suppression below five learners for non-admin reviewers;
+- accepted-of-decided rate, pending count, evidence per learner, and recent
+  decisions;
+- superseded records excluded from active totals and rates;
+- under-18 learners excluded for non-admin reviewers;
+- small-cohort suppression below five learners, with derived rates returned as
+  `null` rather than zero;
+- competency rows suppressed below five distinct learners;
 - competency names beside taxonomy ids, and a CSV export of the loaded
   aggregate for programme reporting.
 
 It is a queue and workload view, not the full class-competency dashboard. The
-tiles below remain the 6.1 plan.
+CSV button is a convenience export of the loaded aggregate, not a signed report.
+Signed report exports and course/term scoping remain 6.1 work. The tiles below
+remain the 6.1 plan.
 
 ## Metric definitions
 

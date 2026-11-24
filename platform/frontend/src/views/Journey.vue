@@ -181,7 +181,7 @@ onMounted(loadJourneys)
 .journey__head p {
   margin: 0;
   max-width: 70ch;
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted);
 }
 
 .journey__current {
@@ -191,7 +191,7 @@ onMounted(loadJourneys)
   gap: 1rem;
   border: 1px solid var(--accent, #2563eb);
   border-radius: 0.9rem;
-  background: var(--surface, #fff);
+  background: var(--bg-secondary);
   padding: 1.1rem;
 }
 
@@ -204,7 +204,7 @@ onMounted(loadJourneys)
 }
 
 .journey__archive {
-  border: 1px solid var(--border, #dbe3ee);
+  border: 1px solid var(--border-color);
   border-left: 4px solid var(--accent, #2563eb);
   border-radius: 0.9rem;
   background: linear-gradient(135deg, #f8fbff, #ffffff);
@@ -224,14 +224,14 @@ onMounted(loadJourneys)
 
 .journey__future {
   margin: 0.6rem 0 0;
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted);
   font-size: 0.9rem;
   max-width: 80ch;
 }
 
 .journey__hint {
   margin: 0 0 0.75rem;
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted);
 }
 
 .journey__grid {
@@ -244,9 +244,9 @@ onMounted(loadJourneys)
 }
 
 .journey__card {
-  border: 1px solid var(--border, #dbe3ee);
+  border: 1px solid var(--border-color);
   border-radius: 0.9rem;
-  background: var(--surface, #fff);
+  background: var(--bg-secondary);
   padding: 1rem;
   display: grid;
   gap: 0.45rem;
@@ -280,13 +280,13 @@ onMounted(loadJourneys)
 .journey__quest {
   margin: 0;
   font-size: 0.88rem;
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted);
 }
 
 .journey__tradition {
   font-size: 0.76rem;
   font-weight: 600;
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted);
 }
 
 .journey__competencies {
@@ -298,7 +298,7 @@ onMounted(loadJourneys)
 .journey__competencies span {
   padding: 0.12rem 0.42rem;
   border-radius: 999px;
-  background: var(--accent-soft, #e0ecff);
+  background: var(--accent-bg);
   color: var(--accent, #2563eb);
   font-size: 0.72rem;
   font-weight: 600;
@@ -312,7 +312,7 @@ onMounted(loadJourneys)
 }
 
 .journey__empty {
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted);
   padding: 1rem 0;
 }
 </style>

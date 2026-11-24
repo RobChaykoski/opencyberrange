@@ -19,15 +19,22 @@
       </button>
     </header>
 
-    <section
+    <details
       v-if="analytics"
       class="evidence-review__analytics"
-      aria-labelledby="evidence-analytics-title"
     >
+      <summary class="evidence-review__analytics-summary">
+        <span>Reporting and analytics</span>
+        <span class="evidence-review__note">
+          {{ analytics.totals.awaiting_review }} awaiting ·
+          {{ analytics.program_effectiveness.accepted_rate ?? '—' }}% accepted
+        </span>
+      </summary>
+      <div class="evidence-review__analytics-body">
       <div class="evidence-review__analytics-head">
         <div>
           <p class="evidence-review__eyebrow">Cohort reporting</p>
-          <h2 id="evidence-analytics-title">Reporting and analytics</h2>
+          <h2 id="evidence-analytics-title">Cohort breakdown</h2>
           <p class="evidence-review__note">
             Aggregate only. No learner ranking. Breakdowns are suppressed below
             five learners.
@@ -38,7 +45,11 @@
         </button>
       </div>
 
-      <div class="evidence-review__summary" aria-label="Evidence operations summary">
+      <div
+        v-if="!analytics.suppressed"
+        class="evidence-review__summary"
+        aria-label="Evidence operations summary"
+      >
         <article>
           <span>Awaiting review</span>
           <strong>{{ analytics.totals.awaiting_review }}</strong>
@@ -57,11 +68,17 @@
         </article>
         <article>
           <span>Oldest waiting</span>
-          <strong>{{ analytics.backlog.oldest_age_days ?? 0 }}d</strong>
+          <strong>
+            {{ analytics.backlog.oldest_age_days ?? '—'
+            }}{{ analytics.backlog.oldest_age_days != null ? 'd' : '' }}
+          </strong>
         </article>
         <article>
-          <span>Accepted rate</span>
-          <strong>{{ analytics.program_effectiveness.accepted_rate }}%</strong>
+          <span>Accepted of decided</span>
+          <strong>
+            {{ analytics.program_effectiveness.accepted_rate ?? '—'
+            }}{{ analytics.program_effectiveness.accepted_rate != null ? '%' : '' }}
+          </strong>
         </article>
         <article>
           <span>Evidence / learner</span>
@@ -121,10 +138,13 @@
 
         <section class="evidence-review__breakdown-wide">
           <h3>Documentation evidence</h3>
-          <p>
+          <p v-if="analytics.documentation.suppressed" class="evidence-review__note">
+            Suppressed: fewer than five learners submitted workbook answers.
+          </p>
+          <p v-else>
             {{ analytics.documentation.accepted }} accepted of
             {{ analytics.documentation.total }} workbook submissions
-            ({{ analytics.documentation.acceptance_rate }}%) from
+            ({{ analytics.documentation.acceptance_rate ?? '—' }}%) from
             {{ analytics.documentation.learners }} learners.
           </p>
           <h3>Confidence trend (30 days)</h3>
@@ -141,7 +161,8 @@
         Use this view to decide where to review or teach next, not to rank a
         learner.
       </p>
-    </section>
+      </div>
+    </details>
     <p v-if="analyticsError" class="form-error" role="alert">{{ analyticsError }}</p>
 
     <p v-if="queueError" class="form-error" role="alert">{{ queueError }}</p>
@@ -180,6 +201,7 @@
               type="button"
               class="evidence-review__queue-item"
               :class="{ 'evidence-review__queue-item--active': item.id === selectedId }"
+              :aria-current="item.id === selectedId ? 'true' : undefined"
               @click="selectRecord(item.id)"
             >
               <span class="evidence-review__queue-top">
@@ -221,7 +243,7 @@
         </div>
       </aside>
 
-      <section class="evidence-review__detail" aria-labelledby="evidence-detail-title">
+      <section ref="detailPanel" class="evidence-review__detail" tabindex="-1" aria-labelledby="evidence-detail-title">
         <p v-if="detailError" class="form-error" role="alert">{{ detailError }}</p>
         <p v-if="loadingDetail" class="evidence-review__empty">Loading evidence...</p>
         <p v-else-if="!record" class="evidence-review__empty">
@@ -326,6 +348,7 @@
               <label class="evidence-review__field">
                 <span>Decision</span>
                 <select v-model="decision" class="form-input">
+                  <option value="" disabled>Choose a decision</option>
                   <option value="accepted">Accept</option>
                   <option value="more_evidence">Request more evidence</option>
                   <option value="rejected">Reject</option>
@@ -346,11 +369,28 @@
                 <input v-model="nextStep" class="form-input" maxlength="500" />
               </label>
             </div>
+            <p v-if="missingScores" class="evidence-review__note">
+              {{ missingScores }} rubric
+              {{ missingScores === 1 ? 'criterion still needs' : 'criteria still need' }}
+              a score before acceptance.
+            </p>
+            <p
+              v-else-if="decision === 'rejected' && !nextStep.trim()"
+              class="evidence-review__note"
+            >
+              A rejection needs a next step for the learner.
+            </p>
+            <p
+              v-else-if="decision && decision !== 'accepted' && !notes.trim()"
+              class="evidence-review__note"
+            >
+              A rejection or more-evidence decision needs notes.
+            </p>
             <p v-if="reviewError" class="form-error" role="alert">{{ reviewError }}</p>
             <button
               type="button"
               class="btn btn--primary btn--sm"
-              :disabled="submitting"
+              :disabled="submitting || !canSubmitReview"
               @click="submitReview"
             >
               {{ submitting ? 'Saving...' : 'Record decision' }}
@@ -416,7 +456,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, nextTick, onMounted, reactive, ref } from 'vue'
 import axios from '../api/axios'
 
 const queue = ref([])
@@ -434,7 +474,7 @@ const detailError = ref('')
 const reviewError = ref('')
 const message = ref('')
 const submitting = ref(false)
-const decision = ref('accepted')
+const decision = ref('')
 const notes = ref('')
 const nextStep = ref('')
 const appealDecision = ref('accepted')
@@ -442,6 +482,8 @@ const appealNotes = ref('')
 const appealSubmitting = ref(false)
 const appealError = ref('')
 const scores = reactive({})
+
+const detailPanel = ref(null)
 
 const selectedRubric = computed(() => {
   if (!record.value) return null
@@ -457,6 +499,22 @@ const selectedRubric = computed(() => {
 const canReview = computed(
   () => record.value && ['collected', 'in_review'].includes(record.value.status)
 )
+
+const missingScores = computed(() => {
+  if (!selectedRubric.value) return 0
+  return selectedRubric.value.criteria.filter(
+    (criterion) => scores[criterion.id] === null || scores[criterion.id] === undefined
+  ).length
+})
+
+const canSubmitReview = computed(() => {
+  if (!record.value || !decision.value) return false
+  if (decision.value === 'accepted') return missingScores.value === 0
+  if (decision.value === 'rejected') {
+    return notes.value.trim().length > 0 && nextStep.value.trim().length > 0
+  }
+  return notes.value.trim().length > 0
+})
 
 const pendingAppeal = computed(
   () => (record.value?.appeals || []).find((appeal) => appeal.status === 'pending') || null
@@ -496,6 +554,10 @@ function downloadAnalytics() {
   if (!data) return
   const rows = [['section', 'key', 'value']]
   const add = (section, key, value) => rows.push([section, key, value])
+  add('report', 'generated_at', new Date().toISOString())
+  add('report', 'suppressed', data.suppressed)
+  add('report', 'small_cohort', data.small_cohort)
+  add('report', 'formula_version', 'evidence-analytics-v1')
   add('totals', 'awaiting_review', data.totals.awaiting_review)
   add('totals', 'accepted', data.totals.accepted)
   add('totals', 'rejected', data.totals.rejected)
@@ -518,24 +580,25 @@ function downloadAnalytics() {
   add('confidence', 'recent_average', data.confidence_trend.recent_average)
   add('confidence', 'prior_average', data.confidence_trend.prior_average)
   add('confidence', 'delta', data.confidence_trend.delta)
-  const csv = rows
-    .map((row) =>
-      row
-        .map((value) => `"${String(value ?? '').replaceAll('"', '""')}"`)
-        .join(',')
-    )
-    .join('\n')
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' })
+  const escapeCell = (value) => {
+    let text = String(value ?? '')
+    if (/^[=+\-@]/.test(text)) text = `'${text}`
+    return `"${text.replaceAll('"', '""')}"`
+  }
+  const csv = rows.map((row) => row.map(escapeCell).join(',')).join('\r\n')
+  const blob = new Blob([`\uFEFF${csv}`], { type: 'text/csv;charset=utf-8' })
   const url = URL.createObjectURL(blob)
   const link = document.createElement('a')
   link.href = url
   link.download = `evidence-analytics-${new Date().toISOString().slice(0, 10)}.csv`
+  document.body.appendChild(link)
   link.click()
-  URL.revokeObjectURL(url)
+  link.remove()
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
 
 function resetForm() {
-  decision.value = 'accepted'
+  decision.value = ''
   notes.value = ''
   nextStep.value = ''
   reviewError.value = ''
@@ -584,15 +647,18 @@ async function decideAppeal() {
       decision: appealDecision.value,
       notes: appealNotes.value,
     })
-    message.value = 'Appeal decision recorded.'
-    await Promise.all([refreshQueue(), loadAnalytics(), fetchAppeals()])
-    await selectRecord(record.value.id)
   } catch (error) {
     appealError.value =
       error.response?.data?.detail || 'Could not record the appeal decision.'
-  } finally {
     appealSubmitting.value = false
+    return
   }
+  message.value = 'Appeal decision recorded.'
+  await Promise.all([refreshQueue(), loadAnalytics(), fetchAppeals()])
+  selectedId.value = null
+  record.value = null
+  if (queue.value.length) await selectRecord(queue.value[0].id)
+  appealSubmitting.value = false
 }
 
 async function refreshQueue() {
@@ -621,6 +687,9 @@ async function selectRecord(id) {
     const response = await axios.get(`/evidence/${id}`)
     record.value = response.data.evidence
     resetForm()
+    await nextTick()
+    detailPanel.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    detailPanel.value?.focus?.()
   } catch (error) {
     record.value = null
     detailError.value = error.response?.data?.detail || 'Could not load this evidence record.'
@@ -638,7 +707,7 @@ function payloadScores() {
 }
 
 async function submitReview() {
-  if (!record.value) return
+  if (!record.value || !canSubmitReview.value) return
   reviewError.value = ''
   submitting.value = true
   try {
@@ -648,15 +717,18 @@ async function submitReview() {
       notes: notes.value || null,
       next_step: nextStep.value || null,
     })
-    message.value = 'Decision recorded.'
-    await Promise.all([refreshQueue(), loadAnalytics()])
-    await selectRecord(record.value.id)
   } catch (error) {
     reviewError.value =
       error.response?.data?.detail || 'Could not record the decision. Check the scores and notes.'
-  } finally {
     submitting.value = false
+    return
   }
+  message.value = 'Decision recorded.'
+  await Promise.all([refreshQueue(), loadAnalytics()])
+  selectedId.value = null
+  record.value = null
+  if (queue.value.length) await selectRecord(queue.value[0].id)
+  submitting.value = false
 }
 
 onMounted(async () => {
@@ -702,7 +774,7 @@ onMounted(async () => {
 .evidence-review__intro,
 .evidence-review__detail-sub,
 .evidence-review__note {
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted);
 }
 
 .evidence-review__summary {
@@ -712,8 +784,8 @@ onMounted(async () => {
 }
 
 .evidence-review__summary article {
-  background: var(--surface, #fff);
-  border: 1px solid var(--border, #dbe3ee);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
   border-radius: 0.7rem;
   padding: 0.8rem;
   display: grid;
@@ -721,7 +793,7 @@ onMounted(async () => {
 }
 
 .evidence-review__summary span {
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted);
   font-size: 0.78rem;
 }
 
@@ -736,8 +808,8 @@ onMounted(async () => {
 }
 
 .evidence-review__breakdown section {
-  background: var(--surface, #fff);
-  border: 1px solid var(--border, #dbe3ee);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
   border-radius: 0.7rem;
   padding: 0.8rem;
 }
@@ -765,10 +837,41 @@ onMounted(async () => {
 .evidence-review__analytics {
   display: grid;
   gap: 0.75rem;
-  border: 1px solid var(--border, #dbe3ee);
+  border: 1px solid var(--border-color);
   border-radius: 0.8rem;
-  background: var(--surface, #fff);
+  background: var(--bg-secondary);
   padding: 1rem;
+}
+
+.evidence-review__analytics summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.evidence-review__analytics summary::-webkit-details-marker {
+  display: none;
+}
+
+.evidence-review__analytics[open] summary {
+  margin-bottom: 0.75rem;
+}
+
+.evidence-review__analytics-summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: baseline;
+  font-weight: 600;
+}
+
+.evidence-review__analytics-body {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.evidence-review__queue-item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .evidence-review__analytics-head {
@@ -792,7 +895,7 @@ onMounted(async () => {
 }
 
 .evidence-review__breakdown small {
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted);
   margin-left: 0.35rem;
   font-size: 0.72rem;
 }
@@ -805,10 +908,10 @@ onMounted(async () => {
 .evidence-review__filter input {
   width: 100%;
   padding: 0.45rem 0.6rem;
-  border: 1px solid var(--border, #dbe3ee);
+  border: 1px solid var(--border-color);
   border-radius: 0.45rem;
-  background: var(--surface, #fff);
-  color: var(--text, #0f172a);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
 }
 
 .evidence-review__sr-only {
@@ -832,8 +935,8 @@ onMounted(async () => {
 
 .evidence-review__queue,
 .evidence-review__detail {
-  background: var(--surface, #fff);
-  border: 1px solid var(--border, #dbe3ee);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
   border-radius: 0.8rem;
   padding: 1rem;
 }
@@ -859,7 +962,7 @@ onMounted(async () => {
   min-width: 1.8rem;
   height: 1.8rem;
   border-radius: 999px;
-  background: var(--accent-soft, #e0ecff);
+  background: var(--accent-bg);
   color: var(--accent, #2563eb);
   font-weight: 700;
 }
@@ -878,7 +981,7 @@ onMounted(async () => {
   gap: 0.25rem;
   text-align: left;
   padding: 0.75rem;
-  border: 1px solid var(--border, #dbe3ee);
+  border: 1px solid var(--border-color);
   border-radius: 0.6rem;
   background: transparent;
   cursor: pointer;
@@ -886,7 +989,7 @@ onMounted(async () => {
 
 .evidence-review__queue-item--active {
   border-color: var(--accent, #2563eb);
-  background: var(--accent-soft, #eff6ff);
+  background: var(--accent-bg);
 }
 
 .evidence-review__queue-top {
@@ -898,7 +1001,7 @@ onMounted(async () => {
 
 .evidence-review__queue-source,
 .evidence-review__queue-meta {
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted);
   font-size: 0.82rem;
 }
 
@@ -939,7 +1042,7 @@ onMounted(async () => {
   font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted);
 }
 
 .evidence-review__meta dd {
@@ -948,7 +1051,7 @@ onMounted(async () => {
 }
 
 .evidence-review__block {
-  border-top: 1px solid var(--border, #dbe3ee);
+  border-top: 1px solid var(--border-color);
   padding-top: 1rem;
   margin-top: 1rem;
 }
@@ -970,7 +1073,7 @@ onMounted(async () => {
 
 .evidence-review__criteria,
 .evidence-review__weight {
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted);
   font-size: 0.85rem;
 }
 
@@ -983,7 +1086,7 @@ onMounted(async () => {
 .evidence-review__rubric td {
   text-align: left;
   padding: 0.55rem 0.4rem;
-  border-bottom: 1px solid var(--border, #dbe3ee);
+  border-bottom: 1px solid var(--border-color);
   vertical-align: top;
 }
 
@@ -1007,7 +1110,7 @@ onMounted(async () => {
 }
 
 .evidence-review__history {
-  border: 1px solid var(--border, #dbe3ee);
+  border: 1px solid var(--border-color);
   border-radius: 0.6rem;
   padding: 0.75rem;
   margin-top: 0.6rem;
@@ -1026,7 +1129,7 @@ onMounted(async () => {
 .evidence-review__answer {
   white-space: pre-wrap;
   line-height: 1.55;
-  background: var(--surface-muted, #f8fafc);
+  background: var(--bg-tertiary);
   border-radius: 0.5rem;
   padding: 0.75rem;
 }
@@ -1045,7 +1148,7 @@ onMounted(async () => {
 }
 
 .evidence-review__empty {
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted);
   padding: 1rem 0;
 }
 

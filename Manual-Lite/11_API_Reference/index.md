@@ -339,6 +339,12 @@ owner-only unless an explicit share or break-glass grant exists.
 | `POST` | `/api/capstones/plans/{plan_id}/archive` | Archive Capstone Plan | OAuth2PasswordBearer |
 | `GET` | `/api/capstones/profiles` | Capstone Profiles | OAuth2PasswordBearer |
 | `GET` | `/api/competencies/{competency_id}/evidence` | Competency Evidence | OAuth2PasswordBearer |
+| `GET` | `/api/competency-reviews/export-ready` | Export Ready | OAuth2PasswordBearer |
+| `GET` | `/api/competency-reviews/queue` | Review Queue | OAuth2PasswordBearer |
+| `GET` | `/api/competency-reviews/{lab_slug}` | Review Detail | OAuth2PasswordBearer |
+| `POST` | `/api/competency-reviews/{lab_slug}/draft` | Save Review Draft | OAuth2PasswordBearer |
+| `POST` | `/api/competency-reviews/{lab_slug}/sign` | Sign Review | OAuth2PasswordBearer |
+| `POST` | `/api/competency-reviews/{review_id}/exported` | Mark Review Exported | OAuth2PasswordBearer |
 | `GET` | `/api/competitions` | List Competitions | OAuth2PasswordBearer |
 | `POST` | `/api/competitions` | Create Competition | OAuth2PasswordBearer |
 | `GET` | `/api/competitions/public/{competition_id}` | Public Competition | Public |
@@ -3835,6 +3841,126 @@ Evidence linked to one competency, scoped to the caller.
 | `competency_id` | path | string | yes |  |
 | `learner_id` | query | integer or null | no |  |
 | `limit` | query | integer | no |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+## Competency reviews
+
+### `GET /api/competency-reviews/export-ready`
+
+**Export Ready**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Responses**
+
+- `200`: Successful Response
+
+### `GET /api/competency-reviews/queue`
+
+**Review Queue**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Responses**
+
+- `200`: Successful Response
+
+### `GET /api/competency-reviews/{lab_slug}`
+
+**Review Detail**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `lab_slug` | path | string | yes |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `POST /api/competency-reviews/{lab_slug}/draft`
+
+**Save Review Draft**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `lab_slug` | path | string | yes |  |
+
+**Request body** (`application/json`)
+
+**Schema:** `ReviewIn`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `competency_ids` | array[object] | no |  |
+| `evidence` | array[object] | no |  |
+| `assessment_reliability` | object | no |  |
+| `assessment_criteria` | array[string] | no |  |
+| `review_cycle_months` | integer | no |  |
+| `rationale` | string | yes |  |
+| `decision` | string or null | no |  |
+| `attestation` | boolean | no |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `POST /api/competency-reviews/{lab_slug}/sign`
+
+**Sign Review**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `lab_slug` | path | string | yes |  |
+
+**Request body** (`application/json`)
+
+**Schema:** `ReviewIn`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `competency_ids` | array[object] | no |  |
+| `evidence` | array[object] | no |  |
+| `assessment_reliability` | object | no |  |
+| `assessment_criteria` | array[string] | no |  |
+| `review_cycle_months` | integer | no |  |
+| `rationale` | string | yes |  |
+| `decision` | string or null | no |  |
+| `attestation` | boolean | no |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `POST /api/competency-reviews/{review_id}/exported`
+
+**Mark Review Exported**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `review_id` | path | integer | yes |  |
 
 **Responses**
 

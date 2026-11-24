@@ -115,8 +115,9 @@ choose a tenant on a child row.
 - `practice_sessions`
 - `practice_session_questions`
 - `capstone_plans`
+- `competency_contract_reviews`
 
-That is **40 tables**. The tenant is derived from the owning user, course, or
+That is **41 tables**. The tenant is derived from the owning user, course, or
 parent evidence record by a trigger; a client cannot choose
 `institution_id`. Background jobs run as the
 system principal, an unauthenticated request sees only the default institution,

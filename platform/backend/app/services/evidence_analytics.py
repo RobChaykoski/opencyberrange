@@ -25,7 +25,13 @@ def _iso(value: datetime | None) -> str | None:
 
 
 def overview(db: Session, viewer: User) -> dict:
-    base = apply_scope(db.query(EvidenceRecord), db, viewer)
+    scoped = apply_scope(db.query(EvidenceRecord), db, viewer)
+    superseded_count = scoped.filter(EvidenceRecord.status == "superseded").count()
+    base = scoped.filter(EvidenceRecord.status != "superseded")
+    if viewer.role != "admin":
+        base = base.join(User, User.id == EvidenceRecord.learner_id).filter(
+            User.is_minor.is_(False)
+        )
     total = base.count()
     learner_count = (
         base.with_entities(func.count(distinct(EvidenceRecord.learner_id))).scalar()
@@ -66,6 +72,7 @@ def overview(db: Session, viewer: User) -> dict:
             "awaiting_review": statuses.get("collected", 0)
             + statuses.get("in_review", 0),
             "rejected": statuses.get("rejected", 0),
+            "superseded": superseded_count,
         },
         "backlog": {
             "awaiting_review": backlog_count,
@@ -89,7 +96,7 @@ def overview(db: Session, viewer: User) -> dict:
         "documentation": {
             "total": 0,
             "accepted": 0,
-            "acceptance_rate": 0.0,
+            "acceptance_rate": None,
             "learners": 0,
         },
         "confidence_trend": {
@@ -99,21 +106,30 @@ def overview(db: Session, viewer: User) -> dict:
             "recent_window_days": 30,
         },
         "program_effectiveness": {
-            "accepted_rate": 0.0,
-            "evidence_per_learner": 0.0,
+            "accepted_rate": None,
+            "evidence_per_learner": None,
             "review_backlog": 0,
         },
         "recent_reviews": [],
     }
     accepted_total = statuses.get("accepted", 0)
+    rejected_total = statuses.get("rejected", 0)
+    decided = accepted_total + rejected_total
+    pending = statuses.get("collected", 0) + statuses.get("in_review", 0)
     result["program_effectiveness"] = {
-        "accepted_rate": round(accepted_total / total * 100, 1) if total else 0.0,
+        "accepted_rate": (
+            round(accepted_total / decided * 100, 1) if decided else None
+        ),
         "evidence_per_learner": (
-            round(total / learner_count, 1) if learner_count else 0.0
+            round(total / learner_count, 1) if learner_count else None
         ),
         "review_backlog": backlog_count,
+        "decided": decided,
+        "pending": pending,
     }
     if suppressed:
+        result["program_effectiveness"]["accepted_rate"] = None
+        result["program_effectiveness"]["evidence_per_learner"] = None
         return result
 
     source_rows = (
@@ -208,8 +224,14 @@ def overview(db: Session, viewer: User) -> dict:
         {"competency_id": row["competency_id"], "accepted": row["accepted"]}
         for row in competencies[:12]
     ]
-    result["strongest_competencies"] = competencies[:12]
-    weakest = [row for row in competencies if row["total"] >= 2]
+    result["strongest_competencies"] = [
+        row for row in competencies[:12] if row["learners"] >= SMALL_COHORT
+    ]
+    weakest = [
+        row
+        for row in competencies
+        if row["total"] >= 2 and row["learners"] >= SMALL_COHORT
+    ]
     weakest.sort(
         key=lambda row: (
             row["acceptance_rate"],
@@ -231,15 +253,21 @@ def overview(db: Session, viewer: User) -> dict:
         ).scalar()
         or 0
     )
+    documentation_suppressed = (
+        viewer.role != "admin" and 0 < workbook_learners < SMALL_COHORT
+    )
     result["documentation"] = {
-        "total": workbook_total,
-        "accepted": workbook_accepted,
+        "total": 0 if documentation_suppressed else workbook_total,
+        "accepted": 0 if documentation_suppressed else workbook_accepted,
         "acceptance_rate": (
-            round(workbook_accepted / workbook_total * 100, 1)
+            None
+            if documentation_suppressed
+            else round(workbook_accepted / workbook_total * 100, 1)
             if workbook_total
-            else 0.0
+            else None
         ),
-        "learners": workbook_learners,
+        "learners": 0 if documentation_suppressed else workbook_learners,
+        "suppressed": documentation_suppressed,
     }
 
     confidence_values = {"low": 1, "medium": 2, "high": 3}

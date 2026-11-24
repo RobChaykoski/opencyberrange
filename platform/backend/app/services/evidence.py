@@ -449,7 +449,7 @@ def list_records(
     offset = max(0, int(offset))
     return (
         query.order_by(
-            EvidenceRecord.collected_at.desc(),
+            EvidenceRecord.collected_at.asc(),
             EvidenceRecord.id.desc(),
         )
         .offset(offset)

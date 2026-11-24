@@ -436,11 +436,11 @@ onBeforeUnmount(stopTimer)
 
 .practice__head p {
   margin: 0;
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted);
 }
 
 .practice__muted {
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted);
   font-size: 0.88rem;
 }
 
@@ -454,9 +454,9 @@ onBeforeUnmount(stopTimer)
 .practice__run,
 .practice__result,
 .practice__section {
-  border: 1px solid var(--border, #dbe3ee);
+  border: 1px solid var(--border-color);
   border-radius: 0.9rem;
-  background: var(--surface, #fff);
+  background: var(--bg-secondary);
   padding: 1rem;
 }
 
@@ -480,7 +480,7 @@ onBeforeUnmount(stopTimer)
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted);
 }
 
 .practice__timer strong {
@@ -502,13 +502,13 @@ onBeforeUnmount(stopTimer)
   width: 2rem;
   height: 2rem;
   border-radius: 0.4rem;
-  border: 1px solid var(--border, #dbe3ee);
-  background: var(--surface, #fff);
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
   cursor: pointer;
 }
 
 .practice__dot--answered {
-  background: var(--accent-soft, #e0ecff);
+  background: var(--accent-bg);
 }
 
 .practice__dot--current {
@@ -533,16 +533,16 @@ onBeforeUnmount(stopTimer)
 .practice__option {
   width: 100%;
   text-align: left;
-  border: 1px solid var(--border, #dbe3ee);
+  border: 1px solid var(--border-color);
   border-radius: 0.6rem;
-  background: var(--surface, #fff);
+  background: var(--bg-secondary);
   padding: 0.7rem;
   cursor: pointer;
 }
 
 .practice__option--selected {
   border-color: var(--accent, #2563eb);
-  background: var(--accent-soft, #e0ecff);
+  background: var(--accent-bg);
 }
 
 .practice__label {
@@ -568,7 +568,7 @@ onBeforeUnmount(stopTimer)
 }
 
 .practice__review-card {
-  border: 1px solid var(--border, #dbe3ee);
+  border: 1px solid var(--border-color);
   border-radius: 0.8rem;
   padding: 0.9rem;
 }
@@ -596,7 +596,7 @@ onBeforeUnmount(stopTimer)
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted);
 }
 
 .practice__explanation {
@@ -608,7 +608,7 @@ onBeforeUnmount(stopTimer)
   display: flex;
   justify-content: space-between;
   gap: 1rem;
-  border: 1px solid var(--border, #dbe3ee);
+  border: 1px solid var(--border-color);
   border-radius: 0.8rem;
   padding: 0.9rem;
 }
@@ -631,7 +631,7 @@ onBeforeUnmount(stopTimer)
 .practice__progress li,
 .practice__history li,
 .practice__domains li {
-  border-bottom: 1px solid var(--border, #dbe3ee);
+  border-bottom: 1px solid var(--border-color);
   padding: 0.45rem 0;
 }
 

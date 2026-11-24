@@ -109,6 +109,12 @@ message and the status in the same change.
 | `capstone_not_found` | 404 | The saved plan does not exist or is outside the caller's scope |
 | `capstone_not_publishable` | 409 | Approval refused because the validation gate has not passed |
 | `capstone_status_invalid` | 409 | An archived plan cannot be edited or approved |
+| `contract_review_forbidden` | 403 | The caller cannot review contracts or mark an export |
+| `contract_review_lab_not_found` | 404 | The lab contract does not exist |
+| `contract_review_invalid` | 400 | A competency, evidence weight, cycle, or decision is invalid |
+| `contract_review_rationale_required` | 400 | The review rationale is shorter than 20 characters |
+| `contract_review_attestation_required` | 400 | The reviewer did not attest to inspecting the lab, workbook, and evidence |
+| `contract_review_not_found` | 404 | The review record does not exist |
 
 The existing `X-Reauth-Required`, `X-Session-Invalid`, `X-Security-Version`, and
 `X-Impersonating` headers remain. Do not duplicate them with a code unless the
