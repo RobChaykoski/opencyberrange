@@ -119,6 +119,7 @@ def test_overview_counts_accepted_evidence_and_backlog(client, db_session):
         assert body["competencies"][0]["competency_id"] == "NET-001"
         assert body["competencies"][0]["accepted"] == 5
         assert body["strongest_competencies"][0]["learners"] == 5
+        assert body["strongest_competencies"][0]["name"] == "OSI Model"
         assert body["weakest_competencies"][0]["competency_id"] == "NET-001"
         assert body["weakest_competencies"][0]["acceptance_rate"] == 83.3
         assert body["documentation"]["total"] == 0

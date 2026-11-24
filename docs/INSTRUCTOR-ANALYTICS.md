@@ -56,7 +56,9 @@ The evidence review surface now carries an operational summary from
 - workbook/documentation coverage;
 - a 30-day confidence trend;
 - accepted rate, evidence per learner, and recent decisions;
-- small-cohort suppression below five learners for non-admin reviewers.
+- small-cohort suppression below five learners for non-admin reviewers;
+- competency names beside taxonomy ids, and a CSV export of the loaded
+  aggregate for programme reporting.
 
 It is a queue and workload view, not the full class-competency dashboard. The
 tiles below remain the 6.1 plan.

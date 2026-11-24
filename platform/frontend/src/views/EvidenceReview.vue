@@ -19,82 +19,129 @@
       </button>
     </header>
 
-    <section v-if="analytics" class="evidence-review__summary" aria-label="Evidence operations summary">
-      <article>
-        <span>Awaiting review</span>
-        <strong>{{ analytics.totals.awaiting_review }}</strong>
-      </article>
-      <article>
-        <span>Accepted</span>
-        <strong>{{ analytics.totals.accepted }}</strong>
-      </article>
-      <article>
-        <span>Rejected</span>
-        <strong>{{ analytics.totals.rejected }}</strong>
-      </article>
-      <article>
-        <span>Learners with evidence</span>
-        <strong>{{ analytics.totals.learners }}</strong>
-      </article>
-      <article>
-        <span>Oldest waiting</span>
-        <strong>{{ analytics.backlog.oldest_age_days ?? 0 }}d</strong>
-      </article>
-      <article>
-        <span>Accepted rate</span>
-        <strong>{{ analytics.program_effectiveness.accepted_rate }}%</strong>
-      </article>
-      <article>
-        <span>Evidence / learner</span>
-        <strong>{{ analytics.program_effectiveness.evidence_per_learner }}</strong>
-      </article>
+    <section
+      v-if="analytics"
+      class="evidence-review__analytics"
+      aria-labelledby="evidence-analytics-title"
+    >
+      <div class="evidence-review__analytics-head">
+        <div>
+          <p class="evidence-review__eyebrow">Cohort reporting</p>
+          <h2 id="evidence-analytics-title">Reporting and analytics</h2>
+          <p class="evidence-review__note">
+            Aggregate only. No learner ranking. Breakdowns are suppressed below
+            five learners.
+          </p>
+        </div>
+        <button type="button" class="btn btn--outline btn--sm" @click="downloadAnalytics">
+          Download CSV
+        </button>
+      </div>
+
+      <div class="evidence-review__summary" aria-label="Evidence operations summary">
+        <article>
+          <span>Awaiting review</span>
+          <strong>{{ analytics.totals.awaiting_review }}</strong>
+        </article>
+        <article>
+          <span>Accepted</span>
+          <strong>{{ analytics.totals.accepted }}</strong>
+        </article>
+        <article>
+          <span>Rejected</span>
+          <strong>{{ analytics.totals.rejected }}</strong>
+        </article>
+        <article>
+          <span>Learners with evidence</span>
+          <strong>{{ analytics.totals.learners }}</strong>
+        </article>
+        <article>
+          <span>Oldest waiting</span>
+          <strong>{{ analytics.backlog.oldest_age_days ?? 0 }}d</strong>
+        </article>
+        <article>
+          <span>Accepted rate</span>
+          <strong>{{ analytics.program_effectiveness.accepted_rate }}%</strong>
+        </article>
+        <article>
+          <span>Evidence / learner</span>
+          <strong>{{ analytics.program_effectiveness.evidence_per_learner }}</strong>
+        </article>
+      </div>
+
+      <p v-if="analytics.suppressed" class="evidence-review__note" role="status">
+        {{ analytics.suppression_note }}
+      </p>
+      <div v-else class="evidence-review__breakdown">
+        <section>
+          <h3>By source</h3>
+          <ul v-if="analytics.sources.length">
+            <li v-for="item in analytics.sources" :key="item.source_type">
+              <span>{{ statusLabel(item.source_type) }}</span><strong>{{ item.count }}</strong>
+            </li>
+          </ul>
+          <p v-else class="evidence-review__empty">No evidence in scope yet.</p>
+        </section>
+
+        <section>
+          <h3>Strongest competencies</h3>
+          <ul v-if="analytics.strongest_competencies.length">
+            <li
+              v-for="item in analytics.strongest_competencies"
+              :key="item.competency_id"
+            >
+              <span>
+                {{ item.name || item.competency_id }}
+                <small>{{ item.competency_id }}</small>
+              </span>
+              <strong>{{ item.accepted }} accepted · {{ item.learners }} learners</strong>
+            </li>
+          </ul>
+          <p v-else class="evidence-review__empty">No accepted competency evidence yet.</p>
+        </section>
+
+        <section>
+          <h3>Weakest competencies</h3>
+          <ul v-if="analytics.weakest_competencies.length">
+            <li
+              v-for="item in analytics.weakest_competencies"
+              :key="item.competency_id"
+            >
+              <span>
+                {{ item.name || item.competency_id }}
+                <small>{{ item.competency_id }}</small>
+              </span>
+              <strong>{{ item.acceptance_rate }}% accepted · {{ item.total }} items</strong>
+            </li>
+          </ul>
+          <p v-else class="evidence-review__empty">
+            No competency has enough evidence to compare yet.
+          </p>
+        </section>
+
+        <section class="evidence-review__breakdown-wide">
+          <h3>Documentation evidence</h3>
+          <p>
+            {{ analytics.documentation.accepted }} accepted of
+            {{ analytics.documentation.total }} workbook submissions
+            ({{ analytics.documentation.acceptance_rate }}%) from
+            {{ analytics.documentation.learners }} learners.
+          </p>
+          <h3>Confidence trend (30 days)</h3>
+          <p>
+            Recent {{ analytics.confidence_trend.recent_average ?? '—' }} / prior
+            {{ analytics.confidence_trend.prior_average ?? '—' }} · delta
+            {{ analytics.confidence_trend.delta ?? '—' }}.
+          </p>
+        </section>
+      </div>
+
+      <p class="evidence-review__note">
+        A competency with no evidence is <strong>unmeasured</strong>, not weak.
+        Use this view to decide where to review or teach next, not to rank a
+        learner.
+      </p>
     </section>
-    <p v-if="analytics?.suppressed" class="evidence-review__note" role="status">
-      {{ analytics.suppression_note }}
-    </p>
-    <div v-if="analytics && !analytics.suppressed" class="evidence-review__breakdown">
-      <section>
-        <h2>By source</h2>
-        <ul>
-          <li v-for="item in analytics.sources" :key="item.source_type">
-            <span>{{ item.source_type }}</span><strong>{{ item.count }}</strong>
-          </li>
-        </ul>
-      </section>
-      <section>
-        <h2>Strongest competencies</h2>
-        <ul>
-          <li v-for="item in analytics.strongest_competencies" :key="item.competency_id">
-            <span>{{ item.competency_id }}</span>
-            <strong>{{ item.accepted }} accepted · {{ item.learners }} learners</strong>
-          </li>
-        </ul>
-      </section>
-      <section>
-        <h2>Weakest competencies</h2>
-        <ul>
-          <li v-for="item in analytics.weakest_competencies" :key="item.competency_id">
-            <span>{{ item.competency_id }}</span>
-            <strong>{{ item.acceptance_rate }}% accepted · {{ item.total }} items</strong>
-          </li>
-        </ul>
-      </section>
-      <section>
-        <h2>Documentation evidence</h2>
-        <p>
-          {{ analytics.documentation.accepted }} accepted of
-          {{ analytics.documentation.total }} workbook submissions
-          ({{ analytics.documentation.acceptance_rate }}%) from
-          {{ analytics.documentation.learners }} learners.
-        </p>
-        <h2>Confidence trend</h2>
-        <p>
-          Recent {{ analytics.confidence_trend.recent_average ?? '—' }} /
-          prior {{ analytics.confidence_trend.prior_average ?? '—' }}
-          (delta {{ analytics.confidence_trend.delta ?? '—' }}).
-        </p>
-      </section>
-    </div>
     <p v-if="analyticsError" class="form-error" role="alert">{{ analyticsError }}</p>
 
     <p v-if="queueError" class="form-error" role="alert">{{ queueError }}</p>
@@ -104,8 +151,19 @@
       <aside class="evidence-review__queue" aria-label="Evidence review queue">
         <div class="evidence-review__queue-head">
           <h2>Awaiting review</h2>
-          <span class="evidence-review__count">{{ queue.length }}</span>
+          <span class="evidence-review__count">
+            {{ filteredQueue.length }}<template v-if="queueFilter"> / {{ queue.length }}</template>
+          </span>
         </div>
+
+        <label class="evidence-review__filter">
+          <span class="evidence-review__sr-only">Filter the review queue</span>
+          <input
+            v-model="queueFilter"
+            type="search"
+            placeholder="Filter by learner, source, or rubric"
+          />
+        </label>
 
         <p v-if="loadingQueue && !queue.length" class="evidence-review__empty">
           Loading the queue...
@@ -113,8 +171,11 @@
         <p v-else-if="!queue.length" class="evidence-review__empty">
           No evidence is waiting for review.
         </p>
+        <p v-else-if="!filteredQueue.length" class="evidence-review__empty">
+          No evidence matches the filter.
+        </p>
         <ul v-else class="evidence-review__list">
-          <li v-for="item in queue" :key="item.id">
+          <li v-for="item in filteredQueue" :key="item.id">
             <button
               type="button"
               class="evidence-review__queue-item"
@@ -359,6 +420,7 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import axios from '../api/axios'
 
 const queue = ref([])
+const queueFilter = ref('')
 const appeals = ref([])
 const rubrics = ref([])
 const analytics = ref(null)
@@ -400,6 +462,25 @@ const pendingAppeal = computed(
   () => (record.value?.appeals || []).find((appeal) => appeal.status === 'pending') || null
 )
 
+const filteredQueue = computed(() => {
+  const term = queueFilter.value.trim().toLowerCase()
+  if (!term) return queue.value
+  return queue.value.filter((item) => {
+    const haystack = [
+      item.learner?.username,
+      item.learner?.display_name,
+      item.source_type,
+      item.source_id,
+      item.rubric?.id,
+      item.rubric?.version,
+    ]
+      .filter(Boolean)
+      .join(' ')
+      .toLowerCase()
+    return haystack.includes(term)
+  })
+})
+
 function statusLabel(status) {
   return String(status || '').replace('_', ' ')
 }
@@ -408,6 +489,49 @@ function formatDate(value) {
   if (!value) return '—'
   const date = new Date(value)
   return Number.isNaN(date.getTime()) ? value : date.toLocaleString()
+}
+
+function downloadAnalytics() {
+  const data = analytics.value
+  if (!data) return
+  const rows = [['section', 'key', 'value']]
+  const add = (section, key, value) => rows.push([section, key, value])
+  add('totals', 'awaiting_review', data.totals.awaiting_review)
+  add('totals', 'accepted', data.totals.accepted)
+  add('totals', 'rejected', data.totals.rejected)
+  add('totals', 'learners', data.totals.learners)
+  add('backlog', 'oldest_age_days', data.backlog.oldest_age_days)
+  add('program', 'accepted_rate', data.program_effectiveness.accepted_rate)
+  add('program', 'evidence_per_learner', data.program_effectiveness.evidence_per_learner)
+  for (const item of data.sources || []) {
+    add('source', item.source_type, item.count)
+  }
+  for (const item of data.strongest_competencies || []) {
+    add('strongest', item.competency_id, `${item.name || ''}|${item.accepted}|${item.learners}`)
+  }
+  for (const item of data.weakest_competencies || []) {
+    add('weakest', item.competency_id, `${item.name || ''}|${item.acceptance_rate}|${item.total}`)
+  }
+  add('documentation', 'accepted', data.documentation.accepted)
+  add('documentation', 'total', data.documentation.total)
+  add('documentation', 'acceptance_rate', data.documentation.acceptance_rate)
+  add('confidence', 'recent_average', data.confidence_trend.recent_average)
+  add('confidence', 'prior_average', data.confidence_trend.prior_average)
+  add('confidence', 'delta', data.confidence_trend.delta)
+  const csv = rows
+    .map((row) =>
+      row
+        .map((value) => `"${String(value ?? '').replaceAll('"', '""')}"`)
+        .join(',')
+    )
+    .join('\n')
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = `evidence-analytics-${new Date().toISOString().slice(0, 10)}.csv`
+  link.click()
+  URL.revokeObjectURL(url)
 }
 
 function resetForm() {
@@ -636,6 +760,67 @@ onMounted(async () => {
   justify-content: space-between;
   gap: 0.5rem;
   font-size: 0.85rem;
+}
+
+.evidence-review__analytics {
+  display: grid;
+  gap: 0.75rem;
+  border: 1px solid var(--border, #dbe3ee);
+  border-radius: 0.8rem;
+  background: var(--surface, #fff);
+  padding: 1rem;
+}
+
+.evidence-review__analytics-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: start;
+}
+
+.evidence-review__analytics h2 {
+  margin: 0 0 0.25rem;
+}
+
+.evidence-review__breakdown-wide {
+  grid-column: 1 / -1;
+}
+
+.evidence-review__breakdown h3 {
+  margin: 0 0 0.4rem;
+  font-size: 0.9rem;
+}
+
+.evidence-review__breakdown small {
+  color: var(--text-muted, #64748b);
+  margin-left: 0.35rem;
+  font-size: 0.72rem;
+}
+
+.evidence-review__filter {
+  display: block;
+  margin: 0 0 0.5rem;
+}
+
+.evidence-review__filter input {
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--border, #dbe3ee);
+  border-radius: 0.45rem;
+  background: var(--surface, #fff);
+  color: var(--text, #0f172a);
+}
+
+.evidence-review__sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .evidence-review__layout {
@@ -867,6 +1052,11 @@ onMounted(async () => {
 @media (max-width: 900px) {
   .evidence-review__layout {
     grid-template-columns: 1fr;
+  }
+
+  .evidence-review__analytics-head {
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .evidence-review__form-grid,

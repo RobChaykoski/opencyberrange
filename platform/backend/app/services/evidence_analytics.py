@@ -14,6 +14,7 @@ from sqlalchemy import distinct, func
 from sqlalchemy.orm import Session
 
 from app.models import EvidenceCompetency, EvidenceRecord, EvidenceReview, User
+from app.services.competency_contract import taxonomy_names
 from app.services.evidence import apply_scope
 
 SMALL_COHORT = 5
@@ -196,6 +197,9 @@ def overview(db: Session, viewer: User) -> dict:
         row["acceptance_rate"] = (
             round(row["accepted"] / row["total"] * 100, 1) if row["total"] else 0.0
         )
+    names = taxonomy_names()
+    for row in competency_data.values():
+        row["name"] = names.get(row["competency_id"], row["competency_id"])
     competencies = list(competency_data.values())
     competencies.sort(
         key=lambda row: (-row["accepted"], -row["learners"], row["competency_id"])
