@@ -5,7 +5,6 @@ Authentication utilities and dependencies
 import logging
 import secrets
 import threading
-import time
 import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Optional
@@ -28,6 +27,7 @@ from app.database import get_db
 from app.models import User
 from app.config import settings
 from app.actor import set_actor
+from app.services import login_throttle
 
 logger = logging.getLogger(__name__)
 
@@ -347,14 +347,12 @@ def get_user_by_username(db: Session, username: str) -> Optional[User]:
 
 # Account lockout constants. The hard lock is now admin-only; automatic
 # throttling is keyed by (username, client IP) so a spray from one address
-# cannot lock a known student out everywhere.
-MAX_FAILED_ATTEMPTS = 5
+# cannot lock a known student out everywhere. The counters are shared across
+# workers through Valkey when configured.
+MAX_FAILED_ATTEMPTS = login_throttle.MAX_FAILED_ATTEMPTS
 LOCKOUT_DURATION_MINUTES = 30
-LOGIN_FAILURE_WINDOW_SECONDS = 15 * 60
-LOGIN_BACKOFF_MAX_SECONDS = 60
-
-_login_failures: dict[tuple[str, str], list[float]] = {}
-_login_failures_lock = threading.Lock()
+LOGIN_FAILURE_WINDOW_SECONDS = login_throttle.WINDOW_SECONDS
+LOGIN_BACKOFF_MAX_SECONDS = login_throttle.MAX_BACKOFF_SECONDS
 
 # A verified Argon2 hash is needed even for unknown usernames. Computing it
 # lazily keeps import cheap while still paying the real verification cost.
@@ -371,49 +369,9 @@ def _dummy_verify(password: str) -> None:
     verify_password(password, _dummy_hash)
 
 
-def _login_key(username: str, ip_address: Optional[str]) -> tuple[str, str]:
-    return ((username or "").strip().lower(), ip_address or "unknown")
-
-
-def _login_failure_record(username: str, ip_address: Optional[str]) -> int:
-    """Record a failure and return the current count for this key."""
-    now = time.monotonic()
-    key = _login_key(username, ip_address)
-    with _login_failures_lock:
-        entry = _login_failures.get(key)
-        if entry and now - entry[0] > LOGIN_FAILURE_WINDOW_SECONDS:
-            entry = None
-        if entry is None:
-            entry = [now, 0.0]
-            _login_failures[key] = entry
-        entry[1] = int(entry[1]) + 1
-        # Keep the map bounded under a distributed spray.
-        if len(_login_failures) > 10000:
-            for stale in [
-                k for k, v in _login_failures.items()
-                if now - v[0] > LOGIN_FAILURE_WINDOW_SECONDS
-            ]:
-                _login_failures.pop(stale, None)
-        return int(entry[1])
-
-
 def _login_retry_after(username: str, ip_address: Optional[str]) -> int:
     """Seconds to wait for this key, or 0 when it is within budget."""
-    key = _login_key(username, ip_address)
-    now = time.monotonic()
-    with _login_failures_lock:
-        entry = _login_failures.get(key)
-        if not entry or now - entry[0] > LOGIN_FAILURE_WINDOW_SECONDS:
-            return 0
-        count = int(entry[1])
-    if count < MAX_FAILED_ATTEMPTS:
-        return 0
-    return min(LOGIN_BACKOFF_MAX_SECONDS, 2 ** (count - MAX_FAILED_ATTEMPTS))
-
-
-def _clear_login_failures(username: str, ip_address: Optional[str]) -> None:
-    with _login_failures_lock:
-        _login_failures.pop(_login_key(username, ip_address), None)
+    return login_throttle.retry_after(username, ip_address)
 
 
 def authenticate_user(
@@ -443,14 +401,14 @@ def authenticate_user(
         # Pay the same hashing cost as a real user so timing does not reveal
         # whether the username exists.
         _dummy_verify(password)
-        _login_failure_record(username, ip_address)
+        login_throttle.record(username, ip_address)
         return None
 
     # SSO-provisioned accounts must use the identity provider. Do not reveal
     # the difference between a missing user and an SSO-only account.
     if getattr(user, "password_login_disabled", False):
         _dummy_verify(password)
-        _login_failure_record(username, ip_address)
+        login_throttle.record(username, ip_address)
         return None
 
     # Check if account is locked
@@ -484,7 +442,7 @@ def authenticate_user(
         # auto-lock the account: the per-IP throttle below is what rejects
         # the attempt. This removes the cross-IP lockout DoS.
         user.failed_attempts = (user.failed_attempts or 0) + 1
-        _login_failure_record(username, ip_address)
+        login_throttle.record(username, ip_address)
         db.commit()
         return None
     
@@ -492,7 +450,7 @@ def authenticate_user(
     # hash. ``verify_and_update`` handles a scheme change (bcrypt -> Argon2id);
     # ``password_rehash_due`` handles an Argon2id parameter change or an old
     # rehash stamp, so the policy keeps applying after the initial migration.
-    _clear_login_failures(username, ip_address)
+    login_throttle.clear(username, ip_address)
     if user.failed_attempts and user.failed_attempts > 0:
         user.failed_attempts = 0
         db.commit()

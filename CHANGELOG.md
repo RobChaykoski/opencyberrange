@@ -4,6 +4,10 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
+### Shared login throttle
+
+- Login-failure backoff now uses the configured Valkey/Redis store with a bounded in-process fallback, so multiple workers share the same limit.
+
 ### Admin tenant isolation
 
 - Added cross-tenant regression tests for the pending and locked account lists, user details, and activity log. The user, stats, activity, and course admin reads are now covered by tests.

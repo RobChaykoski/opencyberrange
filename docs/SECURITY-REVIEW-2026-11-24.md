@@ -20,6 +20,7 @@ A broader code, database, dependency, and host-currency review is in
 | Password-breach digest | The HIBP SHA-1 lookup is marked `usedforsecurity=False`; storage remains Argon2id. |
 | Index hygiene | Migrations `0061` and `0062` remove redundant indexes and add the instructor and lab-session hot-path indexes. |
 | Docker helper image | `ocr-lab/netprobe:1.0` is pre-baked and digest-pinned; runtime `apk add` and unpinned Alpine helper pulls are removed. |
+| Login throttle | Failure counters use the shared Valkey/Redis store with a bounded memory fallback. |
 
 ## High-priority backlog
 
@@ -29,7 +30,7 @@ A broader code, database, dependency, and host-currency review is in
 | `admin.py` | User, pending, locked, details, stats, activity, and course reads are tenant-scoped and covered by cross-tenant tests. Session/audit operations are platform-admin only. | Reviewed; no cross-tenant read found. Platform-only operations remain a policy decision. |
 | `admin.py` | `OCR_DEV_TOOLS` defaults on; stress-run state now lives under `/app/run-state`, but a new run still deletes prior run files. | Default dev tools off outside development; retain prior runs. |
 | `main.py` | Middleware order and early error/CORS behaviour need a live check; inline DDL and Alembic both own schema. | Add a middleware-order contract test; move inline startup DDL to Alembic where possible. |
-| `auth.py` | Login failure counters are in-process, so multiple workers multiply the limit; trusted-proxy IP extraction must be verified. | Move throttling to a shared store; assert `X-Forwarded-For` is only trusted from the proxy. |
+| `auth.py` | Fixed: login failure counters use the configured Valkey/Redis store with a bounded memory fallback. Trusted-proxy IP extraction remains a configuration check. | Covered by `test_login_throttle.py`; verify the proxy header path in deployment. |
 | `config.py` | Fixed: `WG_ENCRYPTION_KEY` and previous rotation keys are validated as Fernet keys at startup. | Covered by `f35fa608` and tests. |
 | `topology_engine.py` | Fixed: `security_opt` must be a string list keeping `no-new-privileges`; `http_port` is range-checked and rejects booleans. | Covered by `e60eb51a` and tests. |
 | `reauth.py` | Failed reauth events omit IP, user agent, and request id. | Pass request context into `security_events.record`. |
