@@ -1,6 +1,8 @@
 # Capstone Builder
 
-Status: **Release 6.1, planning.** Requested as Priority 5 automation.
+Status: **Release 6.1, backend planner MVP implemented.** The deterministic
+planner, validation gate, and instructor API exist. Persistence, the editor UI,
+and publication to a course are not implemented yet.
 
 The Capstone Builder turns a role profile into a teachable, assessable capstone.
 An instructor selects a profile such as **Blue Team Analyst** (the existing
@@ -11,6 +13,49 @@ plan; the platform never publishes a capstone without that review.
 It is not an essay generator and it does not grade. It is a constrained planner
 over the competency contracts, the lab catalogue, the evidence model, and the
 institution's assessment policy.
+
+## Implemented slice
+
+`GET /api/capstones/profiles` lists the 13 role profiles. `POST
+/api/capstones/plan` returns a proposal with objectives, a lab sequence,
+assessments, deliverables, an evidence map, and a validation gate.
+
+The planner is deterministic:
+
+- candidate labs come from the reviewed contracts in the profile's tracks;
+- a greedy weighted set cover selects labs within `max_labs` and the workload
+  budget;
+- reviewed contracts and higher reliability score first;
+- prerequisites are ordered when selected; a missing prerequisite is listed and
+  can be treated as an assumed entry level;
+- an instructor can waive a critical competency only with a written reason;
+- the gate checks coverage, workload tolerance, assessment weights, objective
+  evidence, prerequisites, and waiver validity.
+
+The current bank exposes a real curriculum gap: the `soc-analyst` profile has 29
+critical competencies, but the matching contracts cover about half of them. A
+waived, 12-hour plan with 9 labs and an assumed entry level passes the gate; an
+unwaived 40-hour plan does not. That is the planner doing its job, not a bug.
+
+## API
+
+| Method | Path | Purpose |
+|---|---|---|
+| GET | `/api/capstones/profiles` | Role profiles, critical competency counts, tracks, capstone brief |
+| POST | `/api/capstones/plan` | Generate a proposal and validation report |
+
+The endpoints require an instructor, administrator, mentor, or teaching
+assistant. A learner receives `403 capstone_forbidden`.
+
+## What is not implemented
+
+- Saving a plan, editing it, or versioning it.
+- A visual editor and approval workflow.
+- Publishing to a course, event, or standalone capstone.
+- Generating the learner brief and instructor guide as documents.
+- Exporting a Common Cartridge or PDF package.
+
+Those are the next 6.1 slices. The planner does not publish anything today.
 
 ## Example
 

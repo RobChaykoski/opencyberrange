@@ -103,6 +103,9 @@ message and the status in the same change.
 | `practice_session_not_found` | 404 | The practice session does not exist or belongs to another learner |
 | `practice_session_submitted` | 409 | The practice session is already submitted |
 | `practice_answer_invalid` | 400 | An answer is missing, duplicated, out of range, or names an unknown position |
+| `capstone_forbidden` | 403 | Capstone planning is available to reviewers and administrators |
+| `capstone_profile_unknown` | 404 | The role profile is not in the curriculum catalogue |
+| `capstone_no_candidates` | 409 | No lab contract matches the profile's tracks |
 
 The existing `X-Reauth-Required`, `X-Session-Invalid`, `X-Security-Version`, and
 `X-Impersonating` headers remain. Do not duplicate them with a code unless the

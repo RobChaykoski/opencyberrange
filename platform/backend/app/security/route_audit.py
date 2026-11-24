@@ -54,6 +54,7 @@ _PROTECTED_PREFIXES = (
     "/api/recognition",
     "/api/archive",
     "/api/practice",
+    "/api/capstones",
     "/api/identity",
     "/api/lti",
     "/api/setup",
