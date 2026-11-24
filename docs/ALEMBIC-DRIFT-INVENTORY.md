@@ -1,7 +1,10 @@
 # Alembic drift inventory
 
 Snapshot: `alembic check` against production 5.44.0 on 24 November 2026.
-Sequences were excluded; 93 schema operations remained.
+Sequences were excluded; 93 schema operations remained. After the model
+cleanup, migration 0063, and migration 0064, development reports 57:
+0 added indexes, 0 removed tables, 24 removed columns, 3 nullability changes,
+3 changed index expressions, and 27 removed indexes.
 
 This is a classification, not a migration. Do not autogenerate from it.
 
@@ -30,6 +33,8 @@ This is a classification, not a migration. Do not autogenerate from it.
   `course_lab_assignments(lab_id)`, `flag_attempts(lab_id)`,
   `lab_completions(lab_id)`, `quiz_attempts(quiz_id)`, and
   `survey_responses(course_id)`.
+- Added the `WebSocketTicket` model and migration `0064_ws_tickets`; the runtime
+  `CREATE TABLE` was removed from startup.
 
 ## Remaining categories
 
@@ -51,13 +56,11 @@ Action: create one hand-written tenant-baseline migration that adds the columns,
 indexes, triggers, and RLS policies. Then remove the runtime DDL or reduce it to
 an assertion that the migration ran.
 
-### 2. Runtime `ws_tickets`
+### 2. WebSocket tickets
 
-The WebSocket ticket table is created outside the model. It appears as a
-removed table/index.
-
-Action: add a model and migration, or store tickets in the existing auth-session
-table with an expiry column. Do not let a future autogenerate drop it.
+Fixed: the `WebSocketTicket` model and migration `0064_ws_tickets` own the
+table, and the startup DDL is gone. Development no longer reports a removed
+table or `ws_tickets` index.
 
 ### 3. Legacy Kali columns
 
@@ -103,6 +106,6 @@ bash scripts/restore-drill.sh
 ```
 
 The production snapshot was taken before the model cleanup, migration 0063, and
-migration 0064. Development after 0063 showed 59 operations (down from 93) with
-zero `id`-index or missing-FK-index operations. Re-run `alembic check` after the
-5.45.0 deploy to confirm the count drops again with `0064`.
+migration 0064. Development after 0064 reports 57 operations (down from 93), with zero
+`id`-index, missing-FK-index, or `ws_tickets` operations. Re-run against
+production after the 5.45.0 deploy to confirm the same.
