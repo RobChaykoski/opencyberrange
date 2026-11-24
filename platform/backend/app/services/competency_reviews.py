@@ -251,6 +251,40 @@ def serialize(review: CompetencyContractReview) -> dict:
     }
 
 
+def catalogue() -> dict:
+    with TAXONOMY_FILE.open(encoding="utf-8") as handle:
+        taxonomy = yaml.safe_load(handle) or {}
+    domains = []
+    competencies = []
+    for domain in taxonomy.get("domains", []):
+        domain_id = str(domain.get("id") or "")
+        domain_name = str(domain.get("name") or domain_id)
+        categories = []
+        for category in domain.get("categories", []):
+            category_id = str(category.get("id") or "")
+            category_name = str(category.get("name") or category_id)
+            items = []
+            for competency in category.get("competencies", []):
+                item = {
+                    "id": str(competency["id"]),
+                    "name": competency.get("name"),
+                    "domain_id": domain_id,
+                    "domain_name": domain_name,
+                    "category_id": category_id,
+                    "category_name": category_name,
+                }
+                items.append(item)
+                competencies.append(item)
+            categories.append({"id": category_id, "name": category_name, "competencies": items})
+        domains.append({"id": domain_id, "name": domain_name, "categories": categories})
+    return {
+        "domains": domains,
+        "competencies": competencies,
+        "evidence_types": sorted(EVIDENCE_TYPES),
+        "cycle_months": list(CYCLE_MONTHS),
+    }
+
+
 def queue(db: Session, user: User) -> dict:
     _require_reviewer(user)
     contracts = load_contracts().get("labs") or {}

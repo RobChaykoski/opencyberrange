@@ -240,6 +240,12 @@ const routes = [
     meta: { requiresAuth: true, requiresInstructor: true }
   },
   {
+    path: '/contract-review',
+    name: 'ContractReview',
+    component: () => import('../views/ContractReview.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/reports',
     name: 'Reports',
     component: () => import('../views/Reports.vue'),

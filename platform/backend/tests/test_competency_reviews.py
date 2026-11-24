@@ -253,3 +253,21 @@ def test_a_review_is_not_current_in_another_tenant(client, db_session):
         assert detail["latest"] is None
     finally:
         _cleanup(db_session, [first, second])
+
+
+@pytest.mark.db
+def test_catalogue_exposes_competencies_and_cycle_lengths(client, db_session):
+    instructor = _user(db_session)
+    try:
+        response = client.get(
+            "/api/competency-reviews/catalogue",
+            headers=_headers(client, instructor),
+        )
+        assert response.status_code == 200, response.text
+        body = response.json()
+        assert len(body["competencies"]) >= 200
+        assert body["cycle_months"] == [6, 12, 24]
+        assert "analyst_answer" in body["evidence_types"]
+        assert body["domains"]
+    finally:
+        _cleanup(db_session, [instructor])

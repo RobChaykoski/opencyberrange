@@ -1,10 +1,10 @@
 {
-  "total": 5201,
+  "total": 5268,
   "files": {
     "src/App.vue": 13,
     "src/components/AchievementStudio.vue": 54,
     "src/components/AdminPendingTab.vue": 5,
-    "src/components/AppSidebar.vue": 122,
+    "src/components/AppSidebar.vue": 128,
     "src/components/AuditHistory.vue": 18,
     "src/components/AvailableSurveys.vue": 9,
     "src/components/CareerAssessmentPanel.vue": 8,
@@ -102,6 +102,7 @@
     "src/views/YouthPrivacy.vue": 51,
     "src/views/Impact.vue": 40,
     "src/views/Journey.vue": 16,
-    "src/views/Practice.vue": 37
+    "src/views/Practice.vue": 37,
+    "src/views/ContractReview.vue": 61
   }
 }

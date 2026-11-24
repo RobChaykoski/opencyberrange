@@ -126,6 +126,14 @@
           </svg>
           <span v-show="!collapsed" class="nav-item__label">Evidence review</span>
         </router-link>
+        <router-link to="/contract-review" aria-label="Contract review" title="Contract review" class="nav-item" :class="{ 'nav-item--active': isActive('/contract-review') }">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
+            <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
+            <rect x="9" y="3" width="6" height="4" rx="1"/>
+            <path d="m9 14 2 2 4-4"/>
+          </svg>
+          <span v-show="!collapsed" class="nav-item__label">Contract review</span>
+        </router-link>
         <router-link v-if="!showAdmin" to="/reports" aria-label="Reports and analytics" title="Reports and analytics" class="nav-item" :class="{ 'nav-item--active': isActive('/reports') }">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
             <path d="M3 3v18h18"/>
@@ -284,6 +292,14 @@
             <path d="M9 12l2 2 4-4"/>
           </svg>
           <span v-show="!collapsed" class="nav-item__label">Privacy &amp; audit</span>
+        </router-link>
+        <router-link to="/contract-review" aria-label="Contract review" title="Contract review" class="nav-item" :class="{ 'nav-item--active': isActive('/contract-review') }">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
+            <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
+            <rect x="9" y="3" width="6" height="4" rx="1"/>
+            <path d="m9 14 2 2 4-4"/>
+          </svg>
+          <span v-show="!collapsed" class="nav-item__label">Contract review</span>
         </router-link>
       </div>
 

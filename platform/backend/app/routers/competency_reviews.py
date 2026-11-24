@@ -48,6 +48,16 @@ async def review_queue(
         _raise(exc)
 
 
+@router.get("/catalogue")
+async def review_catalogue(
+    current_user: User = Depends(get_current_active_user),
+):
+    try:
+        return competency_reviews.catalogue()
+    except competency_reviews.ReviewError as exc:
+        _raise(exc)
+
+
 @router.get("/export-ready")
 async def export_ready(
     db: Session = Depends(get_db),

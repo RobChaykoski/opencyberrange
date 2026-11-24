@@ -339,6 +339,7 @@ owner-only unless an explicit share or break-glass grant exists.
 | `POST` | `/api/capstones/plans/{plan_id}/archive` | Archive Capstone Plan | OAuth2PasswordBearer |
 | `GET` | `/api/capstones/profiles` | Capstone Profiles | OAuth2PasswordBearer |
 | `GET` | `/api/competencies/{competency_id}/evidence` | Competency Evidence | OAuth2PasswordBearer |
+| `GET` | `/api/competency-reviews/catalogue` | Review Catalogue | OAuth2PasswordBearer |
 | `GET` | `/api/competency-reviews/export-ready` | Export Ready | OAuth2PasswordBearer |
 | `GET` | `/api/competency-reviews/queue` | Review Queue | OAuth2PasswordBearer |
 | `GET` | `/api/competency-reviews/{lab_slug}` | Review Detail | OAuth2PasswordBearer |
@@ -3848,6 +3849,16 @@ Evidence linked to one competency, scoped to the caller.
 - `422`: Validation Error — `HTTPValidationError`
 
 ## Competency reviews
+
+### `GET /api/competency-reviews/catalogue`
+
+**Review Catalogue**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Responses**
+
+- `200`: Successful Response
 
 ### `GET /api/competency-reviews/export-ready`
 
