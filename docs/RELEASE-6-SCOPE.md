@@ -108,7 +108,8 @@ critical path.
 
 1. **Review the 190 baseline contracts.** This is the hard blocker. It needs
    subject-matter time, not more code. Work in track-sized batches; the generated
-   review queue is the source of truth.
+   review queue is the source of truth. The exact workflow is in the
+   [Competency contract review guide](COMPETENCY-REVIEW-GUIDE.md).
 2. **Enforce object coverage.** Run
    `python scripts/audit-release6-coverage.py --fail-on-gaps` in CI. Labs and
    all 9 quiz pathways are mapped; capstones and per-badge competency lists are

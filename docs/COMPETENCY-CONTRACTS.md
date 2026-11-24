@@ -68,6 +68,7 @@ python scripts/lab_harness.py --lab <lab-id> --runs 3 --rebuild
 python scripts/generate-competency-contracts.py
 ```
 
-A reviewed contract should change `review_status` to `reviewed`, set
-`reviewed_at`, and replace the baseline reliability rationale with the
-actual evidence and harness result.
+A reviewed contract is recorded in
+`platform/backend/app/data/competency-contract-overrides.yaml`: set
+`review_status: reviewed`, `reviewed_at`, and the actual reliability
+rationale, then regenerate. Do not edit the generated contract file.

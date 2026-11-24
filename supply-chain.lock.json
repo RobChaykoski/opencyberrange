@@ -322,7 +322,7 @@
       "sha256": "932569d5fecddfc6c62e665afb5abec732b734ccc635354084fea2f2c4e73066"
     },
     "scripts/generate-competency-contracts.py": {
-      "sha256": "6da347de5026b4649c1a0dd02397666d8971e55e27bb9edb92a23b528e4d0bde"
+      "sha256": "4519bba1cdfe2b28718479d43ebeeea533f9594b704f683651692927f4490cb0"
     },
     "scripts/generate-lab-manifests.py": {
       "sha256": "30e5f2489424b59b6b61efadee0a922316024b14782ecd612be8699cd6d4fdd2"

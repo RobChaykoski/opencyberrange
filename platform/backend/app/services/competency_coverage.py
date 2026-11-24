@@ -212,7 +212,7 @@ def _checklist() -> list[str]:
         "The assessment criteria are observable and not a restatement of the topic.",
         "No prohibited collection is introduced (keystrokes, mouse movement, exhaustive terminal history).",
         "The workbook path resolves to the authored chapter.",
-        "Set `review_status: reviewed` and `reviewed_at: YYYY-MM-DD` in `competency-contracts.yaml`.",
+        "Record the decision in `competency-contract-overrides.yaml` with `review_status: reviewed` and `reviewed_at: YYYY-MM-DD`.",
         "Regenerate the review queue and coverage docs.",
     ]
 
