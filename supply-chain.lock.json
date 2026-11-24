@@ -187,7 +187,7 @@
       "sha256": "18f211d07b779cb88dbb4e5c71c6ae4d62f4f6e38c71104b901ede93df31f6bd"
     },
     "platform/backend/app/version.py": {
-      "sha256": "67e3e022a4cd1688ea837cf09cbc27723b67dc083d4cfe851a2e1b414d67e29c"
+      "sha256": "68f8ac3f756f7470b7fda9ebab88c796fd831193e0ea3ffdb3be2f3bc29a05fe"
     },
     "platform/backend/lab_metadata.schema.json": {
       "sha256": "7590d5bf2a3a9ea2ecf275ba18c82394dfec252b0a39fe0846d18e57d746c36c"
@@ -226,10 +226,10 @@
       "sha256": "854506e5efcc601a6d55dcbf69031382666f0682086ef0159ff98e444898e475"
     },
     "platform/frontend/package-lock.json": {
-      "sha256": "0e4f088dc84ec98a334af1acd78c98209ce4f0d0dec635e6bf6e3dcdbafd639d"
+      "sha256": "6ca0deca2c2704c066edabcacf7b692c51893c74ed7603da460d2ce5bc6d23b0"
     },
     "platform/frontend/package.json": {
-      "sha256": "795f27f182bb474364d747a5385415bf0b0e722b4585061627521d1ca383a5fe"
+      "sha256": "435d6bed32c1f6652f0bf6861116ef71a177e2fa9a3d331ea29de922514be444"
     },
     "platform/frontend/security-headers.conf": {
       "sha256": "cca660b01a952e0077c8d57cb6190f8e78d3aed2defd04e5aabed279368d3489"
@@ -370,7 +370,7 @@
       "sha256": "f08f563a56860357a3c246993e4fd3da16cf1df35cce49f9890c0b09eb1ab769"
     },
     "versions.yaml": {
-      "sha256": "903c03c9ada67e422f975da02a4c42e5a1f681bb5e402a97666ebc78b57fcbca"
+      "sha256": "51f1b611d73ff0e57bbe7bac61e941e2036d686a1f5a9ecb46393bb674e0a017"
     }
   },
   "generator": "scripts/supply_chain.py",
@@ -1685,6 +1685,6 @@
       ]
     }
   },
-  "release": "5.38.0",
+  "release": "5.39.0",
   "schema": 1
 }
