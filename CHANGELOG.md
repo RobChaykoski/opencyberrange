@@ -4,7 +4,11 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
-No unreleased changes.
+### Course-owned RLS
+
+- Added migration `0067_course_content_rls`: `institution_id` on the six course-owned content tables, derived from `course_id`, with forced RLS and the four tenant policies.
+- Extended the two-institution probe to a course-owned table; the enforced set is now 47 tables.
+- Documented the consent subsystem as the next RLS wave; auth tables stay outside RLS by design.
 
 ## [5.48.0] - 2026-11-24
 

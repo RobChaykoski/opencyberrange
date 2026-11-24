@@ -135,21 +135,25 @@ break authentication or remove a global security control.
 | Authentication and identity | `auth_sessions`, `refresh_tokens`, `revoked_tokens`, `sso_sessions`, `sso_login_tickets`, `external_identities`, `rbac_user_roles`, `service_credentials`, `instructor_api_keys`, `wireguard_configs` | Read *before* a tenant context exists; the tenant is resolved from them. Protected by token, role, and secret handling. |
 | Security and platform operations | `security_events`, `data_integrity_ledger`, `production_cutovers`, `settings_change_requests`, `retention_runs`, `break_glass_grants`, `impersonation_sessions` | Global by design. `security_events` has its own forced RLS and append-only policies. |
 | Consent subsystem | `consent_states`, `consent_events`, `consent_audits`, `consent_jobs`, `consent_revocations`, `consent_suppressions`, `survey_consent_events` | Learner-owned, but the consent gate runs during onboarding and sign-in while the tenant is being established. Already protected by the revocation orchestrator, suppression ledger, and erasure path. Candidate for the next RLS wave after the consent read path is tenant-stamped. |
-| Course-owned content | `course_cohorts`, `course_lab_assignments`, `course_requirements`, `survey_attachments`, `exercise_sets`, `report_exports` | Institution-owned rather than learner-personal; scoped by the course in services. A later migration can derive `institution_id` from `course_id`. |
 | Shared definitions | `labs`, `competitions`, `exercise_templates`, `surveys` | Platform-wide catalogue or shared content; not personal data. Competition participation is learner-owned and already covered through `competition_participants` scoping at the service layer. |
 | Framework reference data | `nice_components`, `nice_links`, `nice_framework_meta`, `lab_nice_components`, `lab_nice_metadata` | Public NIST reference data and lab-to-component selections. No learner or institution identity. Mappings are validated against the shared catalogue. |
 
 ## Required next migration
 
-For the remaining course-owned content:
-
-1. Add `institution_id` derived from `course_id` (no user owner required).
-2. Backfill, then set `NOT NULL`.
-3. Enable and force RLS with the tenant policy.
-4. Extend the two-institution probe test.
+Course-owned content is complete in `0067_course_content_rls`. The two-institution
+probe now covers a course-owned table as well as `course_enrollments`.
 
 For the consent subsystem, first stamp the tenant before the onboarding/sign-in
-consent reads, then apply the same pattern.
+consent reads, then apply the same pattern:
+
+1. Stamp `ocr.institution_id` before the consent gate runs.
+2. Add `institution_id` to the consent tables.
+3. Backfill, then set `NOT NULL`.
+4. Enable and force RLS with the tenant policy.
+5. Extend the two-institution probe test.
+
+The authentication family remains deliberately outside RLS: those rows are read
+before a tenant context exists. See the classification table above.
 
 ## Verification
 

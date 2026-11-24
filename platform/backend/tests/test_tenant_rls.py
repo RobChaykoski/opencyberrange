@@ -10,7 +10,14 @@ from sqlalchemy import text
 
 from app import database
 from app.auth import get_password_hash
-from app.models import Course, CourseEnrollment, ReviewRequest, User, UserAccommodation
+from app.models import (
+    Course,
+    CourseCohort,
+    CourseEnrollment,
+    ReviewRequest,
+    User,
+    UserAccommodation,
+)
 from app.services import tenant_rls
 
 PASSWORD = "Tenant#Pass123"  # Test-only credential; security-delta: allow
@@ -69,14 +76,21 @@ def test_tenant_columns_are_derived_and_rls_hides_other_institutions(db_session)
     course_b = _course(db_session, instructor_b, "tenant-b")
     enrollment_a = CourseEnrollment(course_id=course_a.id, user_id=learner_a.id)
     enrollment_b = CourseEnrollment(course_id=course_b.id, user_id=learner_b.id)
-    db_session.add_all([enrollment_a, enrollment_b])
+    cohort_a = CourseCohort(course_id=course_a.id, name=f"Cohort A {uuid.uuid4().hex[:6]}")
+    cohort_b = CourseCohort(course_id=course_b.id, name=f"Cohort B {uuid.uuid4().hex[:6]}")
+    db_session.add_all([enrollment_a, enrollment_b, cohort_a, cohort_b])
     db_session.commit()
     db_session.refresh(enrollment_a)
     db_session.refresh(enrollment_b)
+    db_session.refresh(cohort_a)
+    db_session.refresh(cohort_b)
 
     # The trigger derives the tenant from the course, not from the caller.
     assert enrollment_a.institution_id == "tenant-a"
     assert enrollment_b.institution_id == "tenant-b"
+    # Course-owned content derives its tenant from the course, not the caller.
+    assert cohort_a.institution_id == "tenant-a"
+    assert cohort_b.institution_id == "tenant-b"
 
     with database.engine.connect() as conn:
         trans = conn.begin()
@@ -107,6 +121,15 @@ def test_tenant_columns_are_derived_and_rls_hides_other_institutions(db_session)
         ]
         assert enrollment_a.id in visible
         assert enrollment_b.id not in visible
+
+        cohorts = [
+            row[0]
+            for row in conn.execute(
+                text("SELECT id FROM course_cohorts ORDER BY id")
+            ).all()
+        ]
+        assert cohort_a.id in cohorts
+        assert cohort_b.id not in cohorts
 
         updated = conn.execute(
             text(

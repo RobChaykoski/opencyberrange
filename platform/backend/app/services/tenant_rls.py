@@ -76,6 +76,14 @@ TENANT_TABLES: dict[str, dict] = {
     "evidence_appeals": {"owner": "learner_id", "course": None},
     "evidence_competencies": {"parent": ("evidence_records", "evidence_id")},
     "evidence_reviews": {"parent": ("evidence_records", "evidence_id")},
+    # Course-owned content. There is no user owner: the tenant derives from the
+    # course, so a client cannot choose it.
+    "course_cohorts": {"owner": None, "course": "course_id"},
+    "course_lab_assignments": {"owner": None, "course": "course_id"},
+    "course_requirements": {"owner": None, "course": "course_id"},
+    "survey_attachments": {"owner": None, "course": "course_id"},
+    "exercise_sets": {"owner": None, "course": "course_id"},
+    "report_exports": {"owner": None, "course": "course_id"},
 }
 
 _RLS_USING = (
@@ -113,9 +121,9 @@ def _owner_function(table: str, spec: dict) -> str:
           FROM {parent_table} WHERE id = NEW.{parent_column};
         """
     else:
-        owner = str(spec["owner"])
+        owner = str(spec["owner"]) if spec.get("owner") else None
         course = spec.get("course")
-        if course:
+        if course and owner:
             body = f"""
             SELECT institution_id INTO NEW.institution_id
               FROM courses WHERE id = NEW.{course};
@@ -124,11 +132,18 @@ def _owner_function(table: str, spec: dict) -> str:
                 FROM users WHERE id = NEW.{owner};
             END IF;
             """
-        else:
+        elif course:
+            body = f"""
+            SELECT institution_id INTO NEW.institution_id
+              FROM courses WHERE id = NEW.{course};
+            """
+        elif owner:
             body = f"""
             SELECT institution_id INTO NEW.institution_id
               FROM users WHERE id = NEW.{owner};
             """
+        else:  # pragma: no cover - guarded by the table map
+            raise ValueError(f"{table} needs an owner, course, or parent")
     return f"""
     CREATE OR REPLACE FUNCTION {function}
     RETURNS trigger AS $$

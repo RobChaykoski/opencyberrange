@@ -125,6 +125,9 @@ class CourseCohort(Base):
     """A learner group inside one course for targeted requirements."""
 
     __tablename__ = "course_cohorts"
+    institution_id = Column(
+        String(64), nullable=False, default="default", server_default="default", index=True
+    )
 
     id = Column(Integer, primary_key=True)
     course_id = Column(
@@ -198,6 +201,9 @@ class CourseStaff(Base):
 
 class ExerciseSet(Base):
     __tablename__ = "exercise_sets"
+    institution_id = Column(
+        String(64), nullable=False, default="default", server_default="default", index=True
+    )
 
     id = Column(Integer, primary_key=True)
     course_id = Column(
@@ -236,6 +242,9 @@ class ExerciseSetItem(Base):
 
 class CourseRequirement(Base):
     __tablename__ = "course_requirements"
+    institution_id = Column(
+        String(64), nullable=False, default="default", server_default="default", index=True
+    )
 
     id = Column(Integer, primary_key=True)
     course_id = Column(
@@ -307,6 +316,9 @@ class CourseEnrollment(Base):
 class CourseLabAssignment(Base):
     """Labs assigned to a course"""
     __tablename__ = "course_lab_assignments"
+    institution_id = Column(
+        String(64), nullable=False, default="default", server_default="default", index=True
+    )
 
     id = Column(Integer, primary_key=True)
     course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False)

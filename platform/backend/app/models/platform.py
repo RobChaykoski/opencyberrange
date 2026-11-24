@@ -138,6 +138,9 @@ class ReportExport(Base):
     fabricated or edited report cannot be made to look platform-generated.
     """
     __tablename__ = "report_exports"
+    institution_id = Column(
+        String(64), nullable=False, default="default", server_default="default", index=True
+    )
 
     id = Column(Integer, primary_key=True)
     report_id = Column(String(36), unique=True, index=True, nullable=False)

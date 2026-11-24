@@ -38,6 +38,9 @@ class Survey(Base):
 
 class SurveyAttachment(Base):
     __tablename__ = "survey_attachments"
+    institution_id = Column(
+        String(64), nullable=False, default="default", server_default="default", index=True
+    )
 
     id = Column(Integer, primary_key=True)
     survey_id = Column(Integer, ForeignKey("surveys.id", ondelete="CASCADE"), nullable=False)
