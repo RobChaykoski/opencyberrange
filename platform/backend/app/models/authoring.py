@@ -226,6 +226,7 @@ class ExerciseGenItem(Base):
 
     __table_args__ = (
         Index("ix_genitem_job_status", "job_id", "status"),
+        Index("ix_genitem_lease", "status", "lease_until"),
         CheckConstraint("tier IN ('parameterize', 'remix', 'author')", name="ck_genitem_tier"),
         CheckConstraint(
             "status IN ('pending', 'building', 'ready', 'failed', 'needs_infra', 'skipped')",

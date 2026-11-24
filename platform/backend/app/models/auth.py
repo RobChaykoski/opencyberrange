@@ -396,6 +396,7 @@ class RevokedToken(Base):
 
     __table_args__ = (
         Index('ix_revoked_tokens_user', 'user_id'),
+        Index('ix_revoked_at', 'revoked_at'),
     )
 
 

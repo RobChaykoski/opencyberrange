@@ -7,6 +7,7 @@ from sqlalchemy import (
     DateTime,
     Float,
     ForeignKey,
+    Index,
     Integer,
     String,
     Text,
@@ -92,6 +93,12 @@ class DataIntegrityLedger(Base):
     request_id = Column(String(64), nullable=True)
     prev_hash = Column(String(64), nullable=False)
     entry_hash = Column(String(64), nullable=False)
+
+    __table_args__ = (
+        Index("ix_data_integrity_ledger_entry", "entry_hash"),
+        Index("ix_data_integrity_ledger_occurred", "occurred_at"),
+        Index("ix_data_integrity_ledger_table", "table_name"),
+    )
 
 
 class DataIntegrityReview(Base):

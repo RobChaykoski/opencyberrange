@@ -4,6 +4,12 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
+### Database
+
+- Declared the seven runtime/legacy indexes in the models, including the partial unique one-active-session guard on `lab_sessions`.
+- Aligned `portfolio_share_tokens`, `readiness_lab_reviews`, and `readiness_student_notes` to the database's `NOT NULL DEFAULT 'default'` `institution_id`.
+- Development Alembic drift falls from 48 to a planned 38 operations; the remainder is tenant `institution_id` DDL.
+
 ### Host agent
 
 - Implemented read-only `GET /v1/status/<lab_id>` in `ocr-labd`: validated lab id, fixed `docker inspect`, mapped state, and audited denials/failures.

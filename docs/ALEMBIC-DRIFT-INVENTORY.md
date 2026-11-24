@@ -1,9 +1,9 @@
 # Alembic drift inventory
 
 Snapshot: `alembic check` against production 5.44.0 on 24 November 2026.
-Sequences were excluded; 93 schema operations remained. After the model cleanups and migrations 0063-0065, development reports 48:
-0 added indexes, 0 removed tables, 18 removed columns, 3 nullability changes,
-0 changed index expressions, and 27 removed indexes.
+Sequences were excluded; 93 schema operations remained. After the model cleanups, migrations 0063-0065, and the model-index/nullability alignment, development reports 38:
+0 added indexes, 0 removed tables, 18 removed columns, 0 nullability changes,
+0 changed index expressions, and 20 removed indexes.
 
 This is a classification, not a migration. Do not autogenerate from it.
 
@@ -11,14 +11,14 @@ This is a classification, not a migration. Do not autogenerate from it.
 
 | Category | Count | Action |
 |---|---:|---|
-| Runtime tenant DDL (`institution_id` columns, indexes, NULL changes) | 18 columns, 20 indexes, 3 nullability changes | Move into a dedicated tenant-baseline migration |
+| Runtime tenant DDL (`institution_id` columns, indexes) | 18 columns, 20 indexes | Move into a dedicated tenant-baseline migration |
 | Runtime auth table `ws_tickets` | 1 table, 1 index | **Fixed:** model + migration `0064_ws_tickets`; runtime DDL removed |
 | Legacy Kali columns | 6 columns | **Fixed:** no code references; migration `0065_legacy_kali_columns` drops them |
 | Model `id` index declarations | 24 indexes | **Fixed:** removed `index=True` from 24 model IDs; migration 0061 already dropped the DB indexes |
 | Missing FK indexes declared by models | 10 indexes | **Fixed:** migration 0063 adds them |
 | Index expression drift | 3 indexes | **Fixed:** model indexes now declare `DESC` |
-| Runtime ledger indexes | 3 indexes | Model does not declare them; keep as runtime DDL or migrate |
-| Other legacy indexes | 4 indexes | Review before dropping |
+| Runtime ledger indexes | 3 indexes | **Fixed:** declared in the `DataIntegrityLedger` model |
+| Other legacy indexes | 4 indexes | **Fixed:** declared in the models; the one-active-session partial unique index is retained |
 
 ## Fixed in this pass
 
@@ -38,6 +38,12 @@ This is a classification, not a migration. Do not autogenerate from it.
   application code referenced them.
 - Declared `DESC` on the three recent-first indexes so the model matches the
   database.
+- Declared the seven runtime/legacy indexes in the models: the three
+  `data_integrity_ledger` indexes, `ix_genitem_lease`, `ix_labsession_expires`,
+  `ix_revoked_at`, and the partial unique `uq_active_lab_session_user` guard.
+- Aligned `portfolio_share_tokens`, `readiness_lab_reviews`, and
+  `readiness_student_notes` to the database's `NOT NULL DEFAULT 'default'`
+  `institution_id`.
 
 ## Remaining categories
 
@@ -52,8 +58,7 @@ Affected examples: `accommodation_events`, `activity_events`,
 `course_staff`, `exercise_pulse_surveys`, `exercise_quiz_attempts`,
 `exercise_quiz_feedback`, `exercise_reactions`, `flag_attempts`, `lti_scores`,
 `open_badge_credentials`, `practice_session_questions`, `quiz_attempts`,
-`review_requests`, `survey_responses`, `user_accommodations`, and the
-readiness/portfolio tables with nullability drift.
+`review_requests`, `survey_responses`, and `user_accommodations`.
 
 Action: create one hand-written tenant-baseline migration that adds the columns,
 indexes, triggers, and RLS policies. Then remove the runtime DDL or reduce it to
@@ -78,14 +83,12 @@ Fixed: the model now declares `awarded_at DESC`, `started_at DESC`, and
 
 ### 5. Runtime and legacy indexes
 
-The ledger indexes (`ix_data_integrity_ledger_entry`, `_occurred`, `_table`) are
-created by `db_integrity.py`, not the model. `ix_genitem_lease`,
-`ix_labsession_expires`, `uq_active_lab_session_user`, and `ix_revoked_at` are
-legacy or runtime indexes the model does not declare.
-
-Action: review each for an active query or invariant. Keep the one-active-session
-guard unless a replacement constraint exists. Add the rest to the model or mark
-them as runtime-managed in this inventory.
+Fixed: the model now declares all seven. The three ledger indexes remain useful
+for integrity queries. `ix_genitem_lease` supports the worker claim query,
+`ix_labsession_expires` supports the reaper, and `ix_revoked_at` supports token
+purge. `uq_active_lab_session_user` is a partial unique index over
+`user_id` for `starting`/`running` sessions; it is the one-active-session guard
+and stays in place.
 
 ## Verification
 
@@ -100,7 +103,6 @@ docker exec ocr-backend alembic -c alembic.ini check
 bash scripts/restore-drill.sh
 ```
 
-The production snapshot was taken before the model cleanup, migration 0063, and
-migration 0064. Development after 0065 reports 48 operations: 18 runtime tenant columns, 20
-tenant indexes, 3 nullability changes, and 7 runtime/legacy indexes. Re-run
-against production after the 5.45.0 deploy to confirm the same.
+Development reports 38 operations after the alignment: 18 runtime tenant
+columns and 20 tenant indexes. Production is expected to match; re-run against
+production after the next deploy to confirm.

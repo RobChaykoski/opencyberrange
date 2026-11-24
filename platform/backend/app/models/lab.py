@@ -247,6 +247,16 @@ class LabSession(Base):
     __table_args__ = (
         Index('ix_labsession_status', 'status'),
         Index('ix_labsession_user_status', 'user_id', 'status'),
+        Index('ix_labsession_expires', 'status', 'expires_at'),
+        Index(
+            'uq_active_lab_session_user',
+            'user_id',
+            unique=True,
+            postgresql_where=text(
+                "(status)::text = ANY ((ARRAY['starting'::character varying, "
+                "'running'::character varying])::text[])"
+            ),
+        ),
         Index('ix_lab_sessions_started_at', started_at.desc()),
     )
 

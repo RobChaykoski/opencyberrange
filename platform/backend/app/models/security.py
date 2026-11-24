@@ -294,7 +294,9 @@ class PortfolioShare(Base):
     user_id = Column(
         Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
     )
-    institution_id = Column(String(64), nullable=True, index=True)
+    institution_id = Column(
+        String(64), nullable=False, server_default="default", index=True
+    )
     token_hash = Column(String(64), unique=True, nullable=False, index=True)
     label = Column(String(120), nullable=True)
     audience = Column(String(120), nullable=True)

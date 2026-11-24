@@ -15,7 +15,7 @@ class ReadinessStudentNote(Base):
     __tablename__ = "readiness_student_notes"
 
     id = Column(Integer, primary_key=True)
-    institution_id = Column(String(64), nullable=True, server_default="default")
+    institution_id = Column(String(64), nullable=False, server_default="default")
     course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False, index=True)
     learner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     kind = Column(String(24), nullable=False, index=True)
@@ -43,7 +43,7 @@ class ReadinessLabReview(Base):
     __tablename__ = "readiness_lab_reviews"
 
     id = Column(Integer, primary_key=True)
-    institution_id = Column(String(64), nullable=True, server_default="default")
+    institution_id = Column(String(64), nullable=False, server_default="default")
     course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False, index=True)
     lab_id = Column(Integer, ForeignKey("labs.id", ondelete="CASCADE"), nullable=False, index=True)
     status = Column(String(24), nullable=False)
