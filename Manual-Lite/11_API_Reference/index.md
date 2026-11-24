@@ -331,6 +331,12 @@ owner-only unless an explicit share or break-glass grant exists.
 | `GET` | `/api/badges/mine` | My Badges | OAuth2PasswordBearer |
 | `POST` | `/api/badges/{badge_id}/consent` | Badge Consent | OAuth2PasswordBearer |
 | `POST` | `/api/capstones/plan` | Capstone Plan | OAuth2PasswordBearer |
+| `GET` | `/api/capstones/plans` | List Capstone Plans | OAuth2PasswordBearer |
+| `POST` | `/api/capstones/plans` | Save Capstone Plan | OAuth2PasswordBearer |
+| `GET` | `/api/capstones/plans/{plan_id}` | Get Capstone Plan | OAuth2PasswordBearer |
+| `PUT` | `/api/capstones/plans/{plan_id}` | Update Capstone Plan | OAuth2PasswordBearer |
+| `POST` | `/api/capstones/plans/{plan_id}/approve` | Approve Capstone Plan | OAuth2PasswordBearer |
+| `POST` | `/api/capstones/plans/{plan_id}/archive` | Archive Capstone Plan | OAuth2PasswordBearer |
 | `GET` | `/api/capstones/profiles` | Capstone Profiles | OAuth2PasswordBearer |
 | `GET` | `/api/competencies/{competency_id}/evidence` | Competency Evidence | OAuth2PasswordBearer |
 | `GET` | `/api/competitions` | List Competitions | OAuth2PasswordBearer |
@@ -3677,6 +3683,125 @@ Chapter directories of a course wiki this user may open right now.  Feeds the wo
 | `waived_competencies` | array[string] | no |  |
 | `waiver_reason` | string or null | no |  |
 | `assume_entry_level` | boolean | no |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `GET /api/capstones/plans`
+
+**List Capstone Plans**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Responses**
+
+- `200`: Successful Response
+
+### `POST /api/capstones/plans`
+
+**Save Capstone Plan**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Request body** (`application/json`)
+
+**Schema:** `SavedPlanIn`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `profile_id` | string | yes |  |
+| `duration_hours` | number | no |  |
+| `max_labs` | integer | no |  |
+| `waived_competencies` | array[string] | no |  |
+| `waiver_reason` | string or null | no |  |
+| `assume_entry_level` | boolean | no |  |
+| `title` | string or null | no |  |
+| `notes` | string or null | no |  |
+
+**Responses**
+
+- `201`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `GET /api/capstones/plans/{plan_id}`
+
+**Get Capstone Plan**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `plan_id` | path | integer | yes |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `PUT /api/capstones/plans/{plan_id}`
+
+**Update Capstone Plan**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `plan_id` | path | integer | yes |  |
+
+**Request body** (`application/json`)
+
+**Schema:** `SavedPlanIn`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `profile_id` | string | yes |  |
+| `duration_hours` | number | no |  |
+| `max_labs` | integer | no |  |
+| `waived_competencies` | array[string] | no |  |
+| `waiver_reason` | string or null | no |  |
+| `assume_entry_level` | boolean | no |  |
+| `title` | string or null | no |  |
+| `notes` | string or null | no |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `POST /api/capstones/plans/{plan_id}/approve`
+
+**Approve Capstone Plan**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `plan_id` | path | integer | yes |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `POST /api/capstones/plans/{plan_id}/archive`
+
+**Archive Capstone Plan**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `plan_id` | path | integer | yes |  |
 
 **Responses**
 

@@ -3,6 +3,12 @@
 This page maps the tags in the repository to the release they actually
 represent. It exists because the history contains several naming eras.
 
+## Release 5.40.0
+
+| Tag | Release | Status |
+|---|---|---|
+| `v5.40.0` | SWOCTS Cyber Range Release 5.40.0 | Signed annotated tag: Release 6 object coverage audit, quiz competency mappings, learner-visible unmeasured rule, competency review packets, and the deterministic Capstone Builder with saved plans, versioning, and approval. Includes migration `0059_capstone_plans`. Deployment pending. |
+
 ## Release 5.39.0
 
 | Tag | Release | Status |

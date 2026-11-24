@@ -1,8 +1,9 @@
 # Capstone Builder
 
-Status: **Release 6.1, backend planner MVP implemented.** The deterministic
-planner, validation gate, and instructor API exist. Persistence, the editor UI,
-and publication to a course are not implemented yet.
+Status: **Release 6.1, backend planner and saved plans implemented.** The
+deterministic planner, validation gate, saved-plan API, versioning, and approval
+exist. The editor UI, publication to a course, and exports are not implemented
+yet.
 
 The Capstone Builder turns a role profile into a teachable, assessable capstone.
 An instructor selects a profile such as **Blue Team Analyst** (the existing
@@ -43,19 +44,35 @@ unwaived 40-hour plan does not. That is the planner doing its job, not a bug.
 |---|---|---|
 | GET | `/api/capstones/profiles` | Role profiles, critical competency counts, tracks, capstone brief |
 | POST | `/api/capstones/plan` | Generate a proposal and validation report |
+| POST | `/api/capstones/plans` | Save a draft plan with a version |
+| GET | `/api/capstones/plans` | List the caller's plans |
+| GET | `/api/capstones/plans/{id}` | Read a saved plan and its request |
+| PUT | `/api/capstones/plans/{id}` | Regenerate a draft, increment the version, clear approval |
+| POST | `/api/capstones/plans/{id}/approve` | Approve only when the validation gate passes |
+| POST | `/api/capstones/plans/{id}/archive` | Archive a plan without deleting it |
 
 The endpoints require an instructor, administrator, mentor, or teaching
 assistant. A learner receives `403 capstone_forbidden`.
 
 ## What is not implemented
 
-- Saving a plan, editing it, or versioning it.
-- A visual editor and approval workflow.
+- A visual editor.
 - Publishing to a course, event, or standalone capstone.
 - Generating the learner brief and instructor guide as documents.
 - Exporting a Common Cartridge or PDF package.
 
-Those are the next 6.1 slices. The planner does not publish anything today.
+Those are the next 6.1 slices. A saved plan can be approved, but approval does
+not publish anything today.
+
+## Saved-plan rules
+
+- A saved plan belongs to the instructor who created it.
+- An administrator or institution administrator can see plans in their tenant.
+- Another instructor receives `404 capstone_not_found`.
+- Editing rebuilds the plan, increments the version, returns the status to
+  `draft`, and clears the approval.
+- Approval refuses a plan whose validation gate has not passed.
+- An archived plan cannot be edited or approved.
 
 ## Example
 

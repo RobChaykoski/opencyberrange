@@ -96,7 +96,7 @@ critical path.
 | Competency contracts | **Partial** | 25 of 215 reviewed; 190 baseline-derived contracts await subject-matter review |
 | Coverage gate for every object | **Partial** | Labs and all 9 quiz pathways are mapped; the CI gate exists as `scripts/audit-release6-coverage.py --fail-on-gaps`; capstones are not implemented and badges are derived |
 | Learner-visible score gate | **Partial** | DNA, portfolio, readiness, and competency views now show an unmeasured state with a regression test; the transcript PDF and exported reports still need the same audit |
-| Capstone Builder (6.1) | **Partial** | Deterministic planner, validation gate, and instructor API exist; persistence, editor UI, publication, and exports do not |
+| Capstone Builder (6.1) | **Partial** | Deterministic planner, saved plans, versioning, approval gate, and instructor API exist; editor UI, publication, and exports do not |
 | Six instructor dashboards (6.1) | **Not started** | Definitions exist; the evidence operations summary is not the class-competency dashboard |
 | HA and Kubernetes (6.2) | **Not started** | Single-host Compose remains the reference; no HA control plane or lab node pool |
 | Monitoring (6.2) | **Partial** | The external dashboard exists; the dead-man switch and lab-host agents are blocked on access and a ping URL |

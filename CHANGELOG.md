@@ -6,6 +6,35 @@ All notable changes to OpenCyberRange are recorded here.
 
 No unreleased changes.
 
+## [5.40.0] - 2026-11-24
+
+Release 6 foundation and capstone planning: object coverage audit, quiz
+competency mappings, learner-visible unmeasured rule, capstone planner with
+saved plans and approval, and migration `0059_capstone_plans`.
+
+### Release 6 foundation
+
+- Added `scripts/audit-release6-coverage.py`, which audits every lab contract,
+  certification quiz pathway, exercise quiz, capstone, and badge. CI runs it with
+  `--fail-on-gaps`; `--require-reviewed` is the 6.0 gate.
+- Added competency mappings to all nine certification quiz pathways.
+- Added `scripts/competency-review-packet.py` and the competency review guide.
+  Reviews are recorded in `competency-contract-overrides.yaml`, not the generated
+  contract file.
+- Applied the learner-visible rule to Cyber DNA, the portfolio, the competency
+  taxonomy, and the instructor readiness panel. A null score renders as
+  unmeasured, not zero, with a component regression test.
+- Added the admin question-bank per-domain count and thin-domain highlight.
+
+### Capstone planning
+
+- Added `GET /api/capstones/profiles` and `POST /api/capstones/plan`, a
+  deterministic planner over reviewed contracts with a validation gate.
+- Added saved plans, versioning, approval, and archive at
+  `/api/capstones/plans`. Approval requires the validation gate to pass and does
+  not publish anything.
+- Added migration `0059_capstone_plans` with forced tenant RLS.
+
 ## [5.39.0] - 2026-11-24
 
 Release 6 foundations: evidence appeals, learner journeys, the Cyber Legacy

@@ -7,7 +7,7 @@ import uuid
 import pytest
 
 from app.auth import get_password_hash
-from app.models import User
+from app.models import CapstonePlan, User
 from app.services import capstone_builder
 
 PASSWORD = "Capstone#Pass123"  # Test-only credential; security-delta: allow
@@ -171,3 +171,142 @@ def test_instructor_can_generate_a_plan(client, db_session):
     finally:
         db_session.delete(instructor)
         db_session.commit()
+
+
+def _waived_payload(**overrides) -> dict:
+    payload = {
+        "profile_id": "soc-analyst",
+        "duration_hours": 12,
+        "max_labs": 12,
+        "waived_competencies": _soc_waivers(),
+        "waiver_reason": "The remaining competencies are scheduled for the next curriculum wave.",
+        "assume_entry_level": True,
+    }
+    payload.update(overrides)
+    return payload
+
+
+def _cleanup(db, users: list[User]) -> None:
+    ids = [user.id for user in users]
+    db.query(CapstonePlan).filter(CapstonePlan.owner_id.in_(ids)).delete(
+        synchronize_session=False
+    )
+    for user in users:
+        db.delete(user)
+    db.commit()
+
+
+@pytest.mark.db
+def test_save_list_get_and_approve_a_plan(client, db_session):
+    instructor = _user(db_session, "instructor")
+    try:
+        headers = _headers(client, instructor)
+        saved = client.post(
+            "/api/capstones/plans",
+            json=_waived_payload(title="Blue Team capstone"),
+            headers=headers,
+        )
+        assert saved.status_code == 201, saved.text
+        body = saved.json()
+        assert body["status"] == "draft"
+        assert body["version"] == 1
+        assert body["validation"]["publishable"] is True
+        plan_id = body["id"]
+
+        listed = client.get("/api/capstones/plans", headers=headers)
+        assert listed.status_code == 200
+        assert [row["id"] for row in listed.json()["plans"]] == [plan_id]
+
+        fetched = client.get(
+            f"/api/capstones/plans/{plan_id}", headers=headers
+        )
+        assert fetched.status_code == 200
+        assert fetched.json()["title"] == "Blue Team capstone"
+
+        approved = client.post(
+            f"/api/capstones/plans/{plan_id}/approve", headers=headers
+        )
+        assert approved.status_code == 200, approved.text
+        assert approved.json()["status"] == "approved"
+        assert approved.json()["approved_at"]
+    finally:
+        _cleanup(db_session, [instructor])
+
+
+@pytest.mark.db
+def test_unpublishable_plan_cannot_be_approved(client, db_session):
+    instructor = _user(db_session, "instructor")
+    try:
+        headers = _headers(client, instructor)
+        saved = client.post(
+            "/api/capstones/plans",
+            json={"profile_id": "soc-analyst", "duration_hours": 40, "max_labs": 8},
+            headers=headers,
+        )
+        assert saved.status_code == 201, saved.text
+        plan_id = saved.json()["id"]
+        approved = client.post(
+            f"/api/capstones/plans/{plan_id}/approve", headers=headers
+        )
+        assert approved.status_code == 409
+        assert approved.headers["X-Error-Code"] == "capstone_not_publishable"
+    finally:
+        _cleanup(db_session, [instructor])
+
+
+@pytest.mark.db
+def test_update_resets_approval_and_increments_version(client, db_session):
+    instructor = _user(db_session, "instructor")
+    try:
+        headers = _headers(client, instructor)
+        saved = client.post(
+            "/api/capstones/plans", json=_waived_payload(), headers=headers
+        ).json()
+        plan_id = saved["id"]
+        client.post(f"/api/capstones/plans/{plan_id}/approve", headers=headers)
+
+        updated = client.put(
+            f"/api/capstones/plans/{plan_id}",
+            json=_waived_payload(title="Revised capstone", duration_hours=12),
+            headers=headers,
+        )
+        assert updated.status_code == 200, updated.text
+        body = updated.json()
+        assert body["version"] == 2
+        assert body["status"] == "draft"
+        assert body["approved_at"] is None
+        assert body["title"] == "Revised capstone"
+
+        archived = client.post(
+            f"/api/capstones/plans/{plan_id}/archive", headers=headers
+        )
+        assert archived.status_code == 200
+        assert archived.json()["status"] == "archived"
+        edit_archived = client.put(
+            f"/api/capstones/plans/{plan_id}",
+            json=_waived_payload(),
+            headers=headers,
+        )
+        assert edit_archived.status_code == 409
+        assert edit_archived.headers["X-Error-Code"] == "capstone_status_invalid"
+    finally:
+        _cleanup(db_session, [instructor])
+
+
+@pytest.mark.db
+def test_another_instructor_cannot_read_the_plan(client, db_session):
+    owner = _user(db_session, "instructor")
+    other = _user(db_session, "instructor")
+    try:
+        owner_headers = _headers(client, owner)
+        saved = client.post(
+            "/api/capstones/plans", json=_waived_payload(), headers=owner_headers
+        ).json()
+        response = client.get(
+            f"/api/capstones/plans/{saved['id']}",
+            headers=_headers(client, other),
+        )
+        assert response.status_code == 404
+        assert response.headers["X-Error-Code"] == "capstone_not_found"
+    finally:
+        _cleanup(db_session, [owner, other])

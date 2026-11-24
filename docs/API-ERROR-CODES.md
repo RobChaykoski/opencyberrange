@@ -106,6 +106,9 @@ message and the status in the same change.
 | `capstone_forbidden` | 403 | Capstone planning is available to reviewers and administrators |
 | `capstone_profile_unknown` | 404 | The role profile is not in the curriculum catalogue |
 | `capstone_no_candidates` | 409 | No lab contract matches the profile's tracks |
+| `capstone_not_found` | 404 | The saved plan does not exist or is outside the caller's scope |
+| `capstone_not_publishable` | 409 | Approval refused because the validation gate has not passed |
+| `capstone_status_invalid` | 409 | An archived plan cannot be edited or approved |
 
 The existing `X-Reauth-Required`, `X-Session-Invalid`, `X-Security-Version`, and
 `X-Impersonating` headers remain. Do not duplicate them with a code unless the
