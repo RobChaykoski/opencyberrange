@@ -74,6 +74,7 @@ scale, federation, then the AI mentor.
 - [Dependency and image workflow](DEPENDENCY-WORKFLOW.md)
 - [Competency contract review guide](COMPETENCY-REVIEW-GUIDE.md)
 - [Competency review cycle](COMPETENCY-REVIEW-CYCLE.md)
+- [Competency review campaign](reviews/COMPETENCY-REVIEW-CAMPAIGN.md)
 - [Learner-visible scores](LEARNER-VISIBLE-SCORES.md)
 - [Certification practice](PRACTICE-EXAMS.md)
 - [Identity and Quests](IDENTITY-QUESTS.md)
