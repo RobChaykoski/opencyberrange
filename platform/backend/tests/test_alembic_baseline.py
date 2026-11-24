@@ -19,7 +19,7 @@ def _script() -> ScriptDirectory:
 def test_alembic_head_is_the_metadata_revision():
     script = _script()
     heads = script.get_heads()
-    assert heads == ["0062_index_dedupe"]
+    assert heads == ["0063_missing_fk_indexes"]
 
 
 def test_revision_graph_is_linear():
@@ -71,6 +71,7 @@ def test_baseline_revision_exists():
     assert "0060_competency_reviews.py" in names
     assert "0061_index_hygiene.py" in names
     assert "0062_index_dedupe.py" in names
+    assert "0063_missing_fk_indexes.py" in names
 
 
 

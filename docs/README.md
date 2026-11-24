@@ -59,6 +59,8 @@ scale, federation, then the AI mentor.
 - [Security review log, 24 November 2026](SECURITY-REVIEW-2026-11-24.md)
 - [Code and database review, 24 November 2026](CODE-AND-DATABASE-REVIEW-2026-11-24.md)
 - [Alembic baseline and drift](ALEMBIC-BASELINE.md)
+- [Alembic drift inventory](ALEMBIC-DRIFT-INVENTORY.md)
+- [Docker host isolation ADR](decisions/0007-docker-host-isolation.md)
 - [Competency contract review guide](COMPETENCY-REVIEW-GUIDE.md)
 - [Competency review cycle](COMPETENCY-REVIEW-CYCLE.md)
 - [Learner-visible scores](LEARNER-VISIBLE-SCORES.md)

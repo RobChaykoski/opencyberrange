@@ -26,7 +26,7 @@ class LtiPlatform(Base):
 
     __tablename__ = "lti_platforms"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     name = Column(String(120), nullable=False)
     issuer = Column(String(255), nullable=False, index=True)
     client_id = Column(String(255), nullable=False, index=True)
@@ -59,7 +59,7 @@ class LtiLoginState(Base):
 
     __tablename__ = "lti_login_states"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     state = Column(String(128), unique=True, nullable=False, index=True)
     platform_id = Column(
         Integer,
@@ -84,7 +84,7 @@ class LtiLink(Base):
 
     __tablename__ = "lti_links"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     platform_id = Column(
         Integer,
         ForeignKey("lti_platforms.id", ondelete="CASCADE"),
@@ -116,7 +116,7 @@ class LtiScore(Base):
 
     __tablename__ = "lti_scores"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     link_id = Column(
         Integer,
         ForeignKey("lti_links.id", ondelete="CASCADE"),
@@ -149,7 +149,7 @@ class LtiRosterMember(Base):
 
     __tablename__ = "lti_roster_members"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     link_id = Column(
         Integer,
         ForeignKey("lti_links.id", ondelete="CASCADE"),
@@ -179,7 +179,7 @@ class LtiDeepLinkSession(Base):
 
     __tablename__ = "lti_deep_link_sessions"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     token = Column(String(128), unique=True, nullable=False, index=True)
     platform_id = Column(
         Integer,

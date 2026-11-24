@@ -4,7 +4,10 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
-No unreleased changes.
+### Alembic model alignment
+
+- Removed 24 redundant `id` index declarations from the models and added migration `0063_missing_fk_indexes` for the 10 model-declared FK indexes missing from restored databases.
+- Added the Docker host-isolation ADR and the classified Alembic drift inventory.
 
 ## [5.44.0] - 2026-11-24
 

@@ -70,7 +70,7 @@ class RetentionRun(Base):
 
     __tablename__ = "retention_runs"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     course_id = Column(
         Integer,
         ForeignKey("courses.id", ondelete="CASCADE"),
@@ -92,7 +92,7 @@ class ReviewRequest(Base):
 
     __tablename__ = "review_requests"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(
         Integer,
         ForeignKey("users.id", ondelete="CASCADE"),
@@ -123,7 +123,7 @@ class CourseCohort(Base):
 
     __tablename__ = "course_cohorts"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     course_id = Column(
         Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False, index=True
     )
@@ -140,7 +140,7 @@ class CourseCohort(Base):
 class CourseCohortMember(Base):
     __tablename__ = "course_cohort_members"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     cohort_id = Column(
         Integer,
         ForeignKey("course_cohorts.id", ondelete="CASCADE"),
@@ -161,7 +161,7 @@ class CourseStaff(Base):
 
     __tablename__ = "course_staff"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     course_id = Column(
         Integer,
         ForeignKey("courses.id", ondelete="CASCADE"),
@@ -190,7 +190,7 @@ class CourseStaff(Base):
 class ExerciseSet(Base):
     __tablename__ = "exercise_sets"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     course_id = Column(
         Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False, index=True
     )
@@ -207,7 +207,7 @@ class ExerciseSet(Base):
 class ExerciseSetItem(Base):
     __tablename__ = "exercise_set_items"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     set_id = Column(
         Integer,
         ForeignKey("exercise_sets.id", ondelete="CASCADE"),
@@ -228,7 +228,7 @@ class ExerciseSetItem(Base):
 class CourseRequirement(Base):
     __tablename__ = "course_requirements"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     course_id = Column(
         Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False, index=True
     )

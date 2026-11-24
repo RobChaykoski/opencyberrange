@@ -24,6 +24,12 @@ rejects autogenerate usage in workflows and scripts.
 Autogenerate sees the live database as the source of truth and proposes dropping
 anything the model does not declare. On this schema that is destructive.
 
+## Current inventory
+
+See [Alembic drift inventory](ALEMBIC-DRIFT-INVENTORY.md). The model `id`
+indexes were aligned in the 5.45.0 line and migration `0063` adds the
+model-declared FK indexes.
+
 ## Reconciliation plan
 
 1. Restore a current production dump into a scratch database.

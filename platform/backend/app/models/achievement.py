@@ -119,7 +119,7 @@ class OpenBadgeCredential(Base):
 
     __tablename__ = "open_badge_credentials"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(
         Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
     )

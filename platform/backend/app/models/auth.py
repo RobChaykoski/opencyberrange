@@ -245,7 +245,7 @@ class IdentityProvider(Base):
     """
     __tablename__ = "identity_providers"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     name = Column(String(120), nullable=False)
     kind = Column(String(20), nullable=False)  # ldap, oidc, saml
     enabled = Column(Boolean, default=False, server_default=text("false"), nullable=False)
@@ -271,7 +271,7 @@ class ExternalIdentity(Base):
 
     __tablename__ = "external_identities"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     provider_id = Column(
         Integer,
         ForeignKey("identity_providers.id", ondelete="CASCADE"),
@@ -308,7 +308,7 @@ class SsoLoginState(Base):
 
     __tablename__ = "sso_login_states"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     state = Column(String(128), unique=True, nullable=False, index=True)
     provider_id = Column(
         Integer,
@@ -330,7 +330,7 @@ class SsoLoginTicket(Base):
 
     __tablename__ = "sso_login_tickets"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     ticket = Column(String(128), unique=True, nullable=False, index=True)
     user_id = Column(
         Integer,
@@ -358,7 +358,7 @@ class SsoSession(Base):
 
     __tablename__ = "sso_sessions"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(
         Integer,
         ForeignKey("users.id", ondelete="CASCADE"),
@@ -488,7 +488,7 @@ class ImpersonationSession(Base):
 
     __tablename__ = "impersonation_sessions"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     session_id = Column(String(64), nullable=False, unique=True, index=True)
     actor_id = Column(
         Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True
@@ -520,7 +520,7 @@ class UserAccommodation(Base):
 
     __tablename__ = "user_accommodations"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(
         Integer,
         ForeignKey("users.id", ondelete="CASCADE"),
@@ -545,7 +545,7 @@ class AccommodationEvent(Base):
 
     __tablename__ = "accommodation_events"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(
         Integer,
         ForeignKey("users.id", ondelete="CASCADE"),

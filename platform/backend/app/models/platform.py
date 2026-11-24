@@ -51,7 +51,7 @@ class SystemMetric(Base):
 
     __tablename__ = "system_metrics"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     created_at = Column(DateTime, server_default=func.now(), index=True)
     load1 = Column(Float, nullable=True)
     load5 = Column(Float, nullable=True)
