@@ -59,7 +59,7 @@ The bank is the reviewed certification bank in
 same questions as the exercise check, so there is one source of truth and one
 validator.
 
-The current bank is small (about 128 items across nine pathways). A mock exam is
+The current bank is small (about 158 items across nine pathways). A mock exam is
 therefore a short drill, not a full-length replica. Each pathway declares an
 `exam` block in the bank: today 20 questions, 30 minutes, and a 70% practice
 pass mark. The server clamps the question count to what the pathway actually

@@ -18,20 +18,20 @@ Status: **admin-curated.** The shared bank is
 
 ## Current coverage
 
-The shared bank carries **81 original items across 9 pathways** (reviewed
-2026-11-12):
+The shared bank carries **158 original items across 9 pathways** (reviewed
+2026-11-24):
 
 | Pathway | Code | Items | Tracks | Career pathways |
 |---|---|---:|---|---|
-| CompTIA Security+ | SY0-701 | 9 | network, linux, windows, web, osint, forensics, identity, high-school | SOC analyst, security administrator, junior penetration tester, IT auditor |
-| CompTIA CySA+ | CS0-004 | 9 | forensics, malware, osint, windows, network, ot | SOC analyst, threat hunter, incident responder, vulnerability analyst |
-| CompTIA PenTest+ | PT0-003 | 9 | web, software-security, linux, windows, network | Penetration tester, red team operator, security consultant, application security tester |
-| CompTIA Network+ | N10-009 | 9 | network | Network administrator, network engineer, NOC analyst, network security analyst |
-| CompTIA Linux+ | XK0-006 | 8 | linux | Linux systems administrator, systems engineer, cloud operations engineer, site reliability engineer |
-| Microsoft SC-900 | SC-900 | 8 | identity, windows | Identity and access administrator, security operations analyst, compliance analyst, Microsoft 365 administrator |
-| ISC2 Certified in Cybersecurity | CC | 9 | high-school, network, linux | Security analyst, access control administrator, junior SOC analyst, IT support technician |
-| OWASP Top 10 | 2021 | 10 | web, software-security | Application security engineer, web developer, penetration tester, security code reviewer |
-| OWASP Top 10 for LLM Applications | 2025 | 10 | ai | AI security engineer, ML engineer, AI governance analyst, application security engineer |
+| CompTIA Security+ | SY0-701 | 18 | network, linux, windows, web, osint, forensics, identity, high-school | SOC analyst, security administrator, junior penetration tester, IT auditor |
+| CompTIA CySA+ | CS0-004 | 15 | forensics, malware, osint, windows, network, ot | SOC analyst, threat hunter, incident responder, vulnerability analyst |
+| CompTIA PenTest+ | PT0-003 | 18 | web, software-security, linux, windows, network | Penetration tester, red team operator, security consultant, application security tester |
+| CompTIA Network+ | N10-009 | 16 | network | Network administrator, network engineer, NOC analyst, network security analyst |
+| CompTIA Linux+ | XK0-006 | 19 | linux | Linux systems administrator, systems engineer, cloud operations engineer, site reliability engineer |
+| Microsoft SC-900 | SC-900 | 16 | identity, windows | Identity and access administrator, security operations analyst, compliance analyst, Microsoft 365 administrator |
+| ISC2 Certified in Cybersecurity | CC | 16 | high-school, network, linux | Security analyst, access control administrator, junior SOC analyst, IT support technician |
+| OWASP Top 10 | 2021 | 20 | web, software-security | Application security engineer, web developer, penetration tester, security code reviewer |
+| OWASP Top 10 for LLM Applications | 2025 | 20 | ai | AI security engineer, ML engineer, AI governance analyst, application security engineer |
 
 The lab-specific `quiz.yaml` banks remain the first choice for an exercise.
 The shared bank is the fallback and the source for weekly challenge boards.

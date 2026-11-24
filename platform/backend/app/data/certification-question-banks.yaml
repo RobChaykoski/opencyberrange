@@ -1,5 +1,5 @@
 version: '1.0'
-reviewed_at: '2026-11-18'
+reviewed_at: '2026-11-24'
 status: admin-curated; original practice mapped to current public objectives and career pathways
 notes: 'These are original practice items written to published objectives and public, openly available references.
   They are not copied exam questions and are not a certification exam. Every item carries the objective it tests,
@@ -313,6 +313,74 @@ pathways:
       url: https://csrc.nist.gov/pubs/sp/800/34/r1/final
     career: GRC analyst
 
+  - id: secplus-3-05
+    domain: '3'
+    objective: 3.1 Compare and contrast resilience and recovery concepts.
+    difficulty: standard
+    style: scenario
+    prompt: A hospital must keep its electronic health record available during a ransomware attack on the primary data centre. Which control BEST supports that outcome?
+    options:
+    - A warm site with replicated data and a tested failover procedure
+    - A longer minimum password length
+    - A full-disk encryption rollout for every laptop
+    - A quarterly phishing awareness email
+    correct: 0
+    explanation: Resilience requires a surviving copy of the service and a tested way to move to it. A warm site with replication and a rehearsed failover addresses availability directly; the other options reduce different risks and do not restore the service.
+    reference:
+      label: NIST SP 800-34 Rev. 1, Contingency Planning Guide
+      url: https://csrc.nist.gov/pubs/sp/800/34/r1/final
+    career: Security administrator
+  - id: secplus-3-04
+    domain: '3'
+    objective: 3.2 Apply security principles to system and network design.
+    difficulty: standard
+    style: scenario
+    prompt: A web tier and a database tier sit in separate subnets, and only the web tier may reach the database port. Which design principle does this BEST illustrate?
+    options:
+    - Defence in depth through endpoint antivirus
+    - Network segmentation with least-privilege access
+    - High availability through load balancing
+    - Non-repudiation through central logging
+    correct: 1
+    explanation: Segmentation limits which systems can talk to each other, and the port rule allows only the access the web tier needs. Antivirus, load balancing, and logging are useful controls but do not describe the restricted path between tiers.
+    reference:
+      label: NIST SP 800-41 Rev. 1, Guidelines on Firewalls and Firewall Policy
+      url: https://csrc.nist.gov/pubs/sp/800/41/r1/final
+    career: Network security engineer
+  - id: secplus-5-04
+    domain: '5'
+    objective: 5.3 Explain the processes associated with third-party risk assessment and management.
+    difficulty: standard
+    style: scenario
+    prompt: A payment processor must meet the institution's security requirements. Which document BEST records the required controls, responsibilities, and evidence obligations?
+    options:
+    - An acceptable use policy for staff
+    - A business continuity plan
+    - A service-level agreement with security schedules and evidence clauses
+    - A network topology diagram
+    correct: 2
+    explanation: A service-level agreement can carry security schedules that name the required controls, the responsibilities of each party, and the evidence the provider must supply. An acceptable use policy covers staff behaviour, a continuity plan covers recovery, and a diagram is only a design artifact.
+    reference:
+      label: NIST SP 800-161 Rev. 1, Cybersecurity Supply Chain Risk Management
+      url: https://csrc.nist.gov/pubs/sp/800/161/r1/upd1/final
+    career: GRC analyst
+  - id: secplus-5-05
+    domain: '5'
+    objective: 5.6 Explain the importance of security awareness training.
+    difficulty: standard
+    style: scenario
+    prompt: Which metric BEST shows whether a phishing awareness programme is reducing risky behaviour over time?
+    options:
+    - The click rate on simulated phishing messages across repeated campaigns
+    - The number of awareness emails the security team sends
+    - The number of staff who opened the annual training module
+    - The size of the email archive
+    correct: 0
+    explanation: A repeated simulated-phishing click rate measures behaviour and can show a trend. Sending emails and opening a module measure activity or attendance, not whether staff became less likely to act on a real message. Archive size is unrelated.
+    reference:
+      label: NIST SP 800-50, Building a Cybersecurity Awareness and Training Program
+      url: https://csrc.nist.gov/pubs/sp/800/50/final
+    career: GRC analyst
   careers:
   - SOC analyst
   - Security administrator
@@ -619,6 +687,23 @@ pathways:
       url: https://learn.microsoft.com/en-us/azure/sentinel/detect-threats-custom
     career: SOC analyst
 
+  - id: cysa-2-04
+    domain: '2'
+    objective: 2.3 Explain the vulnerability management process.
+    difficulty: standard
+    style: scenario
+    prompt: A scanner reports a critical vulnerability on a production server that cannot be patched during the current maintenance window. Which response is BEST?
+    options:
+    - Close the finding because the server is in production
+    - Apply a documented compensating control until the patch can be deployed
+    - Disable the scanner for that subnet
+    - Wait for the next annual scan
+    correct: 1
+    explanation: A compensating control reduces exposure while the permanent fix waits for an approved window. Closing the finding, disabling the scanner, or waiting a year hides the risk instead of managing it. The exception and the control should be documented and reviewed.
+    reference:
+      label: NIST SP 800-40 Rev. 4, Guide to Enterprise Patch Management Planning
+      url: https://csrc.nist.gov/pubs/sp/800/40/r4/final
+    career: Vulnerability analyst
   careers:
   - SOC analyst
   - Threat hunter
@@ -922,6 +1007,74 @@ pathways:
       url: https://attack.mitre.org/techniques/T1550/002/
     career: Red team operator
 
+  - id: pentest-3-05
+    domain: '3'
+    objective: 3.3 Analyse findings from reconnaissance and enumeration.
+    difficulty: standard
+    style: scenario
+    prompt: During an authorised test, a web server returns a different response length for valid and invalid usernames. What should the tester record this as?
+    options:
+    - A username enumeration signal
+    - A denial-of-service condition
+    - A cross-site request forgery
+    - A cryptographic failure
+    correct: 0
+    explanation: A measurable difference between valid and invalid identifiers lets an attacker discover accounts. That is username enumeration. It is not a denial of service, CSRF, or a cryptographic failure, although it can support later credential attacks.
+    reference:
+      label: 'OWASP WSTG: Testing for Account Enumeration'
+      url: https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/03-Identity_Management_Testing/04-Testing_for_Account_Enumeration_and_Guessable_User_Account
+    career: Penetration tester
+  - id: pentest-3-04
+    domain: '3'
+    objective: 3.4 Compare and contrast weakness detection and analysis methods.
+    difficulty: standard
+    style: scenario
+    prompt: A tester finds a TLS service that still accepts the obsolete TLS 1.0 protocol. Which finding is MOST accurate?
+    options:
+    - A valid business requirement in every case
+    - A physical security issue
+    - A weak protocol configuration that may expose traffic to known attacks
+    - A denial-of-service vulnerability in the application
+    correct: 2
+    explanation: Accepting TLS 1.0 is a configuration weakness. The protocol lacks modern protections and may allow downgrade or legacy-cipher attacks. It is not automatically a business requirement, a physical issue, or an application denial of service.
+    reference:
+      label: NIST SP 800-52 Rev. 2, Guidelines for TLS
+      url: https://csrc.nist.gov/pubs/sp/800/52/r2/final
+    career: Security consultant
+  - id: pentest-5-04
+    domain: '5'
+    objective: 5.4 Summarise post-exploitation activities.
+    difficulty: advanced
+    style: scenario
+    prompt: After gaining a foothold, a tester wants to confirm whether the compromised account can read a sensitive file share without changing any data. Which action is BEST?
+    options:
+    - Attempt a read-only access check and record the result
+    - Modify a file to test permissions
+    - Delete a test file
+    - Run a ransomware simulation
+    correct: 0
+    explanation: A read-only check proves the access with the least impact on production data. Modifying, deleting, or encrypting files can cause harm and may exceed the rules of engagement. The result should be documented with the account and path used.
+    reference:
+      label: NIST SP 800-115, Technical Guide to Information Security Testing
+      url: https://csrc.nist.gov/pubs/sp/800/115/final
+    career: Red team operator
+  - id: pentest-5-05
+    domain: '5'
+    objective: 5.4 Summarise post-exploitation activities.
+    difficulty: advanced
+    style: scenario
+    prompt: A tester is asked to demonstrate lateral movement without disrupting production. Which approach is MOST appropriate?
+    options:
+    - Deploy a worm across all hosts
+    - Disable the domain controller
+    - Exfiltrate the production database
+    - Use a low-impact technique on a scoped test account and document the path
+    correct: 3
+    explanation: The demonstration should stay inside the agreed scope, use an account intended for testing, avoid destructive actions, and record the path so defenders can reproduce it. A worm, a disabled domain controller, or database exfiltration can disrupt production and exceed consent.
+    reference:
+      label: NIST SP 800-115, Technical Guide to Information Security Testing
+      url: https://csrc.nist.gov/pubs/sp/800/115/final
+    career: Red team operator
   careers:
   - Penetration tester
   - Red team operator
@@ -1214,6 +1367,40 @@ pathways:
       url: https://www.rfc-editor.org/rfc/rfc3927
     career: Help desk technician
 
+  - id: netplus-2-05
+    domain: '2'
+    objective: 2.5 Given a scenario, configure a subnet and use appropriate IP addressing schemes.
+    difficulty: standard
+    style: scenario
+    prompt: A new office needs one flat subnet for 300 devices. Which private IPv4 range provides enough usable addresses without allocating an entire /16?
+    options:
+    - 10.20.0.0/24
+    - 10.20.0.0/23
+    - 192.168.1.0/28
+    - 172.16.0.0/28
+    correct: 1
+    explanation: A /23 has 512 addresses and 510 usable hosts, enough for 300 devices. A /24 provides only 254 usable hosts, and a /28 provides 14. The /23 keeps the subnet contiguous and avoids wasting a much larger block.
+    reference:
+      label: RFC 1918, Address Allocation for Private Internets
+      url: https://www.rfc-editor.org/rfc/rfc1918
+    career: Network engineer
+  - id: netplus-2-04
+    domain: '2'
+    objective: 2.2 Given a scenario, configure switching technologies.
+    difficulty: standard
+    style: scenario
+    prompt: A switch port must carry traffic for several VLANs to a hypervisor host. Which configuration is required?
+    options:
+    - A trunk port using 802.1Q tagging
+    - An access port assigned to one VLAN
+    - A port with Power over Ethernet enabled
+    - A port with Spanning Tree Protocol disabled
+    correct: 0
+    explanation: A trunk carries multiple VLANs and uses 802.1Q tags so the receiving host can separate them. An access port carries one untagged VLAN. PoE supplies power, and disabling STP removes loop protection without enabling multiple VLANs.
+    reference:
+      label: 'Cisco: Configuring VLAN Trunks'
+      url: https://www.cisco.com/c/en/us/support/docs/lan-switching/8021q/17056-741-4.html
+    career: Network administrator
   careers:
   - Network administrator
   - Network engineer
@@ -1486,6 +1673,108 @@ pathways:
       url: https://man7.org/linux/man-pages/man5/systemd.service.5.html
     career: Linux administrator
 
+  - id: linuxplus-1-05
+    domain: '1'
+    objective: 1.4 Given a scenario, manage storage and filesystems.
+    difficulty: standard
+    style: scenario
+    prompt: A production server's /var filesystem is filling rapidly. Which command BEST shows the largest directories under /var without scanning other filesystems?
+    options:
+    - df -h /var
+    - ls -l /var
+    - du -xh --max-depth=1 /var | sort -h
+    - free -m
+    correct: 2
+    explanation: du reports directory usage, -x stays on one filesystem, --max-depth=1 limits the output, and sort -h orders by human-readable size. df shows the filesystem total, ls lists entries, and free shows memory. None of those locate the large directories.
+    reference:
+      label: man du(1)
+      url: https://man7.org/linux/man-pages/man1/du.1.html
+    career: Linux systems administrator
+  - id: linuxplus-1-04
+    domain: '1'
+    objective: 1.5 Given a scenario, manage users and groups.
+    difficulty: starter
+    style: scenario
+    prompt: Which file and directory control which users may use sudo and which commands they may run on most modern Linux distributions?
+    options:
+    - /etc/passwd and /etc/shadow
+    - /etc/fstab and /etc/mtab
+    - /etc/sudoers and files in /etc/sudoers.d/
+    - /var/log/auth.log and /var/log/secure
+    correct: 2
+    explanation: The sudo policy is stored in /etc/sudoers and included fragments under /etc/sudoers.d/. Passwd and shadow hold account data, fstab holds mount data, and the auth logs record events. They do not grant sudo rights.
+    reference:
+      label: man sudoers(5)
+      url: https://man7.org/linux/man-pages/man5/sudoers.5.html
+    career: Systems administrator
+  - id: linuxplus-3-05
+    domain: '3'
+    objective: 3.2 Given a scenario, configure and implement appropriate access and authentication methods.
+    difficulty: standard
+    style: scenario
+    prompt: An administrator needs to allow SSH key authentication while disabling password authentication. Which sshd_config setting is required?
+    options:
+    - PermitRootLogin yes
+    - PasswordAuthentication no
+    - UsePAM no
+    - AllowTcpForwarding yes
+    correct: 1
+    explanation: PasswordAuthentication no stops password logins after the key path is working. PermitRootLogin and AllowTcpForwarding change other access decisions. Disabling PAM can break account and session controls and is not the setting that disables password authentication.
+    reference:
+      label: man sshd_config(5)
+      url: https://man7.org/linux/man-pages/man5/sshd_config.5.html
+    career: Linux administrator
+  - id: linuxplus-3-04
+    domain: '3'
+    objective: 3.1 Given a scenario, apply security principles and practices.
+    difficulty: standard
+    style: scenario
+    prompt: A service account only needs to read files in /srv/reports. Which permission model BEST applies least privilege?
+    options:
+    - A dedicated group with read and execute permission on the directory
+    - World-readable permission on the directory
+    - Full sudo access for the service account
+    - Ownership by root with 777 permissions
+    correct: 0
+    explanation: A dedicated group scoped to the service account grants only the read and execute access the task needs. World-readable or 777 permissions grant access to everyone, and full sudo grants far more than reading reports. The account should not be able to modify the files.
+    reference:
+      label: NIST SP 800-53 Rev. 5, AC-6 Least Privilege
+      url: https://csrc.nist.gov/pubs/sp/800/53/r5/upd1/final
+    career: Systems engineer
+  - id: linuxplus-4-04
+    domain: '4'
+    objective: 4.1 Given a scenario, create simple shell scripts to automate common tasks.
+    difficulty: starter
+    style: scenario
+    prompt: A Bash script must stop immediately if any command fails. Which setting is correct?
+    options:
+    - set -x
+    - set -u
+    - set -e
+    - set +e
+    correct: 2
+    explanation: set -e exits when a command returns a non-zero status. set -x traces commands, set -u errors on an unset variable, and set +e turns the exit-on-error behaviour off. The script should also handle expected failures explicitly.
+    reference:
+      label: 'GNU Bash: The Set Builtin'
+      url: https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html
+    career: Automation engineer
+  - id: linuxplus-4-05
+    domain: '4'
+    objective: 4.2 Given a scenario, schedule and automate tasks.
+    difficulty: standard
+    style: scenario
+    prompt: A cron job works when run manually but fails from cron. Which cause is MOST likely?
+    options:
+    - The job relies on environment variables or a PATH that cron does not set
+    - The server has too much free disk space
+    - The script has a valid shebang line
+    - The cron daemon runs as root
+    correct: 0
+    explanation: Cron starts jobs with a minimal environment, so a script that depends on an interactive PATH or exported variables can fail. A valid shebang and a running daemon help, and free disk space is not a failure cause. Set the environment explicitly or use absolute paths.
+    reference:
+      label: man crontab(5)
+      url: https://man7.org/linux/man-pages/man5/crontab.5.html
+    career: Site reliability engineer
   careers:
   - Linux systems administrator
   - Systems engineer
@@ -1781,6 +2070,40 @@ pathways:
       url: https://learn.microsoft.com/en-us/purview/retention
     career: Compliance administrator
 
+  - id: sc900-4-04
+    domain: '4'
+    objective: 4.2 Describe the data protection capabilities of Microsoft Purview.
+    difficulty: standard
+    style: scenario
+    prompt: An organization must prevent sensitive customer data from being shared in chat messages. Which Microsoft Purview capability is designed for this?
+    options:
+    - Retention labels
+    - Data loss prevention policies
+    - eDiscovery holds
+    - Access reviews
+    correct: 1
+    explanation: Data loss prevention policies detect sensitive information and block or warn on sharing across supported locations. Retention labels control how long content is kept, eDiscovery holds preserve content for legal matters, and access reviews recertify access. Only DLP is designed to stop the sharing action.
+    reference:
+      label: 'Microsoft Learn: Learn about data loss prevention'
+      url: https://learn.microsoft.com/en-us/purview/dlp-learn-about-dlp
+    career: Compliance analyst
+  - id: sc900-4-05
+    domain: '4'
+    objective: 4.3 Describe the data governance capabilities of Microsoft Purview.
+    difficulty: standard
+    style: scenario
+    prompt: Which Microsoft Purview feature helps an investigator find and preserve content for a legal case?
+    options:
+    - Sensitivity labels
+    - Insider risk management
+    - Audit retention policies
+    - eDiscovery
+    correct: 3
+    explanation: eDiscovery supports identifying, collecting, and preserving content for legal or regulatory matters. Sensitivity labels classify and protect content, insider risk management detects risky activity, and audit retention keeps audit records. The legal preservation workflow is eDiscovery.
+    reference:
+      label: 'Microsoft Learn: eDiscovery in Microsoft Purview'
+      url: https://learn.microsoft.com/en-us/purview/edisc
+    career: Compliance analyst
   careers:
   - Identity and access administrator
   - Security operations analyst
@@ -2075,6 +2398,40 @@ pathways:
       url: https://csrc.nist.gov/pubs/sp/800/128/final
     career: IT operations analyst
 
+  - id: cc-2-05
+    domain: '2'
+    objective: 2.4 Understand incident response processes.
+    difficulty: standard
+    style: scenario
+    prompt: After a ransomware incident, which action should come FIRST when the scope is still unknown?
+    options:
+    - Isolate affected systems and preserve evidence according to the response plan
+    - Delete all logs to protect privacy
+    - Restore from backup before isolating affected systems
+    - Notify the media before containment
+    correct: 0
+    explanation: Containment limits spread, and preserving evidence supports scope analysis and later legal or regulatory work. Deleting logs destroys evidence, restoring before isolation can reintroduce the compromise, and premature public statements can harm the response.
+    reference:
+      label: NIST SP 800-61 Rev. 3, Incident Response Recommendations
+      url: https://csrc.nist.gov/pubs/sp/800/61/r3/final
+    career: Incident responder
+  - id: cc-2-04
+    domain: '2'
+    objective: 2.1 Understand business continuity and disaster recovery concepts.
+    difficulty: starter
+    style: scenario
+    prompt: A disaster recovery plan states a recovery time objective (RTO) of four hours for a service. What does that mean?
+    options:
+    - The maximum acceptable time to restore the service after a disruption
+    - The maximum amount of data that may be lost
+    - The interval between backup jobs
+    - The time needed to detect an incident
+    correct: 0
+    explanation: RTO is the target time to restore a service after disruption. The maximum acceptable data loss is the recovery point objective. Backup frequency and detection time are separate measures. Confusing RTO with RPO is a common planning error.
+    reference:
+      label: NIST SP 800-34 Rev. 1, Contingency Planning Guide
+      url: https://csrc.nist.gov/pubs/sp/800/34/r1/final
+    career: Security analyst
   careers:
   - Security analyst
   - Access control administrator
@@ -2402,6 +2759,91 @@ pathways:
       url: https://owasp.org/Top10/A10_2021-Server-Side_Request_Forgery_%28SSRF%29/
     career: AppSec engineer
 
+  - id: owasp-a02-02
+    domain: A02
+    objective: A02:2021 Cryptographic Failures
+    difficulty: standard
+    style: scenario
+    prompt: A web application stores user passwords with a fast, unsalted hash. Which OWASP Top 10 risk does this illustrate?
+    options:
+    - Cryptographic failures
+    - Broken access control
+    - Injection
+    - Security misconfiguration
+    correct: 0
+    explanation: A fast, unsalted password hash fails to protect stored credentials against offline cracking and precomputed attacks. That is a cryptographic failure. It is not an access-control or injection flaw, and the weakness is the algorithm choice rather than a generic configuration error.
+    reference:
+      label: 'OWASP Top 10: A02 Cryptographic Failures'
+      url: https://owasp.org/Top10/A02_2021-Cryptographic_Failures/
+    career: Application security engineer
+  - id: owasp-a04-02
+    domain: A04
+    objective: A04:2021 Insecure Design
+    difficulty: standard
+    style: scenario
+    prompt: A team adds a business rule that limits refunds to the original payment method during design review. Which OWASP risk does this address?
+    options:
+    - Vulnerable and outdated components
+    - Insecure design
+    - Server-side request forgery
+    - Security logging and monitoring failures
+    correct: 1
+    explanation: The control is a design decision that constrains a business action before code is written. Insecure design is about missing or ineffective control design, not a missing patch or a logging gap. Building the rule into the design is the point.
+    reference:
+      label: 'OWASP Top 10: A04 Insecure Design'
+      url: https://owasp.org/Top10/A04_2021-Insecure_Design/
+    career: Security code reviewer
+  - id: owasp-a06-02
+    domain: A06
+    objective: A06:2021 Vulnerable and Outdated Components
+    difficulty: starter
+    style: scenario
+    prompt: An application uses a JavaScript library with a known critical vulnerability. Which OWASP Top 10 risk is this?
+    options:
+    - Injection
+    - Broken access control
+    - Identification and authentication failures
+    - Vulnerable and outdated components
+    correct: 3
+    explanation: The risk comes from a dependency that is known to be vulnerable and is still in use. The fix is to track components, assess the advisory, and upgrade or mitigate. Injection, access control, and authentication are different failure classes.
+    reference:
+      label: 'OWASP Top 10: A06 Vulnerable and Outdated Components'
+      url: https://owasp.org/Top10/A06_2021-Vulnerable_and_Outdated_Components/
+    career: Web developer
+  - id: owasp-a08-02
+    domain: A08
+    objective: A08:2021 Software and Data Integrity Failures
+    difficulty: standard
+    style: scenario
+    prompt: A CI pipeline pulls an unsigned build artifact and deploys it without verification. Which OWASP Top 10 risk does this illustrate?
+    options:
+    - Software and data integrity failures
+    - Cryptographic failures
+    - Insecure design
+    - Security logging and monitoring failures
+    correct: 0
+    explanation: Deploying an artifact without checking its origin or integrity allows a tampered build to reach production. That is a software and data integrity failure. The control is to sign and verify artifacts and constrain the pipeline's trust path.
+    reference:
+      label: 'OWASP Top 10: A08 Software and Data Integrity Failures'
+      url: https://owasp.org/Top10/A08_2021-Software_and_Data_Integrity_Failures/
+    career: Application security engineer
+  - id: owasp-a09-02
+    domain: A09
+    objective: A09:2021 Security Logging and Monitoring Failures
+    difficulty: standard
+    style: scenario
+    prompt: An application logs failed logins but never alerts on a burst of failures. Which OWASP Top 10 risk does this illustrate?
+    options:
+    - Broken access control
+    - Injection
+    - Security logging and monitoring failures
+    - Vulnerable and outdated components
+    correct: 2
+    explanation: The events are recorded but not monitored or alerted on, so a credential attack can proceed unnoticed. Logging and monitoring failures cover detection and response gaps. Access control, injection, and component risk describe different weaknesses.
+    reference:
+      label: 'OWASP Top 10: A09 Security Logging and Monitoring Failures'
+      url: https://owasp.org/Top10/A09_2021-Security_Logging_and_Monitoring_Failures/
+    career: SOC analyst
   careers:
   - Application security engineer
   - Web developer
@@ -2747,6 +3189,74 @@ pathways:
       url: https://genai.owasp.org/llmrisk/llm102025-unbounded-consumption/
     career: AI platform engineer
 
+  - id: llm-03-02
+    domain: LLM03
+    objective: LLM03:2025 Supply Chain
+    difficulty: standard
+    style: scenario
+    prompt: A team downloads a model weight file from an unverified source and runs it in production. Which OWASP LLM risk is this?
+    options:
+    - Prompt injection
+    - Supply chain
+    - Excessive agency
+    - Unbounded consumption
+    correct: 1
+    explanation: Model weights, datasets, and libraries are part of the AI supply chain. An unverified source can introduce tampered weights or malicious code. Prompt injection is an input attack, excessive agency is about permissions, and unbounded consumption is about resource use.
+    reference:
+      label: OWASP LLM03:2025 Supply Chain
+      url: https://genai.owasp.org/llmrisk/llm032025-supply-chain/
+    career: AI security engineer
+  - id: llm-04-02
+    domain: LLM04
+    objective: LLM04:2025 Data and Model Poisoning
+    difficulty: standard
+    style: scenario
+    prompt: An attacker inserts misleading examples into the data used to fine-tune a model. Which OWASP LLM risk is this?
+    options:
+    - Data and model poisoning
+    - System prompt leakage
+    - Vector and embedding weaknesses
+    - Misinformation
+    correct: 0
+    explanation: Tampering with training or fine-tuning data to change model behaviour is data and model poisoning. System prompt leakage exposes hidden instructions, vector weaknesses involve retrieval, and misinformation is an output problem. The root cause here is the poisoned training data.
+    reference:
+      label: OWASP LLM04:2025 Data and Model Poisoning
+      url: https://genai.owasp.org/llmrisk/llm042025-data-and-model-poisoning/
+    career: ML engineer
+  - id: llm-07-02
+    domain: LLM07
+    objective: LLM07:2025 System Prompt Leakage
+    difficulty: standard
+    style: scenario
+    prompt: A user asks the assistant to repeat its hidden instructions, and it does. Which OWASP LLM risk is this?
+    options:
+    - Prompt injection
+    - Excessive agency
+    - Supply chain
+    - System prompt leakage
+    correct: 3
+    explanation: The model disclosed its hidden system instructions. That is system prompt leakage. Prompt injection is the attempt to override instructions, excessive agency is about the model's permissions, and supply chain is about model or dependency provenance.
+    reference:
+      label: OWASP LLM07:2025 System Prompt Leakage
+      url: https://genai.owasp.org/llmrisk/llm072025-system-prompt-leakage/
+    career: AI security engineer
+  - id: llm-09-02
+    domain: LLM09
+    objective: LLM09:2025 Misinformation
+    difficulty: starter
+    style: scenario
+    prompt: A model confidently invents a vendor security certification that does not exist. Which OWASP LLM risk is this?
+    options:
+    - Data and model poisoning
+    - Unbounded consumption
+    - Misinformation
+    - Improper output handling
+    correct: 2
+    explanation: A plausible but false statement presented as fact is misinformation, often called hallucination. Poisoning is a training-data attack, unbounded consumption is a resource issue, and improper output handling is about how downstream systems treat model output. The fabricated claim is the risk here.
+    reference:
+      label: OWASP LLM09:2025 Misinformation
+      url: https://genai.owasp.org/llmrisk/llm092025-misinformation/
+    career: AI governance analyst
   careers:
   - AI security engineer
   - ML engineer

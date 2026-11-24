@@ -164,7 +164,7 @@ def test_a_domain_drill_stays_in_one_domain(client, db_session):
             row for row in pathways.json()["pathways"] if row["id"] == PATHWAY
         )
         assert pathway["exam"] == {
-            "question_count": 14,
+            "question_count": 18,
             "duration_minutes": 30,
             "pass_mark": 70,
         }
