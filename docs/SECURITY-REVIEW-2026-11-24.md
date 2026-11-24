@@ -19,6 +19,7 @@ A broader code, database, dependency, and host-currency review is in
 | Topology input | `security_opt` must be a list of strings keeping `no-new-privileges`; `http_port` is range-checked. |
 | Password-breach digest | The HIBP SHA-1 lookup is marked `usedforsecurity=False`; storage remains Argon2id. |
 | Index hygiene | Migrations `0061` and `0062` remove redundant indexes and add the instructor and lab-session hot-path indexes. |
+| Docker helper image | `ocr-lab/netprobe:1.0` is pre-baked and digest-pinned; runtime `apk add` and unpinned Alpine helper pulls are removed. |
 
 ## High-priority backlog
 

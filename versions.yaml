@@ -9,7 +9,7 @@
 # docs/decisions/0004-single-platform-release-version.md.
 platform:
   name: "SWOCTS Cyber Range"
-  version: "5.42.0"
+  version: "5.43.0"
   status: "release"
   date: "2026-11-24"
 
@@ -41,13 +41,13 @@ maintenance_lines:
     note: "Existing single-host teaching installs; new installs use the Release 5 tree with the Community / Academic profile."
 
 release:
-  version: "5.42.0"
+  version: "5.43.0"
   status: "release"
   date: "2026-11-24"
 
 development:
-  version: "5.43.0"
-  focus: "Release 6 dependency refresh, Docker isolation review, and instructor operations"
+  version: "5.44.0"
+  focus: "Release 6 admin scoping, shared throttling, and instructor operations"
 
 policy:
   name: latest-supported-ga

@@ -4,9 +4,23 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
+No unreleased changes.
+
+## [5.43.0] - 2026-11-24
+
+Dependency refresh and Docker helper hardening: current patch-level backend
+packages and a pinned helper image that removes runtime package installation
+from the privileged network helpers.
+
 ### Dependency refresh
 
-- Updated FastAPI to `0.165.0`, SQLAlchemy to `2.1.9`, Pydantic to `2.14.4`, and pydantic-settings to `2.16.3` on `main` for 5.43.0. The full backend suite passes.
+- Updated FastAPI to `0.165.0`, SQLAlchemy to `2.1.9`, Pydantic to `2.14.4`, and pydantic-settings to `2.16.3`. The full backend suite passes.
+
+### Docker helper image
+
+- Added `ocr-lab/netprobe:1.0`, a digest-pinned Alpine image with `iproute2`, `iptables`, and `bridge-utils`.
+- Replaced the runtime `alpine:latest` / `alpine:3.19` pulls and `apk add` calls in the Docker network helpers.
+- Build the helper image during in-place deploy, development sync, and fresh install.
 
 ## [5.42.0] - 2026-11-24
 
