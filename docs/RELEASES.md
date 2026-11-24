@@ -3,6 +3,31 @@
 This page maps the tags in the repository to the release they actually
 represent. It exists because the history contains several naming eras.
 
+## Release preparation checklist
+
+Run from the repository root before tagging:
+
+1. Bump the version in `versions.yaml`, `platform/backend/app/version.py`,
+   `platform/frontend/package.json`, and the manual pages.
+2. `python scripts/supply_chain.py --update`
+3. `python scripts/generate-integrity-manifest.py`
+4. `python scripts/supply_chain.py --update`
+5. Run `python scripts/generate-integrity-manifest.py` twice and confirm the
+   file hash is unchanged between runs.
+6. Sign the lock, verify it, then tag.
+
+Steps 2 and 3 order matters: the manifest copies the lock's `release` field.
+Releases 5.46.0 and 5.46.1 skipped step 3, so the committed manifest still said
+`5.45.0` and the CI integrity gate failed.
+
+## Release 5.46.2
+
+| Tag | Release | Status |
+|---|---|---|
+| `v5.46.2` | SWOCTS Cyber Range Release 5.46.2 | Signed annotated tag: regenerates the runtime integrity manifest for the current release and adds the release-preparation checklist. Deployed to development and production on 24 November 2026. |
+
+Deliverables: [Release 5.46.2 deliverables](RELEASE-5.46.2-DELIVERABLES.md).
+
 ## Release 5.46.1
 
 | Tag | Release | Status |

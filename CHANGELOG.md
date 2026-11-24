@@ -6,6 +6,15 @@ All notable changes to OpenCyberRange are recorded here.
 
 No unreleased changes.
 
+## [5.46.2] - 2026-11-24
+
+Release metadata fix.
+
+### Release engineering
+
+- Regenerated `software-integrity.json` so its `release` field matches the tagged release. The 5.46.0 and 5.46.1 manifests still reported `5.45.0`, which failed the CI integrity gate.
+- Added a release-preparation checklist covering the integrity manifest, supply-chain lock, and signature order.
+
 ## [5.46.1] - 2026-11-24
 
 Threat-awareness panel design-system alignment.
