@@ -10,6 +10,12 @@ The program layer answers four questions:
 3. **Cyber Transcript** — what can the learner show, and how was it verified?
 4. **Program analytics** — how is the cohort and the programme doing?
 
+## Related designs
+
+- [Identity and Quests](IDENTITY-QUESTS.md) is the learner-facing direction.
+- [Impact and Legacy](IMPACT-AND-LEGACY.md) is the contribution ledger.
+- [Achievements and recognition](ACHIEVEMENTS.md) is the values-based board.
+
 ## Objective 1: Persistent Organizations
 
 A persistent organization is a long-lived, synthetic institution that a cohort

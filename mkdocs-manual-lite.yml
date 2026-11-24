@@ -93,6 +93,10 @@ nav:
     - "Career Atlas and Momentum": 02_Student_Guide/21_Career_Atlas_And_Momentum.md
     - "Workbook Answers": 02_Student_Guide/24_Workbook_Answers.md
     - "My Evidence": 02_Student_Guide/26_My_Evidence.md
+    - "Your Journey": 02_Student_Guide/27_Your_Journey.md
+    - "The Traditions": 02_Student_Guide/30_Traditions.md
+    - "Your Impact": 02_Student_Guide/28_Your_Impact.md
+    - "Recognition": 02_Student_Guide/29_Recognition.md
     - "External Skills Frameworks": 02_Student_Guide/25_External_Skills_Frameworks.md
     - "Changing Your Password": 02_Student_Guide/17_Changing_Your_Password.md
     - "Privacy, Consent, and Your Data": 02_Student_Guide/18_Privacy_And_Your_Data.md
@@ -141,6 +145,7 @@ nav:
     - "Creating and Managing Assignments": 03_Instructor_Guide/15_Creating_and_Managing_Assignments.md
     - "Course Assessments": 03_Instructor_Guide/16_Course_Assessments.md
     - "Evidence Review": 03_Instructor_Guide/17_Evidence_Review.md
+    - "Recognition Awards": 03_Instructor_Guide/18_Recognition_Awards.md
   - "Server Deployment":
     - "Prerequisites": 00_Server_Deployment/01_Prerequisites.md
     - "Docker Compose Manual": 00_Server_Deployment/08_Docker_Deploy_Manual.md

@@ -106,7 +106,14 @@ choose a tenant on a child row.
 - `readiness_student_notes`
 - `readiness_lab_reviews`
 
-That is **33 tables**. The tenant is derived from the owning user, course, or
+**Learning direction and recognition (0055–0057)**
+
+- `learner_journeys`
+- `impact_contributions`
+- `stewardship_events`
+- `achievement_awards`
+
+That is **37 tables**. The tenant is derived from the owning user, course, or
 parent evidence record by a trigger; a client cannot choose
 `institution_id`. Background jobs run as the
 system principal, an unauthenticated request sees only the default institution,

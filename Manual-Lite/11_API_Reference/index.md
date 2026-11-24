@@ -277,6 +277,7 @@ owner-only unless an explicit share or break-glass grant exists.
 | `DELETE` | `/api/analytics/surveys/{survey_id}` | Delete Survey | OAuth2PasswordBearer |
 | `GET` | `/api/analytics/surveys/{survey_id}/responses` | Survey Responses | OAuth2PasswordBearer |
 | `POST` | `/api/analytics/surveys/{survey_id}/responses` | Submit Survey Response | OAuth2PasswordBearer |
+| `GET` | `/api/archive/me` | My Archive | OAuth2PasswordBearer |
 | `POST` | `/api/auth/change-password` | Change Password | OAuth2PasswordBearer |
 | `POST` | `/api/auth/delete-account` | Delete My Account | OAuth2PasswordBearer |
 | `POST` | `/api/auth/delete-request` | Request Account Deletion | OAuth2PasswordBearer |
@@ -478,6 +479,14 @@ owner-only unless an explicit share or break-glass grant exists.
 | `PATCH` | `/api/identity/providers/{provider_id}` | Update Identity Provider | OAuth2PasswordBearer |
 | `POST` | `/api/identity/providers/{provider_id}/default` | Make Default Identity Provider | OAuth2PasswordBearer |
 | `POST` | `/api/identity/providers/{provider_id}/test` | Test Identity Provider | OAuth2PasswordBearer |
+| `GET` | `/api/impact/catalogue` | Impact Catalogue | OAuth2PasswordBearer |
+| `GET` | `/api/impact/cohort` | Cohort Impact | OAuth2PasswordBearer |
+| `POST` | `/api/impact/contributions` | Submit Contribution | OAuth2PasswordBearer |
+| `POST` | `/api/impact/contributions/{contribution_id}/reject` | Reject Contribution | OAuth2PasswordBearer |
+| `POST` | `/api/impact/contributions/{contribution_id}/verify` | Verify Contribution | OAuth2PasswordBearer |
+| `GET` | `/api/impact/me` | My Impact | OAuth2PasswordBearer |
+| `GET` | `/api/impact/pending` | Pending Contributions | OAuth2PasswordBearer |
+| `POST` | `/api/impact/stewardship/{learner_id}` | Record Stewardship | OAuth2PasswordBearer |
 | `GET` | `/api/instructor/courses` | List My Courses | OAuth2PasswordBearer |
 | `GET` | `/api/instructor/courses/{course_id}` | Get My Course | OAuth2PasswordBearer |
 | `GET` | `/api/instructor/courses/{course_id}/enrollable-users` | List Enrollable Users | OAuth2PasswordBearer |
@@ -501,6 +510,9 @@ owner-only unless an explicit share or break-glass grant exists.
 | `GET` | `/api/instructor/overview` | Instructor Overview | OAuth2PasswordBearer |
 | `GET` | `/api/instructor/stats` | Instructor Stats | OAuth2PasswordBearer |
 | `GET` | `/api/instructor/tracks-and-levels` | List Tracks And Levels | OAuth2PasswordBearer |
+| `GET` | `/api/journeys` | List Journeys | OAuth2PasswordBearer |
+| `GET` | `/api/journeys/mine` | My Journey | OAuth2PasswordBearer |
+| `PUT` | `/api/journeys/mine` | Choose Journey | OAuth2PasswordBearer |
 | `GET` | `/api/labs/` | Get Labs | OAuth2PasswordBearer |
 | `GET` | `/api/labs/active` | Get Active Lab | OAuth2PasswordBearer |
 | `POST` | `/api/labs/extend` | Extend Lab Session | OAuth2PasswordBearer |
@@ -575,6 +587,10 @@ owner-only unless an explicit share or break-glass grant exists.
 | `POST` | `/api/rangebox/ws-ticket` | Get Ws Ticket | OAuth2PasswordBearer |
 | `GET` | `/api/rangebox/{session_id}/lab` | Rangebox Lab | OAuth2PasswordBearer |
 | `GET` | `/api/rangebox/{session_id}/status` | Rangebox Status | OAuth2PasswordBearer |
+| `POST` | `/api/recognition/evaluate` | Evaluate Recognition | OAuth2PasswordBearer |
+| `GET` | `/api/recognition/me` | My Recognition | OAuth2PasswordBearer |
+| `POST` | `/api/recognition/seen` | Mark Seen | OAuth2PasswordBearer |
+| `POST` | `/api/recognition/{learner_id}/award` | Manual Award | OAuth2PasswordBearer |
 | `POST` | `/api/reports/verify` | Verify Report File | Public |
 | `POST` | `/api/reviews` | Request Review | OAuth2PasswordBearer |
 | `GET` | `/api/reviews/mine` | List My Reviews | OAuth2PasswordBearer |
@@ -2954,6 +2970,18 @@ Cross-course reporting landing data for instructors and admins.
 
 - `200`: Successful Response
 - `422`: Validation Error — `HTTPValidationError`
+
+## Archive
+
+### `GET /api/archive/me`
+
+**My Archive**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Responses**
+
+- `200`: Successful Response
 
 ## Audit
 
@@ -6990,6 +7018,159 @@ Validate provider settings and reachability for its adapter.
 - `200`: Successful Response
 - `422`: Validation Error — `HTTPValidationError`
 
+## Impact
+
+### `GET /api/impact/catalogue`
+
+**Impact Catalogue**
+
+The contribution types and their base values.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Responses**
+
+- `200`: Successful Response
+
+### `GET /api/impact/cohort`
+
+**Cohort Impact**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Responses**
+
+- `200`: Successful Response
+
+### `POST /api/impact/contributions`
+
+**Submit Contribution**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Request body** (`application/json`)
+
+**Schema:** `ContributionIn`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `dimension` | string | yes |  |
+| `kind` | string | yes |  |
+| `title` | string | yes |  |
+| `summary` | string or null | no |  |
+| `reach_count` | integer | no |  |
+| `originality` | string | no |  |
+| `notes` | string or null | no |  |
+| `occurred_at` | string or null | no |  |
+
+**Responses**
+
+- `201`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `POST /api/impact/contributions/{contribution_id}/reject`
+
+**Reject Contribution**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `contribution_id` | path | integer | yes |  |
+
+**Request body** (`application/json`)
+
+**Schema:** `RejectionIn`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `notes` | string | yes |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `POST /api/impact/contributions/{contribution_id}/verify`
+
+**Verify Contribution**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `contribution_id` | path | integer | yes |  |
+
+**Request body** (`application/json`)
+
+**Schema:** `VerificationIn`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `validation_level` | string | no |  |
+| `quality_rating` | number | yes |  |
+| `reach_count` | integer or null | no |  |
+| `originality` | string or null | no |  |
+| `review_notes` | string or null | no |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `GET /api/impact/me`
+
+**My Impact**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Responses**
+
+- `200`: Successful Response
+
+### `GET /api/impact/pending`
+
+**Pending Contributions**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Responses**
+
+- `200`: Successful Response
+
+### `POST /api/impact/stewardship/{learner_id}`
+
+**Record Stewardship**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `learner_id` | path | integer | yes |  |
+
+**Request body** (`application/json`)
+
+**Schema:** `StewardshipIn`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `points_delta` | integer | yes |  |
+| `category` | string | no |  |
+| `reason` | string | yes |  |
+| `evidence_ref` | string or null | no |  |
+| `visibility` | string | no |  |
+
+**Responses**
+
+- `201`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
 ## Instructor
 
 ### `GET /api/instructor/courses`
@@ -7263,6 +7444,49 @@ Flat list of all tracks and their levels for the lab re-categorize picker.
 **Responses**
 
 - `200`: Successful Response
+
+## Journeys
+
+### `GET /api/journeys`
+
+**List Journeys**
+
+The journey catalogue plus the learner's current primary journey.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Responses**
+
+- `200`: Successful Response
+
+### `GET /api/journeys/mine`
+
+**My Journey**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Responses**
+
+- `200`: Successful Response
+
+### `PUT /api/journeys/mine`
+
+**Choose Journey**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Request body** (`application/json`)
+
+**Schema:** `JourneyChoiceIn`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `journey_id` | string | yes |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
 
 ## LTI 1.3
 
@@ -8883,6 +9107,65 @@ Get RangeBox container status for an active lab session.
 **Responses**
 
 - `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+## Recognition
+
+### `POST /api/recognition/evaluate`
+
+**Evaluate Recognition**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Responses**
+
+- `200`: Successful Response
+
+### `GET /api/recognition/me`
+
+**My Recognition**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Responses**
+
+- `200`: Successful Response
+
+### `POST /api/recognition/seen`
+
+**Mark Seen**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Responses**
+
+- `200`: Successful Response
+
+### `POST /api/recognition/{learner_id}/award`
+
+**Manual Award**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `learner_id` | path | integer | yes |  |
+
+**Request body** (`application/json`)
+
+**Schema:** `ManualAwardIn`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `key` | string | yes |  |
+| `evidence_ref` | string | yes |  |
+| `note` | string | yes |  |
+
+**Responses**
+
+- `201`: Successful Response
 - `422`: Validation Error — `HTTPValidationError`
 
 ## Reports

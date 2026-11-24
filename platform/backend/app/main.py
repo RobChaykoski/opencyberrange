@@ -45,6 +45,10 @@ from app.routers import accommodations as accommodations_router
 from app.routers import reviews as reviews_router
 from app.routers import evidence as evidence_router
 from app.routers import workbook_answers as workbook_answers_router
+from app.routers import journeys as journeys_router
+from app.routers import impact as impact_router
+from app.routers import recognition as recognition_router
+from app.routers import archive as archive_router
 from app.routers import audit as audit_router
 from app.routers import planning as planning_router
 from app.routers import open_badges as open_badges_router
@@ -1509,6 +1513,26 @@ app.include_router(
     workbook_answers_router.router,
     prefix="/api/workbook-answers",
     tags=["Workbook answers"],
+)
+app.include_router(
+    journeys_router.router,
+    prefix="/api/journeys",
+    tags=["Journeys"],
+)
+app.include_router(
+    impact_router.router,
+    prefix="/api/impact",
+    tags=["Impact"],
+)
+app.include_router(
+    recognition_router.router,
+    prefix="/api/recognition",
+    tags=["Recognition"],
+)
+app.include_router(
+    archive_router.router,
+    prefix="/api/archive",
+    tags=["Archive"],
 )
 app.include_router(audit_router.router, prefix="/api", tags=["Audit"])
 app.include_router(planning_router.router, prefix="/api", tags=["Course planning"])

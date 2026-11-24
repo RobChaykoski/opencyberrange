@@ -31,8 +31,33 @@ All notable changes to OpenCyberRange are recorded here.
   record; a reviewer accepts or rejects the appeal with notes, and an accepted
   appeal returns the evidence to `in_review`. Added the learner **My Evidence**
   page and the reviewer appeal queue.
+- Added learner-chosen journeys at `/journey` and `GET/PUT /api/journeys`. A
+  journey maps a mission to existing competencies and a first step; switching
+  direction keeps all evidence. Added the eight traditions (Protection,
+  Creation, Discovery, Stewardship, Illumination, Connection, Service, Judgment)
+  and mission filtering on the journey page.
+- Added the impact ledger at `/impact` and `/api/impact`: build, protect, teach,
+  and serve contributions, reviewer verification, logarithmic reach, a quality
+  floor, diminishing repeats, decay for unused work, a Legacy Score, a Meaning
+  Index, stewardship bands, and a self-view legacy class. There is no learner
+  ranking endpoint.
+- Added values-based recognition at `/api/recognition` and the **Your Impact**
+  board: earned awards, clue-only secret achievements, sealed mythic awards, a
+  rotating whisper, an idempotent rule engine, and audited manual awards with an
+  evidence reference. Recognition never changes the Legacy Score. Earned awards
+  present as historical markers, grouped by tradition.
+- Added the Living Archive at `GET /api/archive/me`: traditions are inferred from
+  verified contribution, never selected. The archive stays undetermined until
+  there is breadth, returns narrative notes and counts rather than percentages,
+  and never changes a score or permission. Removed the tradition selector from
+  the journey page and replaced it with the observed archive.
+- Added the **Cyber Legacy** frame: the Age of Foundations, the First
+  Generation, the eight traditions, and historical markers, linked from the
+  programme docs and the learner manual.
+- Added migrations `0055_learner_journeys`, `0056_impact_ledger`, and
+  `0057_achievement_awards`, all tenant-scoped with forced RLS.
 - Updated the i18n baseline for the new review surface, workbook answer page,
-  and navigation entries.
+  journey, impact, recognition, and navigation entries.
 
 ### User manual and frameworks
 

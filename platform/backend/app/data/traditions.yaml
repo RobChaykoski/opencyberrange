@@ -1,0 +1,153 @@
+version: "1.0"
+note: >
+  A tradition is a durable direction of practice, not a job title and not a
+  certification. Tools change; traditions endure. A journey belongs to one
+  tradition, and a tradition may contain several journeys.
+traditions:
+  - id: protection
+    title: "Protection"
+    archetype: "The Guardians"
+    future_view: "Systems exist to serve people. Hospitals stayed open, schools stayed operational, and communities stayed connected because Guardians stood watch."
+    skills:
+      - "Incident response"
+      - "SOC operations"
+      - "Threat hunting"
+      - "Detection engineering"
+      - "Digital forensics"
+      - "Malware analysis"
+      - "Threat intelligence"
+      - "Crisis management"
+    markers:
+      - "First Defender"
+      - "Community Guardian"
+      - "Healthcare Defender"
+      - "Municipal Guardian"
+      - "Shieldbearer"
+  - id: creation
+    title: "Creation"
+    archetype: "The Builders"
+    future_view: "They solved problems that did not yet have solutions. Later generations relied on systems that began with them."
+    skills:
+      - "Software development"
+      - "Automation"
+      - "DevSecOps"
+      - "Cloud architecture"
+      - "Security engineering"
+      - "AI development"
+      - "Tool development"
+      - "Platform engineering"
+    markers:
+      - "Toolmaker"
+      - "Architect"
+      - "Early Builder"
+      - "Hidden Foundation"
+      - "Cornerstone"
+  - id: discovery
+    title: "Discovery"
+    archetype: "The Cartographers"
+    future_view: "Before knowledge was organised, Cartographers explored unfamiliar territory, documented what they saw, and returned with maps."
+    skills:
+      - "OSINT"
+      - "Threat research"
+      - "Security research"
+      - "Vulnerability research"
+      - "Intelligence analysis"
+      - "Data analysis"
+      - "Reverse engineering"
+      - "AI safety research"
+    markers:
+      - "Rabbit Hole"
+      - "Pathfinder"
+      - "The First Map"
+      - "Cartographer"
+      - "Horizon Walker"
+  - id: stewardship
+    title: "Stewardship"
+    archetype: "The Keepers"
+    future_view: "Many communities begin; few endure. The Keepers made knowledge, systems, and traditions survive long enough to be inherited."
+    skills:
+      - "Governance"
+      - "Risk management"
+      - "Compliance"
+      - "Documentation"
+      - "Programme management"
+      - "Quality assurance"
+      - "Knowledge management"
+      - "Open-source maintenance"
+    markers:
+      - "Trust Earned"
+      - "Memory Keeper"
+      - "Archive Guardian"
+      - "Steward"
+      - "The Unbroken Chain"
+  - id: illumination
+    title: "Illumination"
+    archetype: "The Lighthouses"
+    future_view: "Entire careers changed through simple conversations. The Lighthouses rarely thought themselves extraordinary. History disagreed."
+    skills:
+      - "Teaching"
+      - "Mentorship"
+      - "Curriculum development"
+      - "Coaching"
+      - "Public speaking"
+      - "Technical writing"
+      - "Community education"
+    markers:
+      - "First Light"
+      - "Guide"
+      - "Guiding Star"
+      - "Lighthouse"
+      - "Legacy Builder"
+  - id: connection
+    title: "Connection"
+    archetype: "The Bridgekeepers"
+    future_view: "The strongest communities were rarely built by technology. They were built by people who connected other people."
+    skills:
+      - "Community building"
+      - "Event organisation"
+      - "Leadership"
+      - "Facilitation"
+      - "Networking"
+      - "Partnership development"
+      - "Industry engagement"
+    markers:
+      - "The Connector"
+      - "Campfire Keeper"
+      - "Bridgebuilder"
+      - "Community Founder"
+      - "Bridgekeeper"
+  - id: service
+    title: "Service"
+    archetype: "The Citizens"
+    future_view: "The cyber service movement began when practitioners decided security should not be reserved for those who could afford it."
+    skills:
+      - "Community outreach"
+      - "Volunteer work"
+      - "Public awareness"
+      - "Non-profit security"
+      - "Accessibility advocacy"
+      - "Digital inclusion"
+    markers:
+      - "Digital Citizen"
+      - "Community Champion"
+      - "Advocate"
+      - "Public Guardian"
+      - "Servant of the Commons"
+  - id: judgment
+    title: "Judgment"
+    archetype: "The Wardens"
+    future_view: "Knowledge alone was never enough. Every security decision affects people. Their greatest skill was judgment."
+    skills:
+      - "Security architecture"
+      - "Threat modelling"
+      - "Risk decision making"
+      - "Privacy engineering"
+      - "Policy design"
+      - "Ethical hacking"
+      - "Leadership decisions"
+    markers:
+      - "The Honest Report"
+      - "Responsible"
+      - "The Arbiter"
+      - "Warden"
+      - "Keeper of Trust"

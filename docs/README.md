@@ -47,6 +47,11 @@ scale, federation, then the AI mentor.
 
 - [Release 6 scope](RELEASE-6-SCOPE.md)
 - [Program layer: organizations, scenarios, transcript, and analytics](PROGRAM-LAYER.md)
+- [The Age of Foundations](FOUNDATIONS.md)
+- [The Living Archive](LIVING-ARCHIVE.md)
+- [Identity and Quests](IDENTITY-QUESTS.md)
+- [Impact and Legacy](IMPACT-AND-LEGACY.md)
+- [Achievements and recognition](ACHIEVEMENTS.md)
 - [Digital Cyber Transcript](DIGITAL-CYBER-TRANSCRIPT.md)
 - [Competency Framework](COMPETENCY-FRAMEWORK.md)
 - [Evidence Engine](EVIDENCE-ENGINE.md)

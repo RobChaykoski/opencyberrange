@@ -88,6 +88,13 @@ for the deployment record.
   [Workbook Answers](02_Student_Guide/24_Workbook_Answers.md).
 - Checking your evidence or appealing a rejected record? See
   [My Evidence](02_Student_Guide/26_My_Evidence.md).
+- Not sure which direction to take? See
+  [Your Journey](02_Student_Guide/27_Your_Journey.md) and
+  [The Traditions](02_Student_Guide/30_Traditions.md).
+- Want to record what you built, protected, taught, or served? See
+  [Your Impact](02_Student_Guide/28_Your_Impact.md).
+- Wondering what the hidden achievements are? See
+  [Recognition](02_Student_Guide/29_Recognition.md).
 - Reviewing learner evidence? See
   [Evidence Review](03_Instructor_Guide/17_Evidence_Review.md).
 - Want the full guide to the six Cyber DNA branches, decay and repair, the

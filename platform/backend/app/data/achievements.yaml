@@ -1,0 +1,366 @@
+version: "1.0"
+note: >
+  Achievements are recognition, not currency. They never add to the Legacy
+  Score. Before an achievement is earned the API returns only its tier and
+  clue; it never returns the trigger. A planned rule is not awardable until
+  the platform collects the signal honestly.
+whispers:
+  - "Not all achievements come from solving problems."
+  - "Someone earned an achievement this year that has only been awarded twice."
+  - "The rarest achievement here has nothing to do with cybersecurity."
+  - "There is at least one person in this community whose story is different because you were here."
+achievements:
+  - key: first_responder
+    title: "The First Responder"
+    marker: "First to Answer the Call"
+    tradition: "Illumination"
+    category: "The Hidden Helpers"
+    tier: secret
+    clue: "Sometimes the fastest answer matters more than the smartest one."
+    earned_message: "Someone was confused. You showed up."
+    status: manual
+    rule: manual
+  - key: no_one_left_behind
+    title: "No One Left Behind"
+    marker: "Keeper of the First Cohort"
+    tradition: "Illumination"
+    category: "The Hidden Helpers"
+    tier: secret
+    clue: "The strongest teams move forward together."
+    earned_message: "Success is better when shared."
+    status: manual
+    rule: manual
+  - key: bridge
+    title: "The Bridge"
+    marker: "The First Bridge"
+    tradition: "Connection"
+    category: "The Hidden Helpers"
+    tier: secret
+    clue: "Not every contribution is something you build yourself."
+    earned_message: "You created opportunity."
+    status: manual
+    rule: manual
+  - key: ripple_effect
+    title: "Ripple Effect"
+    marker: "The Ripple That Remained"
+    tradition: "Illumination"
+    category: "The Hidden Helpers"
+    tier: secret
+    clue: "One conversation can echo for years."
+    earned_message: "Your impact continues through others."
+    status: manual
+    rule: manual
+  - key: rabbit_hole
+    title: "The Rabbit Hole"
+    marker: "First to Follow the Thread"
+    tradition: "Discovery"
+    category: "Curiosity"
+    tier: secret
+    clue: "Curiosity has no syllabus."
+    earned_message: "You kept digging."
+    status: planned
+    rule: optional_resources_25
+  - key: what_happens_if
+    title: "What Happens If..."
+    marker: "First to Ask"
+    tradition: "Discovery"
+    category: "Curiosity"
+    tier: secret
+    clue: "The instructions are where most people stop."
+    earned_message: "You looked beyond the instructions."
+    status: planned
+    rule: alternative_solutions_5
+  - key: cartographer
+    title: "Cartographer"
+    marker: "First to Draw the Map"
+    tradition: "Discovery"
+    category: "Curiosity"
+    tier: secret
+    clue: "Every frontier appears obvious after someone maps it."
+    earned_message: "You drew the first map."
+    status: manual
+    rule: manual
+  - key: left_it_better
+    title: "Left It Better"
+    marker: "Keeper of the Path"
+    tradition: "Creation"
+    category: "Builders"
+    tier: secret
+    clue: "A trail can disappear after you're gone. A better trail remains."
+    earned_message: "You improved the path for those behind you."
+    status: manual
+    rule: manual
+  - key: hidden_foundation
+    title: "Hidden Foundation"
+    marker: "The Unseen Foundation"
+    tradition: "Creation"
+    category: "Builders"
+    tier: secret
+    clue: "The most important structures are rarely visible."
+    earned_message: "The strongest foundations are often invisible."
+    status: active
+    rule: build_reach_100
+  - key: toolmaker
+    title: "Toolmaker"
+    marker: "One of the Early Toolmakers"
+    tradition: "Creation"
+    category: "Builders"
+    tier: secret
+    clue: "Some solve problems. Others build solutions that solve them again."
+    earned_message: "You multiplied capability."
+    status: active
+    rule: tool_reach_10
+  - key: architect
+    title: "Architect"
+    marker: "Keeper of What Endures"
+    tradition: "Creation"
+    category: "Builders"
+    tier: secret
+    clue: "What you build today should still matter tomorrow."
+    earned_message: "Some things endure."
+    status: active
+    rule: architect_365
+  - key: honest_report
+    title: "The Honest Report"
+    marker: "Keeper of the Honest Record"
+    tradition: "Judgment"
+    category: "Integrity"
+    tier: legendary
+    clue: "Character reveals itself when nobody is watching."
+    earned_message: "Character before recognition."
+    status: manual
+    rule: manual
+  - key: responsible
+    title: "Responsible"
+    marker: "First Responsible Disclosure"
+    tradition: "Judgment"
+    category: "Integrity"
+    tier: legendary
+    clue: "Knowledge creates choices."
+    earned_message: "Security begins with trust."
+    status: manual
+    rule: manual
+  - key: trust_earned
+    title: "Trust Earned"
+    marker: "The Long Trust"
+    tradition: "Stewardship"
+    category: "Integrity"
+    tier: legendary
+    clue: "Trust arrives slowly and leaves quickly."
+    earned_message: "Reliability is built slowly."
+    status: deferred
+    rule: stewardship_history
+  - key: campfire_keeper
+    title: "Campfire Keeper"
+    marker: "Keeper of the First Fire"
+    tradition: "Connection"
+    category: "Community Legends"
+    tier: legendary
+    clue: "Communities begin around shared stories."
+    earned_message: "Communities form around conversations."
+    status: planned
+    rule: discussion_participants_50
+  - key: welcome_committee
+    title: "The Welcome Committee"
+    marker: "The First Welcome"
+    tradition: "Connection"
+    category: "Community Legends"
+    tier: secret
+    clue: "Every community starts with a welcome."
+    earned_message: "Every community starts with a welcome."
+    status: planned
+    rule: welcomes_50
+  - key: community_builder
+    title: "Community Builder"
+    marker: "Keeper of a Small Community"
+    tradition: "Connection"
+    category: "Community Legends"
+    tier: secret
+    clue: "Someone has to light the first fire."
+    earned_message: "You brought people together."
+    status: manual
+    rule: manual
+  - key: digital_citizen
+    title: "Digital Citizen"
+    marker: "First Citizen of the Service"
+    tradition: "Service"
+    category: "Real-World Impact"
+    tier: secret
+    clue: "Security belongs to everyone."
+    earned_message: "Security should be accessible to everyone."
+    status: active
+    rule: nonprofit_first
+  - key: small_business_shield
+    title: "Small Business Shield"
+    marker: "Shield of the Main Street"
+    tradition: "Service"
+    category: "Real-World Impact"
+    tier: secret
+    clue: "Communities are built on local success."
+    earned_message: "Communities are built on local success."
+    status: active
+    rule: small_business_five
+  - key: municipal_guardian
+    title: "Municipal Guardian"
+    marker: "Guardian of the Municipality"
+    tradition: "Protection"
+    category: "Real-World Impact"
+    tier: secret
+    clue: "The unseen services are often the most essential."
+    earned_message: "Public service deserves protection."
+    status: manual
+    rule: manual
+  - key: healthcare_defender
+    title: "Healthcare Defender"
+    marker: "Guardian of the Ward"
+    tradition: "Protection"
+    category: "Real-World Impact"
+    tier: secret
+    clue: "Some systems protect lives directly."
+    earned_message: "You protected those who protect others."
+    status: manual
+    rule: manual
+  - key: community_guardian
+    title: "Community Guardian"
+    marker: "Guardian of the First Watch"
+    tradition: "Protection"
+    category: "Real-World Impact"
+    tier: secret
+    clue: "Protection becomes meaningful when there is no reward."
+    earned_message: "You protected something that could not repay you."
+    status: manual
+    rule: manual
+  - key: coffee_chat
+    title: "The Coffee Chat"
+    marker: "The First Conversation"
+    tradition: "Connection"
+    category: "Secret Social"
+    tier: legendary
+    clue: "Great things begin with conversations."
+    earned_message: "Great things begin with conversations."
+    status: manual
+    rule: manual
+  - key: connector
+    title: "The Connector"
+    marker: "The First Introduction"
+    tradition: "Connection"
+    category: "Secret Social"
+    tier: legendary
+    clue: "Networks create opportunity."
+    earned_message: "Networks create opportunity."
+    status: manual
+    rule: manual
+  - key: behind_the_scenes
+    title: "Behind The Scenes"
+    marker: "The Unseen Hand"
+    tradition: "Connection"
+    category: "Secret Social"
+    tier: legendary
+    clue: "Impact is not always visible."
+    earned_message: "Impact noticed."
+    status: manual
+    rule: manual
+  - key: lighthouse
+    title: "The Lighthouse"
+    marker: "Lighthouse of the First Generation"
+    tradition: "Illumination"
+    category: "Legendary"
+    tier: legendary
+    clue: "Many found their way because of a light they never saw."
+    earned_message: "Others found their way because you were there."
+    status: active
+    rule: lighthouse
+  - key: steward
+    title: "The Steward"
+    marker: "Keeper of the Long Watch"
+    tradition: "Stewardship"
+    category: "Legendary"
+    tier: legendary
+    clue: "Legacy is consistency over time."
+    earned_message: "Legacy is consistency over time."
+    status: active
+    rule: steward_3_years
+  - key: legend
+    title: "The Legend"
+    marker: "The Story Still Told"
+    tradition: "Stewardship"
+    category: "Legendary"
+    tier: legendary
+    clue: "Some stories are told long after the teller is gone."
+    earned_message: "Your work changed the trajectory of the community."
+    status: deferred
+    rule: meaning_top_one_percent
+  - key: myth
+    title: "The Myth"
+    marker: "Part of the Foundation"
+    tradition: "Stewardship"
+    category: "Legendary"
+    tier: legendary
+    clue: "Some stories become part of the foundation."
+    earned_message: "Your work became part of the foundation."
+    status: active
+    rule: myth_scale
+  - key: helping_1
+    title: "The First Step"
+    marker: "The First Step"
+    tradition: "Illumination"
+    category: "The Hidden Helpers"
+    tier: public
+    clue: "The first step is helping."
+    earned_message: "Helping once is easy."
+    status: active
+    rule: helping_first
+    chain: legacy_chain
+    stage: 1
+  - key: helping_2
+    title: "The Second Step"
+    marker: "The Second Step"
+    tradition: "Illumination"
+    category: "The Hidden Helpers"
+    tier: secret
+    clue: "Helping once is easy."
+    earned_message: "Helping consistently changes people."
+    status: active
+    rule: helping_five
+    chain: legacy_chain
+    stage: 2
+    requires: [helping_1]
+  - key: helping_3
+    title: "The Third Step"
+    marker: "The Third Step"
+    tradition: "Illumination"
+    category: "The Hidden Helpers"
+    tier: secret
+    clue: "Helping consistently changes people."
+    earned_message: "People you helped are helping others now."
+    status: active
+    rule: helping_25
+    chain: legacy_chain
+    stage: 3
+    requires: [helping_2]
+  - key: helping_4
+    title: "The Fourth Step"
+    marker: "The Fourth Step"
+    tradition: "Illumination"
+    category: "The Hidden Helpers"
+    tier: secret
+    clue: "People you helped are helping others now."
+    earned_message: "No further clues."
+    status: manual
+    rule: manual
+    chain: legacy_chain
+    stage: 4
+    requires: [helping_3]
+  - key: legacy
+    title: "Legacy"
+    marker: "Legacy"
+    tradition: "Stewardship"
+    category: "Legendary"
+    tier: mythic
+    clue: null
+    earned_message: "The community is better because you were here."
+    status: active
+    rule: legacy_hidden
+    chain: legacy_chain
+    stage: 5
+    requires: [helping_4]

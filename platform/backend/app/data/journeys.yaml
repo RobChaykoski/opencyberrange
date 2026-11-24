@@ -1,0 +1,106 @@
+version: "1.0"
+note: >
+  A journey is a learner-chosen direction, not a label or a score. It maps a
+  mission to existing competencies and a first quest. The competency vocabulary
+  stays underneath; the learner sees the mission.
+journeys:
+  - id: defend-communities
+    title: "Defend communities"
+    identity: "The Defender"
+    tradition: "Protection"
+    mission: "Protect a regional hospital from a ransomware campaign."
+    summary: "Build the habits of a defender: notice, triage, contain, recover, and explain the decision."
+    competencies: ["IR-001", "IR-009", "TH-008", "NET-031"]
+    first_quest: "Start with one alert-triage exercise, then write a short incident note."
+    impact_areas: ["incident response", "detection", "documentation"]
+    status: preview
+  - id: protect-healthcare
+    title: "Protect healthcare"
+    identity: "The Guardian"
+    tradition: "Protection"
+    mission: "Keep a hospital's patient data and clinical services safe during a breach."
+    summary: "Work where privacy, availability, and care operations meet."
+    competencies: ["IR-009", "PROF-001", "CLD-009"]
+    first_quest: "Review one public incident report and map the patient-safety decisions."
+    impact_areas: ["privacy", "risk", "communication"]
+    status: preview
+  - id: secure-critical-infrastructure
+    title: "Secure critical infrastructure"
+    identity: "The Operator"
+    tradition: "Protection"
+    mission: "Keep a water treatment plant running through an OT incident."
+    summary: "Practise safety-first operations, segmentation, and recovery under pressure."
+    competencies: ["OT-011", "NET-034", "IR-001"]
+    first_quest: "Inspect an OT exercise and list the safety, availability, and security trade-offs."
+    impact_areas: ["OT operations", "resilience", "asset inventory"]
+    status: preview
+  - id: hunt-adversaries
+    title: "Hunt adversaries"
+    identity: "The Investigator"
+    tradition: "Discovery"
+    mission: "Hunt an adversary across endpoint, network, and identity evidence."
+    summary: "Turn a hypothesis into a query, a timeline, and a finding another person can check."
+    competencies: ["LIN-024", "TH-008", "NET-031"]
+    first_quest: "Build a timeline from one forensic exercise and mark observed, inferred, and unknown."
+    impact_areas: ["threat hunting", "forensics", "documentation"]
+    status: preview
+  - id: build-security-tools
+    title: "Build security tools"
+    identity: "The Builder"
+    tradition: "Creation"
+    mission: "Build a detection tool a small municipality can actually run."
+    summary: "Design, implement, test, and explain a tool with a real operational user in mind."
+    competencies: ["TH-008", "APP-001", "PROF-001"]
+    first_quest: "Write one Sigma rule, test it against a positive and a benign event, and document tuning."
+    impact_areas: ["engineering", "detection", "open source"]
+    status: preview
+  - id: teach-future-defenders
+    title: "Teach future defenders"
+    identity: "The Teacher"
+    tradition: "Illumination"
+    mission: "Design and teach a workshop for learners who are new to cyber."
+    summary: "Turn your practice into a lesson, a rubric, and a teach-back that helps someone else."
+    competencies: ["PROF-005", "PROF-006", "PROF-001"]
+    first_quest: "Write a 20-minute teach-back and a three-question knowledge check."
+    impact_areas: ["teaching", "mentoring", "curriculum"]
+    status: preview
+  - id: start-a-cybersecurity-company
+    title: "Start a cybersecurity company"
+    identity: "The Entrepreneur"
+    tradition: "Creation"
+    mission: "Take a security service from zero to ten clients."
+    summary: "Connect product security, privacy, architecture, compliance, and business into one offer."
+    competencies: ["PROF-005", "PROF-006", "APP-001"]
+    first_quest: "Write a one-page service definition, a scope boundary, and a delivery checklist."
+    impact_areas: ["product", "business", "risk"]
+    status: preview
+  - id: conduct-research
+    title: "Conduct research"
+    identity: "The Researcher"
+    tradition: "Discovery"
+    mission: "Produce a defensible threat report from public evidence."
+    summary: "Ask a question, collect evidence, state confidence, and publish something another analyst can reproduce."
+    competencies: ["LIN-024", "PROF-001", "TH-008"]
+    first_quest: "Build a one-page intelligence product with three verified sources and a confidence note."
+    impact_areas: ["research", "threat intelligence", "writing"]
+    status: preview
+  - id: support-law-enforcement
+    title: "Support law enforcement"
+    identity: "The Investigator"
+    tradition: "Judgment"
+    mission: "Build a timeline that supports a lawful investigation."
+    summary: "Preserve evidence, separate observation from inference, and write for a non-specialist reader."
+    competencies: ["IR-001", "IR-009", "LIN-024"]
+    first_quest: "Complete a forensics exercise and write a one-page findings note with a confidence statement."
+    impact_areas: ["forensics", "evidence handling", "reporting"]
+    status: preview
+  - id: secure-democracy
+    title: "Secure democracy"
+    identity: "The Guardian"
+    tradition: "Service"
+    mission: "Protect an election office from business email compromise and disinformation."
+    summary: "Work on identity, email, public trust, and the decisions that keep a small office resilient."
+    competencies: ["IR-001", "PROF-001", "PROF-006", "CLD-006"]
+    first_quest: "Analyse a suspicious email, document the decision, and brief a non-technical official."
+    impact_areas: ["identity", "email security", "public trust"]
+    status: preview

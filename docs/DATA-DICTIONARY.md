@@ -196,6 +196,10 @@ not stored. The roster keeps only the LMS subject, roles, status, and context.
 | `evidence_reviews.*` | Append-only reviewer decision: per-criterion scores, weighted result, notes, next step | Instructor review and audit trail | Service / Security | With the evidence record | Self; instructor; admin | `self` (review feedback) | Deleted with the record |
 | `workbook_answers.*` | Learner's current answer for one exercise prompt, with created/updated timestamps | Capture an analyst answer for instructor review | Service | Until learner erasure | Self; instructor for covered learners; admin | `self` (own answer); evidence export includes the submitted snapshot | Deleted with the learner or exercise |
 | `evidence_appeals.*` | Learner's reason for a second review, status, reviewer, decision notes, and timestamps | Appeal an adverse evidence decision and preserve the decision trail | Service / Security | With the evidence record | Self; instructor; admin | `self` (own appeal history) | Deleted with the evidence record |
+| `learner_journeys.*` | Learner-chosen direction, primary flag, status, and choice time | Keep the learner's chosen mission and history | Service | Until learner erasure | Self; admin | `self` | Deleted with the learner |
+| `impact_contributions.*` | Contribution type, title, summary, base value, reach, reviewer rating, validation level, originality, status, timestamps, verifier, evidence link, and dedupe hash | Record build, protect, teach, and serve contribution and its verification | Service | Until learner erasure | Self; instructor for covered learners to verify; admin | `self` | Deleted with the learner; the linked evidence follows its own policy |
+| `stewardship_events.*` | Trust event change, category, reason, evidence reference, recorder, visibility, and time | Record responsible conduct or a confirmed breach of trust | Service / Security | Until learner erasure, plus the audit window | Self; instructor where visibility allows; admin | `self` | Deleted with the learner; the admin audit line keeps the action, not the learner's content |
+| `achievement_awards.*` | Recognition key, auto or manual source, awarder, evidence reference, note, and seen time | Recognise values-based contribution without changing a score or permission | Service | Until learner erasure | Self; admin; instructor only for public awards in course scope | `self` | Deleted with the learner |
 | `derived.curriculum_demand` | Aggregate topic demand, exercise friction, and competency gaps | Instructor planning | Service | Computed on read | Instructor for assigned courses above the minimum cohort; admin | `analytics` aggregate | Recomputed |
 | `certification_question_banks.*` | Admin-curated original questions, options, correct index, explanation, objective, and public reference | Certification-aligned sampled checks | Service / Security | Until the bank is replaced | Admin only; learners receive a sampled prompt without answers | Not exported | Kept as curriculum content |
 | `derived.quiz_platinum` | Perfect score on a three-question sampled check | Recognise short, relevant practice | Service | Computed on award | Self; instructor; admin | `self`, `reports` | Deleted with the achievement |
@@ -282,7 +286,8 @@ UI and the API documentation.
 Account deletion:
 
 - deletes identity, credentials, MFA, VPN, enrolments, sessions, completions,
-  flag attempts, quiz attempts, achievements, competition entries, and survey
+  flag attempts, quiz attempts, achievements, recognition awards, journeys,
+  impact contributions, stewardship events, competition entries, and survey
   responses linked to the account;
 - anonymises activity events by removing actor, target, label, detail, and IP;
 - nulls author links on labs and templates while keeping the course content;

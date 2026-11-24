@@ -65,6 +65,10 @@ TENANT_TABLES: dict[str, dict] = {
     # derive it from the evidence record so a client cannot choose a tenant.
     "evidence_records": {"owner": "learner_id", "course": None},
     "workbook_answers": {"owner": "user_id", "course": None},
+    "learner_journeys": {"owner": "user_id", "course": None},
+    "impact_contributions": {"owner": "user_id", "course": None},
+    "stewardship_events": {"owner": "user_id", "course": None},
+    "achievement_awards": {"owner": "user_id", "course": None},
     "evidence_appeals": {"owner": "learner_id", "course": None},
     "evidence_competencies": {"parent": ("evidence_records", "evidence_id")},
     "evidence_reviews": {"parent": ("evidence_records", "evidence_id")},

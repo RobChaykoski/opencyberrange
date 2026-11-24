@@ -200,6 +200,11 @@ Release 6 is designed for the questions an academic review actually asks.
 ## Documents
 
 - [Program layer: organizations, scenarios, transcript, and analytics](PROGRAM-LAYER.md)
+- [The Age of Foundations](FOUNDATIONS.md)
+- [The Living Archive](LIVING-ARCHIVE.md)
+- [Identity and Quests](IDENTITY-QUESTS.md)
+- [Impact and Legacy](IMPACT-AND-LEGACY.md)
+- [Achievements and recognition](ACHIEVEMENTS.md)
 - [Competency Framework](COMPETENCY-FRAMEWORK.md) and [contract review queue](COMPETENCY-REVIEW-QUEUE.md)
 - [Evidence Engine](EVIDENCE-ENGINE.md)
 - [Digital Cyber Transcript](DIGITAL-CYBER-TRANSCRIPT.md)

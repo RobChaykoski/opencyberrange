@@ -174,6 +174,20 @@
           </svg>
           <span v-show="!collapsed" class="nav-item__label">Workbook answers</span>
         </router-link>
+        <router-link to="/journey" aria-label="Choose your journey" title="Choose your journey" class="nav-item" :class="{ 'nav-item--active': isActive('/journey') }">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
+            <path d="M12 3v3M12 18v3M3 12h3M18 12h3"/>
+            <circle cx="12" cy="12" r="5"/>
+            <path d="m10 13 2-4 2 4-2 1z"/>
+          </svg>
+          <span v-show="!collapsed" class="nav-item__label">Your journey</span>
+        </router-link>
+        <router-link to="/impact" aria-label="Your impact" title="Your impact" class="nav-item" :class="{ 'nav-item--active': isActive('/impact') }">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
+            <path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>
+          </svg>
+          <span v-show="!collapsed" class="nav-item__label">Your impact</span>
+        </router-link>
         <router-link to="/my-evidence" aria-label="My evidence" title="My evidence" class="nav-item" :class="{ 'nav-item--active': isActive('/my-evidence') }">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
             <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>

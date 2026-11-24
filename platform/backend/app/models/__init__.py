@@ -114,6 +114,9 @@ from app.models.evidence import (
     EvidenceReview,
 )
 from app.models.workbook import WorkbookAnswer
+from app.models.journey import LearnerJourney
+from app.models.impact import ImpactContribution, StewardshipEvent
+from app.models.recognition import RecognitionAward
 from app.models.nice import (
     LabNiceComponent,
     LabNiceMetadata,
@@ -190,6 +193,9 @@ __all__ = [
     "Lab",
     "LabCompletion",
     "LabSession",
+    "RecognitionAward",
+    "ImpactContribution",
+    "LearnerJourney",
     "LearnerSnapshot",
     "Level",
     "LevelQuiz",
@@ -234,5 +240,6 @@ __all__ = [
     "User",
     "UserAccommodation",
     "WireGuardConfig",
+    "StewardshipEvent",
     "WorkbookAnswer",
 ]

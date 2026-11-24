@@ -154,6 +154,18 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/journey',
+    name: 'Journey',
+    component: () => import('../views/Journey.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/impact',
+    name: 'Impact',
+    component: () => import('../views/Impact.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/certificate/event/:eventId/:award',
     name: 'EventCertificate',
     component: () => import('../views/Certificate.vue'),

@@ -69,6 +69,32 @@ message and the status in the same change.
 | `evidence_appeal_conflict` | 409 | An appeal is already pending, or the appeal was already decided |
 | `evidence_appeal_not_found` | 404 | The appeal does not exist or is outside the caller's scope |
 | `evidence_appeal_forbidden` | 403 | The caller cannot appeal or decide this evidence |
+| `journey_invalid` | 400 | The journey id is not in the reviewed catalogue |
+| `impact_dimension_invalid` | 400 | The contribution dimension is not build, protect, teach, or serve |
+| `impact_kind_invalid` | 400 | The contribution kind is not valid for the dimension |
+| `impact_title_invalid` | 400 | The contribution title is missing or outside its length limit |
+| `impact_originality_invalid` | 400 | Originality is not copied, modified, original, or innovative |
+| `impact_duplicate` | 409 | The same learner already submitted this contribution |
+| `impact_not_found` | 404 | The contribution does not exist |
+| `impact_forbidden` | 403 | The caller cannot verify or review this contribution |
+| `impact_already_verified` | 409 | The contribution is already verified |
+| `impact_validation_invalid` | 400 | Validation is self, peer, instructor, industry, or adoption only (self is rejected on verify) |
+| `impact_validation_forbidden` | 403 | Only an administrator can record industry or adoption validation |
+| `impact_rating_required` | 400 | Verification requires a quality rating |
+| `impact_rating_invalid` | 400 | Quality is below 3.0 or above 5.0 |
+| `impact_reach_invalid` | 400 | Reach cannot be negative |
+| `impact_notes_required` | 400 | A rejection needs an explanation |
+| `impact_reason_invalid` | 400 | A stewardship reason is shorter than 10 characters |
+| `impact_category_invalid` | 400 | Stewardship category is not positive, negative, or restoration |
+| `impact_delta_invalid` | 400 | The stewardship change is zero or has the wrong sign for its category |
+| `impact_evidence_required` | 400 | A negative stewardship event needs an evidence reference |
+| `impact_visibility_invalid` | 400 | Stewardship visibility is not private or instructor |
+| `achievement_forbidden` | 403 | Only an administrator can award recognition manually |
+| `achievement_unknown` | 404 | The recognition key is not in the catalogue |
+| `achievement_not_manual` | 400 | The recognition key is not manually awardable |
+| `achievement_evidence_required` | 400 | A manual award needs an evidence reference |
+| `achievement_note_required` | 400 | A manual award needs a note of at least 10 characters |
+| `achievement_locked` | 400 | The previous stage of a hidden chain is not earned |
 
 The existing `X-Reauth-Required`, `X-Session-Invalid`, `X-Security-Version`, and
 `X-Impersonating` headers remain. Do not duplicate them with a code unless the
