@@ -7,7 +7,7 @@ All notable changes to OpenCyberRange are recorded here.
 ### Competency review
 
 - Added the campaign plan: current 25/215 progress, the 25-draft first batch, and the 30 highest-use pending labs ranked from production.
-- Recorded that the drafts live on development and production has none, so signatures must be recorded on production or imported.
+- Seeded the 25 unsigned drafts on production; the campaign plan records the first batch and the 30 highest-use pending labs.
 
 ### Tenant isolation
 

@@ -27,14 +27,14 @@ counts are from the contract overrides.
 
 ## Where signatures live
 
-The 25 unsigned drafts were seeded on **development**. Production has
-`0` draft rows. The strict export gate reads the database of the host
-where it runs, so signatures must be recorded on **production** (or
-imported with the administrator export) before the gate can pass there.
+The 25 unsigned drafts exist on **development** and **production** (seeded
+24 November 2026). The strict export gate reads the database of the host
+where it runs, so signatures must be recorded on **production** (or imported
+with the administrator export) before the gate can pass there.
 
-Do not sign on development and assume the YAML override is enough: the
-gate refuses a `review_status: reviewed` override without a matching
-signed database row.
+Signing on development does not satisfy production. The gate refuses a
+`review_status: reviewed` override without a matching signed database row on
+the host where it runs.
 
 ## First batch: the 25 legacy drafts
 
