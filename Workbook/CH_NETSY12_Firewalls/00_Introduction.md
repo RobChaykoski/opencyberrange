@@ -4,7 +4,7 @@
 !!! note "Curriculum position"
     **Chapter:** `NET03` — Firewalls and Network Policy
     **Prerequisites:** `NET02` — PCAP Forensics
-    **Recommended next:** `WEB01` — Web Reconnaissance
+    **Recommended next:** `NET04` — Device Topology and Routed Paths
 <!-- END GENERATED CHAPTER POSITION -->
 
 ## Welcome

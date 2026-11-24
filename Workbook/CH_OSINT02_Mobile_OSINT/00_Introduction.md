@@ -4,7 +4,7 @@
 !!! note "Curriculum position"
     **Chapter:** `OSINT02` — Mobile OSINT
     **Prerequisites:** `OSINT01` — OSINT Foundations
-    **Recommended next:** `IAM01` — Identity and Access Foundations
+    **Recommended next:** `OSINT03` — Canary Tokens and Deception
 <!-- END GENERATED CHAPTER POSITION -->
 
 This short chapter uses the device in your pocket as a separate research and

@@ -2,9 +2,9 @@
 
 <!-- BEGIN GENERATED CHAPTER POSITION -->
 !!! note "Curriculum position"
-    **Chapter:** `OT01` - Modbus Fundamentals
-    **Prerequisites:** `NET00` - Network Foundations
-    **Recommended next:** `OT02` - S7comm and PLC Data Blocks
+    **Chapter:** `OT01` — Modbus Fundamentals
+    **Prerequisites:** `NET00` — Network Foundations
+    **Recommended next:** `OT02` — S7comm and PLC Data Blocks
 <!-- END GENERATED CHAPTER POSITION -->
 
 ## Industrial Protocols and the Analyst

@@ -4,7 +4,7 @@
 !!! note "Curriculum position"
     **Chapter:** `WIN09` — Complete Network Assessment
     **Prerequisites:** `WIN08` — Credential Reuse and Lateral Movement
-    **Recommended next:** `LIN01` — Linux Service Enumeration
+    **Recommended next:** `WIN10` — Active Directory and Authentication
 <!-- END GENERATED CHAPTER POSITION -->
 
 ## What Is Network Assessment?

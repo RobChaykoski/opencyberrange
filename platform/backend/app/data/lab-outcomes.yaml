@@ -6250,6 +6250,60 @@ labs:
         reviewed.
     review_status: baseline_derived
     reviewed_at: null
+  osint-3-1-noise-in-the-nest:
+    track: OSINT
+    difficulty: intermediate
+    expected_duration_minutes: 45
+    workbook: wiki/range/osint/CH_OSINT03_Canary_And_Deception/01_Noise_in_the_Nest/
+    skills_earned:
+    - id: OSINT-001
+      name: Intelligence Lifecycle
+      weight: 0.4
+    - id: OSINT-002
+      name: Search Operator Usage
+      weight: 0.3
+    - id: OSINT-008
+      name: Source Validation
+      weight: 0.2
+    - id: OSINT-012
+      name: Intelligence Reporting
+      weight: 0.1
+    competencies_proven:
+    - id: OSINT-001
+      name: Intelligence Lifecycle
+      weight: 0.4
+      category: Collection
+    - id: OSINT-002
+      name: Search Operator Usage
+      weight: 0.3
+      category: Collection
+    - id: OSINT-008
+      name: Source Validation
+      weight: 0.2
+      category: Analysis and Reporting
+    - id: OSINT-012
+      name: Intelligence Reporting
+      weight: 0.1
+      category: Analysis and Reporting
+    knowledge_domains:
+    - id: OSINT
+      label: OSINT
+    practice_axes:
+    - OSINT
+    - Incident and forensics
+    evidence_artifacts:
+    - flag
+    - automated validation
+    - analyst finding
+    - submitted artifact
+    confidence:
+      score: 0.65
+      level: medium
+      basis: Baseline contract derived from the reviewed competency mapping. The evidence types and weights
+        are explicit; live harness evidence and analyst-answer moderation are required before marking
+        reviewed.
+    review_status: baseline_derived
+    reviewed_at: null
   ot-1-1-modbus-register-analysis:
     track: OT
     difficulty: beginner

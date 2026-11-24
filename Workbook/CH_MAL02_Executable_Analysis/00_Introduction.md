@@ -4,7 +4,7 @@
 !!! note "Curriculum position"
     **Chapter:** `MAL02` — Executable Analysis
     **Prerequisites:** `MAL01` — Malware Fundamentals
-    **Recommended next:** `FOR01` — Memory Forensics
+    **Recommended next:** `MAL03` — Detection and Triage
 <!-- END GENERATED CHAPTER POSITION -->
 
 ## From Documents to Binaries

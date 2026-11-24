@@ -5,9 +5,9 @@ from app.services.competency_coverage import coverage_summary
 
 def test_coverage_summary_matches_the_contracts():
     summary = coverage_summary()
-    assert summary["total"] == 214
+    assert summary["total"] == 215
     assert summary["reviewed"] == 25
-    assert summary["pending"] == 189
+    assert summary["pending"] == 190
     assert summary["reviewed"] + summary["pending"] == summary["total"]
     assert 0 < summary["coverage_percent"] < 100
 

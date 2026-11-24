@@ -1,4 +1,11 @@
-# Active Directory and Authentication: Choose the Depth
+# WIN10: Active Directory and Authentication
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `WIN10` — Active Directory and Authentication
+    **Prerequisites:** `WIN02` — SMB Reconnaissance
+    **Recommended next:** `LIN01` — Linux Service Enumeration
+<!-- END GENERATED CHAPTER POSITION -->
 
 Two exercises connect directory fundamentals to the SMB skills already used in
 the Windows track.

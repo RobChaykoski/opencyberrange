@@ -1,0 +1,71 @@
+certification:
+  name: "CompTIA Security+"
+  code: "SY0-701"
+  url: "https://www.comptia.org/certifications/security"
+  scope: "Benchmark practice inspired by Security+ monitoring objectives. Not an actual exam item."
+
+questions:
+  - id: "secplus-canary-1"
+    prompt: "What does a canary token primarily detect?"
+    options:
+      - "That a specific URL or file was accessed"
+      - "The identity of the person who accessed it"
+      - "The intent behind the access"
+      - "That the file was encrypted"
+    correct: 0
+    explanation: "A canary token is a tripwire. It reports access to a unique URL or file; it does not establish identity or intent by itself."
+    reference:
+      label: "Canarytokens documentation"
+      url: "https://docs.canarytokens.org/guide/"
+
+  - id: "secplus-canary-2"
+    prompt: "Which request header most strongly suggests a top-level browser navigation?"
+    options:
+      - "Sec-Fetch-Mode: navigate"
+      - "Accept-Encoding: gzip"
+      - "Connection: keep-alive"
+      - "Cache-Control: no-cache"
+    correct: 0
+    explanation: "Browsers set Sec-Fetch-Mode when making fetch metadata requests. The value navigate indicates a top-level navigation rather than an image, script, or background fetch."
+    reference:
+      label: "Fetch Metadata Request Headers"
+      url: "https://developer.mozilla.org/en-US/docs/Glossary/Fetch_metadata_request_header"
+
+  - id: "secplus-canary-3"
+    prompt: "A link-preview bot hits the token shortly after publication. What is the best interpretation?"
+    options:
+      - "Likely automated preview traffic, not proof that a person read the document"
+      - "Proof that the document was leaked to a competitor"
+      - "Proof that the publisher opened the file"
+      - "A confirmed malware infection"
+    correct: 0
+    explanation: "Chat and social platforms fetch links to build preview cards. That is automated traffic and a common source of canary-token noise."
+    reference:
+      label: "Canarytokens: false positives"
+      url: "https://docs.canarytokens.org/guide/"
+
+  - id: "secplus-canary-4"
+    prompt: "Which conclusion is NOT supported by a single canary hit?"
+    options:
+      - "The person who triggered it is the person who leaked the document"
+      - "The token URL was requested at a specific time"
+      - "The request came from a particular source address"
+      - "The request carried a particular user agent"
+    correct: 0
+    explanation: "A token event records access metadata. It cannot establish who leaked the document or why the URL was opened."
+    reference:
+      label: "OpenCyberRange evidence model"
+      url: "https://github.com/RobChaykoski/opencyberrange/blob/main/docs/EVIDENCE-ENGINE.md"
+
+  - id: "secplus-canary-5"
+    prompt: "Which event is the strongest human-navigation candidate?"
+    options:
+      - "Browser user agent, Sec-Fetch-Mode: navigate, referer from the portal"
+      - "Scanner user agent, no referer, no fetch metadata"
+      - "Uptime monitor user agent, regular interval"
+      - "Link-preview bot user agent, social-app referer"
+    correct: 0
+    explanation: "A browser user agent plus a top-level navigation header and a portal referer is the strongest combination in this lab. It still does not prove identity or intent."
+    reference:
+      label: "OWASP: Logging"
+      url: "https://owasp.org/www-project-top-ten/"

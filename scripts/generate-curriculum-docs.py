@@ -488,6 +488,12 @@ def validate_manifest(manifest: dict) -> list[str]:
             if cid in seen_ids:
                 problems.append(f"duplicate chapter id: {cid}")
             seen_ids.add(cid)
+            # Planned chapters reserve their stable id and directory name but do
+            # not have authored content yet. Validate the physical tree only for
+            # chapters that claim to be published; otherwise the manifest cannot
+            # describe the roadmap without failing its own check.
+            if chapter.get("status") == "planned":
+                continue
             if not (WORKBOOK / directory).is_dir():
                 problems.append(f"{cid}: missing directory {directory}")
             actual = chapter_lab_count(directory)

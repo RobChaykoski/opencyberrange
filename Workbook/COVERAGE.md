@@ -14,12 +14,12 @@ links.
 | Malware | 10 |
 | Metasploit | 8 |
 | Network | 22 |
-| OSINT | 8 |
+| OSINT | 9 |
 | OT | 4 |
 | Software Security | 2 |
 | Web | 26 |
 | Windows | 62 |
-| **Total** | **204** |
+| **Total** | **205** |
 
 ## Labs
 
@@ -129,6 +129,7 @@ links.
 | Network | Two-Router Transit - Static Routes Across a Transit Link (`network-12-3-two-router-transit`) | `wiki/range/netfor/CH_NET12_Device_Topology/02_Two_Router_Transit/` |
 | OSINT | Badge Photo Intelligence (`osint-1-2-image-intelligence`) | `wiki/range/osint/CH_OSINT01_OSINT_Foundations/02_Badge_Photo_Intelligence/` |
 | OSINT | EXIF Metadata Investigation (`osint-1-3-exif-metadata`) | `wiki/range/osint/CH_OSINT01_OSINT_Foundations/03_EXIF_Metadata/` |
+| OSINT | Noise in the Nest (`osint-3-1-noise-in-the-nest`) | `wiki/range/osint/CH_OSINT03_Canary_And_Deception/01_Noise_in_the_Nest/` |
 | OSINT | The Developer's Trail (`osint-2-1-source-code-intelligence`) | `wiki/range/osint/CH_OSINT01_OSINT_Foundations/04_The_Developers_Trail/` |
 | OSINT | The Mobile Build (`osint-2-3-responsive-leak`) | `wiki/range/osint/CH_OSINT02_Mobile_OSINT/01_The_Mobile_Build/` |
 | OSINT | The Public Banner (`osint-2-5-public-banner`) | `wiki/range/osint/CH_OSINT02_Mobile_OSINT/03_The_Public_Banner/` |

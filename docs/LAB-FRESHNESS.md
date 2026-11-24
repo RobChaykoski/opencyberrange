@@ -2,7 +2,7 @@
 
 Generated: **2026-11-23**. Policy: review every **365 days**; provisional difficulty evidence is flagged after **180 days**.
 
-- Labs: **214**
+- Labs: **215**
 - Stale or missing review: **0**
 - Provisional difficulty evidence: **208**
 - Promotion candidates (5+ observations): **0**

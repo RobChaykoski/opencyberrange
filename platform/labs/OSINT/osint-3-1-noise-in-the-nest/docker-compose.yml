@@ -1,0 +1,54 @@
+services:
+  portal:
+    mem_limit: 64m
+    cpus: 0.1
+    build:
+      context: ./containers/portal
+      dockerfile: Dockerfile
+    hostname: portal
+    environment:
+      PYTHONDONTWRITEBYTECODE: "1"
+    labels:
+      ip_offset: "85"
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp:size=8m
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    deploy:
+      resources:
+        limits:
+          cpus: '0.10'
+          memory: 64M
+    restart: unless-stopped
+
+  canary:
+    mem_limit: 64m
+    cpus: 0.1
+    build:
+      context: ./containers/canary
+      dockerfile: Dockerfile
+    hostname: canary
+    environment:
+      PYTHONDONTWRITEBYTECODE: "1"
+    labels:
+      ip_offset: "86"
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    deploy:
+      resources:
+        limits:
+          cpus: '0.10'
+          memory: 64M
+    restart: unless-stopped

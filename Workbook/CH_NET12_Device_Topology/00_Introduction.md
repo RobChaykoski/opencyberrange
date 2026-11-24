@@ -1,4 +1,11 @@
-# Device Topology: Routed Path to a Protected Service
+# NET04: Device Topology and Routed Paths
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `NET04` — Device Topology and Routed Paths
+    **Prerequisites:** `NET03` — Firewalls and Network Policy
+    **Recommended next:** `WEB01` — Web Reconnaissance
+<!-- END GENERATED CHAPTER POSITION -->
 
 ## Scenario
 

@@ -2,6 +2,47 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [Unreleased]
+
+### Release 6 evidence ledger
+
+- Added the append-only evidence ledger: `evidence_records`,
+  `evidence_competencies`, and `evidence_reviews` (migration
+  `0052_evidence_engine`).
+- Added idempotent evidence creation with a rubric version, taxonomy
+  competencies, artifact SHA-256, provenance, confidence, and visibility.
+- Added instructor review decisions with per-criterion scores and a weighted
+  result. Reviews are appended; evidence content remains immutable.
+- Added tenant row-level security for the evidence tables, with child rows
+  deriving their tenant from the parent evidence record.
+- Added the evidence API: create, list, read, review queue, review, and
+  competency evidence. Access is learner-, course-, or tenant-scoped.
+- Added tests for idempotency, scope, scoring, queue filtering, validation, and
+  append-only enforcement.
+
+### Career affinity
+
+- Added recency weighting to affinity ranking: practice in the last 365 days
+  counts at full weight and older practice at half weight. Lifetime evidence
+  remains visible, so a learner can change direction without losing history.
+- Marked every affinity with growing or strong evidence as recommended, with a
+  separate `primary` direction for the compact overview card. A multi-talented
+  learner is no longer collapsed to one label.
+- Removed course enrolment and advanced technical labs from the leadership
+  affinity. Leadership now counts teaching and event success, so an active
+  student is not misread as a programme lead.
+- Added `recent_count` and `rank_count` to the affinity payload and used the
+  weighted count in Career Atlas matching.
+
+### OSINT canary lab
+
+- Added the OSINT03 "Canary Tokens and Deception" chapter and lab 3.1
+  "Noise in the Nest". The lab runs a synthetic public portal and canary
+  console, records token hits, and asks the learner to separate a human
+  navigation from link-preview, scanner, and uptime-monitor noise.
+- Added the lab workbook, quiz, competency contract, tester manifest, and
+  automated flag checks. The catalogue is now **215 labs**.
+
 ## [5.37.1] - 2026-11-23
 
 ### Deployment integrity

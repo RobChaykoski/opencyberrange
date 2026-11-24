@@ -4,7 +4,7 @@
 !!! note "Curriculum position"
     **Chapter:** `IAM01` — Identity and Access Foundations
     **Prerequisites:** `NET00` — Network Foundations
-    **Recommended next:** `FOR01` — Memory Forensics
+    **Recommended next:** `IAM02` — Active Directory and Kerberos
 <!-- END GENERATED CHAPTER POSITION -->
 
 ## What this course is

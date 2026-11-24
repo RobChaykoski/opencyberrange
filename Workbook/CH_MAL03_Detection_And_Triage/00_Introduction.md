@@ -1,4 +1,11 @@
-# Detection and Triage: YARA and Evidence
+# MAL03: Detection and Triage
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `MAL03` — Detection and Triage
+    **Prerequisites:** `MAL02` — Executable Analysis
+    **Recommended next:** `FOR01` — Memory Forensics
+<!-- END GENERATED CHAPTER POSITION -->
 
 Two exercises build a detection workflow:
 

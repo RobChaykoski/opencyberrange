@@ -1,0 +1,34 @@
+# Generated from platform/labs/OSINT/osint-3-1-noise-in-the-nest/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: osint-3-1-noise-in-the-nest
+track: OSINT
+difficulty: intermediate
+source: platform/labs/OSINT/osint-3-1-noise-in-the-nest/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr-tester:latest
+  command: /tests/osint-3-1-noise-in-the-nest.sh
+  steps:
+  - name: Public portal responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.portal}/
+    expect: '200'
+  - name: Portal links to the canary token
+    command: curl -s http://{target.portal}/ | grep -c 'canary.lab/t/incident-timeline'
+    expect: '1'
+  - name: Canary console is available
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.canary}/health
+    expect: '200'
+  - name: A browser-class hit unlocks the flag
+    command: 'curl -s -H ''Sec-Fetch-Mode: navigate'' -H ''Sec-Fetch-Dest: document'' -H ''Referer: http://portal.lab/'' -H ''User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/126 Safari/537.36'' http://{target.canary}/t/incident-timeline >/dev/null && curl -s http://{target.canary}/console/api/events | grep -o ''OCR{[^}]*}'''
+    expect: '{flag}'
+expected_flag_count: 1
+expected_flag: '{flag}'
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 320
+max_cpu: 0.35

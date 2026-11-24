@@ -12,10 +12,10 @@ contracts and this queue.
 
 | Measure | Value |
 |---|---:|
-| Contracts | **214** |
+| Contracts | **215** |
 | Reviewed | **25** |
-| Awaiting review | **189** |
-| Review coverage | **11.7%** |
+| Awaiting review | **190** |
+| Review coverage | **11.6%** |
 
 | Track | Awaiting review |
 |---|---:|
@@ -27,7 +27,7 @@ contracts and this queue.
 | Malware | 10 |
 | Metasploit | 8 |
 | Network | 20 |
-| OSINT | 8 |
+| OSINT | 9 |
 | OT | 5 |
 | Software Security | 2 |
 | Web | 25 |
@@ -35,7 +35,7 @@ contracts and this queue.
 
 | Contract status | Count |
 |---|---:|
-| `baseline_derived` | 189 |
+| `baseline_derived` | 190 |
 
 ## Review queue
 
@@ -150,6 +150,7 @@ Per-track worksheets: [`docs/reviews/competency/`](reviews/competency/README.md)
 | `osint-1-1-public-footprint` The Public Footprint | OSINT | beginner | public | 35 | OSINT-001, OSINT-002, OSINT-003, OSINT-005 | flag, validation_step, analyst_answer, artifact | baseline_derived |
 | `osint-1-2-image-intelligence` Badge Photo Intelligence | OSINT | beginner | public | 45 | OSINT-001, OSINT-002, OSINT-003, OSINT-005 | flag, validation_step, analyst_answer, artifact | baseline_derived |
 | `osint-1-3-exif-metadata` EXIF Metadata Investigation | OSINT | beginner | public | 35 | OSINT-001, OSINT-002, OSINT-003, OSINT-005 | flag, validation_step, analyst_answer, artifact | baseline_derived |
+| `osint-3-1-noise-in-the-nest` Noise in the Nest | OSINT | intermediate | public | 45 | OSINT-001, OSINT-002, OSINT-008, OSINT-012 | flag, validation_step, analyst_answer, artifact | baseline_derived |
 | `osint-2-1-source-code-intelligence` The Developer's Trail | OSINT | intermediate | course | 35 | OSINT-001, OSINT-002, OSINT-003, OSINT-005 | flag, validation_step, analyst_answer, artifact | baseline_derived |
 | `osint-2-2-public-homepage` The Public Homepage | OSINT | beginner | course | 25 | OSINT-001, OSINT-002, OSINT-003, OSINT-005 | flag, validation_step, analyst_answer, artifact | baseline_derived |
 | `osint-2-3-responsive-leak` The Mobile Build | OSINT | beginner | course | 25 | OSINT-003, OSINT-004, OSINT-006, OSINT-008 | flag, validation_step, analyst_answer, artifact | baseline_derived |

@@ -1,4 +1,11 @@
-# Topology Forensics: Choose Your Pace
+# FOR03: Topology Forensics
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `FOR03` — Topology Forensics
+    **Prerequisites:** `FOR02` — Network Forensics
+    **Recommended next:** `OSINT01` — OSINT Foundations
+<!-- END GENERATED CHAPTER POSITION -->
 
 Two exercises share the same evidence question: **which path did the request take
 through the router?** Choose the format that fits how you want to learn today.

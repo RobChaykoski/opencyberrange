@@ -1,0 +1,147 @@
+title: Noise in the Nest
+category: osint
+difficulty: intermediate
+estimated_time: 45
+prerequisites:
+  - osint-1-1-public-footprint
+# By completion students will be able to:
+learning_outcomes:
+  - Identify a canary token in a public document without triggering it by accident
+  - Distinguish a human browser visit from link-preview, scanner, and uptime-monitor traffic
+  - Explain what a canary alert proves and what it cannot prove
+  - Record an observation, inference, and unknown for an executive reader
+mapped_skills:
+  - osint
+  - incident_forensics
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+  - Complete the triage table in the workbook.
+mitre_attack:
+  - tactic: Reconnaissance
+    technique: T1592
+    technique_name: Gather Victim Host Information
+    detection: Review web logs for link-preview, scanner, and monitoring user agents that fetch canary URLs.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "5.38.0"
+reviewed_at: "2026-11-23"
+review_status: "original content; live walkthrough pending"
+description: "A public incident update contains a canary token. The security team's console shows a human click among automated noise; decide which hit is human, what it proves, and what it does not."
+visibility: public
+audience: general
+offline_only: true
+external_targets: []
+personal_data: synthetic
+free_text: false
+public_profiles: false
+phone_required: false
+analytics: aggregate_only
+minor_safe_defaults: false
+flag: "OCR{c4n4ry_n0ise_tru3}"
+counts_toward_certificate: false
+
+tools:
+  - browser
+  - curl
+  - python3
+
+scenario: |
+  Northwind Freight published an incident update after a warehouse outage.
+  The press page links to a "timeline" document. Unknown to the publisher, the
+  link is a canary token managed by the security team.
+
+  The console has collected four kinds of traffic: a link-preview bot, a
+  vulnerability scanner, an uptime monitor, and one browser-class visit. Your
+  task is to separate the human visit from the noise, explain the limits of the
+  attribution, and recover the lab flag. Everything here is synthetic and runs
+  inside the isolated lab network.
+
+troubleshooting: "If the portal or console is unreachable, confirm both lab services are running and that you opened the link from the lab browser or a terminal inside the lab. If the console shows no browser-class hit, open the timeline link again from the portal page. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Canary tokens are tripwires, not attribution. They reveal access, not intent or identity. Triage automated noise before escalating a hit, and never treat a single token event as proof of who leaked a document."
+difficulty_evidence: "Author review of the lab definition and triage model; live student walkthrough pending."
+difficulty_evidence_source: "author_review"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-23"
+workbook: "wiki/range/osint/CH_OSINT03_Canary_And_Deception/01_Noise_in_the_Nest/"
+
+hostnames:
+  - ip_offset: "85"
+    hostname: "portal.lab"
+    description: "Northwind Freight public incident page (HTTP 80)"
+  - ip_offset: "86"
+    hostname: "canary.lab"
+    description: "Northwind Freight canary console (HTTP 80)"
+
+topology:
+  nodes:
+    - id: "portal"
+      label: "Northwind Freight Public Portal"
+      type: "server"
+      ip_offset: "85"
+      ports: [80]
+      services: ["http"]
+      x: 1
+      y: 1
+    - id: "canary"
+      label: "Canary Console"
+      type: "server"
+      ip_offset: "86"
+      ports: [80]
+      services: ["http"]
+      x: 3
+      y: 1
+
+hints:
+  - text: |
+      Open `http://portal.lab/` and read the incident page. The timeline link is
+      the collection surface. Inspect the page source before clicking if you want
+      to practise counter-OSINT.
+    unlock_after_minutes: 5
+
+  - text: |
+      The console is at `http://canary.lab/console`. It seeded three synthetic
+      noise events. A browser-class hit unlocks the flag; a link-preview bot,
+      scanner, or uptime monitor does not.
+    unlock_after_minutes: 12
+
+  - text: |
+      Compare `User-Agent`, `Referer`, and `Sec-Fetch-Mode`. A human navigation
+      from the portal usually has `Sec-Fetch-Mode: navigate` and a referer from
+      the portal; a link-preview bot has no browser navigation headers.
+    unlock_after_minutes: 20
+
+  - text: |
+      The flag appears only after a browser-class hit:
+
+      ```bash
+      curl -s http://portal.lab/ | grep canary.lab
+      curl -s -H 'Sec-Fetch-Mode: navigate' -H 'Referer: http://portal.lab/' \
+        -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/126 Safari/537.36' \
+        http://canary.lab/t/incident-timeline >/dev/null
+      curl -s http://canary.lab/console/api/events
+      ```
+    unlock_after_minutes: 28
+
+test:
+  steps:
+    - name: "Public portal responds"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.portal}/"
+      expect: "200"
+      timeout: 20
+
+    - name: "Portal links to the canary token"
+      command: "curl -s http://{target.portal}/ | grep -c 'canary.lab/t/incident-timeline'"
+      expect: "1"
+      timeout: 20
+
+    - name: "Canary console is available"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.canary}/health"
+      expect: "200"
+      timeout: 20
+
+    - name: "A browser-class hit unlocks the flag"
+      command: "curl -s -H 'Sec-Fetch-Mode: navigate' -H 'Sec-Fetch-Dest: document' -H 'Referer: http://portal.lab/' -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/126 Safari/537.36' http://{target.canary}/t/incident-timeline >/dev/null && curl -s http://{target.canary}/console/api/events | grep -o 'OCR{[^}]*}'"
+      expect: "OCR{c4n4ry_n0ise_tru3}"
+      timeout: 20

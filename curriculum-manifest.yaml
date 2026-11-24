@@ -222,6 +222,38 @@ tracks:
         status: published
         intro: CH_LIN09_Assessments/00_Introduction.md
 
+  - id: msfpt
+    pathway_order: 12
+    display_name: "Metasploit Operations"
+    audience: "Learners who have completed the beginner pathway or have equivalent Linux and network service experience."
+    difficulty: "intermediate"
+    prerequisites: ["LIN01", "NET00"]
+    required_environment: "RangeBox with terminal, Kali tools, and a KVM-capable isolated Metasploitable 2 target"
+    recommended_next: "soc"
+    role_alignment: ["Penetration Tester", "Red Team Operator", "SOC Analyst"]
+    status: "published"
+    chapters:
+      - id: MSF01
+        directory: CH_MSF01_Framework_Fundamentals
+        display_name: "Metasploit Framework Fundamentals"
+        difficulty: "beginner"
+        prerequisites: [LIN01]
+        exercises: 4
+        estimated_minutes: 360
+        recommended_next: MSF02
+        status: published
+        notes: "No 00_Introduction page; the track introduction is CH_MSF00_Track_Introduction."
+      - id: MSF02
+        directory: CH_MSF02_Exploitation_and_Post_Exploitation
+        display_name: "Exploitation and Post-Exploitation"
+        difficulty: "intermediate"
+        prerequisites: [MSF01]
+        exercises: 4
+        estimated_minutes: 435
+        recommended_next: SOC01
+        status: published
+        notes: "No 00_Introduction page; the track introduction is CH_MSF00_Track_Introduction."
+
   - id: netfor
     pathway_order: 2
     display_name: "Network Security"
@@ -414,8 +446,8 @@ tracks:
         display_name: "Modbus Fundamentals"
         difficulty: "intermediate"
         prerequisites: [NET00]
-        exercises: 1
-        estimated_minutes: 40
+        exercises: 3
+        estimated_minutes: 135
         recommended_next: OT02
         status: published
         intro: CH_OT01_Modbus_Fundamentals/00_Introduction.md
@@ -490,9 +522,19 @@ tracks:
         prerequisites: [OSINT01]
         exercises: 3
         estimated_minutes: 70
-        recommended_next: IAM01
+        recommended_next: OSINT03
         status: published
         intro: CH_OSINT02_Mobile_OSINT/00_Introduction.md
+      - id: OSINT03
+        directory: CH_OSINT03_Canary_And_Deception
+        display_name: "Canary Tokens and Deception"
+        difficulty: "intermediate"
+        prerequisites: [OSINT02]
+        exercises: 1
+        estimated_minutes: 45
+        recommended_next: IAM01
+        status: published
+        intro: CH_OSINT03_Canary_And_Deception/00_Introduction.md
 
   - id: high-school
     pathway_order: 1

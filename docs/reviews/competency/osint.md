@@ -67,6 +67,26 @@ Date:
 Decision:  
 Notes:  
 
+## `osint-3-1-noise-in-the-nest` — Noise in the Nest
+
+- Track: **OSINT**
+- Difficulty: **intermediate**
+- Visibility: **public**
+- Expected minutes: **45**
+- Competencies: `OSINT-001`, `OSINT-002`, `OSINT-008`, `OSINT-012`
+- Evidence: `flag`, `validation_step`, `analyst_answer`, `artifact`
+
+- [ ] Competency ids exist and match the exercise
+- [ ] Every evidence type can be produced and observed
+- [ ] Competency weights sum to 1.0
+- [ ] Evidence weights sum to 1.0
+- [ ] Difficulty and prerequisites match the walkthrough
+
+Reviewer:  
+Date:  
+Decision:  
+Notes:  
+
 ## `osint-2-1-source-code-intelligence` — The Developer's Trail
 
 - Track: **OSINT**

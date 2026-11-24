@@ -42,10 +42,10 @@ A fresh-contributor review for the Community / Academic edition.
 
 - Backend: **908 passed** on a clean PostgreSQL database.
 - Frontend: **6 passed**; build passed.
-- Labs: **214 definitions, 214 manifests, 214 contracts, 204 workbook-mapped**.
-- `validate-lab.py --all`: **214 labs, 0 failed checks**.
+- Labs: **215 definitions, 215 manifests, 215 contracts, 205 workbook-mapped**.
+- `validate-lab.py --all`: **215 labs, 0 failed checks**.
 - Live harness: all **19 new pathway labs** passed one clean run; the full
-  214-lab, three-run harness remains.
+  215-lab, three-run harness remains.
 - Metadata, outcomes, manifests, API manual, licence, external-dataset, and
   documentation-link checks: passed.
 - MkDocs manual strict build: passed.

@@ -1,10 +1,12 @@
 # Release 6 scope: competency, evidence, scale, and federation
 
-Status: **planning**. No Release 6 code is implemented. This page is the scope
-contract for the release; the signed tag and [`versions.yaml`](../versions.yaml)
-remain the source of truth for the current release.
+Status: **Release 6.0 in progress**. The evidence ledger foundation is
+implemented; capstones, instructor analytics, HA, federation, AI, and
+localization remain. This page is the scope contract for the release; the signed
+tag and [`versions.yaml`](../versions.yaml) remain the source of truth for the
+current release.
 
-Release 5 proved the teaching loop: 214 labs, a competency contract for every
+Release 5 proved the teaching loop: 215 labs, a competency contract for every
 lab, deterministic flag scoring, Cyber DNA v3, and a single-host deployment that
 two campuses can run. Release 6 makes that loop **institution-grade**. It turns
 the competency model into the authoritative vocabulary, makes evidence a
@@ -68,11 +70,11 @@ Release 6 builds on shipped pieces; it is not a blank page.
 | Foundation | Current state |
 |---|---|
 | Competency taxonomy | 212 competencies in domains and categories (`app/data/competency-taxonomy.yaml`) |
-| Lab contracts | 214 labs mapped; 25 reviewed, 189 baseline derived, awaiting subject-matter review |
+| Lab contracts | 215 labs mapped; 25 reviewed, 190 baseline derived, awaiting subject-matter review |
 | Scoring model | Five dimensions: knowledge 20%, execution 30%, troubleshooting 20%, documentation 15%, communication 15% |
 | Rubric registry | Three versioned rubrics: blue-team timeline, vulnerability report, capstone brief (`app/data/rubrics/`) |
 | Pathways | 13 curriculum roles, including SOC Analyst, Incident Responder, and Detection Engineer |
-| Evidence | Flag attempts, lab completions, quiz attempts, workbook answers, learner snapshots, review requests |
+| Evidence | Flag attempts, lab completions, quiz attempts, workbook answers, learner snapshots, review requests, and the append-only evidence ledger (records, competency links, reviews) |
 | Cyber DNA | Evidence ledger, eight-axis radar, six traits, gated affinity, immutable snapshots |
 | Analytics | Last-7-day activity, course health, exercise diagnostics, programme reports, signed exports |
 | Credentials | Open Badges 3.0 scope and level certificates |
@@ -146,7 +148,7 @@ Release 6 is designed for the questions an academic review actually asks.
 
 | Measure | Target |
 |---|---|
-| Labs with a reviewed competency contract | 214 of 214 |
+| Labs with a reviewed competency contract | 215 of 215 |
 | Objects with a competency mapping | 100% of labs, quizzes, assessments, capstones, badges |
 | Evidence records with a rubric version and provenance | 100% |
 | Capstone generation coverage of a role profile | At least 90% of critical competencies |

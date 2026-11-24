@@ -216,7 +216,11 @@ TRACKS = [   {   'name': 'Windows Penetration Testing',
                       {   'level_number': 2,
                           'name': 'Code and Sources',
                           'description': 'Static assets, JavaScript comments, and leaked '
-                                         'public repository material'}]},
+                                         'public repository material'},
+                      {   'level_number': 3,
+                          'name': 'Canary Tokens and Deception',
+                          'description': 'Canary tokens, alert triage, and defensive '
+                                         'deception against public-source collection'}]},
     {   'name': 'Beginner Cybersecurity',
         'slug': 'high-school',
         'description': 'A beginner-only pathway for new learners. Start with RangeBox '

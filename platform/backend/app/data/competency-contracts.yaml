@@ -6580,6 +6580,63 @@ labs:
     usage_source: null
     review_status: baseline_derived
     reviewed_at: null
+  osint-3-1-noise-in-the-nest:
+    lab_id: osint-3-1-noise-in-the-nest
+    track: OSINT
+    difficulty: intermediate
+    expected_duration_minutes: 45
+    prerequisites:
+    - osint-1-1-public-footprint
+    workbook: wiki/range/osint/CH_OSINT03_Canary_And_Deception/01_Noise_in_the_Nest/
+    competency_ids:
+    - id: OSINT-001
+      weight: 0.4
+    - id: OSINT-002
+      weight: 0.3
+    - id: OSINT-008
+      weight: 0.2
+    - id: OSINT-012
+      weight: 0.1
+    evidence:
+    - type: flag
+      weight: 0.35
+      source: lab.flag
+      validation: exact_match
+    - type: validation_step
+      weight: 0.35
+      source: platform/tester/manifests/osint-3-1-noise-in-the-nest.yaml
+      validation: all_steps_pass
+    - type: analyst_answer
+      weight: 0.2
+      source: workbook.analysis_questions
+      validation: rubric
+    - type: artifact
+      weight: 0.1
+      source: submitted_artifact
+      validation: rubric
+    prohibited_collection:
+    - keystrokes
+    - mouse_movement
+    - exhaustive_terminal_history
+    assessment_reliability:
+      level: medium
+      score: 0.65
+      evidence_completeness: medium
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Baseline contract derived from the reviewed competency mapping. The evidence types and weights are explicit; live harness evidence and analyst-answer moderation are required before marking reviewed.
+    assessment_criteria:
+    - Submit the correct flag.
+    - Pass every automated test step in the lab manifest.
+    - Complete the triage table in the workbook.
+    test_steps: 4
+    flag_required: true
+    content_version: 5.38.0
+    usage_rank: null
+    usage_completions: null
+    usage_source: null
+    review_status: baseline_derived
+    reviewed_at: null
   ot-1-1-modbus-register-analysis:
     lab_id: ot-1-1-modbus-register-analysis
     track: OT

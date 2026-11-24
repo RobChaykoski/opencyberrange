@@ -4,7 +4,7 @@
 !!! note "Curriculum position"
     **Chapter:** `FOR02` — Network Forensics
     **Prerequisites:** `FOR01` — Memory Forensics
-    **Recommended next:** `OSINT01` — OSINT Foundations
+    **Recommended next:** `FOR03` — Topology Forensics
 <!-- END GENERATED CHAPTER POSITION -->
 
 ## Welcome
