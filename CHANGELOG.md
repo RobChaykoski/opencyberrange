@@ -4,6 +4,12 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
+No unreleased changes.
+
+## [5.48.0] - 2026-11-24
+
+Tenant baseline migration and a fully reconciled schema.
+
 ### Tenant baseline
 
 - Added migration `0066_tenant_baseline`: idempotent `institution_id` columns, defaults, `NOT NULL`, and indexes for the 20 runtime tenant tables.

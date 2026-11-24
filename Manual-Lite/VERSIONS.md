@@ -2,7 +2,7 @@
 
 The core manual in this folder describes the workflows shared by the
 **Community / Academic**, **Professional**, and **Enterprise** edition profiles
-on platform **Release 5.47.0**, plus the **Advanced DNA Insights** feature
+on platform **Release 5.48.0**, plus the **Advanced DNA Insights** feature
 (enabled under Admin settings). Professional and Enterprise are cumulative:
 every page here still applies, and each edition adds the pages in its own
 supplement.
@@ -15,9 +15,9 @@ supplement.
 
 | Edition profile | Platform release | Manual | What it adds |
 |---|---|---|---|
-| Community / Academic | Release 5.47.0 | This manual | Single-host teaching platform, labs, workbooks, evidence review, courses, certificates, privacy, and administration |
-| Professional | Release 5.47.0 | [Professional supplement](09_Professional/index.md) | Analytics and reporting, competency evidence, feedback, exercise health, and intervention signals |
-| Enterprise | Release 5.47.0 (SSO; HA preview) | [Enterprise supplement](10_Enterprise/index.md) | Multi-host HA lab pool, OIDC/SAML/LDAP SSO, LTI 1.3, enterprise reporting, and compliance reporting |
+| Community / Academic | Release 5.48.0 | This manual | Single-host teaching platform, labs, workbooks, evidence review, courses, certificates, privacy, and administration |
+| Professional | Release 5.48.0 | [Professional supplement](09_Professional/index.md) | Analytics and reporting, competency evidence, feedback, exercise health, and intervention signals |
+| Enterprise | Release 5.48.0 (SSO; HA preview) | [Enterprise supplement](10_Enterprise/index.md) | Multi-host HA lab pool, OIDC/SAML/LDAP SSO, LTI 1.3, enterprise reporting, and compliance reporting |
 
 Release 5 remains a single-tenant appliance: one deployment serves one
 institution. LTI 1.3 is implemented; full multi-tenancy is deferred. SFIA 9

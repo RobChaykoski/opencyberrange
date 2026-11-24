@@ -20,6 +20,14 @@ Steps 2 and 3 order matters: the manifest copies the lock's `release` field.
 Releases 5.46.0 and 5.46.1 skipped step 3, so the committed manifest still said
 `5.45.0` and the CI integrity gate failed.
 
+## Release 5.48.0
+
+| Tag | Release | Status |
+|---|---|---|
+| `v5.48.0` | SWOCTS Cyber Range Release 5.48.0 | Signed annotated tag: migration `0066_tenant_baseline` moves the 20 runtime `institution_id` columns and indexes into the migration graph, the models declare the missing columns, and Alembic drift reaches **0** with the restore-drift gate defaulting to 0. Deployment pending. |
+
+Deliverables: [Release 5.48.0 deliverables](RELEASE-5.48.0-DELIVERABLES.md).
+
 ## Release 5.47.0
 
 | Tag | Release | Status |
