@@ -3,6 +3,14 @@
 This page maps the tags in the repository to the release they actually
 represent. It exists because the history contains several naming eras.
 
+## Release 5.44.0
+
+| Tag | Release | Status |
+|---|---|---|
+| `v5.44.0` | SWOCTS Cyber Range Release 5.44.0 | Signed annotated tag: shared login-failure throttling through Valkey/Redis with a bounded memory fallback, cross-tenant admin scoping regression tests, and the Alembic autogenerate guard with the baseline drift guide. Deployment pending. |
+
+Deliverables: [Release 5.44.0 deliverables](RELEASE-5.44.0-DELIVERABLES.md).
+
 ## Release 5.43.1
 
 | Tag | Release | Status |
@@ -367,7 +375,7 @@ recorded in `versions.yaml` and returned by `/api/version`.
 
 Tags `v3.0.0` through `v3.1.2` belong to the experimental Enterprise/HA branch
 and are historical. They are **not** the supported single-host platform
-release. The current platform releases are the `v5.x` tags on `main`; `v5.43.1`
+release. The current platform releases are the `v5.x` tags on `main`; `v5.44.0`
 is the newest.
 Release 4 added OIDC, SAML, and LDAP SSO. Multi-tenancy, LMS/LTI,
 the per-student accommodation engine, and weekly Jeopardy-style challenge quizzes
@@ -375,7 +383,7 @@ that feed Cyber DNA are Release 5.
 
 ## Choosing a version
 
-1. Use `main` or the latest `v5.x` tag (currently `v5.43.1`) for new installs.
+1. Use `main` or the latest `v5.x` tag (currently `v5.44.0`) for new installs.
 2. Keep `1.1.x` only for an existing Community / Academic maintenance install.
 3. Do not deploy a `v2.2.x`, `v2.3.x`, or `v3.x` tag as the current platform.
 4. Check `docs/SUPPORTED-VERSIONS.md` before changing a dependency or host OS.

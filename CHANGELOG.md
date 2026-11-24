@@ -4,6 +4,13 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
+No unreleased changes.
+
+## [5.44.0] - 2026-11-24
+
+Security verification and hardening: shared login-failure throttling, admin
+tenant-isolation regression coverage, and an Alembic autogenerate guard.
+
 ### Alembic safety guard
 
 - Added `scripts/check-alembic-safety.py` and the Alembic baseline guide. CI rejects autogenerate usage and verifies one linear head.
