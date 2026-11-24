@@ -7,7 +7,9 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.39.0` | SWOCTS Cyber Range Release 5.39.0 | Signed annotated tag: evidence appeals, learner journeys and the eight traditions, the Cyber Legacy contribution ledger and recognition, the Living Archive, standalone certification practice, and the expanded evidence operations summary. Includes migrations `0054`–`0058` and 158 reviewed question-bank items. Deployed to development and production on 24 November 2026; post-deploy backup, restore drill, and smoke tests passed. |
+| `v5.39.0` | SWOCTS Cyber Range Release 5.39.0 | Signed annotated tag: evidence appeals, learner journeys and the eight traditions, the Cyber Legacy contribution ledger and recognition, the Living Archive, standalone certification practice, and the expanded evidence operations summary. Includes migrations `0054`-`0058` and 158 reviewed question-bank items. Deployed to development and production on 24 November 2026; post-deploy backup, restore drill, and smoke tests passed. |
+
+Deliverables: [Release 5.39.0 deliverables](RELEASE-5.39.0-DELIVERABLES.md).
 
 ## Release 5.38.0
 
