@@ -71,6 +71,19 @@ Signing does not publish anything. An administrator exports approved reviews int
 and signs the supply-chain lock. Reviews that are stale, overdue, or
 changes-requested are blocked from export.
 
+```bash
+python scripts/export-contract-reviews.py --export \
+  --database-url "$DATABASE_URL" \
+  --admin-export /secure/ocr-contract-reviews.json
+python scripts/export-contract-reviews.py --write-overrides \
+  --database-url "$DATABASE_URL"
+python scripts/generate-competency-contracts.py
+python scripts/export-contract-reviews.py --check
+```
+
+The manifest is pseudonymous and committable. The administrator export contains
+reviewer names and rationales; store it outside the repository.
+
 ## Troubleshooting
 
 | Problem | What to check |
