@@ -2,6 +2,18 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [Unreleased]
+
+### Evidence review workflow
+
+- Added the evidence reviewer surface at `/evidence-review` for instructors and
+  administrators: queue, learner identity, source, rubric criteria and levels,
+  prior decisions, and the accept / request-more / reject form.
+- Added `GET /api/evidence/rubrics` to expose the versioned rubric registry and
+  included the learner identity in the evidence payload for authorized
+  reviewers.
+- Updated the i18n baseline for the new review surface and navigation entry.
+
 ## [5.38.0] - 2026-11-24
 
 ### Release 6 evidence ledger

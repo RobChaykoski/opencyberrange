@@ -411,6 +411,7 @@ def list_records(
     query = db.query(EvidenceRecord).options(
         selectinload(EvidenceRecord.competencies),
         selectinload(EvidenceRecord.reviews),
+        selectinload(EvidenceRecord.learner),
     )
     query = _apply_scope(query, db, viewer)
     if learner_id is not None:
@@ -445,6 +446,7 @@ def get_record(db: Session, viewer: User, record_id: int) -> EvidenceRecord | No
         .options(
             selectinload(EvidenceRecord.competencies),
             selectinload(EvidenceRecord.reviews),
+            selectinload(EvidenceRecord.learner),
         )
         .filter(EvidenceRecord.id == int(record_id))
         .first()
@@ -652,9 +654,19 @@ def record_payload(record: EvidenceRecord) -> dict:
             "size": record.artifact_size,
             "sha256": record.artifact_sha256,
         }
+    learner = record.learner
     return {
         "id": record.id,
         "learner_id": record.learner_id,
+        "learner": (
+            {
+                "id": learner.id,
+                "username": learner.username,
+                "display_name": learner.display_name,
+            }
+            if learner is not None
+            else None
+        ),
         "source_type": record.source_type,
         "source_id": record.source_id,
         "rubric": {

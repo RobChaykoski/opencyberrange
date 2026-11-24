@@ -23,6 +23,7 @@ from app.database import get_db
 from app.models import User
 from app.services import evidence as evidence_service
 from app.services.evidence import EvidenceError
+from app.services.rubrics import load_rubrics
 
 router = APIRouter()
 competency_router = APIRouter()
@@ -140,6 +141,19 @@ async def list_evidence(
         offset=offset,
     )
     return {"evidence": [evidence_service.record_payload(row) for row in records]}
+
+
+@router.get("/rubrics")
+async def list_evidence_rubrics(
+    current_user: User = Depends(get_current_reporting_user),
+):
+    """Return the versioned rubric registry used by the review form."""
+    return {
+        "rubrics": sorted(
+            load_rubrics().values(),
+            key=lambda item: (str(item.get("rubric")), str(item.get("version"))),
+        )
+    }
 
 
 @router.get("/queue")

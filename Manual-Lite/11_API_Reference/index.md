@@ -443,6 +443,7 @@ owner-only unless an explicit share or break-glass grant exists.
 | `GET` | `/api/evidence` | List Evidence | OAuth2PasswordBearer |
 | `POST` | `/api/evidence` | Create Evidence | OAuth2PasswordBearer |
 | `GET` | `/api/evidence/queue` | Review Queue | OAuth2PasswordBearer |
+| `GET` | `/api/evidence/rubrics` | List Evidence Rubrics | OAuth2PasswordBearer |
 | `GET` | `/api/evidence/{evidence_id}` | Get Evidence | OAuth2PasswordBearer |
 | `POST` | `/api/evidence/{evidence_id}/review` | Review Evidence | OAuth2PasswordBearer |
 | `GET` | `/api/exercises/labs/{lab_id}` | Get Lab Details | OAuth2PasswordBearer |
@@ -5961,6 +5962,18 @@ Evidence awaiting a first review or more evidence.
 
 - `200`: Successful Response
 - `422`: Validation Error — `HTTPValidationError`
+
+### `GET /api/evidence/rubrics`
+
+**List Evidence Rubrics**
+
+Return the versioned rubric registry used by the review form.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Responses**
+
+- `200`: Successful Response
 
 ### `GET /api/evidence/{evidence_id}`
 

@@ -122,6 +122,31 @@ def test_create_is_idempotent(client, db_session):
     assert second["evidence"]["id"] == first["evidence"]["id"]
 
 
+def test_rubric_catalog_is_available_to_reviewers(client, db_session):
+    admin = _user(db_session, "admin")
+    response = client.get(
+        "/api/evidence/rubrics",
+        headers=_headers(client, admin),
+    )
+    assert response.status_code == 200, response.text
+    rubrics = {row["rubric"]: row for row in response.json()["rubrics"]}
+    assert "blue-team-timeline" in rubrics
+    assert rubrics["blue-team-timeline"]["version"] == "1.0"
+    assert rubrics["blue-team-timeline"]["criteria"]
+
+
+def test_record_carries_the_learner_identity_for_reviewers(client, db_session):
+    admin = _user(db_session, "admin")
+    learner = _user(db_session)
+    created = _create(client, admin, _payload(learner.id))
+    response = client.get(
+        f"/api/evidence/{created['evidence']['id']}",
+        headers=_headers(client, admin),
+    )
+    assert response.status_code == 200, response.text
+    assert response.json()["evidence"]["learner"]["username"] == learner.username
+
+
 def test_unknown_rubric_and_competency_are_rejected(client, db_session):
     admin = _user(db_session, "admin")
     learner = _user(db_session)

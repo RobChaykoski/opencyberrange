@@ -1,10 +1,10 @@
 {
-  "total": 4965,
+  "total": 5010,
   "files": {
     "src/App.vue": 13,
     "src/components/AchievementStudio.vue": 54,
     "src/components/AdminPendingTab.vue": 5,
-    "src/components/AppSidebar.vue": 101,
+    "src/components/AppSidebar.vue": 107,
     "src/components/AuditHistory.vue": 18,
     "src/components/AvailableSurveys.vue": 9,
     "src/components/CareerAssessmentPanel.vue": 8,
@@ -75,6 +75,7 @@
     "src/views/Dashboard.vue": 155,
     "src/views/DeepLinkPicker.vue": 8,
     "src/views/Discover.vue": 24,
+    "src/views/EvidenceReview.vue": 39,
     "src/views/ExerciseQuiz.vue": 37,
     "src/views/ForgotPassword.vue": 7,
     "src/views/Governance.vue": 48,

@@ -240,14 +240,18 @@ Release 6.0 ships the first vertical slice:
   confidence, visibility, and review scoring.
 - API endpoints: `POST /api/evidence`, `GET /api/evidence`,
   `GET /api/evidence/{id}`, `POST /api/evidence/{id}/review`,
-  `GET /api/evidence/queue`, and
+  `GET /api/evidence/queue`, `GET /api/evidence/rubrics`, and
   `GET /api/competencies/{id}/evidence`.
+- A reviewer surface at `/evidence-review` that shows the queue, the recorded
+  rubric criteria and levels, prior decisions, and the decision form. The
+  rubric catalogue is loaded from the versioned registry, so an old record is
+  judged by the version it was collected with.
 - Tests for idempotency, tenant and course scope, scoring, queue filtering,
   unknown rubric/competency rejection, and append-only content.
 
-Not yet implemented: artifact upload and storage, appeals, asynchronous
-adapters that create evidence from flags or workbook saves, and a reviewer UI.
-Those are the next increments.
+Not yet implemented: artifact upload and storage, appeals, and asynchronous
+adapters that create evidence from flags or workbook saves. Those are the next
+increments.
 
 ## Privacy and security
 
