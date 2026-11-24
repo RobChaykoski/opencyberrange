@@ -318,3 +318,32 @@ def test_contract_snapshot_hash_is_stable_and_sensitive():
     }
     assert snapshot_hash(base) == snapshot_hash(reordered)
     assert snapshot_hash(base) != snapshot_hash(changed)
+
+@pytest.mark.db
+def test_learner_status_is_compact_and_tracks_sign_off(client, db_session):
+    from app.services.competency_reviews import learner_statuses
+
+    instructor = _user(db_session)
+    learner = _user(db_session, "student")
+    try:
+        before = learner_statuses(db_session, learner, [LAB])[LAB]
+        assert before == {
+            "status": "pending",
+            "provisional": True,
+            "next_review_at": None,
+        }
+
+        signed = client.post(
+            f"/api/competency-reviews/{LAB}/sign",
+            json=_payload(),
+            headers=_headers(client, instructor),
+        )
+        assert signed.status_code == 200, signed.text
+
+        after = learner_statuses(db_session, learner, [LAB])[LAB]
+        assert after["status"] == "current"
+        assert after["provisional"] is False
+        assert after["next_review_at"].endswith("Z")
+        assert set(after) == {"status", "provisional", "next_review_at"}
+    finally:
+        _cleanup(db_session, [instructor, learner])

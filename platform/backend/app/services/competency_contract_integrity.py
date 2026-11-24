@@ -52,6 +52,7 @@ def taxonomy_hash_for(competency_ids) -> str:
     return sha(canonical(payload))
 
 
+@lru_cache(maxsize=1024)
 def lab_hash(slug: str) -> str:
     lab = next(
         (

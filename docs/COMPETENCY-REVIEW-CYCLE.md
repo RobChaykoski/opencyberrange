@@ -193,9 +193,10 @@ dashboard. They are not grandfathered: the release gate must see the signature.
    because the 25 pre-cycle reviewed contracts have no signed review yet.
 2. Track ownership, assignment, reassignment, due/overdue notification, and
    escalation to a track lead or dean.
-3. A learner-visible gate that marks evidence and competency statements
-   provisional when the underlying contract is stale, overdue, or
-   changes-requested.
+3. Extend the learner-visible notice to My Evidence and the competency
+   statements. The exercise page now marks the mapping provisional when the
+   contract is pending, stale, overdue, or changes-requested; it does not block
+   the lab or expose reviewer details.
 4. A dean aggregate view: current, due soon, overdue, stale, and pending by
    track and reviewer; signed this term; awaiting export.
 5. Recent reauthentication and MFA before sign-off; PBAC permissions for

@@ -250,6 +250,13 @@
                   <span v-else-if="lab.is_active" class="lab-status lab-status--active">In progress</span>
                   <span v-else-if="lab.is_current" class="lab-status lab-status--current">Next up</span>
                   <span v-else-if="!lab.is_unlocked" class="lab-status lab-status--locked">Locked</span>
+                  <span
+                    v-if="lab.contract_status && ['stale', 'overdue', 'changes_requested'].includes(lab.contract_status.status)"
+                    class="lab-status lab-status--contract"
+                    :title="`Competency mapping is ${lab.contract_status.status.replace('_', ' ')}`"
+                  >
+                    Mapping review
+                  </span>
                   <button
                     v-if="lab.slug"
                     type="button"
@@ -388,6 +395,15 @@
               class="btn btn--secondary btn--sm"
               title="Return to your current exercise tab; the lab keeps running"
             >Exit</button>
+          </div>
+          <div
+            v-if="contractNotice"
+            class="contract-notice"
+            :class="`contract-notice--${contractNotice.kind}`"
+            role="status"
+          >
+            <strong>{{ contractNotice.title }}</strong>
+            <span>{{ contractNotice.body }}</span>
           </div>
           <div v-if="activeLab.session" class="active-lab-panel__timer-section">
             <div class="active-lab-panel__timer" :class="{ 'timer--warning': isExpiringSoon, 'timer--paused': activeLab.session.is_paused }">
@@ -1494,6 +1510,32 @@ const workspaceMode = computed(() => Boolean(activeLab.value))
 const isBeginnerLab = computed(
   () => activeLab.value?.lab?.difficulty === 'beginner'
 )
+const contractNotice = computed(() => {
+  const status = activeLab.value?.lab?.contract_status
+  if (!status?.provisional) return null
+  const kind = ['stale', 'overdue', 'changes_requested'].includes(status.status)
+    ? 'warning'
+    : 'info'
+  const copy = {
+    pending: {
+      title: 'Competency mapping pending review',
+      body: 'The skills credited for this exercise are provisional until a subject-matter reviewer signs the contract.',
+    },
+    changes_requested: {
+      title: 'Competency mapping under revision',
+      body: 'A reviewer requested changes. The skills credited for this exercise may change; your work and evidence are still recorded.',
+    },
+    overdue: {
+      title: 'Competency review is overdue',
+      body: 'The contract is past its review date. The skills credited may be out of date; your work and evidence are still recorded.',
+    },
+    stale: {
+      title: 'Competency mapping is out of date',
+      body: 'The exercise or taxonomy changed after its review. The skills credited may be out of date; your work and evidence are still recorded.',
+    },
+  }[status.status]
+  return copy ? { kind, ...copy } : null
+})
 // The single-pane workspace needs room for the desktop, the briefing/flag, and
 // the workbook at the same time. Narrower desktop widths keep the tab shell so
 // no pane collapses to an unusable sliver.
@@ -3409,6 +3451,12 @@ watch(timeRemaining, (val) => {
 .lab-status--locked {
   color: var(--text-muted);
 }
+
+.lab-status--contract {
+  border-color: color-mix(in srgb, var(--warning) 45%, var(--border-color));
+  background: color-mix(in srgb, var(--warning) 10%, transparent);
+  color: var(--warning);
+}
 .kvm-badge {
   display: inline-block;
   font-size: 0.6rem;
@@ -3770,6 +3818,29 @@ watch(timeRemaining, (val) => {
   flex-wrap: wrap;
   gap: 0.75rem;
   min-width: 0;
+}
+
+.contract-notice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.6rem;
+  margin: 0.75rem 1.5rem 0;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--accent);
+  border-radius: 0.5rem;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+}
+
+.contract-notice strong {
+  color: var(--text-primary);
+}
+
+.contract-notice--warning {
+  border-left-color: var(--warning);
+  background: color-mix(in srgb, var(--warning) 8%, var(--bg-secondary));
 }
 
 .stop-error {

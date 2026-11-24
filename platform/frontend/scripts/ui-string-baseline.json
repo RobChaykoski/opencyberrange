@@ -1,5 +1,5 @@
 {
-  "total": 5268,
+  "total": 5269,
   "files": {
     "src/App.vue": 13,
     "src/components/AchievementStudio.vue": 54,
@@ -95,7 +95,7 @@
     "src/views/SsoCallback.vue": 4,
     "src/views/StudentDashboard.vue": 35,
     "src/views/Surveys.vue": 33,
-    "src/views/TrackDetail.vue": 160,
+    "src/views/TrackDetail.vue": 161,
     "src/views/VerifyCertificate.vue": 63,
     "src/views/WorkbookAnswers.vue": 12,
     "src/views/WorkbooksLanding.vue": 6,

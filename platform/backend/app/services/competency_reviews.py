@@ -326,6 +326,57 @@ def detail(db: Session, user: User, slug: str) -> dict:
     }
 
 
+def learner_statuses(db: Session, user: User, slugs: list[str]) -> dict[str, dict]:
+    """Return a compact contract status for learner-visible lab rows.
+
+    The payload deliberately excludes the reviewer, the rationale, the draft,
+    and the contract snapshot. It is a trust signal, not a review surface.
+    """
+    contracts = load_contracts().get("labs") or {}
+    tenant = _tenant_of(user)
+    unique = [str(slug) for slug in dict.fromkeys(slugs) if slug]
+    decisions: dict[str, CompetencyContractReview] = {}
+    if unique:
+        rows = (
+            db.query(CompetencyContractReview)
+            .filter(
+                CompetencyContractReview.lab_slug.in_(unique),
+                CompetencyContractReview.institution_id == tenant,
+                CompetencyContractReview.status.in_(("signed", "changes_requested")),
+            )
+            .order_by(
+                CompetencyContractReview.signed_at.desc(),
+                CompetencyContractReview.id.desc(),
+            )
+            .all()
+        )
+        for row in rows:
+            decisions.setdefault(row.lab_slug, row)
+    now = _now()
+    statuses: dict[str, dict] = {}
+    for slug in unique:
+        contract = contracts.get(slug)
+        if not isinstance(contract, dict):
+            statuses[slug] = {
+                "status": "pending",
+                "provisional": True,
+                "next_review_at": None,
+            }
+            continue
+        review = decisions.get(slug)
+        status = review_status(contract, review, now)
+        statuses[slug] = {
+            "status": status,
+            "provisional": status in {"pending", "stale", "overdue", "changes_requested"},
+            "next_review_at": (
+                review.next_review_at.isoformat() + "Z"
+                if review and review.next_review_at
+                else None
+            ),
+        }
+    return statuses
+
+
 def _finite_weight(value, label: str) -> float:
     try:
         weight = float(value)

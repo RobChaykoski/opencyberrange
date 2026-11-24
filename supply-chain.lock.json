@@ -181,7 +181,7 @@
       "sha256": "b91a8826be3d417d08e7376fc7d1baeb91ea629da3c4d2f5a5ea39551756051d"
     },
     "platform/backend/app/services/competency_contract_integrity.py": {
-      "sha256": "189b24fa4077f7fbd30c108d490e803ab6a12786baeb8b9ebd1242b0040f3ec0"
+      "sha256": "80770bd21f27cf8829ea9f990b653c0d870f1192372d0a73ce0e09bc91880361"
     },
     "platform/backend/app/services/production_control.py": {
       "sha256": "79191e58f3c06bd97d5212087b9a7b135cf06a0e9fd3949e341a22625c2f48af"

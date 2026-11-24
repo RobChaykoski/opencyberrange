@@ -15,6 +15,13 @@ All notable changes to OpenCyberRange are recorded here.
 - The contract generator now accepts a full signed `evidence` list and
   `assessment_criteria` from the overrides file and round-trips them.
 
+### Learner-visible contract status
+
+- The exercise page now marks the competency mapping provisional when the
+  contract is pending, stale, overdue, or changes-requested. The notice does not
+  block the lab or expose reviewer details. A compact **Mapping review** badge
+  marks stale, overdue, and changes-requested labs in the exercise list.
+
 ### Workbook reader
 
 - The workbook link now opens a blank window, refreshes the HttpOnly wiki cookie,

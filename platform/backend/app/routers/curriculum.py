@@ -40,7 +40,7 @@ from app.services.lab_text import render_lab_text
 from app.services.curriculum_manifest import chapter_label
 from app.services.learning_metadata import aggregate_difficulty
 from app.services.activity import log_activity, EventTypes
-from app.services import settings_service
+from app.services import competency_reviews, settings_service
 from app.config import settings
 from app.services.achievements import (
     competition_achievement_parts,
@@ -1556,6 +1556,12 @@ async def get_track(
 
     from app.models import LevelQuiz
 
+    contract_statuses = competency_reviews.learner_statuses(
+        db,
+        current_user,
+        [lab.slug for level in track.levels for lab in level.labs],
+    )
+
     levels_data = []
     for level in sorted(track.levels, key=lambda l: l.level_number):
         labs_data = []
@@ -1600,6 +1606,7 @@ async def get_track(
                 "description": lab.description,
                 "scenario_brief": scenario_brief,
                 "difficulty": lab.difficulty,
+                "contract_status": contract_statuses.get(lab.slug),
                 # The SOC track routes Launch by category (soc-triage ->
                 # /soc/triage, soc-ruletest -> /soc/ruletest, else /soc/hunt).
                 # Omitting it made every socir exercise fall through to the hunt
@@ -2656,6 +2663,10 @@ async def get_lab_details(
         except Exception as e:
             logger.warning(f"Failed to compute target IPs for lab {lab_id}: {e}")
 
+    contract_status = competency_reviews.learner_statuses(
+        db, current_user, [lab.slug]
+    ).get(lab.slug)
+
     return {
         "lab": {
             "id": lab.id,
@@ -2665,6 +2676,7 @@ async def get_lab_details(
             "scenario": render_lab_text(lab.scenario, lab, session) if lab.scenario else None,
             "scenario_brief": scenario_brief,
             "difficulty": lab.difficulty,
+            "contract_status": contract_status,
             "category": lab.category,
             "duration_minutes": lab.duration_minutes,
             "objectives": objectives,
