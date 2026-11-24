@@ -30,6 +30,19 @@ All notable changes to OpenCyberRange are recorded here.
   and then navigates. Opening the wiki first raced the cookie request and could
   land on the SPA login on a slow connection.
 
+### Security and database hardening
+
+- Cross-worker exercise-tester, impersonation, and stress-run state now lives
+  under `/app/run-state` (mode 750), not the shared `/tmp`.
+- `WG_ENCRYPTION_KEY` and previous rotation keys are validated as Fernet keys at
+  startup.
+- Topology `security_opt` must be a string list keeping `no-new-privileges`, and
+  `http_port` rejects booleans, non-integers, and values outside 1-65535.
+- The HIBP password lookup digest is marked `usedforsecurity=False`.
+- Migrations `0061` and `0062` remove redundant indexes and add indexes for the
+  instructor course filter and lab-session FK.
+- Added the code, database, dependency, and host-currency review record.
+
 ## [5.41.0] - 2026-11-24
 
 Contract-review operations and evidence-reporting corrections: the instructor
