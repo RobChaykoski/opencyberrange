@@ -7,7 +7,7 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.38.0` | SWOCTS Cyber Range Release 5.38.0 | Signed annotated tag: Release 6 evidence ledger and review API, recency-weighted multi-path career affinity, OSINT03 canary-token lab "Noise in the Nest", curriculum-manifest reconciliation, and the fresh-install README section. |
+| `v5.38.0` | SWOCTS Cyber Range Release 5.38.0 | Signed annotated tag: Release 6 evidence ledger and review API, recency-weighted multi-path career affinity, OSINT03 canary-token lab "Noise in the Nest", curriculum-manifest reconciliation, and the fresh-install README section. Deployed to development and production. |
 
 ## Release 5.37.1
 
