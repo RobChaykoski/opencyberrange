@@ -73,6 +73,8 @@ COVERED_FILES = [
     "platform/backend/Dockerfile",
     "platform/topology-node/Dockerfile",
     "platform/topology-node/entrypoint.py",
+    "platform/netprobe/Dockerfile",
+    "scripts/build-helper-images.sh",
     "platform/backend/app/data/software-integrity.json",
     "platform/backend/lab_metadata.schema.json",
     "platform/backend/app/security/permissions.yaml",

@@ -168,6 +168,8 @@ infrastructure:
   dex_image: "ghcr.io/dexidp/dex:v2.42.0"
   ldap_image: "osixia/openldap:1.5.0"
   topology_node_image: "ocr-lab/topology-node:latest"
+  netprobe_base: "alpine:3.20@sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc"
+  netprobe_image: "ocr-lab/netprobe:1.0"
   ci_checkout: "actions/checkout@v7"
   ci_codeql: "github/codeql-action@v4"
   ci_trivy: "aquasecurity/trivy-action@0.36.0"

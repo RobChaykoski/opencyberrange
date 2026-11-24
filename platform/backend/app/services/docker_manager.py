@@ -28,6 +28,10 @@ except ImportError:  # Windows development hosts: fall back to a thread lock
 
 logger = logging.getLogger(__name__)
 
+# Pinned helper image for host-network and lab-network setup. It replaces
+# runtime `apk add` in the Docker helpers and is built by the deploy path.
+NETPROBE_IMAGE = os.environ.get("OCR_NETPROBE_IMAGE", "ocr-lab/netprobe:1.0")
+
 # Lab compose files may need NET_ADMIN for routed/firewall exercises, but a
 # compromised backend must not be able to turn a lab into a host-root escape.
 _ALLOWED_CAP_ADD = {
@@ -948,7 +952,6 @@ class DockerManager:
         # Script: find the default-route interface, read its CIDR,
         # then compute the network address from it.
         script = r"""
-apk add --no-cache iproute2 >/dev/null 2>&1
 DEV=$(ip -4 route show default | awk '{print $5; exit}')
 [ -z "$DEV" ] && exit 1
 CIDR=$(ip -4 -o addr show dev "$DEV" | awk '{print $4; exit}')
@@ -973,7 +976,7 @@ fi
 """
         try:
             output = self.client.containers.run(
-                "alpine:latest",
+                NETPROBE_IMAGE,
                 command=["sh", "-c", script],
                 network_mode="host",
                 privileged=True,
@@ -1029,7 +1032,7 @@ fi
                 "ip -o link show up 2>/dev/null | awk -F': ' '{print $2}' | sed 's/@.*//'"
             )
             output = self.client.containers.run(
-                "alpine:latest",
+                NETPROBE_IMAGE,
                 command=["sh", "-c", script],
                 network_mode="host",
                 privileged=True,
@@ -1103,8 +1106,9 @@ fi
             for subnet in self._PROTECTED_SUBNETS:
                 rules.append((iface, subnet))
 
-        lines = ["apk add --no-cache iptables >/dev/null 2>&1",
-                 "EXISTING=$(iptables -S DOCKER-USER 2>/dev/null)"]
+        lines = [
+            "EXISTING=$(iptables -S DOCKER-USER 2>/dev/null)"
+        ]
         for iface, subnet in rules:
             # Chained greps for order-independent matching (iptables -S may
             # output -d before -i).  Each grep filters for one component.
@@ -1120,7 +1124,7 @@ fi
         results = []
         try:
             output = self.client.containers.run(
-                "alpine:latest",
+                NETPROBE_IMAGE,
                 command=["sh", "-c", script],
                 network_mode="host",
                 privileged=True,
@@ -1178,7 +1182,7 @@ fi
 
         # Build a script that checks (-C) then inserts (-I) each rule,
         # printing JSON-ish status for each so we can parse the results.
-        lines = ["apk add --no-cache iptables >/dev/null 2>&1"]
+        lines = []
         for rule in rules:
             lines.append(
                 f'if iptables -C DOCKER-USER {rule} 2>/dev/null; then '
@@ -1191,7 +1195,7 @@ fi
         results = []
         try:
             output = self.client.containers.run(
-                "alpine:latest",
+                NETPROBE_IMAGE,
                 command=["sh", "-c", script],
                 network_mode="host",
                 privileged=True,
@@ -1251,7 +1255,6 @@ fi
             gateways = []
 
         lines = [
-            "apk add --no-cache iptables >/dev/null 2>&1",
             "iptables -N OCR-LAB-INPUT 2>/dev/null || true",
             "iptables -C INPUT -j OCR-LAB-INPUT 2>/dev/null || iptables -I INPUT 1 -j OCR-LAB-INPUT",
         ]
@@ -1303,7 +1306,7 @@ fi
 
         try:
             self.client.containers.run(
-                "alpine:latest",
+                NETPROBE_IMAGE,
                 command=["sh", "-c", "\n".join(lines)],
                 network_mode="host",
                 privileged=True,
@@ -1378,7 +1381,7 @@ fi
 
         rules = [f"-s {src} -d {host_net} -j DROP" for src in self._LAB_SUBNETS]
 
-        lines = ["apk add --no-cache iptables >/dev/null 2>&1"]
+        lines = []
         for rule in rules:
             lines.append(
                 f'iptables -C DOCKER-USER {rule} 2>/dev/null '
@@ -1389,7 +1392,7 @@ fi
         checks = []
         try:
             output = self.client.containers.run(
-                "alpine:latest",
+                NETPROBE_IMAGE,
                 command=["sh", "-c", script],
                 network_mode="host",
                 privileged=True,
@@ -1426,7 +1429,6 @@ fi
             if ext_ifaces:
                 # Use grep-based check (tolerant of -m comment variations)
                 inbound_lines = [
-                    "apk add --no-cache iptables >/dev/null 2>&1",
                     "EXISTING=$(iptables -S DOCKER-USER 2>/dev/null)",
                 ]
                 for iface in ext_ifaces:
@@ -1439,7 +1441,7 @@ fi
                         )
 
                 inbound_output = self.client.containers.run(
-                    "alpine:latest",
+                    NETPROBE_IMAGE,
                     command=["sh", "-c", "\n".join(inbound_lines)],
                     network_mode="host",
                     privileged=True,
@@ -2420,7 +2422,6 @@ fi
             bridge_name = f"br-{network.id[:12]}"
 
             script = (
-                f"apk add --no-cache iproute2 >/dev/null 2>&1\n"
                 f"ip link del {gre_name} 2>/dev/null\n"
                 f"ip link add {gre_name} type gretap remote {client_ip} local {server_ip}\n"
                 f"ip link set {gre_name} master {bridge_name}\n"
@@ -2430,7 +2431,7 @@ fi
 
             result = subprocess.run(
                 ["docker", "run", "--rm", "--privileged", "--net=host",
-                 "alpine:3.19", "sh", "-c", script],
+                 NETPROBE_IMAGE, "sh", "-c", script],
                 capture_output=True, text=True, timeout=15
             )
             if result.returncode == 0:
@@ -2452,8 +2453,8 @@ fi
             try:
                 bridge_result = subprocess.run(
                     ["docker", "run", "--rm", "--privileged", "--net=host",
-                     "alpine:3.19", "sh", "-c",
-                     "apk add --no-cache iproute2 bridge-utils >/dev/null 2>&1; bridge link show"],
+                     NETPROBE_IMAGE, "sh", "-c",
+                     "bridge link show"],
                     capture_output=True, text=True, timeout=15
                 )
                 for line in bridge_result.stdout.splitlines():
@@ -2502,7 +2503,7 @@ fi
                     f' {mirror_actions} 2>/dev/null'
                 )
             tc_script = (
-                'apk add --no-cache iproute2 >/dev/null 2>&1\n'
+                ''
                 + tap_setup
                 + "\n".join(mirror_cmds)
                 + f'\necho "TC mirrors to {gre_name} configured for {len(veth_indices)} veths"'
@@ -2510,7 +2511,7 @@ fi
 
             tc_result = subprocess.run(
                 ["docker", "run", "--rm", "--privileged", "--net=host",
-                 "alpine:3.19", "sh", "-c", tc_script],
+                 NETPROBE_IMAGE, "sh", "-c", tc_script],
                 capture_output=True, text=True, timeout=30
             )
             if tc_result.returncode == 0:
@@ -2527,8 +2528,8 @@ fi
         try:
             subprocess.run(
                 ["docker", "run", "--rm", "--privileged", "--net=host",
-                 "alpine:3.19", "sh", "-c",
-                 f"apk add --no-cache iproute2 >/dev/null 2>&1; ip link del {gre_name} 2>/dev/null; echo ok"],
+                 NETPROBE_IMAGE, "sh", "-c",
+                 f"ip link del {gre_name} 2>/dev/null; echo ok"],
                 capture_output=True, text=True, timeout=10
             )
             logger.debug(f"GRETAP {gre_name} removed")
@@ -3873,8 +3874,8 @@ fi
             try:
                 bridge_result = subprocess.run(
                     ["docker", "run", "--rm", "--privileged", "--net=host",
-                     "alpine:3.19", "sh", "-c",
-                     "apk add --no-cache iproute2 bridge-utils >/dev/null 2>&1; bridge link show"],
+                     NETPROBE_IMAGE, "sh", "-c",
+                     "bridge link show"],
                     capture_output=True, text=True, timeout=15
                 )
                 for line in bridge_result.stdout.splitlines():
@@ -3907,7 +3908,7 @@ fi
                     f' action mirred egress mirror dev $RB_VETH 2>/dev/null'
                 )
             script = (
-                f'apk add --no-cache iproute2 >/dev/null 2>&1\n'
+                f''
                 f'RB_VETH=$(ip -o link show | awk -v i={rb_veth_idx} \'$1 ~ "^"i":" {{split($2,a,"@"); print a[1]}}\')\n'
                 f'echo "RangeBox veth: $RB_VETH"\n'
                 + "\n".join(mirror_cmds)
@@ -3916,7 +3917,7 @@ fi
 
             result = subprocess.run(
                 ["docker", "run", "--rm", "--privileged", "--net=host",
-                 "alpine:3.19", "sh", "-c", script],
+                 NETPROBE_IMAGE, "sh", "-c", script],
                 capture_output=True, text=True, timeout=30
             )
             if result.returncode == 0:

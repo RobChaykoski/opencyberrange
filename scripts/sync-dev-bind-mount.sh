@@ -39,6 +39,9 @@ rsync -a \
 echo "making lab content readable"
 chmod -R a+rX platform/labs 2>/dev/null || true
 
+echo "building helper images"
+bash scripts/build-helper-images.sh
+
 echo "rebuilding frontend image"
 docker compose build frontend
 

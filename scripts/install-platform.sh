@@ -844,6 +844,14 @@ build_and_start() {
         warn "platform/network-tap not found - capture labs will spawn without a tap"
     fi
 
+    # Build the pinned helper image used by host-network and lab-network setup.
+    # The backend spawns it by image name, so compose build does not produce it.
+    if [ -x "$REPO_DIR/scripts/build-helper-images.sh" ]; then
+        log "Building helper images..."
+        bash "$REPO_DIR/scripts/build-helper-images.sh" || \
+            error_exit "Helper-image build failed"
+    fi
+
     # Build RangeBox images (browser-based desktops). RangeBox/ and UbuntuBox/
     # sit at the repo root next to platform/, so resolve them from REPO_DIR --
     # PLATFORM_DIR/../RangeBox pointed at ~/RangeBox in the documented layout and

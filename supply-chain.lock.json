@@ -258,6 +258,9 @@
     "platform/labs/_swsec_shared/app.py": {
       "sha256": "8f95e55cdf2f480459deff52eacf188f40bf082932a07b9ea0e4b68ebc1e396a"
     },
+    "platform/netprobe/Dockerfile": {
+      "sha256": "e59c6b99a674a5eb7eceb2561b8b5a8e390e19a859536b8977d06f298d68c3d1"
+    },
     "platform/tester/Dockerfile": {
       "sha256": "23134cc924f0db11c9fdfd3fa876f09ba5425df670ecfd34238c4cac2e78233f"
     },
@@ -278,6 +281,9 @@
     },
     "scripts/bootstrap-db-roles.sh": {
       "sha256": "1f2a17fab3f43bb18de296372f4a4332615a56b3b341b1ae58ce85646ec0fd80"
+    },
+    "scripts/build-helper-images.sh": {
+      "sha256": "a6d5cc43d638a4afcca7c9abb6f3853297266b36305450c184f8dfbdd1ec65ed"
     },
     "scripts/check-built-docs.py": {
       "sha256": "1669ff84cb7e69ec11f35e115c8e1c7ef51a32d3ea7302c46946e97db8a77fb9"
@@ -340,7 +346,7 @@
       "sha256": "e6c423a7bd77efce87b02511565d5db376ebc5427d9b9a1b071e44b139251521"
     },
     "scripts/install-platform.sh": {
-      "sha256": "1d78f3cee1f2f4c9bece63459f3f1e96c5227eae397a1790491385ac97be77a5"
+      "sha256": "42671557e5198632532113658364a6d1178cb0859db29ccf4950dc28ae736e00"
     },
     "scripts/lab_build_hash.py": {
       "sha256": "47f9b084a529c6ef0460cdb0895f0b90d3adf18c6c37ecf97b4f34bfabe952cf"
@@ -358,10 +364,10 @@
       "sha256": "c987b10bb1c70c4955d356acab83486123ee477513fa9272aaa8d566e8b100b8"
     },
     "scripts/supply_chain.py": {
-      "sha256": "937d3c617b2124c3799f95fc20349b511d83461a32e8bf8e3b3daac9a48210ea"
+      "sha256": "dd4e2360504133822c6485559f1b27ebb9e83d8a7de7d53d4269fa67105e376c"
     },
     "scripts/sync-dev-bind-mount.sh": {
-      "sha256": "6af1529b5aec59e29d35b58b5a48910681abc0c92ef3f6d1ee3389ebff07757f"
+      "sha256": "726a5b5f259ee7a1a9e0c1e6cd51873ba4b77d66ffa19f27266da3c288ed3783"
     },
     "scripts/ui-smoke.mjs": {
       "sha256": "b9b266e5517eb35bb0614f6f41f618780b70fdc004e591d787b8d4b02a3bdb3a"
@@ -376,7 +382,7 @@
       "sha256": "f08f563a56860357a3c246993e4fd3da16cf1df35cce49f9890c0b09eb1ab769"
     },
     "versions.yaml": {
-      "sha256": "6bad8fb7c358ef57e8aec15d06f95ef1474511da169c7f7b7824c535e38742cc"
+      "sha256": "5d63e70824ec64c5a933cd8696efa96cbcd7ee9e09c94abc7923719a518fd755"
     }
   },
   "generator": "scripts/supply_chain.py",

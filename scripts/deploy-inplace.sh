@@ -111,6 +111,7 @@ log "Verifying the supply-chain lock"
     --gpg-fingerprint "$RELEASE_GPG_FINGERPRINT")
 
 if [[ "$DRY_RUN" == "1" ]]; then
+    log "Would build the pinned helper image"
     log "Would tag rollback images pre-$TAG"
     log "Would back up the database"
     log "Would build and recreate backend and frontend from $PLATFORM_DIR"
@@ -134,6 +135,11 @@ COMPOSE=(docker compose \
     --project-name "$PROJECT_NAME")
 [[ -f "$PLATFORM_DIR/docker-compose.adopt.yml" ]] && COMPOSE+=(-f "$PLATFORM_DIR/docker-compose.adopt.yml")
 [[ -f "$PLATFORM_DIR/docker-compose.override.yml" ]] && COMPOSE+=(-f "$PLATFORM_DIR/docker-compose.override.yml")
+
+if [[ -x "$REPO_DIR/scripts/build-helper-images.sh" ]]; then
+    log "Building helper images"
+    bash "$REPO_DIR/scripts/build-helper-images.sh"
+fi
 
 log "Building backend"
 "${COMPOSE[@]}" build backend
