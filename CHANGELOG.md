@@ -4,7 +4,22 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
-No unreleased changes.
+### Competency review export
+
+- Added `scripts/export-contract-reviews.py` with a pseudonymous signed-review
+  manifest, a private administrator export, an overrides writer, and an offline
+  `--check` gate that refuses a reviewed YAML entry without a matching signed
+  review.
+- Added `app.services.competency_contract_integrity` so the review service and
+  the offline gate share the contract, lab, and taxonomy hashing rules.
+- The contract generator now accepts a full signed `evidence` list and
+  `assessment_criteria` from the overrides file and round-trips them.
+
+### Workbook reader
+
+- The workbook link now opens a blank window, refreshes the HttpOnly wiki cookie,
+  and then navigates. Opening the wiki first raced the cookie request and could
+  land on the SPA login on a slow connection.
 
 ## [5.41.0] - 2026-11-24
 
