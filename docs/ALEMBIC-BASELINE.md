@@ -59,5 +59,5 @@ database, migrates it to head, and fails if the drift count exceeds the known
 baseline:
 
 ```bash
-SCHEMA_DRIFT_BASELINE=48 bash scripts/check-restore-drift.sh
+SCHEMA_DRIFT_BASELINE=38 bash scripts/check-restore-drift.sh
 ```

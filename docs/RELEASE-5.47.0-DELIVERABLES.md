@@ -1,15 +1,16 @@
 # Release 5.47.0 deliverables
 
-Status: **release prepared; deployment pending** on 24 November 2026.
+Status: **released and deployed** to development and production on 24
+November 2026.
 
 | Item | Value |
 |---|---|
 | Version | `5.47.0` |
 | Signed tag | `v5.47.0` |
-| Release commit | Pending tag |
+| Release commit | `ae0264b9` |
 | Alembic | `0065_legacy_kali_columns` (no new migration) |
-| Production | Pending |
-| Development | Pending |
+| Production | Deployed and verified |
+| Development | Deployed and verified |
 | Supply-chain lock | Refreshed and signed with the release key |
 
 ## Threat intelligence
@@ -52,11 +53,11 @@ Status: **release prepared; deployment pending** on 24 November 2026.
 | Frontend build | Passed |
 | i18n budget | `5,310` bare strings across `104` files |
 | Development drift | `38` operations |
-| Production drift | Pending |
-| Threat routes | `/threat-awareness` and `/api/ransomware-activity` pending |
-| Supply-chain lock | Pending |
-| Restore drill | Pending |
-| Rollback images | Pending |
+| Production drift | `38` operations |
+| Threat routes | `/threat-awareness` `200`; `/api/ransomware-activity` `401` without a token |
+| Supply-chain lock | Verified with the release key |
+| Restore drill | **PASSED** at 38 operations |
+| Rollback images | `pre-v5.47.0` backend and frontend |
 
 ## Known limitations
 
@@ -68,11 +69,11 @@ Status: **release prepared; deployment pending** on 24 November 2026.
 
 ## Acceptance checklist
 
-- [ ] Signed tag and verified supply-chain lock.
-- [ ] CI integrity gate passes on the release commit.
-- [ ] Ransomware section renders with sample data and no victim fields.
-- [ ] Production health, version, SSO, and public routes verified.
-- [ ] Production drift is 38 operations.
-- [ ] Pre-deploy and post-deploy backups.
-- [ ] Restore drill and restore-drift gate passed.
-- [ ] Rollback images retained.
+- [x] Signed tag and verified supply-chain lock.
+- [x] CI integrity gate passes on the release commit.
+- [x] Ransomware section renders with sample data and no victim fields.
+- [x] Production health, version, SSO, and public routes verified.
+- [x] Production drift is 38 operations.
+- [x] Pre-deploy and post-deploy backups.
+- [x] Restore drill and restore-drift gate passed.
+- [x] Rollback images retained.

@@ -14,7 +14,7 @@ DB_CONTAINER="${DB_CONTAINER:-ocr-db}"
 BACKEND_CONTAINER="${BACKEND_CONTAINER:-ocr-backend}"
 DB_USER="${DB_USER:-labuser}"
 DB_NAME="${DB_NAME:-labdb}"
-BASELINE="${SCHEMA_DRIFT_BASELINE:-48}"
+BASELINE="${SCHEMA_DRIFT_BASELINE:-38}"
 
 DUMP="$(ls -t "$BACKUP_DIR"/ocr-backup-*.dump 2>/dev/null | head -1 || true)"
 if [ -z "$DUMP" ]; then

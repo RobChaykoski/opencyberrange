@@ -103,6 +103,5 @@ docker exec ocr-backend alembic -c alembic.ini check
 bash scripts/restore-drill.sh
 ```
 
-Development reports 38 operations after the alignment: 18 runtime tenant
-columns and 20 tenant indexes. Production is expected to match; re-run against
-production after the next deploy to confirm.
+Development and production both report 38 operations after 5.47.0: 18 runtime
+tenant columns and 20 tenant indexes. The restore-drift gate now defaults to 38.

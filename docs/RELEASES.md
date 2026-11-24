@@ -24,7 +24,7 @@ Releases 5.46.0 and 5.46.1 skipped step 3, so the committed manifest still said
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.47.0` | SWOCTS Cyber Range Release 5.47.0 | Signed annotated tag: `ocr-labd` read-only status plus an opt-in stop, aggregated ransomware activity from RansomLook with ADR 0009, and model alignment that reduces Alembic drift from 48 to 38 operations. Deployment pending. |
+| `v5.47.0` | SWOCTS Cyber Range Release 5.47.0 | Signed annotated tag: `ocr-labd` read-only status plus an opt-in stop, aggregated ransomware activity from RansomLook with ADR 0009, and model alignment that reduces Alembic drift from 48 to 38 operations. Deployed to development and production on 24 November 2026; post-deploy backup, restore drill, and restore-drift gate passed. |
 
 Deliverables: [Release 5.47.0 deliverables](RELEASE-5.47.0-DELIVERABLES.md).
 

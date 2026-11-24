@@ -331,7 +331,7 @@
       "sha256": "59be07a3a748ecc99b2e7bd1216d2c6e3ea62209c4abe800500c3c2c176ba3e3"
     },
     "scripts/check-restore-drift.sh": {
-      "sha256": "e3fa0216539a08da5dd3534b7d76742a73addf54c5d45657728fc7cd105988aa"
+      "sha256": "7321e6897c1b74a3ffe7ad59e8f2619ddd80e81b43626abf9fe0929202eeaeaf"
     },
     "scripts/check_db_roles.py": {
       "sha256": "a188534ab5135c289a572edb7982b38e11d27deea8da9c421ed21af5ffada74b"
