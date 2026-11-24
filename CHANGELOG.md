@@ -6,6 +6,46 @@ All notable changes to OpenCyberRange are recorded here.
 
 No unreleased changes.
 
+## [5.41.0] - 2026-11-24
+
+Contract-review operations and evidence-reporting corrections: the instructor
+contract-review dashboard with sign-off and cycle tracking, evidence-review
+analytics and decision-flow fixes, lab framing and console corrections, and
+migration `0060_competency_reviews`.
+
+### Contract review
+
+- Added `/contract-review` for instructors and administrators: a cycle queue
+  with status chips and filters, competency and evidence weight editors,
+  reliability and criteria, a 6/12/24-month cycle selector, attestation, draft
+  save, sign-off, history, and an administrator export-ready panel.
+- Added `GET /api/competency-reviews/catalogue` with the taxonomy domains,
+  competencies, evidence types, and cycle lengths.
+- Added migration `0060_competency_reviews` with tenant scope, one active signed
+  review per institution and lab, and an immutable-signature guard.
+
+### Evidence review
+
+- Corrected the analytics denominators: minors are excluded for non-admin
+  viewers, superseded evidence is excluded, accepted-of-decided rates replace
+  raw acceptance, and suppressed rates return null rather than zero.
+- Weakest and strongest competency slices require at least five learners.
+- The review queue accepts an optional `learner_id` filter without changing its
+  oldest-first order.
+- Fixed the post-decision state so a successful decision no longer shows a stale
+  error, and the workbench advances to the next item.
+
+### Security and reliability
+
+- The SPA document, HTTPS server, and shared security-header snippet now agree on
+  `frame-src` for dynamic lab targets while the workbook stays pinned to :8443.
+- The shared-VM console placeholder is neutral and explains the manual-close
+  fallback instead of showing a false "Connecting" state.
+- Corrected the revocation docstring (the policy fails closed) and WebSocket
+  ticket expiry timezone handling.
+- Login-streak awards now retry on deadlock; recent completion ordering has a
+  deterministic tie-breaker.
+
 ## [5.40.0] - 2026-11-24
 
 Release 6 foundation and capstone planning: object coverage audit, quiz

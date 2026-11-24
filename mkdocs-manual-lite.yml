@@ -147,6 +147,7 @@ nav:
     - "Course Assessments": 03_Instructor_Guide/16_Course_Assessments.md
     - "Evidence Review": 03_Instructor_Guide/17_Evidence_Review.md
     - "Recognition Awards": 03_Instructor_Guide/18_Recognition_Awards.md
+    - "Contract Review": 03_Instructor_Guide/19_Contract_Review.md
   - "Server Deployment":
     - "Prerequisites": 00_Server_Deployment/01_Prerequisites.md
     - "Docker Compose Manual": 00_Server_Deployment/08_Docker_Deploy_Manual.md

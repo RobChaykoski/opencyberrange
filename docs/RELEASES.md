@@ -3,6 +3,14 @@
 This page maps the tags in the repository to the release they actually
 represent. It exists because the history contains several naming eras.
 
+## Release 5.41.0
+
+| Tag | Release | Status |
+|---|---|---|
+| `v5.41.0` | SWOCTS Cyber Range Release 5.41.0 | Signed annotated tag: the instructor contract-review dashboard with sign-off and a 6/12/24-month review cycle, the competency catalogue endpoint, evidence-review analytics and decision-flow corrections, lab framing and console fixes, and migration `0060_competency_reviews`. Deployment pending. |
+
+Deliverables: [Release 5.41.0 deliverables](RELEASE-5.41.0-DELIVERABLES.md).
+
 ## Release 5.40.0
 
 | Tag | Release | Status |

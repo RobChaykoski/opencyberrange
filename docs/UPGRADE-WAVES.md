@@ -11,12 +11,12 @@ Last reviewed: **2026-11-23**.
 
 | Source | Value | Role |
 |---|---|---|
-| `platform/backend/app/version.py` | `APP_VERSION = "5.40.0"` | Runtime version of record |
-| `versions.yaml` `platform.version` | `5.40.0` | Human and CI inventory |
-| `versions.yaml` `release.version` | `5.40.0` | Last released line |
+| `platform/backend/app/version.py` | `APP_VERSION = "5.41.0"` | Runtime version of record |
+| `versions.yaml` `platform.version` | `5.41.0` | Human and CI inventory |
+| `versions.yaml` `release.version` | `5.41.0` | Last released line |
 | `versions.yaml` `development.version` | `5.41.0` | Next planned line |
-| `platform/frontend/package.json` | `5.40.0` | Frontend build metadata |
-| Signed tag | `v5.40.0` | Release evidence |
+| `platform/frontend/package.json` | `5.41.0` | Frontend build metadata |
+| Signed tag | `v5.41.0` | Release evidence |
 
 Do not hand-maintain a second major line in these files. If a value disagrees,
 fix it before a release and run:

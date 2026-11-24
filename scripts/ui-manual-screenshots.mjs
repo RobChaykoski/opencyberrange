@@ -333,6 +333,17 @@ if (instructor) {
     }
   }
 
+  await go(page, '/contract-review', 1800)
+  await viewportShot(page, path.join(IMG.instructor, 'contract-review.png'), 'contract review queue')
+  const contractItem = page.locator('.contract-review__item').first()
+  if (await contractItem.count()) {
+    await contractItem.click()
+    await page.waitForTimeout(1400)
+    await viewportShot(page, path.join(IMG.instructor, 'contract-review-form.png'), 'contract review form')
+  } else {
+    report.push('SKIP contract review form: no contracts in the queue')
+  }
+
   // Student Preview banner
   await go(page, '/instructor?tab=courses', 1300)
   const preview = page.locator('.action-btn--impersonate').first()

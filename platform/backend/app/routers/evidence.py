@@ -215,13 +215,19 @@ async def decide_appeal(
 @router.get("/queue")
 async def review_queue(
     limit: int = Query(50, ge=1, le=200),
+    learner_id: int | None = Query(None, ge=1),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_reporting_user),
 ):
-    """Evidence awaiting a first review or more evidence."""
+    """Evidence awaiting a first review or more evidence.
+
+    ``learner_id`` narrows the queue to one learner without changing its
+    oldest-first review order.
+    """
     records = evidence_service.list_records(
         db,
         current_user,
+        learner_id=learner_id,
         statuses=("collected", "in_review"),
         limit=limit,
     )

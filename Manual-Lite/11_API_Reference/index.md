@@ -6342,7 +6342,7 @@ Accept or reject an appeal. Acceptance returns evidence to review.
 
 **Review Queue**
 
-Evidence awaiting a first review or more evidence.
+Evidence awaiting a first review or more evidence.  ``learner_id`` narrows the queue to one learner without changing its oldest-first review order.
 
 **Authentication:** OAuth2PasswordBearer
 
@@ -6351,6 +6351,7 @@ Evidence awaiting a first review or more evidence.
 | Parameter | In | Type | Required | Description |
 |---|---|---|---|---|
 | `limit` | query | integer | no |  |
+| `learner_id` | query | integer or null | no |  |
 
 **Responses**
 

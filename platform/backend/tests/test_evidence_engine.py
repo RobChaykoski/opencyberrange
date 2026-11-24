@@ -292,7 +292,10 @@ def test_queue_lists_unreviewed_evidence(client, db_session):
     learner = _user(db_session)
     evidence_id = _create(client, admin, _payload(learner.id))["evidence"]["id"]
 
-    queue = client.get("/api/evidence/queue", headers=_headers(client, admin))
+    queue = client.get(
+        f"/api/evidence/queue?learner_id={learner.id}",
+        headers=_headers(client, admin),
+    )
     assert queue.status_code == 200
     assert evidence_id in [row["id"] for row in queue.json()["evidence"]]
 
