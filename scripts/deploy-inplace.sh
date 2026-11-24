@@ -136,7 +136,7 @@ COMPOSE=(docker compose \
 [[ -f "$PLATFORM_DIR/docker-compose.adopt.yml" ]] && COMPOSE+=(-f "$PLATFORM_DIR/docker-compose.adopt.yml")
 [[ -f "$PLATFORM_DIR/docker-compose.override.yml" ]] && COMPOSE+=(-f "$PLATFORM_DIR/docker-compose.override.yml")
 
-if [[ -x "$REPO_DIR/scripts/build-helper-images.sh" ]]; then
+if [[ -f "$REPO_DIR/scripts/build-helper-images.sh" ]]; then
     log "Building helper images"
     bash "$REPO_DIR/scripts/build-helper-images.sh"
 fi

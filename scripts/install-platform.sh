@@ -846,7 +846,7 @@ build_and_start() {
 
     # Build the pinned helper image used by host-network and lab-network setup.
     # The backend spawns it by image name, so compose build does not produce it.
-    if [ -x "$REPO_DIR/scripts/build-helper-images.sh" ]; then
+    if [ -f "$REPO_DIR/scripts/build-helper-images.sh" ]; then
         log "Building helper images..."
         bash "$REPO_DIR/scripts/build-helper-images.sh" || \
             error_exit "Helper-image build failed"
