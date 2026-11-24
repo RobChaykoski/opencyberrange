@@ -41,6 +41,7 @@ from app.timezones import resolve_timezone
 from app.database import get_db
 from app.models import Lab, LabSession, User, FlagAttempt, LabCompletion, ExerciseTestResult, Course, CourseLabAssignment
 from app.services.docker_manager import DockerManager, get_subnet_id, get_track_directory_name
+from app.services.run_state import run_state_dir
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -122,10 +123,18 @@ MAX_RUN_EVENTS = 50_000              # Cap events per run to bound memory
 # ── File-based run state (multi-worker safe) ──────────────────────────────
 # uvicorn runs many workers; the POST that starts a run and the GET polls for
 # its events land on different worker processes, so in-memory _active_runs is
-# invisible to the polling worker. Persist run state to a shared /tmp dir
-# (same container, all workers) so any worker can read it. Mirrors the
-_RUN_DIR = "/tmp/ocr_exercise_test"
+# invisible to the polling worker. Persist run state in the service-owned state
+# directory (same container, all workers) so any worker can read it.
+_RUN_DIR = os.path.join(run_state_dir(), "exercise-test")
 _RUN_TTL_SECONDS = 6 * 3600          # prune run files older than this
+
+
+def _ensure_run_dir() -> None:
+    os.makedirs(_RUN_DIR, mode=0o750, exist_ok=True)
+    try:
+        os.chmod(_RUN_DIR, 0o750)
+    except OSError:
+        pass
 
 
 def _run_state_path(run_id: str) -> str:
@@ -159,10 +168,10 @@ def _run_existing_file(run_id: str, suffix: str) -> str | None:
 
 
 def _run_write_state(run_id: str, state: dict) -> None:
-    os.makedirs(_RUN_DIR, exist_ok=True)
+    _ensure_run_dir()
     path = _run_state_path(run_id)
     tmp = path + ".tmp"
-    with open(tmp, "w") as f:
+    with open(tmp, "w", encoding="utf-8") as f:
         json.dump(state, f)
     os.replace(tmp, path)   # atomic on the same filesystem
 
@@ -179,8 +188,8 @@ def _run_read_state(run_id: str):
 
 
 def _run_append_event(run_id: str, event: dict) -> None:
-    os.makedirs(_RUN_DIR, exist_ok=True)
-    with open(_run_events_path(run_id), "a") as f:
+    _ensure_run_dir()
+    with open(_run_events_path(run_id), "a", encoding="utf-8") as f:
         f.write(json.dumps(event) + "\n")
 
 
@@ -223,7 +232,7 @@ def _run_request_cancel(run_id: str) -> bool:
     state_path = _run_existing_file(run_id, "state.json")
     if state_path is None:
         return False
-    os.makedirs(_RUN_DIR, exist_ok=True)
+    _ensure_run_dir()
     cancel_path = os.path.join(
         os.path.dirname(state_path),
         os.path.basename(state_path)[: -len("state.json")] + "cancel",

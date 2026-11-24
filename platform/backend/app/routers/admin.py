@@ -26,7 +26,6 @@ import json
 import os
 import re
 import logging
-import tempfile
 import threading
 import uuid as _uuid
 
@@ -83,6 +82,7 @@ from app.services.backups import backup_directory, create_database_backup
 from app.services.backup_sql import UnsafeBackupError, validate_sql_dump
 from app.services.erasure import erase_user, ErasureBlocked
 from app.services.password_breach import enforce_password_breach_check
+from app.services.run_state import run_state_dir
 from app.services.file_lock import open_locked
 from app.services.spreadsheet_safety import neutralize_cell
 from app.services.lab_naming import parse_lab_slug
@@ -2019,7 +2019,7 @@ def get_sessions_health(
 import json as _json
 
 _IMPERSONATION_FILE = os.path.join(
-    tempfile.gettempdir(), "ocr_admin_impersonation.json"
+    run_state_dir(), "admin-impersonation.json"
 )
 
 
@@ -5091,7 +5091,7 @@ async def stress_test_cleanup(
 # started the test.
 _STRESS_DIR = os.environ.get(
     "OCR_STRESS_DIR",
-    os.path.join(tempfile.gettempdir(), "opencyberrange-stress"),
+    os.path.join(run_state_dir(), "stress"),
 )
 _stress_cancel_flags: dict[str, threading.Event] = {}
 _stress_state_lock = threading.Lock()

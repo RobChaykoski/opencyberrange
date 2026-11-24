@@ -95,9 +95,10 @@ COPY . /app/
 # runtime user: a host umask of 027 can leave new files mode 640, which the
 # image would otherwise preserve as root-owned and unreadable to UID 10001.
 RUN useradd --uid 10001 --create-home --shell /usr/sbin/nologin ocr && \
-    mkdir -p /app/backups /workbook && \
-    chown -R ocr:ocr /app/backups /workbook && \
-    chmod -R a+rX /app
+    mkdir -p /app/backups /workbook /app/run-state && \
+    chown -R ocr:ocr /app/backups /workbook /app/run-state && \
+    chmod -R a+rX /app && \
+    chmod 750 /app/run-state
 
 USER ocr
 
