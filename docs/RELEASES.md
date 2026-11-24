@@ -20,6 +20,14 @@ Steps 2 and 3 order matters: the manifest copies the lock's `release` field.
 Releases 5.46.0 and 5.46.1 skipped step 3, so the committed manifest still said
 `5.45.0` and the CI integrity gate failed.
 
+## Release 5.47.0
+
+| Tag | Release | Status |
+|---|---|---|
+| `v5.47.0` | SWOCTS Cyber Range Release 5.47.0 | Signed annotated tag: `ocr-labd` read-only status plus an opt-in stop, aggregated ransomware activity from RansomLook with ADR 0009, and model alignment that reduces Alembic drift from 48 to 38 operations. Deployment pending. |
+
+Deliverables: [Release 5.47.0 deliverables](RELEASE-5.47.0-DELIVERABLES.md).
+
 ## Release 5.46.2
 
 | Tag | Release | Status |

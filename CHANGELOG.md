@@ -4,6 +4,12 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
+No unreleased changes.
+
+## [5.47.0] - 2026-11-24
+
+Threat intelligence, host-agent operations, and database model alignment.
+
 ### Threat awareness
 
 - Added an aggregated ransomware-activity section sourced from RansomLook `/api/stats` and `/api/hot`: totals and top group names/counts only, with CC BY 4.0 attribution.

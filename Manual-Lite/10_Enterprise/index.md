@@ -1,6 +1,6 @@
 # SWOCTS Cyber Range Enterprise - manual supplement
 
-Enterprise is a **Release 5.46.2 profile** and adds HA, SSO, enterprise reporting,
+Enterprise is a **Release 5.47.0 profile** and adds HA, SSO, enterprise reporting,
 and compliance reporting. LTI 1.3 and the per-student accommodation engine are
 implemented; full multi-tenancy remains deferred. Read the [core manual](../index.md) and the
 [Professional supplement](../09_Professional/index.md) first. Enterprise is
@@ -8,7 +8,7 @@ cumulative too.
 
 ## Delivery status
 
-| Capability | State in Release 5.46.2 |
+| Capability | State in Release 5.47.0 |
 |---|---|
 | Professional analytics and reporting | Inherited |
 | SSO / OIDC | **Implemented and tested** |
@@ -110,7 +110,7 @@ claim mapping, and troubleshooting, see
 
 - **Identity providers:** the settings screen stores LDAP, OIDC, and SAML
   configuration and encrypts bind passwords, client secrets, and private keys.
-  OIDC, SAML, and LDAP login are active in Release 5.46.2.
+  OIDC, SAML, and LDAP login are active in Release 5.47.0.
 - **API documentation:** `/docs`, `/redoc`, and `/openapi.json` are not proxied
   on the public origin; nginx returns 404. The backend gate is default-off as
   defense in depth for direct localhost access.
