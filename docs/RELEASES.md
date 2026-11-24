@@ -3,6 +3,12 @@
 This page maps the tags in the repository to the release they actually
 represent. It exists because the history contains several naming eras.
 
+## Release 5.38.0
+
+| Tag | Release | Status |
+|---|---|---|
+| `v5.38.0` | SWOCTS Cyber Range Release 5.38.0 | Signed annotated tag: Release 6 evidence ledger and review API, recency-weighted multi-path career affinity, OSINT03 canary-token lab "Noise in the Nest", curriculum-manifest reconciliation, and the fresh-install README section. |
+
 ## Release 5.37.1
 
 | Tag | Release | Status |

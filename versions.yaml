@@ -9,9 +9,9 @@
 # docs/decisions/0004-single-platform-release-version.md.
 platform:
   name: "SWOCTS Cyber Range"
-  version: "5.37.1"
+  version: "5.38.0"
   status: "release"
-  date: "2026-11-23"
+  date: "2026-11-24"
 
 editions:
   community_academic:
@@ -41,13 +41,13 @@ maintenance_lines:
     note: "Existing single-host teaching installs; new installs use the Release 5 tree with the Community / Academic profile."
 
 release:
-  version: "5.37.1"
+  version: "5.38.0"
   status: "release"
-  date: "2026-11-23"
+  date: "2026-11-24"
 
 development:
-  version: "5.38.0"
-  focus: "Release 6 evidence model, competency contract review, and monitoring operations"
+  version: "5.39.0"
+  focus: "Release 6 evidence review, instructor analytics, and monitoring operations"
 
 policy:
   name: latest-supported-ga

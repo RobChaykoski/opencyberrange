@@ -1,8 +1,8 @@
 {
-  "version": "5.37.1",
-  "git_sha": "32652ded",
-  "built_at": "2026-11-23T23:13:13+00:00",
-  "release_date": "2026-11-23",
+  "version": "5.38.0",
+  "git_sha": "e88be438",
+  "built_at": "2026-11-24T00:58:27+00:00",
+  "release_date": "2026-11-24",
   "status": "release",
   "python": "3.13",
   "node": "22",

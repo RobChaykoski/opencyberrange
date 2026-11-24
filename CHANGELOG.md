@@ -2,7 +2,7 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
-## [Unreleased]
+## [5.38.0] - 2026-11-24
 
 ### Release 6 evidence ledger
 
@@ -42,6 +42,12 @@ All notable changes to OpenCyberRange are recorded here.
   navigation from link-preview, scanner, and uptime-monitor noise.
 - Added the lab workbook, quiz, competency contract, tester manifest, and
   automated flag checks. The catalogue is now **215 labs**.
+
+### Documentation
+
+- Added a fresh-install requirements table and the `setup-range-server.sh`
+  command near the top of the README, with the platform-only and post-install
+  paths.
 
 ## [5.37.1] - 2026-11-23
 

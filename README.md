@@ -1,6 +1,6 @@
 ﻿# SWOCTS Cyber Range
 
-> **Release 5 is the current release line (latest signed `v5.37.1`; development and production are on 5.37.1).**
+> **Release 5 is the current release line (latest signed `v5.38.0`; development and production are on 5.38.0).**
 >
 > **Edition: Community / Academic** (single-host, `lite` entitlement). The
 > Professional and Enterprise profiles are separate licence tiers built from the
@@ -43,6 +43,50 @@
 A self-hosted cybersecurity training platform that deploys hands-on exercises inside isolated Docker containers. Students connect over WireGuard VPN, solve challenges across instructor-defined tracks, and submit flags for automated scoring. The platform ships with foundational exercises spanning penetration testing, network foundations and forensics, web exploitation, malware analysis, OT/ICS security, AI security, and open-source intelligence (OSINT).
 
 Students also get a profile with completion statistics, certificates, achievements, and a downloadable PDF transcript. They can download their account data or permanently delete their account from the privacy panel; the erasure suppression ledger and backup workflow keep a restore from resurrecting a deleted account. Instructors and administrators manage courses, progress, and the platform from the same interface.
+
+## Fresh install
+
+### Requirements
+
+| Item | Minimum | Recommended |
+|---|---|---|
+| Host OS | Ubuntu 24.04 LTS (22.04 is supported for upgrades) | Ubuntu 24.04 LTS |
+| CPU | 4 cores | 8 or more |
+| RAM | 32 GB | 64 GB |
+| Disk | 100 GB for an evaluation install | 500 GB with prebuilt lab images |
+| Access | Root or `sudo` on the host | A normal login user with `sudo` |
+| Runtime | Docker Engine 24+ with Compose v2 | The installer adds missing packages |
+| Tooling | Python 3, WireGuard tools, `iptables-persistent` | The installer adds missing packages |
+| Network | 80/TCP, 443/TCP, 51820/UDP; 5555/TCP only if WSTunnel is enabled | Keep 8000/TCP and 5000/TCP closed |
+
+### Brand-new install
+
+Clone the repository on the server and run the master installer as your normal
+login user with `sudo`:
+
+```bash
+git clone https://github.com/RobChaykoski/opencyberrange.git
+cd opencyberrange
+sudo bash scripts/setup-range-server.sh --install
+```
+
+The script installs Docker, WireGuard, the Peer Manager, firewall rules, the
+platform containers, the database, and a self-signed TLS certificate for a LAN
+install. It then asks whether to discover labs and pre-build lab images, and
+runs verification. Do not run it from a root shell (`sudo su` or `su -`); use
+`sudo bash` from the clone in your home directory.
+
+When it finishes, open `https://<server-ip>/` and complete the first-run Setup
+wizard. Verify the running installation with:
+
+```bash
+bash scripts/post-install-check.sh
+```
+
+For a platform-only install without the VPN and server hardening phases, use
+`sudo bash scripts/install-platform.sh --fresh`. For the full guide, see
+[Prerequisites](Manual-Lite/00_Server_Deployment/01_Prerequisites.md) and
+[Local Deployment](Manual-Lite/00_Server_Deployment/02_Local_Deployment.md).
 
 ### Privacy and learner control
 
