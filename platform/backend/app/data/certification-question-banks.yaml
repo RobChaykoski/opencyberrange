@@ -9,6 +9,10 @@ pathways:
 - id: comptia-security-plus
   name: CompTIA Security+
   code: SY0-701
+  exam:
+    question_count: 20
+    duration_minutes: 30
+    pass_mark: 70
   url: https://www.comptia.org/certifications/security
   objectives_url: https://www.comptia.org/certifications/security#examdetails
   tracks:
@@ -320,6 +324,10 @@ pathways:
 - id: comptia-cysa-plus
   name: CompTIA CySA+
   code: CS0-004
+  exam:
+    question_count: 20
+    duration_minutes: 30
+    pass_mark: 70
   url: https://www.comptia.org/en-us/certifications/cybersecurity-analyst/v4/
   objectives_url: https://www.comptia.org/en-us/certifications/cybersecurity-analyst/v4/
   tracks:
@@ -620,6 +628,10 @@ pathways:
 - id: comptia-pentest-plus
   name: CompTIA PenTest+
   code: PT0-003
+  exam:
+    question_count: 20
+    duration_minutes: 30
+    pass_mark: 70
   url: https://www.comptia.org/certifications/pentest
   objectives_url: https://www.comptia.org/certifications/pentest#examdetails
   tracks:
@@ -919,6 +931,10 @@ pathways:
 - id: comptia-network-plus
   name: CompTIA Network+
   code: N10-009
+  exam:
+    question_count: 20
+    duration_minutes: 30
+    pass_mark: 70
   url: https://www.comptia.org/certifications/network
   objectives_url: https://www.comptia.org/certifications/network#examdetails
   tracks:
@@ -1207,6 +1223,10 @@ pathways:
 - id: comptia-linux-plus
   name: CompTIA Linux+
   code: XK0-006
+  exam:
+    question_count: 20
+    duration_minutes: 30
+    pass_mark: 70
   url: https://www.comptia.org/certifications/linux
   objectives_url: https://www.comptia.org/certifications/linux#examdetails
   tracks:
@@ -1477,6 +1497,10 @@ pathways:
 - id: microsoft-sc-900
   name: Microsoft SC-900
   code: SC-900
+  exam:
+    question_count: 20
+    duration_minutes: 30
+    pass_mark: 70
   url: https://learn.microsoft.com/en-us/credentials/certifications/security-compliance-and-identity-fundamentals/
   objectives_url: https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/sc-900
   tracks:
@@ -1768,6 +1792,10 @@ pathways:
 - id: isc2-cc
   name: ISC2 Certified in Cybersecurity
   code: CC
+  exam:
+    question_count: 20
+    duration_minutes: 30
+    pass_mark: 70
   url: https://www.isc2.org/certifications/cc
   objectives_url: https://www.isc2.org/certifications/cc
   tracks:
@@ -2058,6 +2086,10 @@ pathways:
 - id: owasp-top-10
   name: OWASP Top 10
   code: '2021'
+  exam:
+    question_count: 20
+    duration_minutes: 30
+    pass_mark: 70
   url: https://owasp.org/Top10/
   objectives_url: https://owasp.org/Top10/
   tracks:
@@ -2379,6 +2411,10 @@ pathways:
 - id: owasp-llm-top-10
   name: OWASP Top 10 for LLM Applications
   code: '2025'
+  exam:
+    question_count: 20
+    duration_minutes: 30
+    pass_mark: 70
   url: https://genai.owasp.org/llm-top-10/
   objectives_url: https://genai.owasp.org/llm-top-10/
   tracks:

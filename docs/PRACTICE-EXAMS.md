@@ -60,9 +60,27 @@ same questions as the exercise check, so there is one source of truth and one
 validator.
 
 The current bank is small (about 128 items across nine pathways). A mock exam is
-therefore a short drill, not a full-length replica. The UI shows the available
-count rather than pretending otherwise. Expanding the bank is content work with
-its own review and provenance requirements.
+therefore a short drill, not a full-length replica. Each pathway declares an
+`exam` block in the bank: today 20 questions, 30 minutes, and a 70% practice
+pass mark. The server clamps the question count to what the pathway actually
+contains, so a 14-question pathway produces a 14-question mock. The UI shows
+the real count rather than pretending otherwise. Expanding the bank is content
+work with its own review and provenance requirements.
+
+## Practice is not evidence
+
+A passed practice attempt is a **study signal**, not an evidence record. It does
+not enter the evidence ledger, the review queue, or the Legacy Score on its own.
+
+The reason is evidential: a multiple-choice attempt shows recall under a timer.
+It does not show that the learner can apply the knowledge, document a decision,
+or produce an artifact. Auto-creating evidence from every attempt would flood
+the reviewer queue and dilute the ledger.
+
+A later phase may let a learner attach one passed attempt to a written
+reflection and submit that combination for instructor review. That would be an
+explicit, reviewed evidence step, not an automatic one. Guest attempts are not
+accepted at all: practice is authenticated and self-only.
 
 ## What we did not copy from CloudCertPrep
 
@@ -112,8 +130,8 @@ learner; the question rows derive it from the session.
 |---|---|
 | 6.1 | Mock exam, domain drill, answer-key protection, optional shuffling, history, progress |
 | 6.2 | Expand the reviewed bank and add an exam config per pathway |
-| 6.3 | Guest practice with server-side grading and no persistence |
-| 6.4 | Feed practice outcomes into the evidence ledger and readiness view |
+| 6.3 | Expand the reviewed bank and add more pathway exam configurations |
+| 6.4 | Learner-initiated evidence attachment: one passed attempt plus a written reflection, reviewed by an instructor |
 
 ## Acceptance criteria
 

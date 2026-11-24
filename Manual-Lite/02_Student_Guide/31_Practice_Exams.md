@@ -13,7 +13,10 @@ best score for each one, and your recent attempts.
 - **Drill domain** focuses on one domain. Choose the domain first.
 
 The number of questions and the time limit come from the pathway configuration.
-The page shows both before you start.
+Each pathway in the reviewed bank declares its own `exam` block (currently
+20 questions, 30 minutes, 70% pass), and the server clamps that to the questions
+actually available. With today's bank, a Security+ mock is 14 questions, not a
+pretend 90-question replica. The page shows the real count before you start.
 
 ## During an attempt
 

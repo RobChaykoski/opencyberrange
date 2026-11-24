@@ -163,6 +163,11 @@ def test_a_domain_drill_stays_in_one_domain(client, db_session):
         pathway = next(
             row for row in pathways.json()["pathways"] if row["id"] == PATHWAY
         )
+        assert pathway["exam"] == {
+            "question_count": 14,
+            "duration_minutes": 30,
+            "pass_mark": 70,
+        }
         domain = next(row for row in pathway["domain_list"] if row["question_count"])
         started = client.post(
             "/api/practice/sessions",
