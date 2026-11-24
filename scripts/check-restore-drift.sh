@@ -6,7 +6,7 @@
 # production dump and the database container. The live database is untouched.
 #
 #   bash scripts/check-restore-drift.sh
-#   SCHEMA_DRIFT_BASELINE=48 bash scripts/check-restore-drift.sh
+#   SCHEMA_DRIFT_BASELINE=0 bash scripts/check-restore-drift.sh
 set -euo pipefail
 
 BACKUP_DIR="${BACKUP_DIR:-$HOME/backups}"
