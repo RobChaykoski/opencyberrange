@@ -1,15 +1,16 @@
 # Release 5.50.0 deliverables
 
-Status: **release prepared; deployment pending** on 24 November 2026.
+Status: **released and deployed** to development and production on 24
+November 2026.
 
 | Item | Value |
 |---|---|
 | Version | `5.50.0` |
 | Signed tag | `v5.50.0` |
-| Release commit | Pending tag |
+| Release commit | `56a73f17` |
 | Alembic | `0067_course_content_rls` (no migration) |
-| Production | Pending |
-| Development | Pending |
+| Production | Deployed and verified |
+| Development | Deployed and verified |
 | Supply-chain lock | Refreshed and signed with the release key |
 
 ## Tenant isolation
@@ -60,10 +61,10 @@ Status: **release prepared; deployment pending** on 24 November 2026.
 | Tenant audit | PASS, 47 tables, 0 leaks |
 | Labd harness | PASS |
 | Ransomware snapshot | Validated as `snapshot`, `291` posts, `15` groups |
-| Production drift | `0` expected |
-| Production health | Pending |
-| Restore drill | Pending |
-| Rollback images | Pending |
+| Production drift | `0` operations |
+| Production health | `200` |
+| Restore drill | **PASSED** at `0` operations |
+| Rollback images | `pre-v5.50.0` backend and frontend |
 
 ## Known limitations
 
@@ -75,12 +76,12 @@ Status: **release prepared; deployment pending** on 24 November 2026.
 
 ## Acceptance checklist
 
-- [ ] Signed tag and verified supply-chain lock.
-- [ ] CI integrity gate passes on the release commit.
-- [ ] Production health, version, SSO, and public routes verified.
-- [ ] Ransomware section reports `snapshot` mode on production.
-- [ ] Tenant audit passes on production.
-- [ ] Production drift is `0`.
-- [ ] Pre-deploy and post-deploy backups.
-- [ ] Restore drill and restore-drift gate at `0` passed.
-- [ ] Rollback images retained.
+- [x] Signed tag and verified supply-chain lock.
+- [x] CI integrity gate passes on the release commit.
+- [x] Production health, version, SSO, and public routes verified.
+- [x] Ransomware section reports `snapshot` mode on production.
+- [x] Tenant audit passes on production.
+- [x] Production drift is `0`.
+- [x] Pre-deploy and post-deploy backups.
+- [x] Restore drill and restore-drift gate at `0` passed.
+- [x] Rollback images retained.
