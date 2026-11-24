@@ -361,3 +361,32 @@ def test_content_is_append_only(db_session):
     with pytest.raises(ValueError):
         db_session.commit()
     db_session.rollback()
+
+def test_learner_evidence_includes_contract_status(client, db_session):
+    admin = _user(db_session, "admin")
+    learner = _user(db_session)
+    try:
+        created = _create(
+            client,
+            admin,
+            _payload(learner.id, source_id="ai-1-1-prompt-injection-basics"),
+        )
+        response = client.get("/api/evidence", headers=_headers(client, learner))
+        assert response.status_code == 200, response.text
+        row = next(
+            item
+            for item in response.json()["evidence"]
+            if item["id"] == created["evidence"]["id"]
+        )
+        assert row["contract_status"] == {
+            "status": "pending",
+            "provisional": True,
+            "next_review_at": None,
+        }
+    finally:
+        db_session.query(EvidenceRecord).filter(
+            EvidenceRecord.learner_id == learner.id
+        ).delete(synchronize_session=False)
+        db_session.delete(learner)
+        db_session.delete(admin)
+        db_session.commit()

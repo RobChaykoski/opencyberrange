@@ -21,6 +21,7 @@ from app.auth import (
 )
 from app.database import get_db
 from app.models import User
+from app.services import competency_reviews
 from app.services import evidence as evidence_service
 from app.services import evidence_analytics
 from app.services.evidence import EvidenceError
@@ -150,7 +151,15 @@ async def list_evidence(
         limit=limit,
         offset=offset,
     )
-    return {"evidence": [evidence_service.record_payload(row) for row in records]}
+    payloads = [evidence_service.record_payload(row) for row in records]
+    statuses = competency_reviews.evidence_contract_statuses(
+        db, current_user, [row.source_id for row in records]
+    )
+    for row, payload in zip(records, payloads, strict=True):
+        payload["contract_status"] = statuses.get(
+            str(row.source_id or "").split(":", 1)[0]
+        )
+    return {"evidence": payloads}
 
 
 @router.get("/rubrics")
@@ -244,7 +253,14 @@ async def get_evidence(
     record = evidence_service.get_record(db, current_user, evidence_id)
     if record is None:
         raise api_error(404, "evidence_not_found", "Evidence record not found.")
-    return {"evidence": evidence_service.record_payload(record)}
+    payload = evidence_service.record_payload(record)
+    statuses = competency_reviews.evidence_contract_statuses(
+        db, current_user, [record.source_id]
+    )
+    payload["contract_status"] = statuses.get(
+        str(record.source_id or "").split(":", 1)[0]
+    )
+    return {"evidence": payload}
 
 
 @router.post("/{evidence_id}/review")

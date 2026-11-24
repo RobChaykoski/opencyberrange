@@ -347,3 +347,20 @@ def test_learner_status_is_compact_and_tracks_sign_off(client, db_session):
         assert set(after) == {"status", "provisional", "next_review_at"}
     finally:
         _cleanup(db_session, [instructor, learner])
+
+@pytest.mark.db
+def test_evidence_source_maps_to_contract_status(client, db_session):
+    from app.services.competency_reviews import evidence_contract_statuses
+
+    learner = _user(db_session, "student")
+    try:
+        statuses = evidence_contract_statuses(
+            db_session,
+            learner,
+            [LAB, f"{LAB}:quiz", f"{LAB}:reflection:abc123", "not-a-lab"],
+        )
+        assert set(statuses) == {LAB}
+        assert statuses[LAB]["status"] == "pending"
+        assert statuses[LAB]["provisional"] is True
+    finally:
+        _cleanup(db_session, [learner])

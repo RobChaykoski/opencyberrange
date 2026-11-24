@@ -21,6 +21,8 @@ All notable changes to OpenCyberRange are recorded here.
   contract is pending, stale, overdue, or changes-requested. The notice does not
   block the lab or expose reviewer details. A compact **Mapping review** badge
   marks stale, overdue, and changes-requested labs in the exercise list.
+- **My Evidence** now marks each record provisional when its lab contract is
+  pending, stale, overdue, or changes-requested.
 
 ### Workbook reader
 

@@ -34,6 +34,14 @@
           <template v-if="item.confidence"> · confidence {{ item.confidence }}</template>
         </p>
 
+        <p
+          v-if="item.contract_status?.provisional"
+          class="my-evidence__contract"
+          :class="`my-evidence__contract--${item.contract_status.status === 'pending' ? 'info' : 'warning'}`"
+        >
+          {{ contractNote(item.contract_status) }}
+        </p>
+
         <p v-if="item.content_text" class="my-evidence__answer">{{ item.content_text }}</p>
 
         <div v-if="item.competencies.length" class="my-evidence__competencies">
@@ -99,6 +107,23 @@ const appealReasons = reactive({})
 
 function statusLabel(status) {
   return String(status || '').replace('_', ' ')
+}
+
+function contractNote(status) {
+  const value = status?.status
+  if (value === 'pending') {
+    return 'The competency mapping for this exercise is pending review; the skills credited are provisional.'
+  }
+  if (value === 'changes_requested') {
+    return 'The competency mapping is under revision; the skills credited may change.'
+  }
+  if (value === 'overdue') {
+    return 'The competency mapping is overdue for review; the skills credited may be out of date.'
+  }
+  if (value === 'stale') {
+    return 'The exercise changed after its competency review; the skills credited may be out of date.'
+  }
+  return ''
 }
 
 function formatDate(value) {
@@ -210,6 +235,21 @@ onMounted(loadEvidence)
 .my-evidence__note {
   color: var(--text-muted);
   font-size: 0.85rem;
+}
+
+.my-evidence__contract {
+  margin: 0;
+  padding: 0.5rem 0.7rem;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 0.35rem 0.35rem 0;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+}
+
+.my-evidence__contract--warning {
+  border-left-color: var(--warning);
+  background: color-mix(in srgb, var(--warning) 8%, var(--bg-secondary));
 }
 
 .my-evidence__status {

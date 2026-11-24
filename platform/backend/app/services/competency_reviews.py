@@ -377,6 +377,23 @@ def learner_statuses(db: Session, user: User, slugs: list[str]) -> dict[str, dic
     return statuses
 
 
+def evidence_contract_statuses(
+    db: Session, user: User, source_ids: list[str]
+) -> dict[str, dict]:
+    """Map evidence source ids to learner-facing contract statuses.
+
+    Flag evidence uses the lab slug as its source id; quiz and workbook evidence
+    use ``<lab-slug>:...``. Unknown source ids are ignored rather than guessed.
+    """
+    contracts = load_contracts().get("labs") or {}
+    slugs: list[str] = []
+    for source_id in source_ids:
+        candidate = str(source_id or "").split(":", 1)[0]
+        if candidate in contracts and candidate not in slugs:
+            slugs.append(candidate)
+    return learner_statuses(db, user, slugs)
+
+
 def _finite_weight(value, label: str) -> float:
     try:
         weight = float(value)
