@@ -4,6 +4,14 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
+No unreleased changes.
+
+## [5.39.0] - 2026-11-24
+
+Release 6 foundations: evidence appeals, learner journeys, the Cyber Legacy
+layer (impact, recognition, and the Living Archive), standalone certification
+practice, programme analytics, and migrations `0054`–`0058`.
+
 ### Evidence review workflow
 
 - Added the evidence reviewer surface at `/evidence-review` for instructors and
@@ -55,6 +63,9 @@ All notable changes to OpenCyberRange are recorded here.
   timed mock exams, domain drills, per-question option shuffling, a server-held
   answer key, spaced-repetition selection, attempt history, and per-domain
   accuracy. A practice pass is a study signal, not a credential.
+- Added 30 original certification practice items across all nine pathways,
+  concentrated on the thinnest domains, with public https references. The bank
+  now carries 158 reviewed items.
 - Added migration `0058_practice_sessions` with forced tenant RLS.
 - Added the **Cyber Legacy** frame: the Age of Foundations, the First
   Generation, the eight traditions, and historical markers, linked from the
