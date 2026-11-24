@@ -1,17 +1,18 @@
 # Release 5.42.0 deliverables
 
-Status: **release prepared; deployment pending** on 24 November 2026.
+Status: **released and deployed** to development and production on 24 November
+2026.
 
 | Item | Value |
 |---|---|
 | Version | `5.42.0` |
 | Signed tag | `v5.42.0` |
-| Release commit | Pending tag |
+| Release commit | `31ed83ab` |
 | Alembic | `0062_index_dedupe` |
-| Production | Pending |
-| Development | Pending |
+| Production | Deployed and verified |
+| Development | Deployed and verified |
 | Supply-chain lock | Refreshed and signed with the release key |
-| Backups | Pre-deploy and post-deploy dumps, plus a restore drill |
+| Backups | Pre-deploy and post-deploy dumps, plus a passed restore drill |
 
 ## Learner-visible contract state
 
@@ -57,20 +58,22 @@ signature. The gate reports them; it does not grandfather them.
 
 | Check | Result |
 |---|---|
-| Backend tests | Pending |
-| Frontend build and tests | Pending |
-| Quality checks | Pending |
-| Supply-chain lock | Pending |
-| Production `/api/version` | Pending |
-| Production health | Pending |
-| Alembic on production | Pending |
-| Public version and health | Pending |
-| Existing routes | Pending |
-| Review API | Pending |
-| SSO | Pending |
-| Duplicate DB indexes | Pending production check |
-| Restore drill | Pending |
-| Rollback images | Pending |
+| Backend tests | `1,176 passed` |
+| Frontend build and tests | Build passed; `35` component tests passed |
+| Quality checks | Green |
+| Supply-chain lock | Verified with the release key |
+| Production `/api/version` | `5.42.0` |
+| Production health | `200` |
+| Alembic on production | `0062_index_dedupe (head)` |
+| Public version and health | `5.42.0` and `200` |
+| Existing routes | `/journey`, `/impact`, `/practice`, `/my-evidence`, `/evidence-review`, `/contract-review` return `200` |
+| Review API | `/api/competency-reviews/catalogue` is gated (`401` unauthenticated) |
+| SSO | Authentik OIDC provider present; `sso_enabled` true |
+| CSP | `frame-src` includes dynamic lab targets; `frame-ancestors 'self'` |
+| Database index hygiene | Duplicate exact index sets: `0`; hot indexes present: `2` |
+| Cross-worker state | `/app/run-state` mode `750`, owned by `ocr` |
+| Restore drill | 69 users, 215 labs, 2 courses, 64 enrollments, 134 completions, 497 achievements, 1,575 activity events |
+| Rollback images | `opencyberrange-backend:pre-v5.42.0`, `ocr-frontend:pre-v5.42.0` |
 
 ## Known limitations
 
@@ -88,12 +91,12 @@ signature. The gate reports them; it does not grandfather them.
 
 ## Acceptance checklist
 
-- [ ] Signed tag and verified supply-chain lock.
-- [ ] Migration `0062` applied on development and production.
-- [ ] Production health, version, SSO, and public routes verified.
-- [ ] Pre-deploy and post-deploy backups.
-- [ ] Restore drill passed.
-- [ ] Rollback images retained.
-- [ ] Manual and API reference regenerated.
-- [ ] Coverage audit passes structurally.
-- [ ] Test suite and component regression test pass.
+- [x] Signed tag and verified supply-chain lock.
+- [x] Migration `0062` applied on development and production.
+- [x] Production health, version, SSO, and public routes verified.
+- [x] Pre-deploy and post-deploy backups.
+- [x] Restore drill passed.
+- [x] Rollback images retained.
+- [x] Manual and API reference regenerated.
+- [x] Coverage audit passes structurally.
+- [x] Test suite and component regression test pass.

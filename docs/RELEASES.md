@@ -7,7 +7,7 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.42.0` | SWOCTS Cyber Range Release 5.42.0 | Signed annotated tag: learner-visible competency contract status on exercises and My Evidence, the signed-review export manifest and offline gate, the workbook cookie fix, security hardening for run state, Fernet keys, and topology input, and migrations `0061` and `0062` for index hygiene. Deployment pending. |
+| `v5.42.0` | SWOCTS Cyber Range Release 5.42.0 | Signed annotated tag: learner-visible competency contract status on exercises and My Evidence, the signed-review export manifest and offline gate, the workbook cookie fix, security hardening for run state, Fernet keys, and topology input, and migrations `0061` and `0062` for index hygiene. Deployed to development and production on 24 November 2026; post-deploy backup and restore drill passed. |
 
 Deliverables: [Release 5.42.0 deliverables](RELEASE-5.42.0-DELIVERABLES.md).
 

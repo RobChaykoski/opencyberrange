@@ -1,8 +1,6 @@
 # Code and database review: 24 November 2026
 
-Status: **review completed; fixes are on `main` for the next signed release.**
-Production remains on signed `v5.41.0` while these changes are tested on
-development.
+Status: **review completed; fixes are deployed in signed `v5.42.0`.**
 
 This review covers the application code, the live PostgreSQL schema, dependency
 currency, container bases, and host patch state. It follows the earlier
@@ -59,11 +57,11 @@ currency, container bases, and host patch state. It follows the earlier
 | Connections observed | 13 | 29-30 |
 | Long transactions over 5 minutes | 0 | 0 |
 | Idle in transaction | 0 | 1 (under 5 minutes) |
-| Duplicate exact index sets | 0 after `0062` | Pending `0062` |
+| Duplicate exact index sets | 0 after `0062` | 0 after `0062` |
 | Tenant tables with RLS | 41 | 41 |
 | Tenant tables without RLS | 5 | 5 |
 | Largest table | `data_integrity_ledger` (~16k rows) | `system_metrics` (~12k rows) |
-| Hot indexes added | `ix_courses_instructor_id`, `ix_lab_sessions_lab_id` | Pending next release |
+| Hot indexes added | `ix_courses_instructor_id`, `ix_lab_sessions_lab_id` | Present |
 
 `ANALYZE` was run on the largest production tables after the review. No
 long-running query or connection-pressure condition was found. Autovacuum is
