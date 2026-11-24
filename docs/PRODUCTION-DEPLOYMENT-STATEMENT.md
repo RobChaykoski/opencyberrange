@@ -1,6 +1,6 @@
 # Production deployment statement
 
-**Statement date:** 22 November 2026
+**Statement date:** 24 November 2026
 
 This is the authoritative statement for the current production deployment. If
 another document disagrees, this page and the signed tag win.
@@ -9,19 +9,36 @@ another document disagrees, this page and the signed tag win.
 > replaced with placeholders. The private deployment inventory holds the live
 > values. See [`PUBLICATION-METADATA-POLICY.md`](PUBLICATION-METADATA-POLICY.md).
 
+## 5.39.0 deployment verification
+
+| Check | Result |
+|---|---|
+| `/api/version` | `5.39.0` on production and development |
+| Alembic | **`0058_practice_sessions` (head)**; migrations `0054`-`0058` applied |
+| Health | `200` |
+| New routes | `/journey`, `/impact`, `/practice`, `/my-evidence`, `/evidence-review` return `200` |
+| SSO | Authentik OIDC provider present; `sso_enabled` is true |
+| Development smoke | login, journey, contribution, archive, recognition, practice, scoring, and progress passed |
+| Pre-deploy backup | `~/backups/ocr-backup-20261124-033307.dump` |
+| Post-deploy backup | `~/backups/ocr-backup-20261124-033536.dump` |
+| Rollback images | `opencyberrange-backend:pre-5.39.0`, `ocr-frontend:pre-5.39.0` |
+| Restore drill | Pending for 5.39.0 |
+
 ## Release identity
 
 | Item | Value |
 |---|---|
 | Edition | **Community / Academic** (`lite` entitlement, single-host) |
-| Release | **5.30.2** |
-| Signed tag | **`v5.30.2`** |
-| Runtime code commit | `50dde8c1` (signed tag `v5.30.2`) |
-| Previous release | `5.30.1` (signed tag `v5.30.1` at `b9c662ff`) |
-| Alembic revision | **`0050_child_privacy_defaults`** |
+| Release | **5.39.0** |
+| Signed tag | **`v5.39.0`** |
+| Runtime code commit | `6b25be9b` (signed tag `v5.39.0`) |
+| Previous release | `5.38.0` (signed tag `v5.38.0` at `d6300dbf`) |
+| Alembic revision | **`0058_practice_sessions`** |
 | Development host | `<dev-host-ip>` |
 | Production host | `<prod-host-ip>` / `https://<platform-host>` |
 | Repository | `RobChaykoski/opencyberrange` (`main`) |
+| Pre-5.39.0 backup | `~/backups/ocr-backup-20261124-033307.dump` |
+| Post-5.39.0 backup | `~/backups/ocr-backup-20261124-033536.dump` |
 | Pre-5.30.2 backup | `~/backups/ocr-backup-20261123-004045.dump` |
 | Pre-5.30.1 backup | `~/backups/ocr-backup-20261122-194312.dump` |
 | Pre-5.30.0 backup | `~/backups/ocr-backup-20261122-191455.dump` |
