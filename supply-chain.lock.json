@@ -174,6 +174,9 @@
     "platform/backend/app/data/owasp-security-baseline.yaml": {
       "sha256": "a67628fe072235c02aeecb19b468f5c71fd4e5d66163f6a3a2c4c3c19caa3fc4"
     },
+    "platform/backend/app/data/ransomware-activity.json": {
+      "sha256": "033ce877845c13d962d75835d1e1bc3cc56f4abf429ee6f217eba526e685bfc0"
+    },
     "platform/backend/app/data/software-integrity.json": {
       "sha256": "7c319969630c131411145d7402e23e5b0147162cdace0582f2bf4705d80c8014"
     },
@@ -351,6 +354,9 @@
     "scripts/fetch-external-datasets.py": {
       "sha256": "8860a9a4742af0c4d0962b36c5b46ebfadc856a22ee1bc7a02c473005ce2f386"
     },
+    "scripts/fetch-ransomware-feed.py": {
+      "sha256": "301c9c720e0a4567e16f4cf24e921229dde37bce2a7452826c8da506db15e1ca"
+    },
     "scripts/fetch-threat-feed.py": {
       "sha256": "526772d940e8173e844346b0cf79e55380f47a8e2fbf0d230f3206e40e2c640e"
     },
@@ -391,7 +397,7 @@
       "sha256": "c987b10bb1c70c4955d356acab83486123ee477513fa9272aaa8d566e8b100b8"
     },
     "scripts/supply_chain.py": {
-      "sha256": "4e171a71f0d7935e36928262c284abdd27ab9fba20e74dc01397fad7572e1884"
+      "sha256": "63eb01b2ffe65fdf1ecba7ea9ca93eccb1fe98a9ff1898ec80054e369e8742d3"
     },
     "scripts/sync-dev-bind-mount.sh": {
       "sha256": "726a5b5f259ee7a1a9e0c1e6cd51873ba4b77d66ffa19f27266da3c288ed3783"

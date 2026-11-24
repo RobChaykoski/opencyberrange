@@ -5,8 +5,9 @@
       <h1>Global threat awareness</h1>
       <p class="threat__lede">
         Where hostile addresses are concentrated, aggregated by country and feed.
-        This is a periodic snapshot, not a live attack map. No individual address
-        or attack path is shown.
+        Hostile infrastructure and publicly reported ransomware activity. These
+        are periodic snapshots, not a live attack map. No individual address,
+        attack path, victim name, or post link is shown.
       </p>
     </header>
 
@@ -107,6 +108,66 @@
         </section>
       </div>
 
+      <p v-if="ransomError" class="form-error" role="alert">{{ ransomError }}</p>
+
+      <section v-if="ransom" class="threat__card">
+        <h2>Ransomware activity</h2>
+        <p class="threat__muted">
+          Aggregated from public reporting. Group names and counts only; no
+          victim, link, or cryptocurrency detail is shown.
+        </p>
+        <p v-if="ransom.sample" class="threat__inline-note">
+          Sample snapshot. An operator can run
+          <code>scripts/fetch-ransomware-feed.py</code> to refresh it.
+        </p>
+
+        <div class="threat__mini-stats">
+          <div>
+            <span>Posts ? {{ ransom.window_days }}d</span>
+            <strong>{{ formatCount(ransom.totals.window_posts) }}</strong>
+          </div>
+          <div>
+            <span>Posts ? 24h</span>
+            <strong>{{ formatCount(ransom.totals.posts_24h) }}</strong>
+          </div>
+          <div>
+            <span>Groups tracked</span>
+            <strong>{{ formatCount(ransom.totals.groups) }}</strong>
+          </div>
+          <div>
+            <span>Posts ? all time</span>
+            <strong>{{ formatCount(ransom.totals.posts_total) }}</strong>
+          </div>
+        </div>
+
+        <ul class="threat__bars">
+          <li v-for="row in ransom.groups" :key="row.name">
+            <div class="threat__bar-head">
+              <span>{{ row.name }}</span>
+              <strong>{{ formatCount(row.count) }}</strong>
+            </div>
+            <div
+              class="threat__track"
+              role="progressbar"
+              aria-valuemin="0"
+              :aria-valuenow="row.count"
+              :aria-valuemax="maxRansomGroup"
+              :aria-label="`${row.name}: ${formatCount(row.count)} posts`"
+            >
+              <span :style="{ width: barWidth(row.count, maxRansomGroup) }"></span>
+            </div>
+            <span class="threat__share">{{ formatShare(row.share) }}</span>
+          </li>
+        </ul>
+
+        <p class="threat__attribution">
+          {{ ransom.source.attribution }}
+          <a :href="ransom.source.url" target="_blank" rel="noopener noreferrer">
+            {{ ransom.source.licence }}
+          </a>
+        </p>
+      </section>
+
       <section class="threat__card threat__method">
         <h2>How to read this</h2>
         <ul>
@@ -138,7 +199,9 @@ import { computed, onMounted, ref } from 'vue'
 import api from '../api/axios'
 
 const data = ref(null)
+const ransom = ref(null)
 const error = ref('')
+const ransomError = ref('')
 const loading = ref(true)
 
 const numberFormat = new Intl.NumberFormat()
@@ -148,6 +211,9 @@ const maxCategory = computed(() =>
 )
 const maxCountry = computed(() =>
   Math.max(1, ...(data.value?.countries || []).map((row) => row.count)),
+)
+const maxRansomGroup = computed(() =>
+  Math.max(1, ...(ransom.value?.groups || []).map((row) => row.count)),
 )
 
 function formatCount(value) {
@@ -170,15 +236,26 @@ function barWidth(count, max) {
 async function load() {
   loading.value = true
   error.value = ''
-  try {
-    const response = await api.get('/threat-awareness')
-    data.value = response.data
-  } catch (err) {
+  ransomError.value = ''
+  const [threatResult, ransomResult] = await Promise.allSettled([
+    api.get('/threat-awareness'),
+    api.get('/ransomware-activity'),
+  ])
+  if (threatResult.status === 'fulfilled') {
+    data.value = threatResult.value.data
+  } else {
     error.value =
-      err.response?.data?.detail || 'Could not load the threat-awareness snapshot.'
-  } finally {
-    loading.value = false
+      threatResult.reason?.response?.data?.detail ||
+      'Could not load the threat-awareness snapshot.'
   }
+  if (ransomResult.status === 'fulfilled') {
+    ransom.value = ransomResult.value.data
+  } else {
+    ransomError.value =
+      ransomResult.reason?.response?.data?.detail ||
+      'Could not load the ransomware-activity snapshot.'
+  }
+  loading.value = false
 }
 
 onMounted(load)
@@ -344,6 +421,50 @@ onMounted(load)
 .threat__share {
   font-size: 0.72rem;
   color: var(--text-muted);
+}
+
+.threat__inline-note {
+  margin: 0.5rem 0 0;
+  padding: 0.5rem 0.7rem;
+  border-left: 3px solid var(--warning);
+  background: var(--warning-bg);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.threat__inline-note code {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  overflow-wrap: anywhere;
+}
+
+.threat__mini-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  gap: 0.6rem;
+  margin-top: 0.85rem;
+}
+
+.threat__mini-stats div {
+  padding: 0.65rem 0.8rem;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-primary);
+}
+
+.threat__mini-stats span {
+  display: block;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+}
+
+.threat__mini-stats strong {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 1.15rem;
+  color: var(--text-primary);
 }
 
 .threat__method ul {

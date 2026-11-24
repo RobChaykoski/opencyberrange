@@ -4,6 +4,12 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
+### Threat awareness
+
+- Added an aggregated ransomware-activity section sourced from RansomLook `/api/stats` and `/api/hot`: totals and top group names/counts only, with CC BY 4.0 attribution.
+- Added `scripts/fetch-ransomware-feed.py` and `GET /api/ransomware-activity`; the service reads only allow-listed aggregate fields, so victim names, post links, crypto addresses, and peer addresses cannot reach the UI.
+- Added ADR 0009: Global Threat Map rejected, RansomLook aggregate data accepted, Violations Watch rejected on legal and safeguarding grounds.
+
 ### Database
 
 - Declared the seven runtime/legacy indexes in the models, including the partial unique one-active-session guard on `lab_sessions`.

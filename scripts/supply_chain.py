@@ -90,6 +90,8 @@ COVERED_FILES = [
     "scripts/check-dependency-currency.py",
     "scripts/fetch-threat-feed.py",
     "platform/backend/app/data/threat-awareness.json",
+    "platform/backend/app/data/ransomware-activity.json",
+    "scripts/fetch-ransomware-feed.py",
     "scripts/check_db_roles.py",
     "scripts/sync-dev-bind-mount.sh",
     "scripts/check-data-dictionary.py",

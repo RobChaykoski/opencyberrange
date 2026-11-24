@@ -175,6 +175,17 @@ no individual address, hostname, or attack path is stored or shown.
   combined with the PolyForm Noncommercial platform licence, and it renders
   individual addresses with simulated attack paths. A plain outbound link is
   the only permitted use.
+- **RansomLook** (<https://www.ransomlook.io/>). Site content and API responses
+  are **CC BY 4.0**; the tracker code is **AGPL-3.0** and is not used. The
+  platform reads only `/api/stats` and `/api/hot` and stores aggregate totals
+  and per-group post counts. Victim names, post links, cryptocurrency
+  addresses, and peer addresses are excluded. Attribution: "Aggregated counts
+  derived from RansomLook (ransomlook.io), CC BY 4.0." See
+  [ADR 0009](docs/decisions/0009-intelligence-sources.md).
+- **Violations Watch** (<https://violationswatch.org/>) is **not** used. It is
+  human-rights OSINT containing unverified allegations against named actors and
+  incidents involving children. It is out of scope for a cyber range and is
+  rejected in ADR 0009 for legal, safeguarding, and political-risk reasons.
 
 ## 2.7.0 update
 

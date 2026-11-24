@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "mode": "sample",
+  "generated_at": "2026-11-24T00:00:00Z",
+  "window_days": 7,
+  "source": {
+    "name": "RansomLook",
+    "url": "https://www.ransomlook.io/",
+    "licence": "CC BY 4.0",
+    "attribution": "Aggregated counts derived from RansomLook (ransomlook.io), CC BY 4.0. No victim details are included."
+  },
+  "method": {
+    "aggregation": "group",
+    "victim_details": false,
+    "links": false,
+    "crypto_addresses": false
+  },
+  "totals": {
+    "posts_24h": 40,
+    "posts_month": 1074,
+    "posts_90d": 3390,
+    "posts_year": 10234,
+    "posts_total": 37478,
+    "groups": 654,
+    "groups_online": 727,
+    "markets": 161,
+    "window_posts": 285
+  },
+  "groups": [
+    { "name": "n0n", "count": 61 },
+    { "name": "safepay", "count": 19 },
+    { "name": "the gentlemen", "count": 18 },
+    { "name": "pixelleaks", "count": 17 },
+    { "name": "inc ransom", "count": 14 },
+    { "name": "vortex", "count": 13 },
+    { "name": "leakeddata", "count": 12 },
+    { "name": "aurora", "count": 11 },
+    { "name": "qilin", "count": 11 },
+    { "name": "rhysida", "count": 10 }
+  ],
+  "notes": [
+    "Sample snapshot. Run scripts/fetch-ransomware-feed.py on a host with API access to replace it.",
+    "Counts are aggregated per group. Victim names, post links, crypto addresses, and peer addresses are excluded.",
+    "Not live attack telemetry. This is a periodic snapshot of publicly reported ransomware posts."
+  ]
+}

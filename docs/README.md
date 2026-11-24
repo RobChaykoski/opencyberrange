@@ -66,6 +66,7 @@ scale, federation, then the AI mentor.
 - [Alembic drift inventory](ALEMBIC-DRIFT-INVENTORY.md)
 - [Docker host isolation ADR](decisions/0007-docker-host-isolation.md)
 - [Threat awareness ADR](decisions/0008-threat-awareness.md)
+- [Intelligence sources ADR](decisions/0009-intelligence-sources.md)
 - [Dependency and image workflow](DEPENDENCY-WORKFLOW.md)
 - [Competency contract review guide](COMPETENCY-REVIEW-GUIDE.md)
 - [Competency review cycle](COMPETENCY-REVIEW-CYCLE.md)

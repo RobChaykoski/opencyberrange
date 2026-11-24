@@ -36,6 +36,7 @@ from app.routers import modules as modules_router
 from app.routers import rangebox as rangebox_router
 from app.routers import about as about_router
 from app.routers import threat_awareness as threat_awareness_router
+from app.routers import ransomware_activity as ransomware_activity_router
 from app.routers import public_config as public_config_router
 from app.routers import public_usage as public_usage_router
 from app.routers import usage as usage_router
@@ -1552,6 +1553,11 @@ app.include_router(about_router.router, prefix="/api/about", tags=["About"])
 app.include_router(
     threat_awareness_router.router,
     prefix="/api/threat-awareness",
+    tags=["Threat awareness"],
+)
+app.include_router(
+    ransomware_activity_router.router,
+    prefix="/api/ransomware-activity",
     tags=["Threat awareness"],
 )
 app.include_router(public_config_router.router, prefix="/api", tags=["Public config"])
