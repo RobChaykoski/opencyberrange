@@ -702,6 +702,7 @@ def check_quiz_achievements(
     db.commit()
 
 
+@retry_on_deadlock
 def check_login_streak_achievements(db: Session, user_id: int, streak_days: int):
     """Award global badges when a sign-in streak reaches a threshold."""
     for days, achievement_type in LOGIN_STREAK_ACHIEVEMENTS:
@@ -1101,7 +1102,7 @@ def check_achievements(db: Session, user_id: int, lab_id: int):
             LabCompletion.lab_id.in_(course_lab_ids),
             LabCompletion.flag_submitted.isnot(None),
             LabCompletion.flag_submitted != "",
-        ).order_by(LabCompletion.completed_at.desc()).all()
+        ).order_by(LabCompletion.completed_at.desc(), LabCompletion.id.desc()).all()
 
         recent_valid = [c for c in recent_all if _valid_in_course(c)][:3]
 
@@ -1220,13 +1221,7 @@ def _check_custom_achievements(
 
     # OSINT-specific progress. The trigger uses the track slug rather than a
     # hard-coded lab list so future OSINT exercises count automatically.
-    osint_lab_ids = {
-        row[0] for row in db.query(Lab.id).join(
-            Level, Lab.level_id == Level.id
-        ).join(
-            Track, Level.track_id == Track.id
-        ).filter(Track.slug == "osint").all()
-    }
+    osint_lab_ids = _track_lab_ids(db, "osint")
     osint_completions = [c for c in valid_completions if c.lab_id in osint_lab_ids]
     osint_labs_completed = len(osint_completions)
     osint_no_hint_labs = sum(1 for c in osint_completions if c.hints_used == 0)
