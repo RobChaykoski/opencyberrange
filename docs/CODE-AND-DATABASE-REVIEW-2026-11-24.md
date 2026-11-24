@@ -42,7 +42,7 @@ currency, container bases, and host patch state. It follows the earlier
 | High | Login throttling | Failure counters are in-process, so multiple workers multiply the limit. | Open; move counters to Valkey or another shared store. |
 | Medium | RLS gaps | `users` is the tenant root and has no RLS. `auth_sessions`, `refresh_tokens`, `rbac_user_roles`, and `service_credentials` also have no RLS; the last two carry `institution_id`. | Review before multi-tenant use; single-host `default` tenant is not exposed. |
 | Medium | Host patches | Production had 21 pending packages. On 24 November the host rebooted into kernel 6.8.0-151 and applied Docker 29.10.0, containerd, and systemd. Only `libsqlite3-0` remains. Development had 35 pending at review time. | Applied on production; unattended security upgrades remain active. |
-| Medium | Base-image pinning | `nginx:alpine` is unpinned. The current tag resolves to nginx 1.31.8, the same version already running. | Pin the digest in the next dependency wave. |
+| Medium | Helper-image pinning | The production backend and frontend bases are pinned by digest. `platform/tester/Dockerfile` and the runtime helper containers use tag-only Alpine images (`alpine:3.19`, `alpine:latest`). | Pre-bake a pinned helper image and pin the tester base in the Docker helper slice. |
 | Low | Unindexed foreign keys | 54 FKs have no index. Most are actor/creator columns on small or audit tables. `lab_sessions.lab_id` and `courses.instructor_id` were the hot paths. | Fixed for the hot paths; the rest are low-cardinality and low-volume. |
 | Low | SQL f-string scanner hits | Bandit reports 12 `B608` hits in consent hooks, erasure, tenant RLS, and an export README. The SQL identifiers come from fixed tuples or pass an identifier regex; values are bound parameters. | Accepted; comments and tests document the boundary. |
 | Low | URL opens | `release_check.py` opens a static GitHub URL; `rangebox.py` opens a Docker-derived container IP. | Accepted. A future defensive check can require an IP literal in the RangeBox probe. |
@@ -80,7 +80,7 @@ vacuum timestamps and should be watched as usage grows.
 | cryptography | 50.0.2 | 50.0.2 | Current. |
 | PostgreSQL | 15.19 | 15.19 | Current 15.x; 15→17 is a planned major upgrade. |
 | Valkey | 9.1.3 | 9.1.3 | Current. |
-| nginx | 1.31.8 | 1.31.8 | Current tag; pin the digest. |
+| nginx | 1.31.8 | 1.31.8 | Pinned digest; current. |
 | Node (builder) | 22.23.5 | 22.23.5 | Current LTS; 24 is the next target. |
 | Docker Engine | 29.10.0 | 29.10.0 | Applied 24 November. |
 | Ubuntu | 24.04.5 | 24.04 line | Kernel 6.8.0-151 applied 24 November; no reboot required. |
