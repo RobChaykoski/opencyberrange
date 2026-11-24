@@ -133,6 +133,11 @@ def _can_access(db: Session, viewer: User, record: EvidenceRecord) -> bool:
     return record.learner_id in _covered_learner_ids(db, viewer)
 
 
+def apply_scope(query, db: Session, viewer: User):
+    """Apply the caller's learner, course, or tenant scope to a query."""
+    return _apply_scope(query, db, viewer)
+
+
 def _apply_scope(query, db: Session, viewer: User):
     if viewer.role == "admin":
         return query

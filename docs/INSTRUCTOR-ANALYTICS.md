@@ -1,7 +1,8 @@
 # Instructor Analytics
 
-Status: **Release 6.1, planning.** This extends the Release 5 instructor
-dashboard and programme reports; it does not replace them.
+Status: **Release 6.1, planning**, with the 6.0 evidence operations summary
+implemented. This extends the Release 5 instructor dashboard and programme
+reports; it does not replace them.
 
 Release 5 answers "what happened in the last seven days" and "which exercise is
 unhealthy". Release 6 answers the questions a programme lead, accreditation
@@ -42,6 +43,21 @@ them ranks an individual learner.
   evidence, inspect a lab, adjust a due date, or open the rubric.
 - **Versioned definitions.** The metric dictionary is versioned; a historical
   report keeps the definition it used.
+
+## Implemented 6.0 slice
+
+The evidence review surface now carries an operational summary from
+`GET /api/evidence/analytics`:
+
+- evidence totals by status;
+- review backlog and the oldest waiting record;
+- source and rubric mix;
+- the top competencies with accepted evidence;
+- recent decisions;
+- small-cohort suppression below five learners for non-admin reviewers.
+
+It is a queue and workload view, not the full class-competency dashboard. The
+tiles below remain the 6.1 plan.
 
 ## Metric definitions
 

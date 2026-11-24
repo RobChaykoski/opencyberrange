@@ -19,6 +19,51 @@
       </button>
     </header>
 
+    <section v-if="analytics" class="evidence-review__summary" aria-label="Evidence operations summary">
+      <article>
+        <span>Awaiting review</span>
+        <strong>{{ analytics.totals.awaiting_review }}</strong>
+      </article>
+      <article>
+        <span>Accepted</span>
+        <strong>{{ analytics.totals.accepted }}</strong>
+      </article>
+      <article>
+        <span>Rejected</span>
+        <strong>{{ analytics.totals.rejected }}</strong>
+      </article>
+      <article>
+        <span>Learners with evidence</span>
+        <strong>{{ analytics.totals.learners }}</strong>
+      </article>
+      <article>
+        <span>Oldest waiting</span>
+        <strong>{{ analytics.backlog.oldest_age_days ?? 0 }}d</strong>
+      </article>
+    </section>
+    <p v-if="analytics?.suppressed" class="evidence-review__note" role="status">
+      {{ analytics.suppression_note }}
+    </p>
+    <div v-if="analytics && !analytics.suppressed" class="evidence-review__breakdown">
+      <section>
+        <h2>By source</h2>
+        <ul>
+          <li v-for="item in analytics.sources" :key="item.source_type">
+            <span>{{ item.source_type }}</span><strong>{{ item.count }}</strong>
+          </li>
+        </ul>
+      </section>
+      <section>
+        <h2>Top competencies with accepted evidence</h2>
+        <ul>
+          <li v-for="item in analytics.competencies" :key="item.competency_id">
+            <span>{{ item.competency_id }}</span><strong>{{ item.accepted }}</strong>
+          </li>
+        </ul>
+      </section>
+    </div>
+    <p v-if="analyticsError" class="form-error" role="alert">{{ analyticsError }}</p>
+
     <p v-if="queueError" class="form-error" role="alert">{{ queueError }}</p>
     <p v-if="message" class="evidence-review__message" role="status">{{ message }}</p>
 
@@ -221,6 +266,8 @@ import axios from '../api/axios'
 
 const queue = ref([])
 const rubrics = ref([])
+const analytics = ref(null)
+const analyticsError = ref('')
 const record = ref(null)
 const selectedId = ref(null)
 const loadingQueue = ref(false)
@@ -278,6 +325,17 @@ async function fetchRubrics() {
   rubrics.value = response.data.rubrics || []
 }
 
+async function loadAnalytics() {
+  analyticsError.value = ''
+  try {
+    const response = await axios.get('/evidence/analytics')
+    analytics.value = response.data
+  } catch (error) {
+    analyticsError.value =
+      error.response?.data?.detail || 'Could not load the evidence summary.'
+  }
+}
+
 async function refreshQueue() {
   loadingQueue.value = true
   queueError.value = ''
@@ -332,7 +390,7 @@ async function submitReview() {
       next_step: nextStep.value || null,
     })
     message.value = 'Decision recorded.'
-    await refreshQueue()
+    await Promise.all([refreshQueue(), loadAnalytics()])
     await selectRecord(record.value.id)
   } catch (error) {
     reviewError.value =
@@ -348,7 +406,7 @@ onMounted(async () => {
   } catch (error) {
     detailError.value = error.response?.data?.detail || 'Could not load the rubric registry.'
   }
-  await refreshQueue()
+  await Promise.all([refreshQueue(), loadAnalytics()])
 })
 </script>
 
@@ -386,6 +444,63 @@ onMounted(async () => {
 .evidence-review__detail-sub,
 .evidence-review__note {
   color: var(--text-muted, #64748b);
+}
+
+.evidence-review__summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
+}
+
+.evidence-review__summary article {
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #dbe3ee);
+  border-radius: 0.7rem;
+  padding: 0.8rem;
+  display: grid;
+  gap: 0.25rem;
+}
+
+.evidence-review__summary span {
+  color: var(--text-muted, #64748b);
+  font-size: 0.78rem;
+}
+
+.evidence-review__summary strong {
+  font-size: 1.4rem;
+}
+
+.evidence-review__breakdown {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.evidence-review__breakdown section {
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #dbe3ee);
+  border-radius: 0.7rem;
+  padding: 0.8rem;
+}
+
+.evidence-review__breakdown h2 {
+  margin: 0 0 0.4rem;
+  font-size: 0.9rem;
+}
+
+.evidence-review__breakdown ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.25rem;
+}
+
+.evidence-review__breakdown li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.85rem;
 }
 
 .evidence-review__layout {
@@ -609,7 +724,8 @@ onMounted(async () => {
     grid-template-columns: 1fr;
   }
 
-  .evidence-review__form-grid {
+  .evidence-review__form-grid,
+  .evidence-review__breakdown {
     grid-template-columns: 1fr;
   }
 }

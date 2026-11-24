@@ -19,6 +19,10 @@ All notable changes to OpenCyberRange are recorded here.
   version is snapshotted into the evidence ledger with the `analyst-answer`
   rubric and waits in the instructor review queue; the review surface shows the
   submitted text.
+- Added an evidence operations summary to the review surface: status totals,
+  backlog age, source and rubric mix, top competencies with accepted evidence,
+  and recent decisions. Aggregates below five learners are suppressed for
+  non-admin reviewers.
 - Updated the i18n baseline for the new review surface, workbook answer page,
   and navigation entries.
 

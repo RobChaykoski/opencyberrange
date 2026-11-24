@@ -442,6 +442,7 @@ owner-only unless an explicit share or break-glass grant exists.
 | `GET` | `/api/dna/v3/snapshots/{snapshot_id}` | Cyber DNA snapshot | OAuth2PasswordBearer |
 | `GET` | `/api/evidence` | List Evidence | OAuth2PasswordBearer |
 | `POST` | `/api/evidence` | Create Evidence | OAuth2PasswordBearer |
+| `GET` | `/api/evidence/analytics` | Evidence Analytics Overview | OAuth2PasswordBearer |
 | `GET` | `/api/evidence/queue` | Review Queue | OAuth2PasswordBearer |
 | `GET` | `/api/evidence/rubrics` | List Evidence Rubrics | OAuth2PasswordBearer |
 | `GET` | `/api/evidence/{evidence_id}` | Get Evidence | OAuth2PasswordBearer |
@@ -5947,6 +5948,18 @@ Record evidence from a reviewed rubric and competency contract.  Replaying the s
 
 - `201`: Successful Response
 - `422`: Validation Error — `HTTPValidationError`
+
+### `GET /api/evidence/analytics`
+
+**Evidence Analytics Overview**
+
+Aggregate evidence operations for the caller's scope.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Responses**
+
+- `200`: Successful Response
 
 ### `GET /api/evidence/queue`
 

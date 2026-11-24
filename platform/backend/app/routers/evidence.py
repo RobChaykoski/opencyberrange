@@ -22,6 +22,7 @@ from app.auth import (
 from app.database import get_db
 from app.models import User
 from app.services import evidence as evidence_service
+from app.services import evidence_analytics
 from app.services.evidence import EvidenceError
 from app.services.rubrics import load_rubrics
 
@@ -154,6 +155,15 @@ async def list_evidence_rubrics(
             key=lambda item: (str(item.get("rubric")), str(item.get("version"))),
         )
     }
+
+
+@router.get("/analytics")
+async def evidence_analytics_overview(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_reporting_user),
+):
+    """Aggregate evidence operations for the caller's scope."""
+    return evidence_analytics.overview(db, current_user)
 
 
 @router.get("/queue")

@@ -244,7 +244,8 @@ Release 6.0 ships the first vertical slice:
   confidence, visibility, and review scoring.
 - API endpoints: `POST /api/evidence`, `GET /api/evidence`,
   `GET /api/evidence/{id}`, `POST /api/evidence/{id}/review`,
-  `GET /api/evidence/queue`, `GET /api/evidence/rubrics`, and
+  `GET /api/evidence/queue`, `GET /api/evidence/rubrics`,
+  `GET /api/evidence/analytics`, and
   `GET /api/competencies/{id}/evidence`.
 - A reviewer surface at `/evidence-review` that shows the queue, the recorded
   rubric criteria and levels, prior decisions, and the decision form. The
@@ -256,9 +257,13 @@ Release 6.0 ships the first vertical slice:
 - Workbook answer capture at `/workbook-answers`. The live answer is editable;
   each distinct version is snapshotted into the evidence ledger with the
   `analyst-answer` rubric and waits in the instructor review queue.
+- An evidence operations summary above the review queue: totals by status,
+  review backlog and oldest wait, source and rubric mix, top competencies with
+  accepted evidence, and recent decisions. Aggregates below five learners are
+  suppressed for non-admin reviewers.
 - Tests for idempotency, tenant and course scope, scoring, queue filtering,
   unknown rubric/competency rejection, automatic acceptance, workbook answer
-  versioning, and append-only content.
+  versioning, aggregate suppression, and append-only content.
 
 Not yet implemented: artifact upload and storage and appeals. Those are the
 next increments.

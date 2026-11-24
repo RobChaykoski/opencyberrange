@@ -10,6 +10,17 @@ navigation. Instructors see evidence for learners in the courses they own or
 staff. Administrators see the institution. A learner sees only their own evidence
 elsewhere in the product.
 
+## Operations summary
+
+Above the queue, the page shows the current workload: awaiting review, accepted,
+rejected, learners with evidence, and the age of the oldest waiting record. It
+also shows the source and rubric mix and the competencies with the most accepted
+evidence.
+
+For an instructor, aggregate breakdowns are hidden when the visible scope has
+fewer than five learners. The totals and the queue remain usable; the dashboard
+does not become a window into an individual learner.
+
 ## The queue
 
 The left column lists evidence with status **collected** or **in review**. Each
