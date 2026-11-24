@@ -79,3 +79,18 @@ def test_production_requires_wireguard_key_encryption(monkeypatch):
 def test_valid_production_configuration_is_accepted(monkeypatch):
     _production(monkeypatch)
     config.validate_settings()
+
+def test_malformed_wireguard_key_is_rejected(monkeypatch):
+    _production(monkeypatch)
+    monkeypatch.setattr(config.settings, "WG_ENCRYPTION_KEY", "not-a-fernet-key")
+    with pytest.raises(ValueError, match="Fernet"):
+        config.validate_settings()
+
+
+def test_malformed_previous_wireguard_key_is_rejected(monkeypatch):
+    _production(monkeypatch)
+    monkeypatch.setattr(
+        config.settings, "WG_ENCRYPTION_KEY_PREVIOUS", "not-a-fernet-key"
+    )
+    with pytest.raises(ValueError, match="WG_ENCRYPTION_KEY_PREVIOUS"):
+        config.validate_settings()

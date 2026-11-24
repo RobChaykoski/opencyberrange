@@ -132,6 +132,17 @@ def _is_placeholder_secret(value: str) -> bool:
     return any(marker in lowered for marker in _PLACEHOLDER_SECRET_MARKERS)
 
 
+def _is_fernet_key(value: str) -> bool:
+    """True when the value is a valid URL-safe base64 32-byte Fernet key."""
+    try:
+        from cryptography.fernet import Fernet
+
+        Fernet(str(value or "").strip().encode("utf-8"))
+        return True
+    except Exception:
+        return False
+
+
 def validate_settings():
     """
     Validate critical security settings on startup.
@@ -278,6 +289,21 @@ def validate_settings():
             "print(Fernet.generate_key().decode())\""
         )
         (errors if (production or vpn_configured) else warnings).append(message)
+    else:
+        if not _is_fernet_key(settings.WG_ENCRYPTION_KEY):
+            errors.append(
+                "WG_ENCRYPTION_KEY is not a valid Fernet key. It must be a "
+                "URL-safe base64-encoded 32-byte key."
+            )
+        for index, previous in enumerate(
+            (settings.WG_ENCRYPTION_KEY_PREVIOUS or "").split(","), start=1
+        ):
+            value = previous.strip()
+            if value and not _is_fernet_key(value):
+                errors.append(
+                    f"WG_ENCRYPTION_KEY_PREVIOUS entry {index} is not a valid "
+                    "Fernet key."
+                )
     
     # Log warnings
     for warning in warnings:
