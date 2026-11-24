@@ -7,7 +7,7 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.44.0` | SWOCTS Cyber Range Release 5.44.0 | Signed annotated tag: shared login-failure throttling through Valkey/Redis with a bounded memory fallback, cross-tenant admin scoping regression tests, and the Alembic autogenerate guard with the baseline drift guide. Deployment pending. |
+| `v5.44.0` | SWOCTS Cyber Range Release 5.44.0 | Signed annotated tag: shared login-failure throttling through Valkey/Redis with a bounded memory fallback, cross-tenant admin scoping regression tests, and the Alembic autogenerate guard with the baseline drift guide. Deployed to development and production on 24 November 2026; post-deploy backup and restore drill passed. |
 
 Deliverables: [Release 5.44.0 deliverables](RELEASE-5.44.0-DELIVERABLES.md).
 

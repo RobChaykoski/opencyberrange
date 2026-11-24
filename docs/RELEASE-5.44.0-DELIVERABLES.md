@@ -1,16 +1,18 @@
 # Release 5.44.0 deliverables
 
-Status: **release prepared; deployment pending** on 24 November 2026.
+Status: **released and deployed** to development and production on 24 November
+2026.
 
 | Item | Value |
 |---|---|
 | Version | `5.44.0` |
 | Signed tag | `v5.44.0` |
-| Release commit | Pending tag |
+| Release commit | `47146529` |
 | Alembic | `0062_index_dedupe` |
-| Production | Pending |
-| Development | Pending |
+| Production | Deployed and verified |
+| Development | Deployed and verified |
 | Supply-chain lock | Refreshed and signed with the release key |
+| Backups | Pre-deploy and post-deploy dumps, plus a passed restore drill |
 
 ## Shared login throttle
 
@@ -20,7 +22,7 @@ Status: **release prepared; deployment pending** on 24 November 2026.
 | Fallback | Bounded in-process counters when the cache is unavailable |
 | Window | 15 minutes; backoff starts at 5 failures and caps at 60 seconds |
 | Privacy | Redis keys are SHA-256 hashes, not usernames or IPs |
-| Verification | Unit tests for both paths; live development check against Valkey |
+| Verification | Unit tests for both paths; live production and development checks against Valkey |
 
 ## Admin tenant isolation
 
@@ -46,17 +48,19 @@ Status: **release prepared; deployment pending** on 24 November 2026.
 | Check | Result |
 |---|---|
 | Backend tests | `1,182 passed` |
-| Frontend build and tests | Pending |
-| Quality checks | Pending |
-| Supply-chain lock | Pending |
-| Development Valkey throttle | `record` 1-5, retry 1, clear 0 |
-| Production `/api/version` | Pending |
-| Production health | Pending |
-| Alembic on production | Pending |
-| Existing routes | Pending |
-| SSO | Pending |
-| Restore drill | Pending |
-| Rollback images | Pending |
+| Frontend build and tests | Build passed; `35` component tests passed |
+| Quality checks | Green |
+| Supply-chain lock | Verified with the release key |
+| Production login throttle | Valkey/Redis connected; record `1-5`, retry `1`, clear `0` |
+| Production `/api/version` | `5.44.0` |
+| Production health | `200` |
+| Alembic on production | `0062_index_dedupe (head)` |
+| Existing routes | `/contract-review`, `/my-evidence`, `/evidence-review`, `/journey`, `/impact`, `/practice` return `200` |
+| SSO | Authentik OIDC provider present; `sso_enabled` true |
+| Pre-deploy backup | `~/backups/ocr-backup-20261124-173551.dump` |
+| Post-deploy backup | `~/backups/ocr-backup-20261124-173923.dump` |
+| Rollback images | `opencyberrange-backend:pre-v5.44.0`, `ocr-frontend:pre-v5.44.0` |
+| Restore drill | `69` users, `215` labs, `2` courses, `64` enrollments, `134` completions, `497` achievements, `1,575` activity events |
 
 ## Known limitations
 
@@ -67,12 +71,12 @@ Status: **release prepared; deployment pending** on 24 November 2026.
 
 ## Acceptance checklist
 
-- [ ] Signed tag and verified supply-chain lock.
-- [ ] Production health, version, SSO, and public routes verified.
-- [ ] Production Valkey throttle check passes.
-- [ ] Pre-deploy and post-deploy backups.
-- [ ] Restore drill passed.
-- [ ] Rollback images retained.
-- [ ] Manual and API reference regenerated.
-- [ ] Coverage audit passes structurally.
-- [ ] Test suite and component regression test pass.
+- [x] Signed tag and verified supply-chain lock.
+- [x] Production health, version, SSO, and public routes verified.
+- [x] Production Valkey throttle check passes.
+- [x] Pre-deploy and post-deploy backups.
+- [x] Restore drill passed.
+- [x] Rollback images retained.
+- [x] Manual and API reference regenerated.
+- [x] Coverage audit passes structurally.
+- [x] Test suite and component regression test pass.
