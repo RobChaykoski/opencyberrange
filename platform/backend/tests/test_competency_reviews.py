@@ -271,3 +271,50 @@ def test_catalogue_exposes_competencies_and_cycle_lengths(client, db_session):
         assert body["domains"]
     finally:
         _cleanup(db_session, [instructor])
+
+def test_contract_snapshot_hash_is_stable_and_sensitive():
+    from app.services.competency_contract_integrity import (
+        contract_snapshot,
+        snapshot_hash,
+    )
+
+    base = {
+        "competency_ids": [{"id": "AI-001", "weight": 1.0}],
+        "evidence": [
+            {
+                "type": "flag",
+                "weight": 1.0,
+                "source": "lab.flag",
+                "validation": "exact_match",
+            }
+        ],
+        "assessment_reliability": {"level": "medium", "score": 0.6},
+        "assessment_criteria": ["Submit the correct flag."],
+        "track": "AI",
+    }
+    reordered = {
+        "track": "AI",
+        "assessment_criteria": ["Submit the correct flag."],
+        "assessment_reliability": {"score": 0.6, "level": "medium"},
+        "evidence": [
+            {
+                "validation": "exact_match",
+                "source": "lab.flag",
+                "weight": 1.0,
+                "type": "flag",
+            }
+        ],
+        "competency_ids": [{"weight": 1.0, "id": "AI-001"}],
+    }
+    changed = {
+        **base,
+        "competency_ids": [{"id": "AI-001", "weight": 0.9}],
+    }
+    assert set(contract_snapshot(base)) == {
+        "competency_ids",
+        "evidence",
+        "assessment_reliability",
+        "assessment_criteria",
+    }
+    assert snapshot_hash(base) == snapshot_hash(reordered)
+    assert snapshot_hash(base) != snapshot_hash(changed)

@@ -124,12 +124,43 @@ No learner record is part of the cycle view.
   signer.
 - No export mutates the running application contract.
 
-## Next slice
+## Export and release gate
 
-- Dashboard form with taxonomy picker, weights, reliability, rationale,
-  attestation, and cycle selection.
-- Queue status chips and a due/overdue summary for the dean.
-- Export script and an export status panel.
+The dashboard form, queue status chips, and sign-off are implemented. The export
+path is `scripts/export-contract-reviews.py`:
+
+```bash
+# Write a pseudonymous, committable manifest and a private admin export
+python scripts/export-contract-reviews.py --export \
+  --database-url "$DATABASE_URL" \
+  --admin-export /secure/ocr-contract-reviews.json
+
+# Merge approved reviews into the overrides file, then regenerate
+python scripts/export-contract-reviews.py --write-overrides \
+  --database-url "$DATABASE_URL"
+python scripts/generate-competency-contracts.py
+python scripts/generate-competency-review-queue.py
+python scripts/validate-competency-contracts.py
+
+# Offline gate: every reviewed override must match a signed review
+python scripts/export-contract-reviews.py --check
+python scripts/export-contract-reviews.py --check --require-all
+```
+
+The manifest records the lab, the review id, a stable reviewer reference, the
+signature date, the next review date, and the contract, lab, and taxonomy
+hashes. It does not record the reviewer name or the review notes. The private
+admin export keeps the full record.
+
+`--check` fails when a YAML `review_status: reviewed` entry has no matching
+signed review, when the generated contract or lab content changed after the
+signature, when the taxonomy hash differs, or when the next review date has
+passed. Sign the manifest with the release key and pass `--signature`,
+`--gpg-public-key`, and `--gpg-fingerprint` for a release gate.
+
+The 25 contracts curated before the review cycle have no signed database review
+yet. The gate will fail on them until each is reviewed and signed in the
+dashboard. They are not grandfathered: the release gate must see the signature.
 
 
 ## Controls in the reviewed slice
@@ -157,9 +188,9 @@ No learner record is part of the cycle view.
 
 ## Deferred before the 6.0 release gate
 
-1. An export manifest and a CI check that every `review_status: reviewed`
-   contract has a signed review with the same contract hash. Today the review
-   record and the YAML gate are still separate.
+1. Signing the export manifest in CI. The manifest generator and offline check
+   are implemented; the strict check is a release gate, not a per-commit CI job,
+   because the 25 pre-cycle reviewed contracts have no signed review yet.
 2. Track ownership, assignment, reassignment, due/overdue notification, and
    escalation to a track lead or dean.
 3. A learner-visible gate that marks evidence and competency statements

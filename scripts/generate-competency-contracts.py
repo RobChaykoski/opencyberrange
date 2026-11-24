@@ -121,34 +121,22 @@ def contract_for(lab: dict, slug: str, track: str, mapping: dict, taxonomy: dict
     competencies = override.get("competency_ids") or weighted_ids(
         baseline_competencies(lab, mapping, taxonomy)
     )
-    evidence_weights = {**DEFAULT_EVIDENCE, **(override.get("evidence_weights") or {})}
-    reliability = override.get("assessment_reliability") or {
-        "level": "medium",
-        "score": 0.65,
-        "evidence_completeness": "medium",
-        "determinism": "deterministic",
-        "independent_validation": "pending",
-        "rationale": (
-            "Baseline contract derived from the reviewed competency mapping. "
-            "The evidence types and weights are explicit; live harness evidence "
-            "and analyst-answer moderation are required before marking reviewed."
-        ),
-    }
-    criteria = lab.get("assessment_criteria") or [
-        "Submit the correct flag.",
-        "Pass every automated solve step.",
-        "Record one analyst observation and one defensive implication.",
-        "Submit the requested scan, report, or screenshot artifact.",
-    ]
-    return {
-        "lab_id": slug,
-        "track": track,
-        "difficulty": lab.get("difficulty") or "unknown",
-        "expected_duration_minutes": int(lab.get("estimated_time") or 60),
-        "prerequisites": list(lab.get("prerequisites") or []),
-        "workbook": lab.get("workbook") or "",
-        "competency_ids": competencies,
-        "evidence": [
+    if override.get("evidence"):
+        evidence = [
+            {
+                "type": str(item["type"]),
+                "weight": float(item["weight"]),
+                "source": str(item["source"]),
+                "validation": str(item["validation"]),
+            }
+            for item in override["evidence"]
+        ]
+    else:
+        evidence_weights = {
+            **DEFAULT_EVIDENCE,
+            **(override.get("evidence_weights") or {}),
+        }
+        evidence = [
             {
                 "type": "flag",
                 "weight": evidence_weights["flag"],
@@ -173,7 +161,38 @@ def contract_for(lab: dict, slug: str, track: str, mapping: dict, taxonomy: dict
                 "source": "submitted_artifact",
                 "validation": "rubric",
             },
-        ],
+        ]
+    reliability = override.get("assessment_reliability") or {
+        "level": "medium",
+        "score": 0.65,
+        "evidence_completeness": "medium",
+        "determinism": "deterministic",
+        "independent_validation": "pending",
+        "rationale": (
+            "Baseline contract derived from the reviewed competency mapping. "
+            "The evidence types and weights are explicit; live harness evidence "
+            "and analyst-answer moderation are required before marking reviewed."
+        ),
+    }
+    criteria = (
+        override.get("assessment_criteria")
+        or lab.get("assessment_criteria")
+        or [
+            "Submit the correct flag.",
+            "Pass every automated solve step.",
+            "Record one analyst observation and one defensive implication.",
+            "Submit the requested scan, report, or screenshot artifact.",
+        ]
+    )
+    return {
+        "lab_id": slug,
+        "track": track,
+        "difficulty": lab.get("difficulty") or "unknown",
+        "expected_duration_minutes": int(lab.get("estimated_time") or 60),
+        "prerequisites": list(lab.get("prerequisites") or []),
+        "workbook": lab.get("workbook") or "",
+        "competency_ids": competencies,
+        "evidence": evidence,
         "prohibited_collection": list(PROHIBITED),
         "assessment_reliability": reliability,
         "assessment_criteria": criteria,

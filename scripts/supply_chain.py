@@ -137,6 +137,8 @@ COVERED_FILES = [
     "platform/backend/app/data/competency-contracts.yaml",
     "platform/backend/app/data/competency-contract-overrides.yaml",
     "platform/backend/app/data/competency-contract.schema.json",
+    "platform/backend/app/services/competency_contract_integrity.py",
+    "scripts/export-contract-reviews.py",
     "scripts/generate-lab-manifests.py",
     "scripts/lab_harness.py",
     "scripts/audit-publication.py",

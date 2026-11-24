@@ -20,7 +20,43 @@ For the current file-based workflow, record the decision in:
 Do **not** edit `competency-contracts.yaml` by hand. It is generated from the
 labs, the mapping, and the overrides file.
 
-## Workflow
+## Dashboard and export workflow
+
+1. Open **Contract review** in the instructor navigation.
+2. Inspect the competencies, evidence, reliability, and criteria. Choose a
+   review cycle and sign an approval or a change request.
+3. An administrator exports the approved reviews:
+
+   ```bash
+   python scripts/export-contract-reviews.py --export \
+     --database-url "$DATABASE_URL" \
+     --admin-export /secure/ocr-contract-reviews.json
+   python scripts/export-contract-reviews.py --write-overrides \
+     --database-url "$DATABASE_URL"
+   ```
+
+4. Regenerate and validate:
+
+   ```bash
+   python scripts/generate-competency-contracts.py
+   python scripts/generate-competency-review-queue.py
+   python scripts/validate-competency-contracts.py
+   ```
+
+5. Run the signed-review gate:
+
+   ```bash
+   python scripts/export-contract-reviews.py --check
+   ```
+
+The manifest at `docs/competency-reviews.lock.json` is pseudonymous and
+committable. The administrator export contains reviewer names and rationales;
+store it outside the repository.
+
+## File-based workflow
+
+Use this only when the dashboard is unavailable. A signed review is still the
+preferred record.
 
 ```bash
 # 1. See the backlog and the smallest tracks first
@@ -76,6 +112,12 @@ labs:
     review_status: reviewed
     reviewed_at: '2026-11-24'
 ```
+
+A dashboard export writes the full `evidence` list (type, weight, source, and
+validation), `assessment_criteria`, `review_id`, `review_hash`, `reviewer_ref`,
+and `reviewer_role`. Both the `evidence` and `evidence_weights` forms are
+supported; do not include both. The export script removes `evidence_weights` when
+it writes an entry.
 
 Do not invent `usage_rank` or `usage_completions`. Leave them out unless you
 have the measured values.

@@ -10,12 +10,8 @@ draft. A draft is shown separately so it cannot hide a valid approval.
 
 from __future__ import annotations
 
-import hashlib
-import json
 import math
 from datetime import datetime, timedelta, timezone
-from functools import lru_cache
-from pathlib import Path
 
 import yaml
 from sqlalchemy.exc import IntegrityError
@@ -24,16 +20,20 @@ from sqlalchemy.orm import Session
 from app.models import CompetencyContractReview, User
 from app.services.audit import log_admin_action
 from app.services.competency_contract import load_contracts, taxonomy_ids
+from app.services.competency_contract_integrity import (
+    TAXONOMY_FILE,
+    canonical as _canonical,
+    lab_hash as _lab_hash,
+    sha as _sha,
+    snapshot_hash,
+    taxonomy_hash_for,
+)
 from app.services.evidence import REVIEW_ROLES, _tenant_of
 
-DATA_DIR = Path(__file__).resolve().parent.parent / "data"
-TAXONOMY_FILE = DATA_DIR / "competency-taxonomy.yaml"
-LABS_DIR = Path(__file__).resolve().parents[3] / "labs"
 EVIDENCE_TYPES = {"flag", "validation_step", "analyst_answer", "artifact"}
 SIGN_ROLES = {"admin", "institution_admin", "instructor"}
 CYCLE_MONTHS = (6, 12, 24)
 DUE_SOON_DAYS = 60
-RELEVANT_SUFFIXES = {".yaml", ".yml", ".md"}
 PRIORITY = {
     "overdue": 0,
     "stale": 1,
@@ -57,59 +57,13 @@ def _now() -> datetime:
     return datetime.now(timezone.utc).replace(tzinfo=None)
 
 
-def _sha(payload: bytes) -> str:
-    return hashlib.sha256(payload).hexdigest()
-
-
-def _canonical(payload: dict) -> bytes:
-    return json.dumps(
-        payload, sort_keys=True, separators=(",", ":"), allow_nan=False
-    ).encode("utf-8")
-
-
-@lru_cache(maxsize=1)
-def _taxonomy_entries() -> dict[str, dict]:
-    with TAXONOMY_FILE.open(encoding="utf-8") as handle:
-        taxonomy = yaml.safe_load(handle) or {}
-    entries: dict[str, dict] = {}
-    for domain in taxonomy.get("domains", []):
-        for category in domain.get("categories", []):
-            for competency in category.get("competencies", []):
-                entries[str(competency["id"])] = {
-                    "id": str(competency["id"]),
-                    "name": competency.get("name"),
-                    "definition": competency.get("definition"),
-                }
-    return entries
-
-
-def taxonomy_hash_for(competency_ids) -> str:
-    entries = _taxonomy_entries()
-    payload = {str(item): entries.get(str(item)) for item in sorted(set(competency_ids))}
-    return _sha(_canonical(payload))
-
-
 def lab_hash(slug: str) -> str:
-    lab = next(
-        (path.parent for path in LABS_DIR.rglob("lab.yaml") if path.parent.name == slug),
-        None,
-    )
-    if lab is None:
-        raise ReviewError("contract_review_lab_not_found", "The lab does not exist.", 404)
-    digest = hashlib.sha256()
-    for path in sorted(lab.rglob("*")):
-        if not path.is_file() or path.suffix.lower() not in RELEVANT_SUFFIXES:
-            continue
-        parts = {part.lower() for part in path.parts}
-        if "img" in parts or "images" in parts:
-            continue
-        digest.update(str(path.relative_to(lab)).replace("\\", "/").encode("utf-8"))
-        digest.update(path.read_bytes())
-    manifest = LABS_DIR.parent / "tester" / "manifests" / f"{slug}.yaml"
-    if manifest.is_file():
-        digest.update(b"tester-manifest")
-        digest.update(manifest.read_bytes())
-    return digest.hexdigest()
+    try:
+        return _lab_hash(slug)
+    except FileNotFoundError as exc:
+        raise ReviewError(
+            "contract_review_lab_not_found", "The lab does not exist.", 404
+        ) from exc
 
 
 def _require_reviewer(user: User) -> None:
@@ -475,15 +429,6 @@ def _validate_payload(payload: dict) -> dict:
     }
 
 
-def _baseline(contract: dict) -> dict:
-    return {
-        "competency_ids": contract.get("competency_ids") or [],
-        "evidence": contract.get("evidence") or [],
-        "assessment_reliability": contract.get("assessment_reliability") or {},
-        "assessment_criteria": contract.get("assessment_criteria") or [],
-    }
-
-
 def _deviation(contract: dict, snapshot: dict) -> dict:
     baseline = {
         str(link.get("id")): float(link.get("weight") or 0)
@@ -553,7 +498,7 @@ def save_draft(db: Session, user: User, slug: str, payload: dict) -> dict:
         "assessment_criteria": normalized["assessment_criteria"],
     }
     review.contract_hash = _sha(_canonical(review.contract_snapshot))
-    review.baseline_hash = _sha(_canonical(_baseline(contract)))
+    review.baseline_hash = snapshot_hash(contract)
     review.deviation = _deviation(contract, review.contract_snapshot)
     review.lab_hash = lab_hash(slug)
     review.taxonomy_hash = taxonomy_hash_for(
@@ -618,7 +563,7 @@ def sign(db: Session, user: User, slug: str, payload: dict) -> dict:
         "assessment_criteria": normalized["assessment_criteria"],
     }
     review.contract_hash = _sha(_canonical(review.contract_snapshot))
-    review.baseline_hash = _sha(_canonical(_baseline(contract)))
+    review.baseline_hash = snapshot_hash(contract)
     review.deviation = _deviation(contract, review.contract_snapshot)
     review.lab_hash = lab_hash(slug)
     review.taxonomy_hash = taxonomy_hash_for(

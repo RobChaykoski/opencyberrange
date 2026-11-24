@@ -180,6 +180,9 @@
     "platform/backend/app/security/policy_rules.py": {
       "sha256": "b91a8826be3d417d08e7376fc7d1baeb91ea629da3c4d2f5a5ea39551756051d"
     },
+    "platform/backend/app/services/competency_contract_integrity.py": {
+      "sha256": "189b24fa4077f7fbd30c108d490e803ab6a12786baeb8b9ebd1242b0040f3ec0"
+    },
     "platform/backend/app/services/production_control.py": {
       "sha256": "79191e58f3c06bd97d5212087b9a7b135cf06a0e9fd3949e341a22625c2f48af"
     },
@@ -312,6 +315,9 @@
     "scripts/deploy-updates.sh": {
       "sha256": "d265fb4bbaad00eb675c481258c84ab46af355e8de0f61ca6bf99db6a659b999"
     },
+    "scripts/export-contract-reviews.py": {
+      "sha256": "cf25b21d792022085aab7ef8df41f2fc3935db0e7af91d78086b49f2e49d4f71"
+    },
     "scripts/fetch-external-datasets.py": {
       "sha256": "8860a9a4742af0c4d0962b36c5b46ebfadc856a22ee1bc7a02c473005ce2f386"
     },
@@ -322,7 +328,7 @@
       "sha256": "932569d5fecddfc6c62e665afb5abec732b734ccc635354084fea2f2c4e73066"
     },
     "scripts/generate-competency-contracts.py": {
-      "sha256": "4519bba1cdfe2b28718479d43ebeeea533f9594b704f683651692927f4490cb0"
+      "sha256": "a2b53ea3978c22b980c8708bdc89cf20838124ea8c2dfd28c0b8edab66a6a6b1"
     },
     "scripts/generate-lab-manifests.py": {
       "sha256": "30e5f2489424b59b6b61efadee0a922316024b14782ecd612be8699cd6d4fdd2"
@@ -352,7 +358,7 @@
       "sha256": "c987b10bb1c70c4955d356acab83486123ee477513fa9272aaa8d566e8b100b8"
     },
     "scripts/supply_chain.py": {
-      "sha256": "90b2d2180822c8de9d5cd450a2af4642794fbd82824bd3132f8a015f4145fe57"
+      "sha256": "937d3c617b2124c3799f95fc20349b511d83461a32e8bf8e3b3daac9a48210ea"
     },
     "scripts/sync-dev-bind-mount.sh": {
       "sha256": "6af1529b5aec59e29d35b58b5a48910681abc0c92ef3f6d1ee3389ebff07757f"
