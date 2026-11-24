@@ -8,7 +8,7 @@ from datetime import datetime, timedelta, timezone
 import pytest
 
 from app.auth import get_password_hash
-from app.models import Course, User
+from app.models import ActivityEvent, Course, User
 
 PASSWORD = "Inst#Pass123"  # Test-only credential; security-delta: allow
 pytestmark = pytest.mark.db
@@ -121,3 +121,54 @@ def test_institution_admin_cannot_promote_to_platform_admin(client, db_session):
         headers=_headers(client, admin_a),
     )
     assert response.status_code == 403
+
+def test_institution_admin_pending_and_locked_are_scoped(client, db_session):
+    admin_a = _user(db_session, "institution_admin", "tenant-a")
+    pending_a = _user(db_session, "student", "tenant-a")
+    pending_b = _user(db_session, "student", "tenant-b")
+    locked_a = _user(db_session, "student", "tenant-a")
+    locked_b = _user(db_session, "student", "tenant-b")
+    pending_a.is_approved = False
+    pending_b.is_approved = False
+    locked_a.is_locked = True
+    locked_b.is_locked = True
+    db_session.commit()
+
+    headers = _headers(client, admin_a)
+    pending = client.get("/api/admin/users/pending", headers=headers)
+    assert pending.status_code == 200, pending.text
+    pending_ids = {row["id"] for row in pending.json()}
+    assert pending_a.id in pending_ids
+    assert pending_b.id not in pending_ids
+
+    locked = client.get("/api/admin/users/locked", headers=headers)
+    assert locked.status_code == 200, locked.text
+    locked_ids = {row["id"] for row in locked.json()}
+    assert locked_a.id in locked_ids
+    assert locked_b.id not in locked_ids
+
+
+def test_institution_admin_user_details_are_scoped(client, db_session):
+    admin_a = _user(db_session, "institution_admin", "tenant-a")
+    learner_b = _user(db_session, "student", "tenant-b")
+    response = client.get(
+        f"/api/admin/users/{learner_b.id}/details",
+        headers=_headers(client, admin_a),
+    )
+    assert response.status_code == 404
+
+
+def test_institution_admin_activity_is_scoped(client, db_session):
+    admin_a = _user(db_session, "institution_admin", "tenant-a")
+    actor_a = _user(db_session, "student", "tenant-a")
+    actor_b = _user(db_session, "student", "tenant-b")
+    event_a = ActivityEvent(event_type="login", actor_id=actor_a.id)
+    event_b = ActivityEvent(event_type="login", actor_id=actor_b.id)
+    db_session.add_all([event_a, event_b])
+    db_session.commit()
+
+    response = client.get("/api/admin/activity", headers=_headers(client, admin_a))
+    assert response.status_code == 200, response.text
+    ids = {row["id"] for row in response.json()["events"]}
+    assert event_a.id in ids
+    assert event_b.id not in ids

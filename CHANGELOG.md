@@ -4,7 +4,9 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
-No unreleased changes.
+### Admin tenant isolation
+
+- Added cross-tenant regression tests for the pending and locked account lists, user details, and activity log. The user, stats, activity, and course admin reads are now covered by tests.
 
 ## [5.43.1] - 2026-11-24
 

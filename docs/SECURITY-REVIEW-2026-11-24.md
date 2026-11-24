@@ -26,7 +26,7 @@ A broader code, database, dependency, and host-currency review is in
 | Area | Finding | Next action |
 |---|---|---|
 | `docker_manager.py` | The backend talks to the Docker socket and runs privileged/host-network helper containers with runtime `apk add`. Backend code execution is host-root-equivalent. | Pre-bake a pinned helper image; remove runtime package installation; document that the backend is host-root-equivalent; consider a host-side agent. |
-| `admin.py` | Several user/session/audit endpoints use the platform-admin dependency without the institution scope used by the core user endpoints. | Audit every admin action for institution scope; platform-only actions must say so explicitly. |
+| `admin.py` | User, pending, locked, details, stats, activity, and course reads are tenant-scoped and covered by cross-tenant tests. Session/audit operations are platform-admin only. | Reviewed; no cross-tenant read found. Platform-only operations remain a policy decision. |
 | `admin.py` | `OCR_DEV_TOOLS` defaults on; stress-run state now lives under `/app/run-state`, but a new run still deletes prior run files. | Default dev tools off outside development; retain prior runs. |
 | `main.py` | Middleware order and early error/CORS behaviour need a live check; inline DDL and Alembic both own schema. | Add a middleware-order contract test; move inline startup DDL to Alembic where possible. |
 | `auth.py` | Login failure counters are in-process, so multiple workers multiply the limit; trusted-proxy IP extraction must be verified. | Move throttling to a shared store; assert `X-Forwarded-For` is only trusted from the proxy. |
