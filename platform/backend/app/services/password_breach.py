@@ -32,8 +32,14 @@ USER_AGENT = "OpenCyberRange-PasswordBreachCheck/1.0"
 
 
 def password_sha1(password: str) -> str:
-    """Return the uppercase SHA-1 lookup digest for a password."""
-    return hashlib.sha1(password.encode("utf-8")).hexdigest().upper()
+    """Return the uppercase SHA-1 lookup digest for a password.
+
+    SHA-1 is used only as the Pwned Passwords range lookup index, never for
+    password storage or authentication. ``usedforsecurity=False`` states that.
+    """
+    return hashlib.sha1(
+        password.encode("utf-8"), usedforsecurity=False
+    ).hexdigest().upper()
 
 
 def _split_digest(digest: str) -> tuple[str, str]:
