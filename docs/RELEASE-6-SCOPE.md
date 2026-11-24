@@ -94,7 +94,7 @@ critical path.
 | Rubric registry | **Shipped** | Five versioned rubrics, including the capstone brief |
 | Evidence analytics (6.0) | **Shipped** | Status totals, backlog age, strongest/weakest competencies, documentation coverage, confidence trend, programme effectiveness, small-cohort suppression |
 | Competency contracts | **Partial** | 25 of 215 reviewed; 190 baseline-derived contracts await subject-matter review |
-| Coverage gate for every object | **Partial** | Labs have contracts; the quiz, assessment, capstone, and badge coverage gate is not yet enforced in CI |
+| Coverage gate for every object | **Partial** | Labs and all 9 quiz pathways are mapped; the CI gate exists as `scripts/audit-release6-coverage.py --fail-on-gaps`; capstones are not implemented and badges are derived |
 | Learner-visible score gate | **Partial** | Readiness already distinguishes unmeasured from weak; the remaining surfaces need the same rule verified |
 | Capstone Builder (6.1) | **Not started** | Rubric and scope exist; generation, edit, validation, publication, and evidence capture do not |
 | Six instructor dashboards (6.1) | **Not started** | Definitions exist; the evidence operations summary is not the class-competency dashboard |
@@ -109,8 +109,10 @@ critical path.
 1. **Review the 190 baseline contracts.** This is the hard blocker. It needs
    subject-matter time, not more code. Work in track-sized batches; the generated
    review queue is the source of truth.
-2. **Enforce object coverage.** Add a CI gate and an admin report for every lab,
-   quiz, assessment, capstone, and badge that lacks a competency mapping.
+2. **Enforce object coverage.** Run
+   `python scripts/audit-release6-coverage.py --fail-on-gaps` in CI. Labs and
+   all 9 quiz pathways are mapped; capstones and per-badge competency lists are
+   still open and are reported honestly rather than assumed.
 3. **Verify the learner-visible rule.** Every score surface must say
    **unmeasured** when coverage is absent, not show a low score.
 4. **Prove analytics at cohort scale.** Load and suppress at 200 learners, with

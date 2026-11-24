@@ -55,6 +55,9 @@ jobs:
       - name: Validate competency contract structure
         run: python scripts/validate-competency-contracts.py
 
+      - name: Audit Release 6 object coverage
+        run: python scripts/audit-release6-coverage.py --fail-on-gaps
+
       - name: Validate rubric registry
         run: python scripts/validate-rubrics.py
 

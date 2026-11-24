@@ -36,6 +36,18 @@ def taxonomy_ids() -> frozenset[str]:
     return frozenset(ids)
 
 
+@lru_cache(maxsize=1)
+def taxonomy_names() -> dict[str, str]:
+    with TAXONOMY_FILE.open("r", encoding="utf-8") as handle:
+        taxonomy = yaml.safe_load(handle) or {}
+    names: dict[str, str] = {}
+    for domain in taxonomy.get("domains", []):
+        for category in domain.get("categories", []):
+            for competency in category.get("competencies", []):
+                names[str(competency["id"])] = str(competency.get("name") or "")
+    return names
+
+
 def contract_for_lab(lab_slug: str) -> dict | None:
     return (load_contracts().get("labs") or {}).get(lab_slug)
 

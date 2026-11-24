@@ -38,6 +38,24 @@ The admin bank view shows a **per-domain question count** and highlights a
 domain with fewer than two reviewed items, so content work targets the thinnest
 area first rather than adding to the strongest one.
 
+## Competency mapping
+
+Each certification pathway declares a short `competencies:` list. The mapping is
+deliberately broad: it names the capabilities the pathway practices, not a
+one-to-one map from every question. It lets the coverage audit treat the quiz
+pathway as a mapped object for Release 6.
+
+```yaml
+  competencies:
+  - IR-001
+  - PROF-003
+  - WEB-018
+```
+
+`python scripts/audit-release6-coverage.py` checks that every pathway has a
+non-empty mapping and that every id exists in the taxonomy. It also checks every
+lab contract, every exercise quiz, and reports capstones and badges honestly.
+
 ## Source policy
 
 - Items are **original** and written to published objectives. Do not paste

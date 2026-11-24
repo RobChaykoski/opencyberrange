@@ -125,6 +125,38 @@ def build() -> tuple[str, dict]:
     lines.extend(
         [
             "",
+            "## Review campaign",
+            "",
+            "Use the packet generator to review by track rather than lab by lab. A",
+            "packet prints the current competencies, taxonomy names, evidence weights,",
+            "assessment criteria, and a checklist. It does not change the contract.",
+            "",
+            "```bash",
+            "# Progress by track",
+            "python scripts/competency-review-packet.py --summary",
+            "",
+            "# Review the first AI contract",
+            "python scripts/competency-review-packet.py --track AI --limit 1",
+            "",
+            "# Write packets for a track review session",
+            "python scripts/competency-review-packet.py --track Network --out /tmp/ocr-review",
+            "",
+            "# Audit every object that needs a mapping",
+            "python scripts/audit-release6-coverage.py",
+            "python scripts/audit-release6-coverage.py --fail-on-gaps",
+            "python scripts/audit-release6-coverage.py --require-reviewed",
+            "```",
+            "",
+            "The audit is a report by default. `--fail-on-gaps` fails on a missing or",
+            "unknown competency mapping; `--require-reviewed` fails while any baseline",
+            "contract remains. The second is the Release 6.0 gate.",
+            "",
+        ]
+    )
+
+    lines.extend(
+        [
+            "",
             "## Review queue",
             "",
             "Public labs are listed first within each track. Fill the reviewer, decision,",

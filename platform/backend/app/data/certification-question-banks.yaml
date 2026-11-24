@@ -389,6 +389,10 @@ pathways:
   - IT support technician
   - Network security engineer
   - GRC analyst
+  competencies:
+  - IR-001
+  - PROF-003
+  - WEB-018
 - id: comptia-cysa-plus
   name: CompTIA CySA+
   code: CS0-004
@@ -710,6 +714,11 @@ pathways:
   - Incident responder
   - Vulnerability analyst
   - SOC lead
+  competencies:
+  - SOC-001
+  - SIEM-001
+  - IR-004
+  - IR-009
 - id: comptia-pentest-plus
   name: CompTIA PenTest+
   code: PT0-003
@@ -1081,6 +1090,11 @@ pathways:
   - Security consultant
   - Application security tester
   - Vulnerability analyst
+  competencies:
+  - WEB-018
+  - NET-030
+  - WIN-022
+  - IR-009
 - id: comptia-network-plus
   name: CompTIA Network+
   code: N10-009
@@ -1407,6 +1421,10 @@ pathways:
   - NOC analyst
   - Network security analyst
   - Network security engineer
+  competencies:
+  - NET-001
+  - NET-011
+  - NET-034
 - id: comptia-linux-plus
   name: CompTIA Linux+
   code: XK0-006
@@ -1783,6 +1801,10 @@ pathways:
   - Systems administrator
   - Linux administrator
   - Automation engineer
+  competencies:
+  - LIN-003
+  - LIN-021
+  - LIN-024
 - id: microsoft-sc-900
   name: Microsoft SC-900
   code: SC-900
@@ -2112,6 +2134,11 @@ pathways:
   - Security architect
   - Identity administrator
   - SOC analyst
+  competencies:
+  - CLD-003
+  - CLD-004
+  - AI-008
+  - PROF-003
 - id: isc2-cc
   name: ISC2 Certified in Cybersecurity
   code: CC
@@ -2440,6 +2467,11 @@ pathways:
   - Incident responder
   - Network security analyst
   - Security operations analyst
+  competencies:
+  - WEB-018
+  - IR-001
+  - WIN-012
+  - PROF-003
 - id: owasp-top-10
   name: OWASP Top 10
   code: '2021'
@@ -2850,6 +2882,11 @@ pathways:
   - Penetration tester
   - Security code reviewer
   - SOC analyst
+  competencies:
+  - WEB-018
+  - APP-001
+  - APP-011
+  - PROF-003
 - id: owasp-llm-top-10
   name: OWASP Top 10 for LLM Applications
   code: '2025'
@@ -3262,6 +3299,12 @@ pathways:
   - ML engineer
   - AI governance analyst
   - Application security engineer
+
+  competencies:
+  - AI-005
+  - AI-006
+  - AI-007
+  - AI-008
 sources:
 - name: NIST Computer Security Resource Center
   url: https://csrc.nist.gov/
