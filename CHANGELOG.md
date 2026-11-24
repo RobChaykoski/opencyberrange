@@ -4,10 +4,17 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
+No unreleased changes.
+
+## [5.50.0] - 2026-11-24
+
+Tenant-isolation tooling, the competency review campaign, and a live ransomware
+snapshot.
+
 ### Competency review
 
-- Added the campaign plan: current 25/215 progress, the 25-draft first batch, and the 30 highest-use pending labs ranked from production.
-- Seeded the 25 unsigned drafts on production; the campaign plan records the first batch and the 30 highest-use pending labs.
+- Added the campaign plan: 25/215 progress, the 25-draft first batch, and the 30 highest-use pending labs ranked from production usage.
+- Seeded the 25 unsigned drafts on production so the first batch can be signed where the export gate runs.
 
 ### Tenant isolation
 
@@ -17,6 +24,10 @@ All notable changes to OpenCyberRange are recorded here.
 - Added ADR 0010: the consent-subsystem RLS design, gated on the pilot, with pre-read tenant stamping and the subject-only suppression exception.
 - Added `scripts/check-tenant-pilot-api.py` for two-token course, evidence, catalogue, and admin cross-tenant probes.
 - Added the `ocr-labd` host harness: disposable container, status, stop, invalid ids, and audit-log checks.
+
+### Threat awareness
+
+- Refreshed the RansomLook snapshot with live aggregate data (291 posts in 7 days, 15 groups). The ransomware section no longer shows the sample banner.
 
 ## [5.49.0] - 2026-11-24
 

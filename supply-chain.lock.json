@@ -175,10 +175,10 @@
       "sha256": "a67628fe072235c02aeecb19b468f5c71fd4e5d66163f6a3a2c4c3c19caa3fc4"
     },
     "platform/backend/app/data/ransomware-activity.json": {
-      "sha256": "033ce877845c13d962d75835d1e1bc3cc56f4abf429ee6f217eba526e685bfc0"
+      "sha256": "fa98a77f258b88dcb508b1ad129e4724cabad65d8ed7db26e03c3c8e1c1538de"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "c7f44e8f91119ba16a951c32660156b315df6a155a4a88dfdf07678e7fd13f13"
+      "sha256": "a7487671002e3072925ad54d6b48b278b64b932e9686b08d6d9abebc5efe7ca6"
     },
     "platform/backend/app/data/threat-awareness.json": {
       "sha256": "ea3fd8666be4686ba069ac17a344c91042dedf3145043142034603429127c159"
@@ -199,7 +199,7 @@
       "sha256": "18f211d07b779cb88dbb4e5c71c6ae4d62f4f6e38c71104b901ede93df31f6bd"
     },
     "platform/backend/app/version.py": {
-      "sha256": "4d2840fafcddb0a18376f31138ade6e5389f88859dc3ae9b92791c2bdf4a05b7"
+      "sha256": "0ef04eca28c5263043b715f34eea2e869d9ba183e063b7e8dcb7f83cff8800a9"
     },
     "platform/backend/lab_metadata.schema.json": {
       "sha256": "7590d5bf2a3a9ea2ecf275ba18c82394dfec252b0a39fe0846d18e57d746c36c"
@@ -238,10 +238,10 @@
       "sha256": "f808eb1e3d730c8d87db3a9888de8cabf6a63bcf09e828d56228313f1b7f7942"
     },
     "platform/frontend/package-lock.json": {
-      "sha256": "f42589e93fcfaac967adc9ce3ca0f65d358ebed10050a366fdb9bb9f9542f52f"
+      "sha256": "494d4de325562e19d35219a0bdb4c783cbd6d76402908493353efe6dfa9be5af"
     },
     "platform/frontend/package.json": {
-      "sha256": "638331009804a632346fd1da68380eb38a6321584e90102110d58b6ee029cf8b"
+      "sha256": "ef89571fd083af785955beae0ada28f37126947bdb4ec40f859d8ea63c266f61"
     },
     "platform/frontend/security-headers.conf": {
       "sha256": "dedacc7cf8e9ae24225045f3cb3c47a5f5fa3141cab22ce59fc9b51eff25053f"
@@ -424,7 +424,7 @@
       "sha256": "f08f563a56860357a3c246993e4fd3da16cf1df35cce49f9890c0b09eb1ab769"
     },
     "versions.yaml": {
-      "sha256": "672e7c5b1bf30f56c6f57cc2f5d44990b9706c900be3d7c7deb72b521b36ecd7"
+      "sha256": "7457dc18ff725fa42f07ce554fbb1e637f814f7562f09ad0a0a00c81ede4ffb5"
     }
   },
   "generator": "scripts/supply_chain.py",
@@ -1739,6 +1739,6 @@
       ]
     }
   },
-  "release": "5.49.0",
+  "release": "5.50.0",
   "schema": 1
 }
