@@ -145,7 +145,8 @@ Course-owned content is complete in `0067_course_content_rls`. The two-instituti
 probe now covers a course-owned table as well as `course_enrollments`.
 
 For the consent subsystem, first stamp the tenant before the onboarding/sign-in
-consent reads, then apply the same pattern:
+consent reads, then apply the same pattern. The design is in
+[ADR 0010](decisions/0010-consent-rls.md) and is gated on the two-tenant pilot:
 
 1. Stamp `ocr.institution_id` before the consent gate runs.
 2. Add `institution_id` to the consent tables.
