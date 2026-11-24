@@ -650,20 +650,6 @@ async def lifespan(app: FastAPI):
             logger.info("Added counts_toward_certificate column to labs table")
         labs_columns = [c['name'] for c in inspector.get_columns('labs')]
 
-        # --- ws_tickets: single-use WebSocket auth tickets (RangeBox VNC etc.) ---
-        # Used by auth.py via raw SQL; there is no ORM model, so create it here
-        # so fresh installs have it (previously hand-created only on the dev host).
-        if 'ws_tickets' not in inspector.get_table_names():
-            conn.execute(text(
-                "CREATE TABLE IF NOT EXISTS ws_tickets ("
-                " ticket VARCHAR(64) PRIMARY KEY,"
-                " user_id INTEGER NOT NULL,"
-                " expires_at TIMESTAMP NOT NULL)"))
-            conn.execute(text(
-                "CREATE INDEX IF NOT EXISTS idx_ws_tickets_expires ON ws_tickets (expires_at)"))
-            conn.commit()
-            logger.info("Created ws_tickets table")
-
         # --- Track sequential gating: add 'sequential' column to tracks ---
         tracks_columns = [c['name'] for c in inspector.get_columns('tracks')]
         if 'sequential' not in tracks_columns:

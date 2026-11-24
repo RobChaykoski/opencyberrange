@@ -27,8 +27,8 @@ anything the model does not declare. On this schema that is destructive.
 ## Current inventory
 
 See [Alembic drift inventory](ALEMBIC-DRIFT-INVENTORY.md). The model `id`
-indexes were aligned in the 5.45.0 line and migration `0063` adds the
-model-declared FK indexes.
+indexes were aligned in the 5.45.0 line, migration `0063` adds the
+model-declared FK indexes, and migration `0064` owns the WebSocket ticket table.
 
 ## Reconciliation plan
 

@@ -10,7 +10,7 @@ This is a classification, not a migration. Do not autogenerate from it.
 | Category | Count | Action |
 |---|---:|---|
 | Runtime tenant DDL (`institution_id` columns, indexes, NULL changes) | ~21 columns/indexes, 3 nullability changes | Move into a dedicated tenant-baseline migration |
-| Runtime auth table `ws_tickets` | 1 table, 1 index | Create a migration/model or fold it into auth sessions |
+| Runtime auth table `ws_tickets` | 1 table, 1 index | **Fixed:** model + migration `0064_ws_tickets`; runtime DDL removed |
 | Legacy Kali columns | 6 columns | Verify no code references, then drop in a dedicated migration |
 | Model `id` index declarations | 24 indexes | **Fixed:** removed `index=True` from 24 model IDs; migration 0061 already dropped the DB indexes |
 | Missing FK indexes declared by models | 10 indexes | **Fixed:** migration 0063 adds them |
@@ -102,6 +102,7 @@ docker exec ocr-backend alembic -c alembic.ini check
 bash scripts/restore-drill.sh
 ```
 
-The production snapshot was taken before the model cleanup and migration 0063.
-Re-run `alembic check` after the 5.45.0 deploy to confirm the 24 `id` indexes and
-10 FK indexes no longer appear.
+The production snapshot was taken before the model cleanup, migration 0063, and
+migration 0064. Development after 0063 showed 59 operations (down from 93) with
+zero `id`-index or missing-FK-index operations. Re-run `alembic check` after the
+5.45.0 deploy to confirm the count drops again with `0064`.

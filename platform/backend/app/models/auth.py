@@ -469,6 +469,18 @@ class RefreshToken(Base):
     )
 
 
+class WebSocketTicket(Base):
+    """Single-use ticket for a RangeBox WebSocket handshake."""
+
+    __tablename__ = "ws_tickets"
+
+    ticket = Column(String(64), primary_key=True)
+    user_id = Column(Integer, nullable=False)
+    expires_at = Column(DateTime, nullable=False)
+
+    __table_args__ = (Index("idx_ws_tickets_expires", "expires_at"),)
+
+
 class InviteCode(Base):
     """Invite-gated registration. A code is single-use; email, when set,
     pins the code to one address."""
