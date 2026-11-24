@@ -4,6 +4,12 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
+No unreleased changes.
+
+## [5.49.0] - 2026-11-24
+
+Course-owned content row-level security.
+
 ### Course-owned RLS
 
 - Added migration `0067_course_content_rls`: `institution_id` on the six course-owned content tables, derived from `course_id`, with forced RLS and the four tenant policies.

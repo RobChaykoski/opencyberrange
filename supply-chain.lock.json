@@ -178,7 +178,7 @@
       "sha256": "033ce877845c13d962d75835d1e1bc3cc56f4abf429ee6f217eba526e685bfc0"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "9b172ead5cb6f09502776f56b86041373d416e6537bc84192b7ad30ae75e35d6"
+      "sha256": "c7f44e8f91119ba16a951c32660156b315df6a155a4a88dfdf07678e7fd13f13"
     },
     "platform/backend/app/data/threat-awareness.json": {
       "sha256": "ea3fd8666be4686ba069ac17a344c91042dedf3145043142034603429127c159"
@@ -199,7 +199,7 @@
       "sha256": "18f211d07b779cb88dbb4e5c71c6ae4d62f4f6e38c71104b901ede93df31f6bd"
     },
     "platform/backend/app/version.py": {
-      "sha256": "aa73abf62955b2eec74ca663756b22b1deaeca042509594f265739afd6b2b7f2"
+      "sha256": "4d2840fafcddb0a18376f31138ade6e5389f88859dc3ae9b92791c2bdf4a05b7"
     },
     "platform/backend/lab_metadata.schema.json": {
       "sha256": "7590d5bf2a3a9ea2ecf275ba18c82394dfec252b0a39fe0846d18e57d746c36c"
@@ -238,10 +238,10 @@
       "sha256": "f808eb1e3d730c8d87db3a9888de8cabf6a63bcf09e828d56228313f1b7f7942"
     },
     "platform/frontend/package-lock.json": {
-      "sha256": "f30c52ebaba0db68906860b0ce6168a3c7a0e0c13850f79c87925f2f0b49d3ee"
+      "sha256": "f42589e93fcfaac967adc9ce3ca0f65d358ebed10050a366fdb9bb9f9542f52f"
     },
     "platform/frontend/package.json": {
-      "sha256": "f53a3860b34a3e1eba7100dd5f79f42734c543321fe72817f1fcd510d02ff421"
+      "sha256": "638331009804a632346fd1da68380eb38a6321584e90102110d58b6ee029cf8b"
     },
     "platform/frontend/security-headers.conf": {
       "sha256": "dedacc7cf8e9ae24225045f3cb3c47a5f5fa3141cab22ce59fc9b51eff25053f"
@@ -415,7 +415,7 @@
       "sha256": "f08f563a56860357a3c246993e4fd3da16cf1df35cce49f9890c0b09eb1ab769"
     },
     "versions.yaml": {
-      "sha256": "c19d078c4aef18bb29072472932092a95f7cf61ea6a30d1cf9a46d6754276866"
+      "sha256": "672e7c5b1bf30f56c6f57cc2f5d44990b9706c900be3d7c7deb72b521b36ecd7"
     }
   },
   "generator": "scripts/supply_chain.py",
@@ -1730,6 +1730,6 @@
       ]
     }
   },
-  "release": "5.48.0",
+  "release": "5.49.0",
   "schema": 1
 }

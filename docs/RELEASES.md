@@ -20,6 +20,14 @@ Steps 2 and 3 order matters: the manifest copies the lock's `release` field.
 Releases 5.46.0 and 5.46.1 skipped step 3, so the committed manifest still said
 `5.45.0` and the CI integrity gate failed.
 
+## Release 5.49.0
+
+| Tag | Release | Status |
+|---|---|---|
+| `v5.49.0` | SWOCTS Cyber Range Release 5.49.0 | Signed annotated tag: migration `0067_course_content_rls` scopes the six course-owned content tables to the tenant with forced RLS and the four policies, bringing the enforced set to 47 tables. Deployment pending. |
+
+Deliverables: [Release 5.49.0 deliverables](RELEASE-5.49.0-DELIVERABLES.md).
+
 ## Release 5.48.0
 
 | Tag | Release | Status |

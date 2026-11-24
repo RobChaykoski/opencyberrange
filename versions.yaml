@@ -9,7 +9,7 @@
 # docs/decisions/0004-single-platform-release-version.md.
 platform:
   name: "SWOCTS Cyber Range"
-  version: "5.48.0"
+  version: "5.49.0"
   status: "release"
   date: "2026-11-24"
 
@@ -41,13 +41,13 @@ maintenance_lines:
     note: "Existing single-host teaching installs; new installs use the Release 5 tree with the Community / Academic profile."
 
 release:
-  version: "5.48.0"
+  version: "5.49.0"
   status: "release"
   date: "2026-11-24"
 
 development:
-  version: "5.49.0"
-  focus: "RLS coverage, host-agent harness, and the competency review campaign"
+  version: "5.50.0"
+  focus: "Consent RLS wave, host-agent harness, and the competency review campaign"
 
 policy:
   name: latest-supported-ga
