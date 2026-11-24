@@ -14,7 +14,9 @@ Run from the repository root before tagging:
 4. `python scripts/supply_chain.py --update`
 5. Run `python scripts/generate-integrity-manifest.py` twice and confirm the
    file hash is unchanged between runs.
-6. Sign the lock, verify it, then tag.
+6. On development, run `docker exec -i ocr-backend python - < scripts/check-tenant-isolation.py`
+   and confirm `PASSED`.
+7. Sign the lock, verify it, then tag.
 
 Steps 2 and 3 order matters: the manifest copies the lock's `release` field.
 Releases 5.46.0 and 5.46.1 skipped step 3, so the committed manifest still said

@@ -70,7 +70,12 @@ network-namespace privileges. Adjust only after the security review.
 
 ```bash
 python scripts/check-labd-agent.py
+bash scripts/check-labd-harness.sh
 ```
+
+The harness creates a disposable `ocr-lab-harness` container, starts the agent
+with `--enable-stop`, and verifies health, auth, status, stop, invalid ids, and
+the audit log. It removes the container and agent in a trap.
 
 The check starts the server on an ephemeral port, verifies `/health`, rejects a
 missing token, verifies `/v1/capabilities`, exercises `status` and `stop` with a fake runtime and with mocked `docker

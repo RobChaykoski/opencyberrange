@@ -10,6 +10,8 @@ All notable changes to OpenCyberRange are recorded here.
 - The audit passes on development and production as the runtime role with zero leaked rows.
 - Added the two-tenant pilot runbook and classified `users` as the tenant source outside RLS by design.
 - Added ADR 0010: the consent-subsystem RLS design, gated on the pilot, with pre-read tenant stamping and the subject-only suppression exception.
+- Added `scripts/check-tenant-pilot-api.py` for two-token course, evidence, catalogue, and admin cross-tenant probes.
+- Added the `ocr-labd` host harness: disposable container, status, stop, invalid ids, and audit-log checks.
 
 ## [5.49.0] - 2026-11-24
 

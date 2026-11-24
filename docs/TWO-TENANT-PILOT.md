@@ -67,6 +67,21 @@ probe: tenant __isolation_probe__, 0 table(s) leaked
 PASSED: tenant controls and cross-tenant probe
 ```
 
+Then run the API probe with one token per tenant:
+
+```bash
+python scripts/check-tenant-pilot-api.py \
+  --base-url https://localhost --insecure \
+  --token-a "$TOKEN_A" --token-b "$TOKEN_B" \
+  --admin-token-a "$ADMIN_A" --admin-token-b "$ADMIN_B" \
+  --label-a default --label-b pilot-b
+```
+
+It checks `/api/auth/me`, course and evidence list disjointness, foreign
+course/evidence reads, the shared lab catalogue, and admin user scoping. It
+prints only method, path, and status on failure. Use `--plan` to preview the
+checks without tokens.
+
 Then check the product:
 
 | Check | Expected |

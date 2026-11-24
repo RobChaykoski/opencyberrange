@@ -250,7 +250,7 @@
       "sha256": "2af94f01e1971686c7dd0ca2b94552cd6537f1802a3c3ccf0974fce6611d951e"
     },
     "platform/labd/README.md": {
-      "sha256": "545cb4f5b504e5e7cc6d5c761faf538c2892e41a66e8da0b9acb9f028452bfa3"
+      "sha256": "d46ce0e563701aa5d0114e80e67fbcbfddc3cbe324ac0fb3ccd222d4e87e7ae4"
     },
     "platform/labd/ocr_labd.py": {
       "sha256": "87ed73e6ed9543ec90f27541ec7c3d964e2614d60eb1e3febf828d5a373c3fe1"
@@ -321,6 +321,9 @@
     "scripts/check-labd-agent.py": {
       "sha256": "2b3d02f5dbf6f0cb431b2c346be1aabc48b8737aba5567ed7c15a992ac6aa585"
     },
+    "scripts/check-labd-harness.sh": {
+      "sha256": "7ab1bea53f4044481f326b76240b2959a2b64426d07d8dc0321e98bb1ccd3178"
+    },
     "scripts/check-licences.py": {
       "sha256": "535634890ffc65b0dc4a35f4f36dd6a62ca27b6ae350233b17332894ca71f7a1"
     },
@@ -335,6 +338,9 @@
     },
     "scripts/check-tenant-isolation.py": {
       "sha256": "2d3371a241f8411103e37891ba3015aab6d0482fc6e4089356b930f9508f2dab"
+    },
+    "scripts/check-tenant-pilot-api.py": {
+      "sha256": "b3244bd471e4557f8a184f362dfa643a5dce6db7702d786f405274c55e4f6175"
     },
     "scripts/check_db_roles.py": {
       "sha256": "a188534ab5135c289a572edb7982b38e11d27deea8da9c421ed21af5ffada74b"
@@ -400,7 +406,7 @@
       "sha256": "c987b10bb1c70c4955d356acab83486123ee477513fa9272aaa8d566e8b100b8"
     },
     "scripts/supply_chain.py": {
-      "sha256": "54a12ea70af145fbe881ceb8d55ac6d2d638a5af2543746308c29ca5c4364a25"
+      "sha256": "ce601a665d295b22e63facf47ee1609c21ce6d799ef86f4d27b8a986b9f9f7dc"
     },
     "scripts/sync-dev-bind-mount.sh": {
       "sha256": "726a5b5f259ee7a1a9e0c1e6cd51873ba4b77d66ffa19f27266da3c288ed3783"
