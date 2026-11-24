@@ -43,6 +43,23 @@ Attribution is written into the snapshot: "IP geolocation by DB-IP
 The same command works with a GeoLite2-Country `.mmdb` obtained under a MaxMind
 account and licence. Keep the MaxMind attribution with any copy.
 
+### Mirrors and consensus builds
+
+- **WP Statistics DB-IP mirror** (`wp-statistics/DbIP-City-lite`, served through
+  jsDelivr): the same DB-IP City Lite data under CC BY 4.0, with no account.
+  Acceptable as a fallback when `db-ip.com` is unavailable; keep the DB-IP
+  attribution. Prefer the upstream download for provenance.
+- **GeoForge** (`ipanalytics/GeoForge`): not adopted. It is a source-available
+  Go builder that merges DB-IP Lite, GeoLite2, IP2Location LITE, Sypex Geo,
+  operator geofeeds, RIR statistics, and GeoNames into a consensus MMDB. It is
+  heavier than a country-only refresh needs, and the licence plus
+  `THIRD_PARTY_DATA.md` put conditions on redistributing derived outputs.
+  Revisit only if country accuracy becomes a measured problem and those terms
+  are cleared.
+- **ipgeolocation.io**: a keyed API with rate-limited tiers. Suitable for spot
+  checks or a future paid accuracy tier, not for refreshing hundreds of
+  thousands of feed entries.
+
 ### HackerTarget and other lookup APIs
 
 `https://hackertarget.com/geoip-ip-location-lookup/` is an ad-hoc lookup

@@ -1,15 +1,16 @@
 # Release 5.50.1 deliverables
 
-Status: **release prepared; deployment pending** on 24 November 2026.
+Status: **released and deployed** to development and production on 24
+November 2026.
 
 | Item | Value |
 |---|---|
 | Version | `5.50.1` |
 | Signed tag | `v5.50.1` |
-| Release commit | Pending tag |
+| Release commit | `bd1fd500` |
 | Alembic | `0067_course_content_rls` (no migration) |
-| Production | Pending |
-| Development | Pending |
+| Production | Deployed and verified |
+| Development | Deployed and verified |
 | Supply-chain lock | Refreshed and signed with the release key |
 
 ## Live threat snapshot
@@ -32,12 +33,12 @@ Status: **release prepared; deployment pending** on 24 November 2026.
 | Ransomware snapshot | `snapshot`, `291` posts in `7` days, `15` groups |
 | Backend tests | Unchanged: `1,196 passed` |
 | Frontend tests | Unchanged: `38 passed` |
-| Supply-chain lock | Pending |
+| Supply-chain lock | Verified with the release key |
 | Development drift | `0` expected |
-| Production drift | `0` expected |
-| Production health | Pending |
-| Restore drill | Pending |
-| Rollback images | Pending |
+| Production drift | `0` operations |
+| Production health | `200` |
+| Restore drill | **PASSED** at `0` operations |
+| Rollback images | `pre-v5.50.1` backend and frontend |
 
 ## Known limitations
 
@@ -47,11 +48,11 @@ Status: **release prepared; deployment pending** on 24 November 2026.
 
 ## Acceptance checklist
 
-- [ ] Signed tag and verified supply-chain lock.
-- [ ] CI integrity gate passes on the release commit.
-- [ ] Production reports `snapshot` mode with no sample banner.
-- [ ] Production health, version, SSO, and public routes verified.
-- [ ] Production drift is `0`.
-- [ ] Pre-deploy and post-deploy backups.
-- [ ] Restore drill and restore-drift gate at `0` passed.
-- [ ] Rollback images retained.
+- [x] Signed tag and verified supply-chain lock.
+- [x] CI integrity gate passes on the release commit.
+- [x] Production reports `snapshot` mode with no sample banner.
+- [x] Production health, version, SSO, and public routes verified.
+- [x] Production drift is `0`.
+- [x] Pre-deploy and post-deploy backups.
+- [x] Restore drill and restore-drift gate at `0` passed.
+- [x] Rollback images retained.

@@ -9,6 +9,24 @@ another document disagrees, this page and the signed tag win.
 > replaced with placeholders. The private deployment inventory holds the live
 > values. See [`PUBLICATION-METADATA-POLICY.md`](PUBLICATION-METADATA-POLICY.md).
 
+## 5.50.1 deployment verification
+
+| Check | Result |
+|---|---|
+| `/api/version` | `5.50.1` on production and development |
+| Alembic | **`0067_course_content_rls` (head)** |
+| Health | `200` |
+| Alembic drift | **`0` operations** |
+| Threat snapshot | `snapshot` mode, `469,828` entries, `148` countries |
+| Ransomware snapshot | `snapshot` mode, `291` posts in `7` days, `15` groups |
+| Existing routes | `/threat-awareness`, `/contract-review`, `/my-evidence`, `/evidence-review` return `200` |
+| SSO | Authentik OIDC provider present; `sso_enabled` is true |
+| Pre-deploy backup | `~/backups/ocr-backup-20261124-221418.dump` |
+| Post-deploy backup | `~/backups/ocr-backup-20261124-221744.dump` |
+| Rollback images | `opencyberrange-backend:pre-v5.50.1`, `ocr-frontend:pre-v5.50.1` |
+| Restore drill | **PASSED** (69 users, 215 labs, 2 courses, 64 enrollments, 134 completions, 497 achievements, 1,575 activity events) |
+| Restore-drift gate | **PASSED** at `0` operations |
+
 ## 5.50.0 deployment verification
 
 | Check | Result |

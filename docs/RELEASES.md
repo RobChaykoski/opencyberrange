@@ -26,7 +26,7 @@ Releases 5.46.0 and 5.46.1 skipped step 3, so the committed manifest still said
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.50.1` | SWOCTS Cyber Range Release 5.50.1 | Signed annotated tag: live FireHOL snapshot with DB-IP Lite country attribution (`469,828` entries across `148` countries), the `--require-geoip` guard, and the threat-awareness operations runbook. Deployment pending. |
+| `v5.50.1` | SWOCTS Cyber Range Release 5.50.1 | Signed annotated tag: live FireHOL snapshot with DB-IP Lite country attribution (`469,828` entries across `148` countries), the `--require-geoip` guard, and the threat-awareness operations runbook. Deployed to development and production on 24 November 2026; restore drill and zero-drift gate passed. |
 
 Deliverables: [Release 5.50.1 deliverables](RELEASE-5.50.1-DELIVERABLES.md).
 

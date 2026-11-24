@@ -4,7 +4,9 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
-No unreleased changes.
+### Threat awareness
+
+- Documented GeoIP source options: DB-IP upstream and the WP Statistics mirror, the GeoForge licence and build assessment, and the HackerTarget/ipgeolocation.io rate limits.
 
 ## [5.50.1] - 2026-11-24
 
