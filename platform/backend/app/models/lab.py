@@ -247,7 +247,7 @@ class LabSession(Base):
     __table_args__ = (
         Index('ix_labsession_status', 'status'),
         Index('ix_labsession_user_status', 'user_id', 'status'),
-        Index('ix_lab_sessions_started_at', 'started_at'),
+        Index('ix_lab_sessions_started_at', started_at.desc()),
     )
 
 
@@ -282,7 +282,7 @@ class LabCompletion(Base):
     
     __table_args__ = (
         Index('ix_completion_user_lab', 'user_id', 'lab_id', unique=True),
-        Index('ix_lab_completions_lab_completed', 'lab_id', 'completed_at'),
+        Index('ix_lab_completions_lab_completed', 'lab_id', completed_at.desc()),
     )
 
 

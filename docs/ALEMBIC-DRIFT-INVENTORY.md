@@ -14,10 +14,10 @@ This is a classification, not a migration. Do not autogenerate from it.
 |---|---:|---|
 | Runtime tenant DDL (`institution_id` columns, indexes, NULL changes) | ~21 columns/indexes, 3 nullability changes | Move into a dedicated tenant-baseline migration |
 | Runtime auth table `ws_tickets` | 1 table, 1 index | **Fixed:** model + migration `0064_ws_tickets`; runtime DDL removed |
-| Legacy Kali columns | 6 columns | Verify no code references, then drop in a dedicated migration |
+| Legacy Kali columns | 6 columns | **Fixed:** no code references; migration `0065_legacy_kali_columns` drops them |
 | Model `id` index declarations | 24 indexes | **Fixed:** removed `index=True` from 24 model IDs; migration 0061 already dropped the DB indexes |
 | Missing FK indexes declared by models | 10 indexes | **Fixed:** migration 0063 adds them |
-| Index expression drift | 3 indexes | Align model and DB on ASC/DESC |
+| Index expression drift | 3 indexes | **Fixed:** model indexes now declare `DESC` |
 | Runtime ledger indexes | 3 indexes | Model does not declare them; keep as runtime DDL or migrate |
 | Other legacy indexes | 4 indexes | Review before dropping |
 
@@ -35,6 +35,10 @@ This is a classification, not a migration. Do not autogenerate from it.
   `survey_responses(course_id)`.
 - Added the `WebSocketTicket` model and migration `0064_ws_tickets`; the runtime
   `CREATE TABLE` was removed from startup.
+- Dropped the six legacy Kali columns in migration `0065_legacy_kali_columns`; no
+  application code referenced them.
+- Declared `DESC` on the three recent-first indexes so the model matches the
+  database.
 
 ## Remaining categories
 
@@ -64,22 +68,14 @@ table or `ws_tickets` index.
 
 ### 3. Legacy Kali columns
 
-`lab_sessions.kali_terminal_url`, `kali_container_id`, `kali_port`,
-`kali_activity_heartbeat`, `kali_last_activity`, and
-`labs.provides_kali_terminal` exist in the database but not the model.
-
-Action: confirm no code or report reads them, take a backup, then drop them in a
-dedicated migration. Do not combine the drop with a feature release.
+Fixed: `0065_legacy_kali_columns` drops the six columns. The repository had no
+application, report, or frontend references. The deploy takes a pre-deploy
+backup, and the downgrade restores the original types.
 
 ### 4. Index expression drift
 
-`ix_achievements_awarded_at`, `ix_lab_completions_lab_completed`, and
-`ix_lab_sessions_started_at` are descending in the database and ascending in the
-model.
-
-Action: decide whether recent-first queries need DESC. If so, declare
-`column.desc()` in the model and add a migration that matches the database.
-Otherwise recreate the indexes ascending.
+Fixed: the model now declares `awarded_at DESC`, `started_at DESC`, and
+`completed_at DESC`. The database already matched those expressions.
 
 ### 5. Runtime and legacy indexes
 
@@ -106,6 +102,6 @@ bash scripts/restore-drill.sh
 ```
 
 The production snapshot was taken before the model cleanup, migration 0063, and
-migration 0064. Development after 0064 reports 57 operations (down from 93), with zero
-`id`-index, missing-FK-index, or `ws_tickets` operations. Re-run against
-production after the 5.45.0 deploy to confirm the same.
+migration 0064. Development after 0065 is expected to report about 48 operations: the remaining
+runtime tenant columns/nullability changes and the runtime/legacy indexes.
+Re-run against production after the 5.45.0 deploy to confirm.

@@ -19,7 +19,7 @@ def _script() -> ScriptDirectory:
 def test_alembic_head_is_the_metadata_revision():
     script = _script()
     heads = script.get_heads()
-    assert heads == ["0064_ws_tickets"]
+    assert heads == ["0065_legacy_kali_columns"]
 
 
 def test_revision_graph_is_linear():
@@ -73,6 +73,7 @@ def test_baseline_revision_exists():
     assert "0062_index_dedupe.py" in names
     assert "0063_missing_fk_indexes.py" in names
     assert "0064_ws_tickets.py" in names
+    assert "0065_legacy_kali_columns.py" in names
 
 
 
