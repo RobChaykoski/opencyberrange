@@ -9,6 +9,24 @@ another document disagrees, this page and the signed tag win.
 > replaced with placeholders. The private deployment inventory holds the live
 > values. See [`PUBLICATION-METADATA-POLICY.md`](PUBLICATION-METADATA-POLICY.md).
 
+## 5.49.0 deployment verification
+
+| Check | Result |
+|---|---|
+| `/api/version` | `5.49.0` on production and development |
+| Alembic | **`0067_course_content_rls` (head)** |
+| Health | `200` |
+| Alembic drift | **`0` operations** |
+| Course-owned RLS | Forced RLS on all six new tables |
+| Tenant values | `0` null values in `course_cohorts` and `report_exports` |
+| Existing routes | `/threat-awareness`, `/contract-review`, `/my-evidence`, `/evidence-review` return `200` |
+| SSO | Authentik OIDC provider present; `sso_enabled` is true |
+| Pre-deploy backup | `~/backups/ocr-backup-20261124-205252.dump` |
+| Post-deploy backup | `~/backups/ocr-backup-20261124-205618.dump` |
+| Rollback images | `opencyberrange-backend:pre-v5.49.0`, `ocr-frontend:pre-v5.49.0` |
+| Restore drill | **PASSED** (69 users, 215 labs, 2 courses, 64 enrollments, 134 completions, 497 achievements, 1,575 activity events) |
+| Restore-drift gate | **PASSED** at `0` operations |
+
 ## 5.48.0 deployment verification
 
 | Check | Result |

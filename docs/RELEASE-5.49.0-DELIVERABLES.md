@@ -1,15 +1,16 @@
 # Release 5.49.0 deliverables
 
-Status: **release prepared; deployment pending** on 24 November 2026.
+Status: **released and deployed** to development and production on 24
+November 2026.
 
 | Item | Value |
 |---|---|
 | Version | `5.49.0` |
 | Signed tag | `v5.49.0` |
-| Release commit | Pending tag |
+| Release commit | `bfb593a0` |
 | Alembic | `0067_course_content_rls` |
-| Production | Pending |
-| Development | Deployed and verified: `0067`, drift `0` |
+| Production | Deployed and verified |
+| Development | Deployed and verified |
 | Supply-chain lock | Refreshed and signed with the release key |
 
 ## Course-owned RLS
@@ -34,10 +35,10 @@ Status: **release prepared; deployment pending** on 24 November 2026.
 | Development drift | `0` operations |
 | Development RLS | Forced RLS on all six new tables |
 | Development nulls | `0` |
-| Production drift | Pending |
-| Restore-drift gate | Pending at `0` |
-| Production health | Pending |
-| Rollback images | Pending |
+| Production drift | `0` operations |
+| Restore-drift gate | **PASSED** at `0` operations |
+| Production health | `200` |
+| Rollback images | `pre-v5.49.0` backend and frontend |
 
 ## Known limitations
 
@@ -51,12 +52,12 @@ Status: **release prepared; deployment pending** on 24 November 2026.
 
 ## Acceptance checklist
 
-- [ ] Signed tag and verified supply-chain lock.
-- [ ] CI integrity gate passes on the release commit.
-- [ ] Production migration reaches `0067_course_content_rls`.
-- [ ] Production drift is `0`.
-- [ ] All six tables have forced RLS and no null tenant values.
-- [ ] Production health, version, SSO, and public routes verified.
-- [ ] Pre-deploy and post-deploy backups.
-- [ ] Restore drill and restore-drift gate at `0` passed.
-- [ ] Rollback images retained.
+- [x] Signed tag and verified supply-chain lock.
+- [x] CI integrity gate passes on the release commit.
+- [x] Production migration reaches `0067_course_content_rls`.
+- [x] Production drift is `0`.
+- [x] All six tables have forced RLS and no null tenant values.
+- [x] Production health, version, SSO, and public routes verified.
+- [x] Pre-deploy and post-deploy backups.
+- [x] Restore drill and restore-drift gate at `0` passed.
+- [x] Rollback images retained.
