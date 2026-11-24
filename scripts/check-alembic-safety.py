@@ -5,29 +5,20 @@ The live schema contains runtime tenant DDL and legacy-restored columns and
 indexes that are not represented in the migration graph. Autogenerate would
 propose destructive drops. This check keeps that unsafe path out of CI and
 scripts until the baseline is reconciled.
+
+It parses the revision files with ``ast`` so the docs/quality job does not need
+Alembic, the application package, or a database connection.
 """
 
 from __future__ import annotations
 
-import os
+import ast
 import sys
-from itertools import pairwise
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-BACKEND = ROOT / "platform" / "backend"
+VERSIONS = ROOT / "platform" / "backend" / "alembic" / "versions"
 SELF = Path(__file__).resolve()
-
-# Revision modules import the application package and its settings. Set a
-# harmless local placeholder before Alembic walks them; this script never opens
-# a database connection.
-if str(BACKEND) not in sys.path:
-    sys.path.insert(0, str(BACKEND))
-os.environ.setdefault("DATABASE_URL", "postgresql://ocr:ocr@localhost/ocr")
-os.environ.setdefault("JWT_SECRET", "alembic-safety-check")
-
-from alembic.config import Config
-from alembic.script import ScriptDirectory
 
 PATTERNS = (
     "alembic revision --autogenerate",
@@ -37,25 +28,78 @@ PATTERNS = (
 SCAN = (ROOT / ".github" / "workflows", ROOT / "scripts")
 
 
-def _script() -> ScriptDirectory:
-    cfg = Config(str(BACKEND / "alembic.ini"))
-    cfg.set_main_option("script_location", str(BACKEND / "alembic"))
-    return ScriptDirectory.from_config(cfg)
+def _literal(node):
+    try:
+        return ast.literal_eval(node)
+    except (ValueError, TypeError, SyntaxError):
+        return None
+
+
+def _metadata(path: Path) -> tuple[str | None, list[str]]:
+    tree = ast.parse(path.read_text(encoding="utf-8"))
+    revision = None
+    down: list[str] = []
+    for node in tree.body:
+        if not isinstance(node, ast.Assign) or len(node.targets) != 1:
+            continue
+        target = node.targets[0]
+        if not isinstance(target, ast.Name):
+            continue
+        value = _literal(node.value)
+        if target.id == "revision" and isinstance(value, str):
+            revision = value
+        elif target.id == "down_revision":
+            if isinstance(value, str):
+                down = [value]
+            elif isinstance(value, (tuple, list)):
+                down = [item for item in value if isinstance(item, str)]
+            elif value is None:
+                down = []
+    return revision, down
 
 
 def main() -> int:
     errors: list[str] = []
-    script = _script()
-    heads = script.get_heads()
+    graph: dict[str, list[str]] = {}
+    for path in VERSIONS.glob("*.py"):
+        revision, down = _metadata(path)
+        if not revision:
+            errors.append(f"{path.name}: no revision id")
+            continue
+        if revision in graph:
+            errors.append(f"duplicate revision id {revision}")
+        graph[revision] = down
+
+    if not graph:
+        errors.append("no Alembic revisions found")
+
+    down_refs = {item for values in graph.values() for item in values}
+    heads = sorted(set(graph) - down_refs)
     if len(heads) != 1:
         errors.append(f"expected one Alembic head, found {heads}")
 
-    revisions = list(script.walk_revisions())
-    for current, previous in pairwise(revisions):
-        if current.down_revision != previous.revision:
+    missing = sorted(down_refs - set(graph))
+    for item in missing:
+        errors.append(f"down_revision {item} does not exist")
+
+    for revision, down in graph.items():
+        if len(down) > 1:
+            errors.append(f"{revision}: merge revisions are not allowed")
+        for item in down:
+            if item not in graph:
+                errors.append(f"{revision}: unknown down_revision {item}")
+
+    if len(heads) == 1:
+        visited: list[str] = []
+        current: str | None = heads[0]
+        while current and current in graph and current not in visited:
+            visited.append(current)
+            downs = graph[current]
+            current = downs[0] if len(downs) == 1 else None
+        if len(visited) != len(graph):
             errors.append(
-                f"non-linear revision graph: {current.revision} -> "
-                f"{current.down_revision}, expected {previous.revision}"
+                f"revision graph is disconnected: {len(visited)} of "
+                f"{len(graph)} revisions reachable from {heads[0]}"
             )
 
     for directory in SCAN:

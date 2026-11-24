@@ -286,7 +286,7 @@
       "sha256": "a6d5cc43d638a4afcca7c9abb6f3853297266b36305450c184f8dfbdd1ec65ed"
     },
     "scripts/check-alembic-safety.py": {
-      "sha256": "a6182bd07de29a2b6a2f6458659b399e23b04089540cbe9c3205c9b08914518a"
+      "sha256": "68601daf3990f157ff356ee0a360c8b5de54018ea160e489e7aec0ff85e889b0"
     },
     "scripts/check-built-docs.py": {
       "sha256": "1669ff84cb7e69ec11f35e115c8e1c7ef51a32d3ea7302c46946e97db8a77fb9"
