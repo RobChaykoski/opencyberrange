@@ -1,15 +1,16 @@
 # Release 5.46.1 deliverables
 
-Status: **release prepared; deployment pending** on 24 November 2026.
+Status: **released and deployed** to development and production on 24
+November 2026.
 
 | Item | Value |
 |---|---|
 | Version | `5.46.1` |
 | Signed tag | `v5.46.1` |
-| Release commit | Pending tag |
+| Release commit | `ed7cf08a` |
 | Alembic | `0065_legacy_kali_columns` (no migration) |
-| Production | Pending |
-| Development | Pending |
+| Production | Deployed and verified |
+| Development | Deployed and verified |
 | Supply-chain lock | Refreshed and signed with the release key |
 
 ## Design alignment
@@ -42,13 +43,13 @@ listed as unverified below.
 | Frontend tests | `37 passed` |
 | i18n budget | `5,300` bare strings across `104` files (baseline updated in review) |
 | Backend tests | Unchanged from 5.46.0: `1,189 passed` |
-| Quality checks | Pending |
-| Supply-chain lock | Pending |
-| Development `/threat-awareness` | Pending |
-| Production `/threat-awareness` | Pending |
-| Production health | Pending |
-| Restore drill | Pending |
-| Rollback images | Pending |
+| Quality checks | Green |
+| Supply-chain lock | Verified with the release key |
+| Development `/threat-awareness` | `200` |
+| Production `/threat-awareness` | `200`; API `401` without a token |
+| Production health | `200` |
+| Restore drill | **PASSED** at 48 operations |
+| Rollback images | `pre-v5.46.1` backend and frontend |
 
 ## Not verified
 
@@ -61,10 +62,10 @@ design references, but a human visual check is still required.
 
 ## Acceptance checklist
 
-- [ ] Signed tag and verified supply-chain lock.
-- [ ] Panel reachable and styled on development and production.
-- [ ] Production health, version, SSO, and public routes verified.
-- [ ] Production drift still 48 operations.
-- [ ] Pre-deploy and post-deploy backups.
-- [ ] Restore drill passed.
-- [ ] Rollback images retained.
+- [x] Signed tag and verified supply-chain lock.
+- [x] Panel reachable and styled on development and production.
+- [x] Production health, version, SSO, and public routes verified.
+- [x] Production drift still 48 operations.
+- [x] Pre-deploy and post-deploy backups.
+- [x] Restore drill and restore-drift gate passed.
+- [x] Rollback images retained.
