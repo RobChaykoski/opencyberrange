@@ -2,12 +2,12 @@
   <div class="threat">
     <header class="threat__head">
       <p class="threat__eyebrow">Awareness, not telemetry</p>
-      <h1>Global threat awareness</h1>
+      <h1>Threat map</h1>
       <p class="threat__lede">
-        Where hostile addresses are concentrated, aggregated by country and feed.
-        Hostile infrastructure and publicly reported ransomware activity. These
-        are periodic snapshots, not a live attack map. No individual address,
-        attack path, victim name, or post link is shown.
+        Explore where reported hostile addresses are concentrated in the current
+        snapshot. The map is aggregated by country and feed. It is not a live
+        attack map: no individual address, attack path, victim name, or post
+        link is shown.
       </p>
     </header>
 
@@ -24,17 +24,17 @@
 
       <section class="threat__stats">
         <article>
-          <span>Entries reported</span>
+          <span>Reported entries</span>
           <strong>{{ formatCount(data.totals.entries_reported) }}</strong>
           <p>Across {{ data.totals.categories }} feeds</p>
         </article>
         <article>
-          <span>Countries</span>
+          <span>Countries seen</span>
           <strong>{{ data.totals.countries }}</strong>
           <p>{{ data.totals.buckets_suppressed }} small buckets suppressed</p>
         </article>
         <article>
-          <span>Coverage</span>
+          <span>Feed coverage</span>
           <strong>{{ formatShare(data.totals.coverage) }}</strong>
           <p>Of {{ formatCount(data.totals.entries_observed) }} observed entries</p>
         </article>
@@ -44,6 +44,14 @@
           <p>{{ data.window_hours }}h window</p>
         </article>
       </section>
+
+      <ThreatMap
+        v-if="data.countries.length"
+        :countries="data.countries"
+        :entries-reported="data.totals.entries_reported"
+        :generated-at="data.generated_at"
+        :window-hours="data.window_hours"
+      />
 
       <p
         v-if="!data.categories.length && !data.countries.length"
@@ -56,9 +64,11 @@
 
       <div v-else class="threat__grid">
         <section v-if="data.categories.length" class="threat__card">
-          <h2>By feed</h2>
+          <h2>What is being reported</h2>
           <p class="threat__muted">
-            An entry can appear in more than one feed, so counts overlap.
+            An entry can appear in more than one feed, so counts overlap. Feeds
+            describe the kind of list an address appeared on, not a confirmed
+            attack.
           </p>
           <ul class="threat__bars">
             <li v-for="row in data.categories" :key="row.id">
@@ -75,32 +85,6 @@
                 :aria-label="`${row.label}: ${formatCount(row.count)} entries`"
               >
                 <span :style="{ width: barWidth(row.count, maxCategory) }"></span>
-              </div>
-              <span class="threat__share">{{ formatShare(row.share) }}</span>
-            </li>
-          </ul>
-        </section>
-
-        <section v-if="data.countries.length" class="threat__card">
-          <h2>By country</h2>
-          <p class="threat__muted">
-            Aggregated counts only. A country with a small count is suppressed.
-          </p>
-          <ul class="threat__bars">
-            <li v-for="row in data.countries" :key="row.code">
-              <div class="threat__bar-head">
-                <span>{{ row.label }} <small>{{ row.code }}</small></span>
-                <strong>{{ formatCount(row.count) }}</strong>
-              </div>
-              <div
-                class="threat__track"
-                role="progressbar"
-                aria-valuemin="0"
-                :aria-valuenow="row.count"
-                :aria-valuemax="maxCountry"
-                :aria-label="`${row.label}: ${formatCount(row.count)} entries`"
-              >
-                <span :style="{ width: barWidth(row.count, maxCountry) }"></span>
               </div>
               <span class="threat__share">{{ formatShare(row.share) }}</span>
             </li>
@@ -123,11 +107,11 @@
 
         <div class="threat__mini-stats">
           <div>
-            <span>Posts ? {{ ransom.window_days }}d</span>
+            <span>Posts · last {{ ransom.window_days }} days</span>
             <strong>{{ formatCount(ransom.totals.window_posts) }}</strong>
           </div>
           <div>
-            <span>Posts ? 24h</span>
+            <span>Posts · last 24 hours</span>
             <strong>{{ formatCount(ransom.totals.posts_24h) }}</strong>
           </div>
           <div>
@@ -135,13 +119,13 @@
             <strong>{{ formatCount(ransom.totals.groups) }}</strong>
           </div>
           <div>
-            <span>Posts ? all time</span>
+            <span>Posts · all time</span>
             <strong>{{ formatCount(ransom.totals.posts_total) }}</strong>
           </div>
         </div>
 
         <ul class="threat__bars">
-          <li v-for="row in ransom.groups" :key="row.name">
+          <li v-for="row in visibleRansomGroups" :key="row.name">
             <div class="threat__bar-head">
               <span>{{ row.name }}</span>
               <strong>{{ formatCount(row.count) }}</strong>
@@ -159,6 +143,15 @@
             <span class="threat__share">{{ formatShare(row.share) }}</span>
           </li>
         </ul>
+        <button
+          v-if="ransom.groups.length > 8"
+          type="button"
+          class="threat__more"
+          :aria-expanded="showAllRansomGroups"
+          @click="showAllRansomGroups = !showAllRansomGroups"
+        >
+          {{ showAllRansomGroups ? 'Show top 8 groups' : `Show all ${ransom.groups.length} groups` }}
+        </button>
 
         <p class="threat__attribution">
           {{ ransom.source.attribution }}
@@ -173,13 +166,20 @@
         <ul>
           <li v-for="note in data.notes" :key="note">{{ note }}</li>
           <li>
+            The map marker is the country where an address is registered. It is
+            not proof that a person, group, or government in that country is
+            responsible. Shared hosting, VPNs, Tor exits, and stale feed entries
+            all distort the picture.
+          </li>
+          <li>
             Country attribution: {{ data.method.geoip === 'local-database'
               ? 'local GeoIP database'
               : 'not configured, so entries are counted as unknown' }}.
           </li>
           <li>
             Minimum bucket size: {{ data.method.minimum_bucket_size }}. Smaller
-            buckets are not published.
+            buckets are not published, so the map never narrows down to a
+            handful of hosts.
           </li>
         </ul>
         <p class="threat__attribution">
@@ -197,24 +197,27 @@
 import { computed, onMounted, ref } from 'vue'
 
 import api from '../api/axios'
+import ThreatMap from '../components/ThreatMap.vue'
 
 const data = ref(null)
 const ransom = ref(null)
 const error = ref('')
 const ransomError = ref('')
 const loading = ref(true)
+const showAllRansomGroups = ref(false)
 
 const numberFormat = new Intl.NumberFormat()
 
 const maxCategory = computed(() =>
   Math.max(1, ...(data.value?.categories || []).map((row) => row.count)),
 )
-const maxCountry = computed(() =>
-  Math.max(1, ...(data.value?.countries || []).map((row) => row.count)),
-)
 const maxRansomGroup = computed(() =>
   Math.max(1, ...(ransom.value?.groups || []).map((row) => row.count)),
 )
+const visibleRansomGroups = computed(() => {
+  const groups = ransom.value?.groups || []
+  return showAllRansomGroups.value ? groups : groups.slice(0, 8)
+})
 
 function formatCount(value) {
   return numberFormat.format(value || 0)
@@ -322,7 +325,7 @@ onMounted(load)
 
 .threat__stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 0.75rem;
 }
 
@@ -423,6 +426,22 @@ onMounted(load)
   color: var(--text-muted);
 }
 
+.threat__more {
+  margin-top: 0.6rem;
+  padding: 0.25rem 0;
+  border: 0;
+  background: none;
+  color: var(--accent-text);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.threat__more:hover {
+  text-decoration: underline;
+}
+
 .threat__inline-note {
   margin: 0.5rem 0 0;
   padding: 0.5rem 0.7rem;
@@ -502,8 +521,21 @@ onMounted(load)
     gap: 1.25rem;
   }
 
+  .threat__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .threat__stats strong {
     font-size: 1.35rem;
+  }
+
+  .threat__date {
+    font-size: 0.82rem !important;
+    line-height: 1.35;
+  }
+
+  .threat__mini-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 

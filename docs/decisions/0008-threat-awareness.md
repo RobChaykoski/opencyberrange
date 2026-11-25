@@ -74,3 +74,12 @@ plain link is not a derivative work. It is not enabled by default.
 - The panel maps to `TH-010 Threat Intelligence Correlation` and `SOC-004
   Threat Intelligence Usage` for competency evidence, but it is awareness
   material, not a lab and not learner evidence on its own.
+
+## Implementation note (24 November 2026)
+
+The panel is now a first-party bubble map. It uses Natural Earth 110m land and
+country centroids (public domain) and the same aggregated snapshot. It filters
+by region and bucket size, lists hotspots, and offers a local three-question
+challenge. It deliberately does **not** animate attack paths, simulate traffic,
+or expose an address, host, learner, lab, prompt, packet, or flow. See
+`docs/THREAT-AWARENESS-OPERATIONS.md` for the UI contract and tests.

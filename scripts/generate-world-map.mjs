@@ -1,0 +1,188 @@
+#!/usr/bin/env node
+/**
+ * Generate the threat-map geography module.
+ *
+ * Source: Natural Earth 110m admin-0 countries (public domain).
+ * Output: platform/frontend/src/data/worldMap.js
+ *
+ * This is a maintenance script, not a runtime dependency. It fetches the source
+ * GeoJSON, simplifies the outline, and writes one SVG path plus country
+ * centroids and region labels. Run it only when the source data changes:
+ *
+ *   node scripts/generate-world-map.mjs
+ */
+import { writeFileSync } from 'node:fs'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const ROOT = dirname(dirname(fileURLToPath(import.meta.url)))
+const TARGET = join(ROOT, 'platform', 'frontend', 'src', 'data', 'worldMap.js')
+const SOURCE =
+  'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson'
+
+const response = await fetch(SOURCE)
+if (!response.ok) {
+  throw new Error(`Could not fetch Natural Earth data: ${response.status}`)
+}
+const geojson = await response.json()
+
+const LAT_MIN = -56
+const LAT_MAX = 84
+const project = ([lon, lat]) => [lon + 180, LAT_MAX - Math.max(LAT_MIN, Math.min(LAT_MAX, lat))]
+
+function ringArea(poly) {
+  let area = 0
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    area += poly[j][0] * poly[i][1] - poly[i][0] * poly[j][1]
+  }
+  return Math.abs(area / 2)
+}
+
+function centroid(poly) {
+  let area = 0
+  let cx = 0
+  let cy = 0
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const cross = poly[j][0] * poly[i][1] - poly[i][0] * poly[j][1]
+    area += cross
+    cx += (poly[j][0] + poly[i][0]) * cross
+    cy += (poly[j][1] + poly[i][1]) * cross
+  }
+  if (Math.abs(area) < 1e-9) return poly[0]
+  return [cx / (3 * area), cy / (3 * area)]
+}
+
+function simplify(points, tolerance) {
+  if (points.length < 4) return points
+  const sq = tolerance * tolerance
+  const keep = new Uint8Array(points.length)
+  keep[0] = 1
+  keep[points.length - 1] = 1
+  const stack = [[0, points.length - 1]]
+  while (stack.length) {
+    const [first, last] = stack.pop()
+    let maxDist = 0
+    let index = -1
+    const [x1, y1] = points[first]
+    const [x2, y2] = points[last]
+    const dx = x2 - x1
+    const dy = y2 - y1
+    const denom = dx * dx + dy * dy
+    for (let i = first + 1; i < last; i += 1) {
+      const [x, y] = points[i]
+      let dist
+      if (denom === 0) {
+        dist = (x - x1) ** 2 + (y - y1) ** 2
+      } else {
+        let t = ((x - x1) * dx + (y - y1) * dy) / denom
+        t = Math.max(0, Math.min(1, t))
+        dist = (x - (x1 + t * dx)) ** 2 + (y - (y1 + t * dy)) ** 2
+      }
+      if (dist > maxDist) {
+        maxDist = dist
+        index = i
+      }
+    }
+    if (maxDist > sq && index !== -1) {
+      keep[index] = 1
+      stack.push([first, index], [index, last])
+    }
+  }
+  return points.filter((_, i) => keep[i])
+}
+
+const REGION_MAP = {
+  'North America': 'Americas',
+  'South America': 'Americas',
+  Europe: 'Europe',
+  Africa: 'Africa',
+  Asia: 'Asia',
+  Oceania: 'Oceania',
+}
+
+// Natural Earth uses -99 or omits a few small states. Add the ones that appear
+// in the FireHOL snapshot with their approximate centroids.
+const MANUAL_CENTROIDS = {
+  FR: [2.2, 46.6, 'Europe'],
+  NO: [8.5, 61.5, 'Europe'],
+  SG: [103.8, 1.4, 'Asia'],
+  TW: [121, 23.7, 'Asia'],
+  HK: [114.2, 22.3, 'Asia'],
+  MT: [14.4, 35.9, 'Europe'],
+  BH: [50.6, 26, 'Asia'],
+  CW: [-68.9, 12.2, 'Americas'],
+  AD: [1.6, 42.5, 'Europe'],
+  MU: [57.5, -20.3, 'Africa'],
+  VI: [-64.8, 18.3, 'Americas'],
+  SC: [55.5, -4.6, 'Africa'],
+  XK: [21, 42.6, 'Europe'],
+  MC: [7.4, 43.7, 'Europe'],
+  MO: [113.5, 22.2, 'Asia'],
+  BB: [-59.5, 13.2, 'Americas'],
+  JE: [-2.1, 49.2, 'Europe'],
+}
+
+const countries = {}
+let land = ''
+let pointCount = 0
+for (const feature of geojson.features) {
+  let a2 = feature.properties.ISO_A2
+  if (!a2 || a2 === '-99' || a2 === 'AQ') continue
+  if (a2 === 'CN-TW') a2 = 'TW'
+  const region = REGION_MAP[feature.properties.CONTINENT] || 'Other'
+  const polygons = feature.geometry.type === 'Polygon'
+    ? [feature.geometry.coordinates]
+    : feature.geometry.coordinates
+  let best = null
+  let bestArea = 0
+  for (const polygon of polygons) {
+    const outer = polygon[0]
+    const area = ringArea(outer)
+    if (area > bestArea) {
+      bestArea = area
+      best = outer
+    }
+    if (area < 0.8) continue
+    for (const ring of polygon) {
+      let points = ring.map(project)
+      if (points.length < 3) continue
+      points = simplify(points, 0.35)
+      if (points.length < 3) continue
+      pointCount += points.length
+      land += 'M' + points
+        .map(([x, y]) => `${Math.round(x * 10) / 10} ${Math.round(y * 10) / 10}`)
+        .join('L') + 'Z'
+    }
+  }
+  if (!best) continue
+  const [lon, lat] = centroid(best)
+  countries[a2] = [
+    Math.round(lon * 10) / 10,
+    Math.round(lat * 10) / 10,
+    region,
+  ]
+}
+Object.assign(countries, MANUAL_CENTROIDS)
+
+const lines = [
+  '// Generated by scripts/generate-world-map.mjs.',
+  '// Source: Natural Earth 110m admin-0 countries, public domain.',
+  '// The outline is one SVG path in a 360 x 140 equirectangular box; country',
+  '// centroids are [longitude, latitude, region] used for the map markers.',
+  '// Do not edit by hand; rerun the generator when the source changes.',
+  '',
+  'export const WORLD_WIDTH = 360',
+  'export const WORLD_HEIGHT = 140',
+  `export const WORLD_LAND_PATH = '${land}'`,
+  '',
+  'export const COUNTRY_CENTROIDS = {',
+]
+for (const key of Object.keys(countries).sort()) {
+  const [lon, lat, region] = countries[key]
+  lines.push(`  ${key}: [${lon}, ${lat}, '${region}'],`)
+}
+lines.push('}', '')
+lines.push(`export const WORLD_POINT_COUNT = ${pointCount}`, '')
+
+writeFileSync(TARGET, lines.join('\n'), 'utf8')
+console.log(`Wrote ${TARGET}: ${land.length} path chars, ${Object.keys(countries).length} countries, ${pointCount} points.`)

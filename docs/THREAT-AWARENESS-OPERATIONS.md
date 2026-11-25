@@ -84,6 +84,57 @@ Only `/api/stats` and `/api/hot` are read. Victim names, post links, crypto
 addresses, and peer addresses are excluded. Attribution: "Aggregated counts
 derived from RansomLook (ransomlook.io), CC BY 4.0."
 
+## Threat map UI
+
+The page at `/threat-awareness` (also `/threat-map`) is a first-party bubble
+map. It is the primary way a learner explores the snapshot:
+
+- **Markers** are country centroids from Natural Earth 110m data. Marker size
+  shows reported entries; the top three have a dashed ring.
+- **Filters** limit the view by region and minimum bucket size. The hotspot list
+  shows the same rows as a keyboard-friendly alternative to the map.
+- **Selection** opens a detail panel with the count, share, rank, and the
+  country-attribution caveat. It never shows an address, host, attack path,
+  victim, or post link.
+- **OpenStreetMap link.** The selected-country panel offers a plain outbound
+  link to `openstreetmap.org` at the country centroid. The platform does not
+  fetch tiles or call OSM at runtime; opening the link is a deliberate learner
+  action and contacts that site.
+- **Snapshot, not live.** The page shows the snapshot time and a "not live"
+  badge. There is no animated attack traffic and no simulated telemetry.
+- **Two-minute challenge.** Three questions use only the aggregate rows:
+  compare three countries, estimate the top country's share, and compare
+  regions. The score is local to the page and is never sent to the platform.
+
+The map source is generated once:
+
+```text
+platform/frontend/src/data/worldMap.js
+```
+
+It contains the Natural Earth land outline, country centroids, and region
+labels. Natural Earth is public domain. Regenerate it only when the source
+changes; do not fetch map data at runtime.
+
+### Privacy and accessibility
+
+- Country-level counts only. The map cannot be filtered down to a small bucket
+  because the ingest suppresses buckets below `minimum_bucket_size`.
+- No learner, lab, session, prompt, packet, or flow data is used.
+- The map has no runtime egress. The snapshot is a local file.
+- Keyboard: arrow keys move between countries, Enter or Space selects, Home/End
+  jump, and Escape clears. The hotspot list is a complete accessible fallback.
+- The tooltip is decorative; the detail panel is the accessible announcement.
+- `prefers-reduced-motion` disables the marker and tooltip transitions.
+
+### Tests
+
+- `src/components/__tests__/ThreatMap.test.js` covers markers, selection,
+  region filtering, and the empty-filter state.
+- `src/components/__tests__/ThreatMapQuiz.test.js` covers the question flow and
+  the "nothing is recorded" statement.
+- `src/composables/useToolPanel.test.js` covers the allow-listed tool keys.
+
 ## Verify before committing
 
 ```bash

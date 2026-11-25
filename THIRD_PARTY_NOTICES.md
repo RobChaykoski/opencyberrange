@@ -88,6 +88,22 @@ The `network-2-7-arkime-session-triage` lab adds two Apache-2.0 components:
   generator carries the GPL-2.0 SPDX header; the licence text is
   `THIRD_PARTY_LICENSES/GPL-2.0.txt`.
 
+## Threat map geography
+
+The threat-map component renders a world outline and country centroids generated
+from **Natural Earth 110m** data. Natural Earth is public domain; see
+<https://www.naturalearthdata.com/about/terms-of-use/>. The generated file is
+`platform/frontend/src/data/worldMap.js`. It contains no third-party runtime
+code and is loaded only with the threat-map route.
+
+## OWASP ZAP scan planner
+
+The ZAP scan planner at `platform/frontend/public/tools/zap-scan/` is first-party
+static HTML, CSS, and JavaScript. It links to the official ZAP download and
+documentation pages and does **not** bundle, download, or redistribute ZAP. If a
+future lab image installs OWASP ZAP (Apache-2.0), add the licence text, image
+pin, and SBOM entry to the release record.
+
 ## Open lab datasets and reference sources
 
 The platform registers external lab-building sources in
