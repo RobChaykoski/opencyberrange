@@ -241,8 +241,8 @@ async function checkTools(page, label) {
   check(`${label}: full mode shows the active-scan warning`, await frame.locator('#full-warning').isVisible())
 
   await page.locator('.tool-panel__close').click()
-  await page.waitForTimeout(200)
-  check(`${label}: tool panel closes`, !(await page.locator('.tool-panel').isVisible()))
+  await page.locator('.tool-panel').waitFor({ state: 'detached', timeout: 3000 })
+  check(`${label}: tool panel closes`, (await page.locator('.tool-panel').count()) === 0)
 }
 
 try {
@@ -251,7 +251,7 @@ try {
   await checkThreatMap(threatPage, 'desktop')
   await threatPage.screenshot({ path: path.join(OUT, 'desktop-threat-map.png'), fullPage: true })
 
-  const toolsPage = await openPage(desktop, '/tools')
+  const toolsPage = await openPage(desktop, '/toolbox')
   await checkTools(toolsPage, 'desktop')
   await toolsPage.screenshot({ path: path.join(OUT, 'desktop-tools.png'), fullPage: false })
   await desktop.close()

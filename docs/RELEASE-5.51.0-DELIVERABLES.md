@@ -1,6 +1,8 @@
 # Release 5.51.0 deliverables
 
-Status: **release prepared; deployment pending**.
+Status: **superseded by 5.51.1 before production**; the tools catalogue moved
+from `/tools` to `/toolbox` after nginx served the static `/tools/` directory as
+a 403.
 
 | Item | Value |
 |---|---|
@@ -25,7 +27,7 @@ Status: **release prepared; deployment pending**.
 
 | Deliverable | Detail |
 |---|---|
-| Tools catalogue | `/tools` for CyberChef, OT scan, ATT&CK Navigator and ZAP |
+| Tools catalogue | `/tools` (superseded by `/toolbox` in 5.51.1) for CyberChef, OT scan, ATT&CK Navigator and ZAP |
 | Shared panel | Every card uses the same allow-listed, sandboxed panel |
 | ZAP planner | `/tools/zap-scan/`, with baseline/full commands, reports, authorisation gate and triage checklist |
 | Lab toolbar | ZAP added beside CyberChef, OT scan and ATT&CK |

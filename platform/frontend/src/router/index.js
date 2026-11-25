@@ -179,7 +179,7 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/tools',
+    path: '/toolbox',
     name: 'Tools',
     component: () => import('../views/Tools.vue'),
     meta: { requiresAuth: true }

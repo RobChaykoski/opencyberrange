@@ -22,11 +22,19 @@ Steps 2 and 3 order matters: the manifest copies the lock's `release` field.
 Releases 5.46.0 and 5.46.1 skipped step 3, so the committed manifest still said
 `5.45.0` and the CI integrity gate failed.
 
+## Release 5.51.1
+
+| Tag | Release | Status |
+|---|---|---|
+| `v5.51.1` | SWOCTS Cyber Range Release 5.51.1 | Signed annotated tag: the 5.51.0 navigation, tools, threat-map and lab release, with the tools catalogue moved from `/tools` to `/toolbox` after nginx served the static `/tools/` directory as a 403. Deployment pending; update after the development and production cutover. |
+
+Deliverables: [Release 5.51.1 deliverables](RELEASE-5.51.1-DELIVERABLES.md).
+
 ## Release 5.51.0
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.51.0` | SWOCTS Cyber Range Release 5.51.0 | Signed annotated tag: regrouped learner/instructor/admin navigation, the shared `/tools` catalogue with the OWASP ZAP scan planner, an interactive privacy-safe threat map, the Arkime DET-08 lab, and the `web-11-11-zap-baseline-triage` Web lab. Deployment pending; update after the development and production cutover. |
+| `v5.51.0` | SWOCTS Cyber Range Release 5.51.0 | Signed annotated tag: regrouped learner/instructor/admin navigation, the shared `/tools` catalogue with the OWASP ZAP scan planner, an interactive privacy-safe threat map, the Arkime DET-08 lab, and the `web-11-11-zap-baseline-triage` Web lab. Development-only; superseded by 5.51.1 before production because `/tools` collided with the static tool directory. |
 
 Deliverables: [Release 5.51.0 deliverables](RELEASE-5.51.0-DELIVERABLES.md).
 

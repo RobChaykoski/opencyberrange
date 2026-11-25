@@ -65,7 +65,7 @@ describe('AppSidebar navigation', () => {
     const wrapper = await mountSidebar('student')
     const allTools = wrapper.findAll('a').find((link) => link.text().includes('All tools'))
     expect(allTools).toBeTruthy()
-    expect(allTools.attributes('href')).toBe('/tools')
+    expect(allTools.attributes('href')).toBe('/toolbox')
     const zap = wrapper.findAll('button').find((button) => button.text().includes('ZAP scan'))
     expect(zap).toBeTruthy()
   })

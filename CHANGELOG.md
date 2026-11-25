@@ -6,6 +6,12 @@ All notable changes to OpenCyberRange are recorded here.
 
 No unreleased changes.
 
+## [5.51.1] - 2026-11-25
+
+### Fixed
+
+- Moved the tools catalogue from `/tools` to `/toolbox`. Nginx serves the static `/tools/` directory for CyberChef, OT scan, and the ZAP planner, so `/tools` redirected to a 403 directory page instead of the SPA. Static tool URLs under `/tools/...` are unchanged.
+
 ## [5.51.0] - 2026-11-25
 
 Navigation, tools, the interactive threat map, and the ZAP baseline triage lab.

@@ -235,7 +235,7 @@ if (student) {
   await shot(page, '.threat-map', path.join(IMG.student, 'threat-map.png'), 'threat map')
   await viewportShot(page, path.join(IMG.student, 'threat-map-page.png'), 'threat map page')
 
-  await go(page, '/tools')
+  await go(page, '/toolbox')
   await viewportShot(page, path.join(IMG.student, 'tools-catalogue.png'), 'tools catalogue')
 
   await go(page, '/change-password')

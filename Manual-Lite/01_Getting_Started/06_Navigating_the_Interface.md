@@ -63,7 +63,7 @@ The sidebar groups links into sections. You see only the sections your role allo
 
 **Reports & analytics** opens at `/reports`. Admins see it in Operations; instructors see it in Teaching. **Surveys** opens at `/surveys` for instructors and admins. See [Reporting and Analytics](../04_Admin_Guide/28_Reporting_And_Analytics.md).
 
-**Tools** is one catalogue for every role. **All tools** opens `/tools`; the
+**Tools** is one catalogue for every role. **All tools** opens `/toolbox`; the
 shortcuts open the same allow-listed panel as the active-lab toolbar. The
 **ZAP scan** planner writes a command for a practice target; it does not run a
 scan. See [Threat map and tools](../02_Student_Guide/32_Threat_Map_And_Tools.md).
