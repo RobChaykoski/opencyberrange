@@ -76,6 +76,7 @@ _site-*/
 ui-smoke-artifacts/
 ui-workspace-artifacts/
 ui-verify-artifacts/
+ui-tools-map-artifacts/
 
 # Local lint/report output
 ruff-report.json
