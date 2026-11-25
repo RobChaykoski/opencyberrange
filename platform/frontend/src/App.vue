@@ -360,8 +360,8 @@ const tourKey = computed(() => 'ocr_orientation_seen_v1_' + tourUser.value)
 let tourCheckedForToken = null
 const tourSteps = [
   { title: 'Welcome to the range', body: 'Here is a quick tour to get you from zero to your first running lab. It takes under a minute.', placement: 'center' },
-  { title: '1. Connect over the VPN', body: 'Most labs run on an isolated network you reach over a VPN. Open VPN Setup to download your config and connect. You only do this once.', selector: '[data-tour="nav-vpn"]' },
-  { title: '2. Or skip the VPN with RangeBox', body: 'No local setup? When you start a lab you can launch it with RangeBox instead, a full Kali attack box right in your browser, with nothing to install.', placement: 'center' },
+  { title: '1. Connect over the VPN', body: 'Most labs run on an isolated network you reach over a VPN. Open Dashboard to download your config and connect. You only do this once.', selector: '[data-tour="nav-dashboard"]' },
+  { title: '2. Or skip the VPN with RangeBox', body: 'No local setup? When you start a lab you can launch it with RangeBox instead, a full Kali attack box right in your browser, with nothing to install.', selector: '[data-tour="nav-rangebox"]' },
   { title: '3. Find your exercises', body: 'Your labs live under Exercises, grouped into tracks by skill. Courses holds any work an instructor has assigned you.', selector: '[data-tour="nav-exercises"]' },
   { title: '4. Start your first lab', body: 'Open a track, pick an exercise, and click Launch or Start Exercise. Choose the VPN or a RangeBox when it starts, and your step-by-step workbook opens right alongside.', route: '/exercises', selector: '.track-grid .track-card' },
   { title: 'You are set', body: 'That is the whole loop: connect, launch, follow the workbook. You can replay this tour anytime from the sidebar menu. Have fun.', placement: 'center', route: '/exercises' },

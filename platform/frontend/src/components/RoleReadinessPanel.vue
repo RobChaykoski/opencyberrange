@@ -2,7 +2,7 @@
   <section class="readiness" aria-labelledby="readiness-title">
     <header class="readiness__head">
       <div>
-        <p class="readiness__eyebrow">Cyber GPS readiness</p>
+        <p class="readiness__eyebrow">Career GPS readiness</p>
         <h2 id="readiness-title" class="readiness__title">I want to become a {{ selectedRoleTitle }}.</h2>
         <p class="readiness__intro">
           Pick a target role. OpenCyberRange will show the skills you already have,

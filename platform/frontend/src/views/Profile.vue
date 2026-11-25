@@ -291,7 +291,7 @@
           v-if="gpsQuestions.length && !gpsBannerDismissed && hasCareerEvidence"
           class="gps-card"
           role="region"
-          aria-label="Optional Cyber GPS questions"
+          aria-label="Optional Career GPS questions"
           @mouseenter="pauseGpsRotation"
           @mouseleave="resumeGpsRotation"
           @focusin="pauseGpsRotation"
@@ -305,7 +305,7 @@
                   <path d="m15.5 8.5-2.2 5.3-5.3 2.2 2.2-5.3z" />
                 </svg>
               </span>
-              Optional &middot; Cyber GPS
+              Optional &middot; Career GPS
             </span>
             <button
               type="button"
@@ -340,7 +340,7 @@
           <div class="gps-card__foot">
             <span>Optional. Answer or skip; it never affects your progress.</span>
             <button type="button" class="gps-card__link" @click="setTab('careers')">
-              Open Cyber GPS &rarr;
+              Open Career GPS &rarr;
             </button>
           </div>
         </div>
@@ -398,7 +398,7 @@
               <article class="overview-card overview-card--accent">
                 <p class="overview-card__eyebrow">Next practice step</p>
                 <h3>{{ topAffinity?.label || 'Start your first exercise' }}</h3>
-                <p>{{ topAffinity?.next_step || 'Complete one exercise to give your skill tree its first branch.' }}</p>
+                <p>{{ topAffinity?.next_step || 'Complete one exercise to give your Cyber DNA its first branch.' }}</p>
                 <p v-if="topAffinity?.evidence" class="overview-card__evidence">{{ topAffinity.evidence }}</p>
                 <p v-if="otherAffinities.length" class="overview-card__evidence">
                   Also strong: {{ otherAffinities.map((item) => item.label).join(' · ') }}
@@ -407,7 +407,7 @@
                   Find your first exercise
                 </router-link>
                 <button v-else type="button" class="btn btn--secondary btn--sm" @click="setTab('skill-tree')">
-                  Open skill tree
+                  Open Cyber DNA
                 </button>
               </article>
 
@@ -525,7 +525,7 @@
               :momentum="summary.skill_dna.momentum"
             />
           </template>
-          <p v-else class="help-text">Complete an exercise to grow your skill tree.</p>
+          <p v-else class="help-text">Complete an exercise to grow your Cyber DNA.</p>
           <p
             v-if="titleMessage"
             :class="titleError ? 'error-message' : 'success-message'"
@@ -559,7 +559,7 @@
             :dna="summary.skill_dna"
           />
           <p v-else class="help-text">
-            The Cyber GPS view is not enabled on this deployment. Ask an administrator
+            The Career GPS view is not enabled on this deployment. Ask an administrator
             to enable it in Settings &rarr; Features.
           </p>
         </div>
@@ -1434,9 +1434,9 @@ const hasCareerAtlas = computed(
 const canViewAffinity = computed(() => user.value?.role === 'student')
 const PROFILE_TAB_LABELS = {
   overview: 'Overview',
-  'skill-tree': 'Skill tree',
+  'skill-tree': 'Cyber DNA',
   affinity: 'Career affinity',
-  careers: 'Cyber GPS',
+  careers: 'Career GPS',
   portfolio: 'Portfolio',
   learning: 'Learning record',
   account: 'Account',
@@ -5375,4 +5375,3 @@ onUnmounted(() => {
   font-weight: 600;
 }
 </style>
-

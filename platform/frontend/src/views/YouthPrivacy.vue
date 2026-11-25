@@ -33,7 +33,7 @@
         </p>
         <ul>
           <li><strong>Cyber DNA</strong> — a learning profile based on your practice.</li>
-          <li><strong>Cyber GPS</strong> — learning routes and career suggestions.</li>
+          <li><strong>Career GPS</strong> — learning routes and career suggestions.</li>
           <li><strong>Professional portfolio</strong> — a portfolio you can share later.</li>
           <li><strong>AI coach</strong> — chat history and AI memory.</li>
           <li><strong>Research</strong> — learner-level analytics used for research.</li>

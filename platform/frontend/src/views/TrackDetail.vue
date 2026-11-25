@@ -376,6 +376,14 @@
               ATT&amp;CK
             </button>
             <button
+              type="button"
+              class="btn btn--secondary btn--sm"
+              title="Build an authorised OWASP ZAP baseline or full scan"
+              @click="toggleTool('zap')"
+            >
+              ZAP
+            </button>
+            <button
               v-if="activeLab.session"
               @click="stopLab"
               class="btn btn--danger btn--sm"

@@ -1,8 +1,8 @@
 <template>
   <div class="workbook-answers">
     <header class="workbook-answers__head">
-      <p class="workbook-answers__eyebrow">Learning evidence</p>
-      <h1>Workbook answers</h1>
+      <p class="workbook-answers__eyebrow">Written evidence</p>
+      <h1>Analyst answers</h1>
       <p>
         Write a short analyst answer for an exercise. Each distinct version is
         saved as evidence and sent to an instructor for review; editing creates

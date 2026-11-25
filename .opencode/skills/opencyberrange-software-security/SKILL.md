@@ -198,6 +198,23 @@ boundary, a proxy, a client/server split, or where a check is missing.
   and
   [Diagnostics Command Injection](../../../Workbook/CH_SWSEC_Software_Security/02_Diagnostics_Command_Injection.md).
 
+## Tooling
+
+- Use the platform's **ZAP scan planner** (`Tools → ZAP scan`) for an authorised
+  baseline or full scan of a disposable practice app. It writes the command and
+  a triage checklist; it does not run the scan. Download ZAP from
+  <https://www.zaproxy.org/download/>.
+- A baseline scan is passive and is the default teaching mode. A full scan is
+  active and can change data; use it only on a lab target with a restore path.
+- Treat scanner output as a **candidate list**. Reproduce each finding by hand,
+  decide whether it matters in the app's data and identity context, and write
+  the remediation and retest note.
+- ZAP cannot see a wrong business rule, a hidden authorization gap that the UI
+  does not link to, or whether a finding is exploitable in this deployment. A
+  clean scan is not a security proof.
+- Never point a scan at a production service, a third-party site, or a target
+  the learner does not own or have written authorisation to test.
+
 ## Safety and ethics
 
 - All targets are fictional and isolated.

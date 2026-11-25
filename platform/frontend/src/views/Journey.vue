@@ -2,11 +2,11 @@
   <div class="journey">
     <header class="journey__head">
       <p class="journey__eyebrow">Direction, not a score</p>
-      <h1>Who are you trying to become?</h1>
+      <h1>Journey &amp; mission</h1>
       <p>
-        Do not declare an identity. Choose a mission, and the Living Archive
-        observes what your verified work becomes. You can change missions; your
-        evidence stays with you.
+        Choose the direction you are working toward. The Living Archive observes
+        what your verified work becomes, not what you say you enjoy. You can
+        change missions; your evidence stays with you.
       </p>
     </header>
 

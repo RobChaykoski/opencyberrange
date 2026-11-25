@@ -204,7 +204,7 @@
         </p>
         <ul>
           <li><strong>Cyber DNA:</strong> competency evidence, behaviour and interest profiles, affinity signals, and DNA snapshots. Off by default — explicit opt-in.</li>
-          <li><strong>Cyber GPS:</strong> direction finding, learning routes, gap analysis, and readiness views. Off by default — explicit opt-in.</li>
+          <li><strong>Career GPS:</strong> direction finding, learning routes, gap analysis, and readiness views. Off by default — explicit opt-in.</li>
           <li><strong>Professional portfolio:</strong> stored portfolio and career/report snapshots. Off by default — explicit opt-in.</li>
           <li><strong>Portfolio sharing:</strong> employer/public share links and public profiles. Off by default.</li>
           <li><strong>AI coach:</strong> AI conversations, prompt context, embeddings, and memory. Off by default.</li>

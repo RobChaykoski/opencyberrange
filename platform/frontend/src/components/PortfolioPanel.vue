@@ -430,7 +430,7 @@ const dnaAria = computed(() => {
   const branches = treeDimensions.value
     .map((dimension) => `${dimension.label}: ${dimension.score} out of 99`)
     .join('. ')
-  return `Cyber DNA skill tree. ${branches}.`
+  return `Cyber DNA profile. ${branches}.`
 })
 
 function formatDate(value) {

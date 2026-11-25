@@ -50,7 +50,7 @@
     <section v-if="hasEvidence" class="dna-tree" aria-labelledby="dna-tree-title">
       <div class="dna-tree__head">
         <div>
-          <p class="dna-section__eyebrow">Skill tree</p>
+          <p class="dna-section__eyebrow">Cyber DNA</p>
           <h3 id="dna-tree-title" class="dna-tree__title">Six branches, one practice map</h3>
           <p class="dna-tree__intro">
             Built from your completed exercises, course participation, and feedback.
@@ -636,7 +636,7 @@ const treeAriaLabel = computed(() => {
   const branches = treeDimensions.value
     .map((dimension) => `${dimension.label}: ${dimension.score} out of 99`)
     .join('. ')
-  return `Skill tree with six practice branches. ${branches}.`
+  return `Cyber DNA with six practice branches. ${branches}.`
 })
 
 const certificationPath = computed(() => {

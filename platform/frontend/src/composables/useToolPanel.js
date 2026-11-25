@@ -1,14 +1,16 @@
 import { computed, ref } from 'vue'
 
-// One shared panel state so the sidebar and the active-lab panel open the same
-// bottom drawer. Only allow-listed tools can be opened; the URL is never taken
-// from a route, query string, or learner input.
+// One shared panel state so the sidebar, the Tools page, and the active-lab
+// panel open the same bottom drawer. Only allow-listed tools can be opened;
+// the URL is never taken from a route, query string, or learner input.
 const TOOLS = Object.freeze({
   cyberchef: {
     key: 'cyberchef',
     title: 'CyberChef',
     url: '/tools/cyberchef/',
+    category: 'Inspect and decode',
     description: 'Encode, decode, and inspect data without leaving the exercise.',
+    tags: ['Offline', 'Data'],
     attribution:
       'CyberChef is an Apache-2.0 tool by GCHQ. The pinned build is served from this platform, so it works without internet access.',
   },
@@ -16,7 +18,9 @@ const TOOLS = Object.freeze({
     key: 'otscan',
     title: 'OT scan assistant',
     url: '/tools/ot-scan/',
+    category: 'Network and OT',
     description: 'Build a slow, scoped nmap command for Modbus, S7, EtherNet/IP, or DNP3.',
+    tags: ['Offline', 'Planner'],
     attribution:
       'Runs entirely in this panel. The platform does not send a scan; it only writes the command after you confirm authorisation.',
   },
@@ -24,14 +28,29 @@ const TOOLS = Object.freeze({
     key: 'attacknavigator',
     title: 'MITRE ATT&CK Navigator',
     url: 'https://mitre-attack.github.io/attack-navigator/',
+    category: 'Detection and coverage',
     description:
       'Explore ATT&CK techniques and build a coverage layer for a lab or detection review.',
+    tags: ['Internet', 'Coverage'],
     attribution:
       'MITRE ATT&CK Navigator is an Apache-2.0 project by The MITRE Corporation. It runs at mitre-attack.github.io and needs internet access.',
     // Navigator keeps its layers in its own browser storage. The iframe stays
     // cross-origin, so allow-same-origin preserves Navigator's origin and
     // storage without granting access to the platform origin.
     sandbox: 'allow-scripts allow-same-origin allow-forms allow-downloads allow-modals',
+  },
+  zap: {
+    key: 'zap',
+    title: 'OWASP ZAP scan planner',
+    url: '/tools/zap-scan/',
+    category: 'Web application scanning',
+    description:
+      'Build an authorised baseline or full ZAP scan, then triage the report.',
+    tags: ['Offline', 'Planner', 'Web'],
+    downloadUrl: 'https://www.zaproxy.org/download/',
+    downloadLabel: 'Download ZAP',
+    attribution:
+      'OWASP ZAP is an Apache-2.0 project by the ZAP community. The planner is first-party and writes a command; it does not bundle or run ZAP.',
   },
 })
 
@@ -66,5 +85,6 @@ export function useToolPanel() {
     closeTool,
     toggleTool,
     tools: TOOLS,
+    toolList: computed(() => Object.values(TOOLS)),
   }
 }

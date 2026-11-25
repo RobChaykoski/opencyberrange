@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>OWASP ZAP scan planner</title>
+<link rel="stylesheet" href="app.css" />
+</head>
+<body>
+  <header class="head">
+    <div>
+      <h1>OWASP ZAP scan planner</h1>
+      <p class="lede">
+        Build an authorised baseline or full ZAP scan for a practice web app.
+        This page writes the command and a triage checklist. It never sends a
+        request and it does not run ZAP.
+      </p>
+    </div>
+    <span class="badge">Offline planner</span>
+  </header>
+
+  <div class="layout">
+    <section class="card" aria-labelledby="scope-title">
+      <h2 id="scope-title">Scope</h2>
+
+      <div class="row">
+        <div class="seg" role="group" aria-label="Scan mode">
+          <button type="button" id="mode-baseline" aria-pressed="true">Baseline · passive</button>
+          <button type="button" id="mode-full" aria-pressed="false">Full · active</button>
+        </div>
+      </div>
+
+      <label class="field">
+        <span>Target URL</span>
+        <input type="text" id="target" placeholder="http://10.100.0.20:3000" autocomplete="off" spellcheck="false" />
+      </label>
+
+      <p class="hint" id="mode-hint">
+        Baseline spider and passive rules. Safe for a normal practice app.
+      </p>
+      <p class="warning" id="full-warning">
+        A full scan sends active attacks. It can change or delete data. Use it
+        only on a disposable practice target with a known restore path.
+      </p>
+
+      <div class="field-row">
+        <label class="field">
+          <span>Run with</span>
+          <select id="runner">
+            <option value="docker" selected>Docker (recommended)</option>
+            <option value="local">Local ZAP install</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Minutes</span>
+          <select id="minutes">
+            <option value="1">1</option>
+            <option value="5" selected>5</option>
+            <option value="10">10</option>
+            <option value="20">20</option>
+          </select>
+        </label>
+      </div>
+
+      <fieldset class="formats">
+        <legend>Reports</legend>
+        <label><input type="checkbox" id="report-html" checked /> HTML</label>
+        <label><input type="checkbox" id="report-json" checked /> JSON</label>
+        <label><input type="checkbox" id="report-md" /> Markdown</label>
+      </fieldset>
+
+      <label class="field field--spaced">
+        <span>Minimum report level</span>
+        <select id="level">
+          <option value="INFO">INFO — show everything</option>
+          <option value="WARN" selected>WARN — warnings and failures</option>
+          <option value="FAIL">FAIL — failures only</option>
+        </select>
+      </label>
+
+      <p class="hint">
+        The planner validates the URL and quotes it for the shell. It does not
+        accept credentials in the URL.
+      </p>
+    </section>
+
+    <section class="card output" aria-labelledby="output-title">
+      <h2 id="output-title">Command</h2>
+      <pre id="command">Enter an authorised target URL to generate a command.</pre>
+      <div class="actions">
+        <button type="button" class="btn btn--primary" id="copy" disabled>Copy command</button>
+        <span class="copy-state" id="copy-state" role="status"></span>
+      </div>
+
+      <div class="warning warning--auth" id="auth-warning">
+        Confirm written authorisation and a disposable target before you run the
+        command.
+      </div>
+
+      <div class="links">
+        <a href="https://www.zaproxy.org/download/" target="_blank" rel="noopener noreferrer">Download ZAP</a>
+        <a href="https://www.zaproxy.org/docs/" target="_blank" rel="noopener noreferrer">ZAP documentation</a>
+      </div>
+
+      <div class="stop">
+        <strong>Stop conditions</strong>
+        <ul>
+          <li>A page starts returning errors or the app loses data.</li>
+          <li>The target is shared with anyone outside the exercise.</li>
+          <li>You cannot restore the target from a snapshot.</li>
+          <li>The scan leaves the agreed host or path scope.</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+
+  <section class="card card--spaced" aria-labelledby="auth-title">
+    <h2 id="auth-title">Before you scan</h2>
+    <ul class="checklist">
+      <li>
+        <input type="checkbox" id="auth" />
+        <label for="auth"><strong>Written authorisation</strong> covers this target, the scan type, and the time window.</label>
+      </li>
+      <li>
+        <input type="checkbox" id="disposable" />
+        <label for="disposable"><strong>Disposable target</strong> can be restored from a snapshot if the scan changes data.</label>
+      </li>
+      <li>
+        <input type="checkbox" id="scope" />
+        <label for="scope"><strong>Scope is minimal</strong>: one practice app, no production host, no third-party service.</label>
+      </li>
+    </ul>
+    <p class="hint hint--spaced">
+      The copy button stays disabled until all three boxes are ticked.
+    </p>
+  </section>
+
+  <div class="layout layout--lower">
+    <section class="card" aria-labelledby="after-title">
+      <h2 id="after-title">After the scan</h2>
+      <ol class="steps">
+        <li>Open the report and sort by risk. Read the request and response evidence, not only the alert name.</li>
+        <li>Reproduce each finding by hand. ZAP reports candidates; a person confirms an issue.</li>
+        <li>Mark false positives. Shared hosting, a WAF, and a custom login flow all create noise.</li>
+        <li>Write the impact in the app's own terms: what data, whose account, what action.</li>
+        <li>Record the fix, the retest, and the residual risk in the lab workbook or DefectDojo.</li>
+      </ol>
+    </section>
+
+    <section class="card" aria-labelledby="limits-title">
+      <h2 id="limits-title">What ZAP cannot tell you</h2>
+      <ul class="limits">
+        <li>Whether a business rule is wrong when the request is technically valid.</li>
+        <li>Whether one user can reach another user's data if the app hides the link.</li>
+        <li>Whether a finding is exploitable in this deployment's network and identity context.</li>
+        <li>Whether the app is safe. A clean scan is not a security proof.</li>
+      </ul>
+    </section>
+  </div>
+
+</body>
+</html>
+<script src="app.js"></script>

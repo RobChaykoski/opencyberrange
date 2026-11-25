@@ -6,8 +6,8 @@
       storage-key="ocr.notice.instructor-panel"
     />
     <header class="panel-header">
-      <h1>Instructor Panel</h1>
-      <p class="panel-subtitle">Manage your courses and browse available exercises</p>
+      <h1>Teaching workspace</h1>
+      <p class="panel-subtitle">Manage your courses and author exercises</p>
     </header>
 
     <!-- Tab Navigation -->
@@ -21,12 +21,12 @@
         class="tab-btn"
         :class="{ 'tab-btn--active': activeTab === 'courses' }"
         @click="switchTab('courses')"
-      >My Courses</button>
+      >Course workspace</button>
       <button
         class="tab-btn"
         :class="{ 'tab-btn--active': activeTab === 'labs' }"
         @click="switchTab('labs')"
-      >Exercises</button>
+      >Exercise authoring</button>
     </div>
 
     <!-- OVERVIEW TAB -->

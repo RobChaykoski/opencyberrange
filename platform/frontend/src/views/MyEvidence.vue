@@ -1,8 +1,8 @@
 <template>
   <div class="my-evidence">
     <header class="my-evidence__head">
-      <p class="my-evidence__eyebrow">Learning evidence</p>
-      <h1>My evidence</h1>
+      <p class="my-evidence__eyebrow">Verified work</p>
+      <h1>Evidence portfolio</h1>
       <p>
         Every reviewed or automatically verified practice record appears here.
         A rejected record can be appealed for a second review.

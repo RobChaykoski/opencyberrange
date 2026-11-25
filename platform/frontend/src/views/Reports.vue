@@ -210,7 +210,7 @@
       >
         <div class="skill-panel__head">
           <div>
-            <p class="skill-panel__eyebrow">Skill tree</p>
+            <p class="skill-panel__eyebrow">Cyber DNA</p>
             <h2 id="skill-tree-title">Exercise coverage by skill branch</h2>
             <p>
               How {{ skillScopeLabel }} spreads across the six Skill DNA branches.
@@ -579,7 +579,7 @@ const radarLabels = computed(() =>
   })
 )
 const skillAriaLabel = computed(() =>
-  `Skill tree coverage for ${skillScopeLabel.value}. ` +
+  `Cyber DNA coverage for ${skillScopeLabel.value}. ` +
   skillDimensions.value
     .map(
       (dimension) =>
@@ -751,7 +751,7 @@ const exportCsv = async () => {
     return
   }
 
-  const header = ['Period', 'Period start', 'Period end', 'Course code', 'Course', 'RAG', 'Cohort state', 'Learners', 'Learning hours', 'Completion %', 'Abandonment %', 'Learning reported', 'Likes', 'Dislikes', 'Positive feedback %', 'Confidence gain', 'Pulse responses', 'Skill tree assigned %', 'Skill tree completed %']
+  const header = ['Period', 'Period start', 'Period end', 'Course code', 'Course', 'RAG', 'Cohort state', 'Learners', 'Learning hours', 'Completion %', 'Abandonment %', 'Learning reported', 'Likes', 'Dislikes', 'Positive feedback %', 'Confidence gain', 'Pulse responses', 'Cyber DNA assigned %', 'Cyber DNA completed %']
   const lines = rows.value.map((row) => {
     const available = row.cohort_state === 'available'
     const metric = (value, fallback = '') => available ? (value ?? fallback) : ''

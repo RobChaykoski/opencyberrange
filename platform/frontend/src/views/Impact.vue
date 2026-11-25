@@ -2,7 +2,7 @@
   <div class="impact">
     <header class="impact__head">
       <p class="impact__eyebrow">Contribution, not completion</p>
-      <h1>Your impact</h1>
+      <h1>Impact &amp; recognition</h1>
       <p>
         What you built, protected, taught, and served. Recognition is separate
         from your evidence and never changes your score by itself.

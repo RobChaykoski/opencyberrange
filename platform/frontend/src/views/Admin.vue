@@ -5170,13 +5170,13 @@ watch(activeTab, (tab) => {
 const adminTabs = computed(() => [
   { key: 'users', label: 'Users', count: stats.value.total_users || null },
   { key: 'pending', label: 'Pending', count: stats.value.pending_users || null },
-  { key: 'courses', label: 'Courses', count: adminCourses.value.length || null },
-  { key: 'exercises', label: 'Exercises' },
-  { key: 'quality', label: 'Quality' },
-  { key: 'monitoring', label: 'Live activity', count: stats.value.active_labs || null },
+  { key: 'courses', label: 'Course catalogue', count: adminCourses.value.length || null },
+  { key: 'exercises', label: 'Exercise library' },
+  { key: 'quality', label: 'Content quality' },
+  { key: 'monitoring', label: 'Sessions & activity', count: stats.value.active_labs || null },
   { key: 'security', label: 'Security' },
-  { key: 'system', label: 'System' },
-  { key: 'settings', label: 'Settings' },
+  { key: 'system', label: 'System health' },
+  { key: 'settings', label: 'Platform settings' },
 ])
 
 const adminTabGroups = computed(() => {
@@ -17337,4 +17337,3 @@ watch(activeTab, (tab) => {
   }
 }
 </style>
-

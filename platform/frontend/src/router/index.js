@@ -174,7 +174,14 @@ const routes = [
   {
     path: '/threat-awareness',
     name: 'ThreatAwareness',
+    alias: '/threat-map',
     component: () => import('../views/ThreatAwareness.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/tools',
+    name: 'Tools',
+    component: () => import('../views/Tools.vue'),
     meta: { requiresAuth: true }
   },
   {

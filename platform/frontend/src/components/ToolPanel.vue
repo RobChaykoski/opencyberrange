@@ -12,7 +12,7 @@
           <div class="tool-panel__identity">
             <p class="tool-panel__eyebrow">Tools</p>
             <h2 class="tool-panel__title">{{ activeTool.title }}</h2>
-            <span class="tool-panel__badge">Sandboxed external tool</span>
+            <span class="tool-panel__badge">{{ toolBadge }}</span>
             <p class="tool-panel__description">{{ activeTool.description }}</p>
           </div>
           <div class="tool-panel__actions">
@@ -105,9 +105,10 @@ const route = useRoute()
 
 const toolUrl = computed(() => safeHttpUrl(activeTool.value?.url))
 
-// A same-origin tool is a reviewed, pinned build (CyberChef). A future
-// cross-origin tool must not get allow-same-origin, which would cancel the
-// sandbox for the app origin.
+// A same-origin tool is a reviewed, pinned build (CyberChef, OT scan, ZAP
+// planner). A future cross-origin tool must not get allow-same-origin, which
+// would cancel the sandbox for the app origin. Same-origin planners may open a
+// vendor download link in a new tab, so they get allow-popups.
 const toolSandbox = computed(() => {
   if (activeTool.value?.sandbox) return activeTool.value.sandbox
   const url = toolUrl.value
@@ -115,10 +116,21 @@ const toolSandbox = computed(() => {
   try {
     const sameOrigin = new URL(url, window.location.origin).origin === window.location.origin
     return sameOrigin
-      ? 'allow-scripts allow-same-origin allow-forms allow-downloads allow-modals'
+      ? 'allow-scripts allow-same-origin allow-forms allow-downloads allow-modals allow-popups allow-popups-to-escape-sandbox'
       : 'allow-scripts allow-forms allow-downloads allow-modals'
   } catch {
     return 'allow-scripts allow-forms'
+  }
+})
+
+const toolBadge = computed(() => {
+  const url = toolUrl.value
+  if (!url) return 'Sandboxed tool'
+  try {
+    const sameOrigin = new URL(url, window.location.origin).origin === window.location.origin
+    return sameOrigin ? 'Sandboxed in-panel tool' : 'Sandboxed external tool'
+  } catch {
+    return 'Sandboxed tool'
   }
 })
 

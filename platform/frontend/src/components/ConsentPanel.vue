@@ -4,7 +4,7 @@
       <div>
         <h2 id="consent-panel-title" class="section-title">AI and career data</h2>
         <p class="consent-panel__lead">
-          These controls govern derived intelligence: Cyber DNA, Cyber GPS,
+          These controls govern derived intelligence: Cyber DNA, Career GPS,
           portfolio snapshots, and future AI coaching. Revoking a consent blocks
           the feature immediately and deletes its derived data. Your learning
           record, completions, certificates, and achievements are kept.
