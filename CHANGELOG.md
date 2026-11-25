@@ -4,6 +4,10 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
+### Labs
+
+- Added `network-2-7-arkime-session-triage`: an advanced, course-visible traffic-analysis lab using Arkime 6.9.2 and OpenSearch 2.19.3. The stack is pinned, runs non-root, keeps OpenSearch off the student bridge and seeds a synthetic capture; the analyst role can search sessions but cannot download the PCAP. The lab maps to the new DET-08 pathway module and passes the three-run live harness.
+
 ### Threat awareness
 
 - Documented GeoIP source options: DB-IP upstream and the WP Statistics mirror, the GeoForge licence and build assessment, and the HackerTarget/ipgeolocation.io rate limits.
