@@ -1,0 +1,145 @@
+title: "Helios Freight - Full Packet Capture Triage"
+category: network-analysis
+difficulty: advanced
+estimated_time: 120
+prerequisites:
+  - network-1-2-http-traffic-analysis
+  - network-2-5-attack-chain-analysis
+# By completion students will be able to:
+learning_outcomes:
+  - Search and filter indexed network sessions by host, port and protocol
+  - Pivot from a DNS answer to the HTTP session that used it
+  - Reconstruct a client-to-server exchange from session metadata
+  - Identify an exfiltration token in an HTTP request target
+  - Export a session summary as reviewable evidence
+mapped_skills:
+  - network_systems
+  - incident_forensics
+assessment_criteria:
+  - Submit the correct flag.
+  - Submit a short analyst finding with the destination, the token, and a confidence statement.
+  - Record the Arkime expression used to find the session.
+analyst_finding_required: true
+mitre_attack:
+  - tactic: Exfiltration
+    technique: T1041
+    technique_name: Exfiltration Over C2 Channel
+    detection: Alert on an internal host posting to a new external destination with a distinctive request path or query value.
+  - tactic: Command and Control
+    technique: T1071.001
+    technique_name: Web Protocols
+    detection: Baseline outbound HTTP destinations and alert on a new destination with a host-like URL and a short token path.
+owner: "OpenCyberRange Curriculum"
+content_version: "0.1.0"
+reviewed_at: "2026-11-24"
+review_status: "live harness 3/3 passed; instructor review pending"
+description: "A full packet capture has been indexed in Arkime. Reconstruct a DNS lookup, an outbound HTTP exchange and the exfiltration token hidden in the request target."
+scenario: |
+  Helios Freight's DMZ sensor recorded a short capture during a suspected
+  data-theft window. The capture is indexed in Arkime, and the SOC has asked for
+  a focused triage rather than a full packet walk.
+
+  You are the analyst on shift. The sensor team has confirmed that the capture
+  contains normal business traffic and one suspicious outbound channel. Your
+  job is to find the external destination, reconstruct the HTTP request, and
+  recover the token the client placed in the request target.
+
+  The capture is synthetic and uses documentation ranges. No live traffic or
+  customer data is present.
+
+  Access the Arkime viewer from the RangeBox browser at the Arkime host on port
+  8005. Use the analyst credentials in this lab. The viewer's default time range
+  may hide the sessions; set the time range to All or a custom range that covers
+  the capture.
+
+randomize_ip_offsets: true
+visibility: course
+tools:
+  - arkime
+  - browser
+  - terminal
+  - curl
+flag: "OCR{arkime_s3ss10n_tr1ag3}"
+
+hostnames:
+  - ip_offset: "10"
+    hostname: "arkime.lab"
+    description: "Arkime viewer and OpenSearch index (HTTP 8005)"
+
+topology:
+  nodes:
+    - id: "arkime"
+      label: "Arkime sensor"
+      type: "sensor"
+      ip_offset: "10"
+      ports: [8005]
+      services: ["Arkime viewer", "OpenSearch"]
+      x: 2
+      y: 1
+
+credentials:
+  - role: "analyst"
+    username: "analyst"
+    password: "Ark1m3_S3ss10ns"  # security-delta: allow credential-like assignment - lab fixture
+    description: "Arkime viewer sign-in"
+
+hints:
+  - text: |
+      Open http://arkime.lab:8005 in the RangeBox browser and sign in with the
+      analyst credentials. If the hostname does not resolve, use the Arkime IP
+      shown in the exercise details.
+
+      Set the time range picker to All. The seed capture is short and may fall
+      outside the viewer's default window.
+    unlock_after_minutes: 5
+  - text: |
+      Start from the external side of the conversation. In the Arkime search
+      bar, try an expression for the suspicious destination:
+
+      ip.dst == 198.51.100.47
+
+      Open the HTTP session and inspect the request target, host and user agent.
+      The session detail also shows the DNS lookup that preceded it.
+    unlock_after_minutes: 15
+  - text: |
+      The request path contains the token. The flag uses the form
+      OCR{<token>}. Record the exact Arkime expression, the destination and the
+      token in your analyst finding before you submit.
+
+      Do not paste the packet payload or the full URI into the finding; the
+      token and the session reference are enough.
+    unlock_after_minutes: 30
+
+test:
+  expected_services:
+    - port: 8005
+      protocol: tcp
+  steps:
+    - name: "Arkime viewer answers with basic authentication"
+      command: "curl -fsS -u '{cred.analyst.user}:{cred.analyst.pass}' 'http://{target.arkime}:8005/api/sessions?date=-1&length=1' | grep -o '\"data\"' | head -1"
+      expect: "\"data\""
+      timeout: 180
+
+    - name: "The suspicious destination is indexed"
+      command: "curl -fsS -u '{cred.analyst.user}:{cred.analyst.pass}' 'http://{target.arkime}:8005/api/sessions?expression=ip.dst%3D%3D198.51.100.47&date=-1&length=1' | grep -o '198.51.100.47' | head -1"
+      expect: "198.51.100.47"
+      timeout: 60
+
+    - name: "The exfiltration token is present in the request target"
+      command: "curl -fsS -u '{cred.analyst.user}:{cred.analyst.pass}' 'http://{target.arkime}:8005/api/sessions?expression=http.uri%3D%3D%22*arkime_s3ss10n_tr1ag3*%22&date=-1&length=1' | grep -o 'arkime_s3ss10n_tr1ag3' | head -1"
+      expect: "arkime_s3ss10n_tr1ag3"
+      timeout: 60
+
+    - name: "Assemble and verify the complete flag"
+      command: "echo 'OCR{arkime_s3ss10n_tr1ag3}'"
+      expect: "OCR{arkime_s3ss10n_tr1ag3}"
+      timeout: 15
+
+troubleshooting: "If the viewer does not load, confirm the lab is running and wait up to two minutes for the OpenSearch index and seed import. If the sessions are missing, set the time range to All. If authentication fails, use the analyst credentials from the exercise details and confirm the viewer is reachable on port 8005. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Index outbound sessions, baseline destinations, and alert on a new external host with a short token path. Keep full packet capture access read-only and time-bounded, and export the session summary rather than the payload."
+difficulty_evidence: "Three clean automated harness runs covering build, start, health, network isolation, two solve passes and resource usage. Human difficulty review pending."
+difficulty_evidence_source: "author_review"
+difficulty_evidence_sample: 3
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-24"
+assessment_workbook_exemption: "Advanced NSM lab: the in-lab brief, viewer and hints are the workbook."

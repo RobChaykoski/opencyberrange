@@ -49,6 +49,7 @@ records. OpenIAM is fetched separately as its own compose stack.
 | Virtual switching | Open vSwitch, Mininet | NENG08 lab | Lab/reference topology only | Test topology only | Test topology only |
 | Endpoint detection | Wazuh, Sysmon, Fail2Ban, Lynis | SOC01/SOC04/SOC07 labs | Endpoint control evidence | Collector host hardening | Clinical endpoint compliance |
 | Network detection | Suricata, Zeek, Security Onion | SOC02/SOC03/SOC08 labs | Detection-control evidence | Sensor detection evidence | Clinical network monitoring evidence |
+| Full packet capture / NSM | Arkime | network-2-7 indexed session triage lab | Aggregate session evidence and links; no PCAP or payload (OpenGRC ADR 0060) | Sensor context | Clinical network investigation reference |
 | Web/VM scanning | OpenVAS, Nessus, Nikto, OWASP ZAP | VM02/VM03/VM05 labs | Vulnerability-management control evidence | Web service exposure evidence | Clinical web app vulnerability evidence |
 | Asset ownership | Ralph, NetBox | Asset ownership report | Asset/control scope | Data-source ownership | Clinical asset ownership |
 | Endpoint compliance | Fleet | Endpoint compliance report | Control evidence | Collector posture | Clinical device posture |
@@ -67,6 +68,12 @@ records. OpenIAM is fetched separately as its own compose stack.
 | Supply-chain trust | Sigstore, Cosign, Syft | Release signing and verification labs | Build and release control evidence | Collector and policy-bundle verification | Vendor artifact and image verification |
 | Metadata and policy context | OpenMetadata, OPA, Authentik | Learner and lab metadata context | Decision evidence and policy version | Classification and policy context | PHI policy context and access decisions |
 | Privacy and reporting | Shared role model | Privacy office and auditor dashboards | Evidence requests and audit packs | Classification and discovery reports | PHI access and retention evidence |
+
+Arkime is a full-packet store, not an IDS. In OCR it runs as a lab-scoped
+viewer over OpenSearch with a synthetic capture; the analyst role cannot
+download the PCAP. OpenGRC consumes aggregate session evidence and a session
+reference only. See `docs/DETECTION-ENGINEERING-PATHWAY.md` (DET-08) and the
+`network-2-7-arkime-session-triage` lab.
 
 ### Cloud assessment selection
 

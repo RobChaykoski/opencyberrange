@@ -45,6 +45,7 @@ the alert is real, and writing the rule that catches it next time.
 | DET-05 | Suricata Alert Triage | intermediate | 120 | signature context, disposition, escalation |
 | DET-06 | OpenSearch, Elastic, and KQL-Style Hunting | intermediate | 180 | indexes, fields, Sigma-to-KQL translation |
 | DET-07 | Capstone: Multi-Stage Intrusion Hunt | advanced | 240 | one timeline across endpoint, network, and SIEM |
+| DET-08 | Full Packet Capture and Session Triage | advanced | 120 | indexed sessions, DNS-to-HTTP pivot, evidence export |
 
 Each module lists weighted competencies from the shared taxonomy. The weights
 sum to 1.0 so a module grade is reproducible even when a reviewer changes the
@@ -117,6 +118,19 @@ Existing labs: `network-1-3-dns-anomaly-detection`,
 
 Planned labs: `detection-3-2-multi-stage-hunt`.
 
+### DET-08 — Full Packet Capture and Session Triage
+
+Outcomes: select the narrowest session filter that answers a question; pivot
+from a DNS answer to the HTTP session that used it; export a session summary and
+state what the capture does not prove.
+
+Existing labs: `network-2-7-arkime-session-triage`.
+
+The lab generates its own synthetic capture inside the Arkime container; it does
+not rely on a shared JSON dataset. The learner works in the Arkime viewer over an
+indexed OpenSearch store. PCAP download is disabled for the analyst role and the
+evidence is the session summary, not the payload.
+
 ## Synthetic datasets
 
 Assets live in `platform/backend/app/data/detection-datasets/`.
@@ -165,12 +179,13 @@ be: a query either returns the synthetic event or it does not. Written work is
 graded against a short rubric covering the hypothesis, the evidence, the
 decision, confidence, and the next action.
 
-A learner who completes DET-01 through DET-07 can:
+A learner who completes DET-01 through DET-08 can:
 
 - read an endpoint or network log and say what happened;
 - select the cheapest telemetry that answers a question;
 - write and review a Sigma rule and a SIEM query;
 - separate a true positive from a noisy signature;
+- triage indexed sessions and export the decision without copying the payload;
 - produce a timeline and an incident note that another analyst can act on.
 
 ## Relationship to the offensive tracks

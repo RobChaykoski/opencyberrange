@@ -1,5 +1,5 @@
 framework: NICE
-generated_at: '2026-11-23T02:58:10.484139+00:00'
+generated_at: '2026-11-25T03:14:35.933886+00:00'
 mappings:
   ai-1-1-prompt-injection-basics:
     confidence: medium
@@ -85,6 +85,28 @@ mappings:
     - T1052
     - T0751
     - T1054
+    work_roles:
+    - DD-WRL-003
+    - DD-WRL-005
+    - PD-WRL-006
+  ai-2-2-multi-agent-privilege-escalation:
+    confidence: medium
+    knowledge:
+    - K0639
+    - K0719
+    - K0757
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0466
+    - S0569
+    - S0574
+    source: derived_from_competency_and_category
+    tasks:
+    - T1083
+    - T1318
+    - T0077
     work_roles:
     - DD-WRL-003
     - DD-WRL-005
@@ -2365,6 +2387,28 @@ mappings:
     - PD-WRL-001
     - PD-WRL-007
     - IO-WRL-004
+  network-2-7-arkime-session-triage:
+    confidence: medium
+    knowledge:
+    - K0716
+    - K0717
+    - K0759
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0875
+    - S0156
+    - S0425
+    source: derived_from_competency_and_category
+    tasks:
+    - T0129
+    - T1390
+    - T0081
+    work_roles:
+    - PD-WRL-001
+    - PD-WRL-007
+    - IO-WRL-004
   osint-1-1-public-footprint:
     confidence: medium
     knowledge:
@@ -2532,6 +2576,28 @@ mappings:
     - T1053
     - T1054
     - T1198
+    work_roles:
+    - PD-WRL-006
+    - IN-WRL-001
+    - PD-WRL-003
+  osint-3-1-noise-in-the-nest:
+    confidence: medium
+    knowledge:
+    - K0719
+    - K0724
+    - K0725
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0509
+    - S0673
+    - S0695
+    source: derived_from_competency_and_category
+    tasks:
+    - T0262
+    - T0510
+    - T0751
     work_roles:
     - PD-WRL-006
     - IN-WRL-001

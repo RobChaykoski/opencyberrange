@@ -5826,6 +5826,60 @@ labs:
         reviewed.
     review_status: baseline_derived
     reviewed_at: null
+  network-2-7-arkime-session-triage:
+    track: Network
+    difficulty: advanced
+    expected_duration_minutes: 120
+    workbook: ''
+    skills_earned:
+    - id: NET-029
+      name: Wireshark Navigation
+      weight: 0.4
+    - id: NET-030
+      name: Packet Capture Analysis
+      weight: 0.3
+    - id: NET-031
+      name: Protocol Identification
+      weight: 0.2
+    - id: NET-032
+      name: Traffic Baseline Analysis
+      weight: 0.1
+    competencies_proven:
+    - id: NET-029
+      name: Wireshark Navigation
+      weight: 0.4
+      category: Network Analysis
+    - id: NET-030
+      name: Packet Capture Analysis
+      weight: 0.3
+      category: Network Analysis
+    - id: NET-031
+      name: Protocol Identification
+      weight: 0.2
+      category: Network Analysis
+    - id: NET-032
+      name: Traffic Baseline Analysis
+      weight: 0.1
+      category: Network Analysis
+    knowledge_domains:
+    - id: NET
+      label: Networking
+    practice_axes:
+    - Network systems
+    - Incident and forensics
+    evidence_artifacts:
+    - flag
+    - automated validation
+    - analyst finding
+    - submitted artifact
+    confidence:
+      score: 0.65
+      level: medium
+      basis: Baseline contract derived from the reviewed competency mapping. The evidence types and weights
+        are explicit; live harness evidence and analyst-answer moderation are required before marking
+        reviewed.
+    review_status: baseline_derived
+    reviewed_at: null
   osint-1-1-public-footprint:
     track: OSINT
     difficulty: beginner

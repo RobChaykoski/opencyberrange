@@ -64,7 +64,7 @@
       "sha256": "b4e5cc77a8408624fcdd3b95e22773d1ce59fd5ea755e4100e1bae7c47648460"
     },
     "platform/backend/app/data/competency-contracts.yaml": {
-      "sha256": "54b77dfd7af6c62d3e59c4570a646484befc230bd1e342ff732352bb3c8b93f6"
+      "sha256": "3b1740ea5726ce15a22e17450c15e300b57d9165b11e331944ecf7f2584d4cd1"
     },
     "platform/backend/app/data/competency-mapping.yaml": {
       "sha256": "23cd82a50b8c2c23970cdc5a9eb77afcc0e5a96b018bcd5fa791e5b306fc0c32"
@@ -109,7 +109,7 @@
       "sha256": "f1ea46f9640c4110e010840ad949abdb3e4c75424ff70b59d016beb0c47be410"
     },
     "platform/backend/app/data/detection-pathway.yaml": {
-      "sha256": "d76fb590961faadd894c29364e53ecc1ed8ce6a28a9d172f89b1dec381a0e27b"
+      "sha256": "c5668d0a83acba2ca2991b247f35b81344c4cdded141d5a547e418f2d938ce7d"
     },
     "platform/backend/app/data/dfir-datasets/README.md": {
       "sha256": "1d5a3343382e1c4d04e1d82628eb5992707c15c043807fbb55d144ec69225016"
@@ -163,7 +163,7 @@
       "sha256": "d073d2202db1e15c9b259640ea31cde86fc10329b3918c9fdc18fab906fd4d4d"
     },
     "platform/backend/app/data/lab-outcomes.yaml": {
-      "sha256": "862f343590d7fd8c3ccdf686fabec9e793464cdf35343a8437786a2e13018053"
+      "sha256": "b844facef6915904a292bcfd63bb9142dddd2fbd2d33a8b3eeeb8d7983f3d5cb"
     },
     "platform/backend/app/data/malware-samples.yaml": {
       "sha256": "4e6a00ce7febc54336c44fe167b45180fbc8ae8cbb4343f772b2ad0554cc77be"
@@ -178,7 +178,7 @@
       "sha256": "fa98a77f258b88dcb508b1ad129e4724cabad65d8ed7db26e03c3c8e1c1538de"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "60fb84016612bbdc21d18c698fa7146258399b35444d7550a825b4d343c9f2b0"
+      "sha256": "c0de08303c0745b33bf8c8084ccb6ab291467d68d4304c707b082b6195c369a1"
     },
     "platform/backend/app/data/threat-awareness.json": {
       "sha256": "5828778ace98209af63064d601b43cee84c782593fe8f9a8c85c3203ba8387ac"
@@ -1081,6 +1081,12 @@
       "services": [
         "c2-relay",
         "victim"
+      ]
+    },
+    "network-2-7-arkime-session-triage": {
+      "content_hash": "7e67db8637f4b68df625e7cd4a0689ed7fe0f970ba8172fc1f03f384e25e2db8",
+      "services": [
+        "arkime"
       ]
     },
     "osint-1-1-public-footprint": {

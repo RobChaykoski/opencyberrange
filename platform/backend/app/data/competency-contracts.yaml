@@ -6131,6 +6131,64 @@ labs:
     usage_source: null
     review_status: baseline_derived
     reviewed_at: null
+  network-2-7-arkime-session-triage:
+    lab_id: network-2-7-arkime-session-triage
+    track: Network
+    difficulty: advanced
+    expected_duration_minutes: 120
+    prerequisites:
+    - network-1-2-http-traffic-analysis
+    - network-2-5-attack-chain-analysis
+    workbook: ''
+    competency_ids:
+    - id: NET-029
+      weight: 0.4
+    - id: NET-030
+      weight: 0.3
+    - id: NET-031
+      weight: 0.2
+    - id: NET-032
+      weight: 0.1
+    evidence:
+    - type: flag
+      weight: 0.35
+      source: lab.flag
+      validation: exact_match
+    - type: validation_step
+      weight: 0.35
+      source: platform/tester/manifests/network-2-7-arkime-session-triage.yaml
+      validation: all_steps_pass
+    - type: analyst_answer
+      weight: 0.2
+      source: workbook.analysis_questions
+      validation: rubric
+    - type: artifact
+      weight: 0.1
+      source: submitted_artifact
+      validation: rubric
+    prohibited_collection:
+    - keystrokes
+    - mouse_movement
+    - exhaustive_terminal_history
+    assessment_reliability:
+      level: medium
+      score: 0.65
+      evidence_completeness: medium
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Baseline contract derived from the reviewed competency mapping. The evidence types and weights are explicit; live harness evidence and analyst-answer moderation are required before marking reviewed.
+    assessment_criteria:
+    - Submit the correct flag.
+    - Submit a short analyst finding with the destination, the token, and a confidence statement.
+    - Record the Arkime expression used to find the session.
+    test_steps: 4
+    flag_required: true
+    content_version: 0.1.0
+    usage_rank: null
+    usage_completions: null
+    usage_source: null
+    review_status: baseline_derived
+    reviewed_at: null
   osint-1-1-public-footprint:
     lab_id: osint-1-1-public-footprint
     track: OSINT

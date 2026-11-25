@@ -14,9 +14,9 @@ See [Competency contract review guide](COMPETENCY-REVIEW-GUIDE.md).
 
 | Measure | Value |
 |---|---:|
-| Contracts | **215** |
+| Contracts | **216** |
 | Reviewed | **25** |
-| Awaiting review | **190** |
+| Awaiting review | **191** |
 | Review coverage | **11.6%** |
 
 | Track | Awaiting review |
@@ -28,7 +28,7 @@ See [Competency contract review guide](COMPETENCY-REVIEW-GUIDE.md).
 | Linux | 31 |
 | Malware | 10 |
 | Metasploit | 8 |
-| Network | 20 |
+| Network | 21 |
 | OSINT | 9 |
 | OT | 5 |
 | Software Security | 2 |
@@ -37,7 +37,7 @@ See [Competency contract review guide](COMPETENCY-REVIEW-GUIDE.md).
 
 | Contract status | Count |
 |---|---:|
-| `baseline_derived` | 190 |
+| `baseline_derived` | 191 |
 
 ## Review campaign
 
@@ -176,6 +176,7 @@ Per-track worksheets: [`docs/reviews/competency/`](reviews/competency/README.md)
 | `network-1-2-log-correlation` Horizon Aerospace - Log Correlation Investigation | Network | intermediate | course | 60 | NET-029, NET-030, NET-031, NET-032 | flag, validation_step, analyst_answer, artifact | baseline_derived |
 | `network-12-1-firewall-fundamentals` Firewall Fundamentals - Controlling Inbound Traffic | Network | beginner | course | 60 | NET-001, NET-011, NET-021, NET-033 | flag, validation_step, analyst_answer, artifact | baseline_derived |
 | `network-12-2-firewall-policy-hardening` Firewall Policy Hardening - Defense in Depth | Network | intermediate | course | 75 | NET-001, NET-011, NET-021, NET-033 | flag, validation_step, analyst_answer, artifact | baseline_derived |
+| `network-2-7-arkime-session-triage` Helios Freight - Full Packet Capture Triage | Network | advanced | course | 120 | NET-029, NET-030, NET-031, NET-032 | flag, validation_step, analyst_answer, artifact | baseline_derived |
 | `osint-1-1-public-footprint` The Public Footprint | OSINT | beginner | public | 35 | OSINT-001, OSINT-002, OSINT-003, OSINT-005 | flag, validation_step, analyst_answer, artifact | baseline_derived |
 | `osint-1-2-image-intelligence` Badge Photo Intelligence | OSINT | beginner | public | 45 | OSINT-001, OSINT-002, OSINT-003, OSINT-005 | flag, validation_step, analyst_answer, artifact | baseline_derived |
 | `osint-1-3-exif-metadata` EXIF Metadata Investigation | OSINT | beginner | public | 35 | OSINT-001, OSINT-002, OSINT-003, OSINT-005 | flag, validation_step, analyst_answer, artifact | baseline_derived |

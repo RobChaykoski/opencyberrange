@@ -182,3 +182,26 @@ modules:
       - "Build a hypothesis and select the minimum telemetry needed to test it."
       - "Correlate Windows, Sysmon, Zeek, Suricata, and SIEM evidence into one timeline."
       - "Write a detection rule and an incident note with containment and recovery recommendations."
+  - id: DET-08
+    title: "Full Packet Capture and Session Triage"
+    difficulty: advanced
+    estimated_minutes: 120
+    prerequisites: [DET-04, DET-05, DET-06]
+    datasets: []
+    external_datasets: []
+    sigma_rules: []
+    competencies:
+      - {id: SIEM-001, weight: 0.25}
+      - {id: SIEM-002, weight: 0.25}
+      - {id: TH-003, weight: 0.25}
+      - {id: IR-001, weight: 0.25}
+    existing_labs: [network-2-7-arkime-session-triage]
+    planned_labs: []
+    evidence: [query_result, triage_note, artifact]
+    assessment:
+      deterministic: true
+      validation: "session search checks, a captured expression, and a triage rubric"
+    outcomes:
+      - "Select the narrowest session filter that answers the question."
+      - "Pivot from a DNS answer to the session that used it."
+      - "Export a session summary and state what the capture does not prove."

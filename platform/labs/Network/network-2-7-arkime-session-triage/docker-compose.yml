@@ -1,0 +1,54 @@
+services:
+  opensearch:
+    image: opensearchproject/opensearch:2.19.3@sha256:e96cc6ae1500a073d973c0906f30f7cf4d9c461f32f855f9242a2da933660cdd
+    mem_limit: 2g
+    cpus: 1.0
+    user: "1000:1000"
+    environment:
+      - discovery.type=single-node
+      - DISABLE_SECURITY_PLUGIN=true
+      - DISABLE_INSTALL_DEMO_CONFIG=true
+      - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
+    labels:
+      ocr_lab_net: "false"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS 'http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=5s' >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 30s
+    networks:
+      internal:
+    restart: unless-stopped
+
+  arkime:
+    mem_limit: 1g
+    cpus: 1.0
+    user: "arkime"
+    build:
+      context: ./containers/arkime
+      dockerfile: Dockerfile
+    hostname: arkime
+    labels:
+      ip_offset: "10"
+    environment:
+      - ARKIME_OPENSEARCH_URL=http://opensearch:9200
+      - ARKIME_ADMIN_PASSWORD=Ark1m3_Adm1n_2026
+      - ARKIME_ANALYST_PASSWORD=Ark1m3_S3ss10ns
+    depends_on:
+      opensearch:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS -u admin:$$ARKIME_ADMIN_PASSWORD 'http://localhost:8005/api/sessions?date=-1&length=1' >/dev/null || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 120s
+    networks:
+      default:
+      internal:
+    restart: unless-stopped
+
+networks:
+  internal:
+    internal: true
