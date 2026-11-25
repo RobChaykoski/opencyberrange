@@ -26,6 +26,7 @@ All notable changes to OpenCyberRange are recorded here.
 
 ### Labs
 
+- Added `web-11-11-zap-baseline-triage`: a Web application security lab with a disposable Flask practice app, a public export directory, missing headers, and a synthetic assessment token. The learner runs a ZAP baseline scan, triages the report, confirms directory browsing by hand, and writes a remediation and retest note. The lab is listed under MAS-06 in the modern AppSec pathway and has a workbook page.
 - Added `network-2-7-arkime-session-triage`: an advanced, course-visible traffic-analysis lab using Arkime 6.9.2 and OpenSearch 2.19.3. The stack is pinned, runs non-root, keeps OpenSearch off the student bridge and seeds a synthetic capture; the analyst role can search sessions but cannot download the PCAP. The lab maps to the new DET-08 pathway module and passes the three-run live harness.
 
 ### Threat awareness data

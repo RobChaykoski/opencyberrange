@@ -92,6 +92,7 @@ htmlcov/
 /wiki/
 platform/frontend/wiki/
 platform/frontend/wiki.prev/
+platform/frontend/wiki.new/
 platform/frontend/dist/
 tools/wiki-gen/generated/
 platform/labs/.prebuild-progress.json

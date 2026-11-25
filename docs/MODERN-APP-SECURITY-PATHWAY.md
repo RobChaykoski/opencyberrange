@@ -77,6 +77,7 @@ manifest, and a container-backed exercise):
 - `web-11-4-jwt-security`
 - `web-11-5-oauth-abuse`
 - `web-11-6-devsecops-pipeline`
+- `web-11-11-zap-baseline-triage`
 - `web-11-7-container-security`
 - `web-11-8-kubernetes-security`
 - `web-11-9-supply-chain-integrity`

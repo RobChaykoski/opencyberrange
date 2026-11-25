@@ -113,6 +113,7 @@ nav:
     - "Exercise W11.7 -- Container Security": CH_WEB11_AppSec_Pathway/07_Container_Security.md
     - "Exercise W11.8 -- Kubernetes Security": CH_WEB11_AppSec_Pathway/08_Kubernetes_Security.md
     - "Exercise W11.9 -- Supply Chain and Artifact Integrity": CH_WEB11_AppSec_Pathway/09_Supply_Chain_Integrity.md
+    - "Exercise W11.11 -- ZAP Baseline Triage": CH_WEB11_AppSec_Pathway/11_ZAP_Baseline_Triage.md
     - "Exercise W11.10 -- Modern Application Security Capstone": CH_WEB11_AppSec_Pathway/10_AppSec_Capstone.md
   - "IoT security references": IOT-SECURITY-REFERENCES.md
   - "Free training and certifications": FREE-TRAINING-AND-CERTIFICATIONS.md

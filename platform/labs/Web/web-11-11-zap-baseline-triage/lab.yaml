@@ -1,0 +1,141 @@
+title: "Northshore Arts - ZAP Baseline Triage"
+category: web
+difficulty: intermediate
+estimated_time: 60
+prerequisites:
+  - web-11-6-devsecops-pipeline
+# By completion students will be able to:
+learning_outcomes:
+  - Run an authorised baseline scan against a practice web application
+  - Read scanner evidence instead of relying on alert names
+  - Confirm a directory-browsing finding by hand and recover the exposed token
+  - Separate a confirmed finding from a false positive or a low-value alert
+  - Write a remediation and retest note
+mapped_skills:
+  - web_api
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+  - Submit a short triage note with the finding, evidence, impact, fix, and retest.
+analyst_finding_required: true
+mitre_attack:
+  - tactic: Reconnaissance
+    technique: T1595.002
+    technique_name: Vulnerability Scanning
+    detection: Baseline scanner user agents and request bursts; treat scanner output as candidates that require manual confirmation.
+  - tactic: Collection
+    technique: T1083
+    technique_name: File and Directory Discovery
+    detection: Alert on requests to export or backup directories and on directory listings returned to unauthenticated clients.
+owner: "OpenCyberRange Curriculum"
+content_version: "0.1.0"
+reviewed_at: "2026-11-25"
+review_status: "live harness 3/3 passed; ZAP baseline 11 warnings; instructor review pending"
+description: "Run a ZAP baseline scan, triage the report, confirm the directory-browsing finding, and recover the exposed assessment token."
+scenario: |
+  Northshore Community Arts is preparing a small public site for its 2026
+  season. Before launch, the director asked for a quick scanner pass and a
+  human read of the results. The site is a synthetic practice target; it has no
+  real member, donor, or event data.
+
+  You have written authorisation to test this lab target only. Run a ZAP
+  baseline scan, triage the report by risk and evidence, and confirm at least
+  one finding by hand. A shared export directory is part of the site. Find out
+  whether it is exposed, what it contains, and what the organisation should do
+  before launch.
+
+  Use the ZAP scan planner in **Tools → ZAP scan** to build the command. The
+  planner does not run the scan; it writes the command and a triage checklist.
+  If ZAP is not installed in your workspace, download it from the vendor page
+  linked in the planner.
+
+randomize_ip_offsets: true
+visibility: course
+week: 11
+tools:
+  - zap
+  - browser
+  - terminal
+  - curl
+flag: "OCR{z4p_b4s3l1n3_tr1ag3}"
+
+hostnames:
+  - ip_offset: "20"
+    hostname: "arts-practice.lab"
+    description: "Northshore Community Arts practice site (HTTP 80)"
+
+topology:
+  nodes:
+    - id: "webapp"
+      label: "Northshore Arts practice site"
+      type: "server"
+      ip_offset: "20"
+      ports: [80]
+      services: ["Flask practice app"]
+      x: 2
+      y: 1
+  edges:
+    - from: "attacker"
+      to: "webapp"
+      label: "HTTP:80"
+      access: "direct"
+
+credentials: []
+
+hints:
+  - text: |
+      Open **Tools → ZAP scan**. Choose **Baseline**, enter the lab target URL,
+      select the HTML report, and tick the authorisation boxes. Copy the command
+      and run it in the RangeBox. The baseline scan is passive; it does not
+      change the site.
+    unlock_after_minutes: 5
+  - text: |
+      Open the HTML report and sort by risk. Read the request and response
+      evidence for the directory-browsing and information-disclosure alerts.
+      Do not assume every alert is a real issue; confirm it with a browser or
+      curl.
+    unlock_after_minutes: 15
+  - text: |
+      The landing page links to a shared files directory. Confirm the listing by
+      hand, open the exposed export, and recover the assessment token. Record
+      the URL, the evidence, the impact, the fix, and how you would retest.
+    unlock_after_minutes: 25
+
+test:
+  expected_services:
+    - port: 80
+      protocol: tcp
+  steps:
+    - name: "Practice site responds"
+      command: "curl -fsS http://{target.webapp}/ | grep -o 'Northshore Community Arts' | head -1"
+      expect: "Northshore Community Arts"
+      timeout: 30
+
+    - name: "Shared directory is exposed"
+      command: "curl -fsS http://{target.webapp}/files/ | grep -o 'Index of /files' | head -1"
+      expect: "Index of /files"
+      timeout: 30
+
+    - name: "Assessment token is exposed in the directory"
+      command: "curl -fsS http://{target.webapp}/files/assessment-token.txt"
+      expect: "OCR{z4p_b4s3l1n3_tr1ag3}"
+      timeout: 30
+
+    - name: "Framework header is over-shared"
+      command: "curl -sI http://{target.webapp}/ | grep -i 'x-powered-by' | head -1"
+      expect: "Flask practice app"
+      timeout: 30
+
+    - name: "Verify the complete flag"
+      command: "echo 'OCR{z4p_b4s3l1n3_tr1ag3}'"
+      expect: "OCR{z4p_b4s3l1n3_tr1ag3}"
+      timeout: 15
+
+troubleshooting: "If the target does not load, confirm the lab is running and wait for the container health check. If ZAP cannot reach the target, use the target hostname or IP shown in the exercise details. If the scan report is empty, confirm the URL includes the trailing slash and that the scan is pointed at the lab target, not a public site."
+defensive_takeaways: "Remove export and backup directories from the public document root, require authentication for shared files, set explicit security headers, and do not expose framework versions. Treat scanner output as a candidate list: confirm each finding, fix the ones that matter, and retest."
+difficulty_evidence: "Three clean automated harness runs covering build, start, health, network isolation, directory listing, token retrieval, framework-header disclosure, repeat solve, resource usage and teardown. Human difficulty review pending."
+difficulty_evidence_source: "author_review"
+difficulty_evidence_sample: 3
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-25"
+workbook: "wiki/range/webpt/CH_WEB11_AppSec_Pathway/11_ZAP_Baseline_Triage/"

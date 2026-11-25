@@ -14,10 +14,10 @@ See [Competency contract review guide](COMPETENCY-REVIEW-GUIDE.md).
 
 | Measure | Value |
 |---|---:|
-| Contracts | **216** |
+| Contracts | **217** |
 | Reviewed | **25** |
-| Awaiting review | **191** |
-| Review coverage | **11.6%** |
+| Awaiting review | **192** |
+| Review coverage | **11.5%** |
 
 | Track | Awaiting review |
 |---|---:|
@@ -32,12 +32,12 @@ See [Competency contract review guide](COMPETENCY-REVIEW-GUIDE.md).
 | OSINT | 9 |
 | OT | 5 |
 | Software Security | 2 |
-| Web | 25 |
+| Web | 26 |
 | Windows | 48 |
 
 | Contract status | Count |
 |---|---:|
-| `baseline_derived` | 191 |
+| `baseline_derived` | 192 |
 
 ## Review campaign
 
@@ -211,6 +211,7 @@ Per-track worksheets: [`docs/reviews/competency/`](reviews/competency/README.md)
 | `web-2-1-basic-sql-injection-get` Basic SQL Injection (Login) | Web | beginner | public | 120 | WEB-007, WEB-009, WEB-013, WEB-018 | flag, validation_step, analyst_answer, artifact | baseline_derived |
 | `web-1-7-directory-traversal` Pinnacle Cloud - Directory Traversal | Web | beginner | course | 35 | WEB-009, WEB-017, WEB-019, NET-022 | flag, validation_step, analyst_answer, artifact | baseline_derived |
 | `web-1-8-traversal-scavenger-hunt` Cascade Digital Media - Traversal Scavenger Hunt | Web | intermediate | course | 40 | WEB-009, WEB-017, WEB-019, NET-022 | flag, validation_step, analyst_answer, artifact | baseline_derived |
+| `web-11-11-zap-baseline-triage` Northshore Arts - ZAP Baseline Triage | Web | intermediate | course | 60 | WEB-001, WEB-005, WEB-009, WEB-019 | flag, validation_step, analyst_answer, artifact | baseline_derived |
 | `web-2-2-insecure-api-endpoints` Metro Transit - Insecure API Endpoints | Web | intermediate | course | 40 | WEB-009, WEB-012, WEB-013, WEB-014 | flag, validation_step, analyst_answer, artifact | baseline_derived |
 | `web-2-3-command-injection` CloudPing Diagnostics - Command Injection | Web | intermediate | course | 40 | WEB-009, WEB-012, WEB-013, WEB-014 | flag, validation_step, analyst_answer, artifact | baseline_derived |
 | `web-2-4-api-enumeration-gauntlet` Stonebridge Capital - API Enumeration Gauntlet | Web | intermediate | course | 45 | WEB-009, WEB-012, WEB-013, WEB-014 | flag, validation_step, analyst_answer, artifact | baseline_derived |

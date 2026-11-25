@@ -7262,6 +7262,59 @@ labs:
         reviewed.
     review_status: baseline_derived
     reviewed_at: null
+  web-11-11-zap-baseline-triage:
+    track: Web
+    difficulty: intermediate
+    expected_duration_minutes: 60
+    workbook: wiki/range/webpt/CH_WEB11_AppSec_Pathway/11_ZAP_Baseline_Triage/
+    skills_earned:
+    - id: WEB-001
+      name: HTML Fundamentals
+      weight: 0.4
+    - id: WEB-005
+      name: HTTP Methods
+      weight: 0.3
+    - id: WEB-009
+      name: Input Validation
+      weight: 0.2
+    - id: WEB-019
+      name: OWASP Top 10 Mapping
+      weight: 0.1
+    competencies_proven:
+    - id: WEB-001
+      name: HTML Fundamentals
+      weight: 0.4
+      category: Web Fundamentals
+    - id: WEB-005
+      name: HTTP Methods
+      weight: 0.3
+      category: Web Fundamentals
+    - id: WEB-009
+      name: Input Validation
+      weight: 0.2
+      category: Web Security
+    - id: WEB-019
+      name: OWASP Top 10 Mapping
+      weight: 0.1
+      category: Web Vulnerabilities
+    knowledge_domains:
+    - id: WEB
+      label: Web Technologies
+    practice_axes:
+    - Web and API
+    evidence_artifacts:
+    - flag
+    - automated validation
+    - analyst finding
+    - submitted artifact
+    confidence:
+      score: 0.65
+      level: medium
+      basis: Baseline contract derived from the reviewed competency mapping. The evidence types and weights
+        are explicit; live harness evidence and analyst-answer moderation are required before marking
+        reviewed.
+    review_status: baseline_derived
+    reviewed_at: null
   web-11-2-api-bola-bfla:
     track: Web
     difficulty: intermediate

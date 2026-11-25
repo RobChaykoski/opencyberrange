@@ -74,22 +74,36 @@ the release records.
 
 ## Lab follow-up
 
-The planner is usable now. The next step is a dedicated Web application security
-lab, planned as a course-visible exercise in the Web pathway:
+The dedicated Web application security lab is implemented as
+`web-11-11-zap-baseline-triage`:
 
-- **Working id:** `web-11-11-zap-baseline-triage`.
-- **Target:** a disposable practice app on the lab network, with a known restore
-  snapshot and no production dependency.
-- **Task:** run a baseline scan, triage three findings, reproduce one by hand,
-  and write a remediation and retest note.
+- **Target:** a local Flask practice app on the lab network, with synthetic
+  community-arts content, a public export directory, missing headers, and no
+  production dependency.
+- **Task:** run a baseline scan, triage the report, confirm the directory
+  browsing finding by hand, recover the assessment token, and write a
+  remediation and retest note.
 - **Evidence:** the learner's triage note and remediation plan, not the raw scan
   output. The report may contain target URLs and response snippets, so keep it
   in the lab and do not import it into a GRC record.
-- **Contract and outcomes:** add the lab to `curriculum-manifest.yaml`, the
-  competency contract, NICE mapping, and the Web track workbook when the target
-  image is pinned and the harness passes.
+- **Pathway:** the lab is listed in `modern-appsec-pathway.yaml` under MAS-06
+  (DevSecOps and CI/CD Security) and in the Web 11 workbook.
+- **Harness:** the lab manifest is generated from `lab.yaml`; run
+  `python scripts/lab_harness.py --lab web-11-11-zap-baseline-triage` and record
+  the result in the lab review notes.
 - **Out of scope for the planner:** authenticated scans that require real
   credentials, production hosts, and automated exploit chaining.
+
+## Verified lab findings
+
+A local ZAP baseline scan of `web-11-11-zap-baseline-triage` on 25 November 2026
+returned the intended triage set: Directory Browsing (10033) at `/files/`, Cookie
+No HttpOnly Flag (10010), Cookie without SameSite (10054), Server version
+disclosure (10036), `X-Powered-By` disclosure (10037), CSP missing (10038),
+anti-clickjacking header missing (10020), `X-Content-Type-Options` missing
+(10021), Permissions Policy missing (10063), and CORP/COEP/COOP missing (90004).
+The directory listing exposes `assessment-token.txt`, which is the manual
+confirmation step.
 
 ## Acceptance checks
 

@@ -17,9 +17,9 @@ links.
 | OSINT | 9 |
 | OT | 4 |
 | Software Security | 2 |
-| Web | 26 |
+| Web | 27 |
 | Windows | 62 |
-| **Total** | **205** |
+| **Total** | **206** |
 
 ## Labs
 
@@ -161,6 +161,7 @@ links.
 | Web | MedCore Health Systems: Full Web-to-Root Compromise (`web-3-3-full-web-to-root`) | `wiki/range/webpt/CH_WEB03_Advanced_Exploitation/03_Full_Web_To_Root/` |
 | Web | Metro Transit - Insecure API Endpoints (`web-2-2-insecure-api-endpoints`) | `wiki/range/webpt/CH_WEB02B_API_And_Injection/01_Insecure_API_Endpoints/` |
 | Web | Modern Application Security: Capstone Assessment (`web-11-10-modern-appsec-capstone`) | `wiki/range/webpt/CH_WEB11_AppSec_Pathway/10_AppSec_Capstone/` |
+| Web | Northshore Arts - ZAP Baseline Triage (`web-11-11-zap-baseline-triage`) | `wiki/range/webpt/CH_WEB11_AppSec_Pathway/11_ZAP_Baseline_Triage/` |
 | Web | NovaTech Solutions - Hidden Login Discovery (`web-3-1-hidden-login-discovery`) | `wiki/range/webpt/CH_WEB03_Advanced_Exploitation/01_Hidden_Login_Discovery/` |
 | Web | Pinnacle Cloud - Directory Traversal (`web-1-7-directory-traversal`) | `wiki/range/webpt/CH_WEB01B_Advanced_Recon/01_Directory_Traversal/` |
 | Web | Stonebridge Capital - API Enumeration Gauntlet (`web-2-4-api-enumeration-gauntlet`) | `wiki/range/webpt/CH_WEB02B_API_And_Injection/03_API_Enumeration_Gauntlet/` |

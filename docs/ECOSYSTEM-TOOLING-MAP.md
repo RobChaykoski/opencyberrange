@@ -50,7 +50,7 @@ records. OpenIAM is fetched separately as its own compose stack.
 | Endpoint detection | Wazuh, Sysmon, Fail2Ban, Lynis | SOC01/SOC04/SOC07 labs | Endpoint control evidence | Collector host hardening | Clinical endpoint compliance |
 | Network detection | Suricata, Zeek, Security Onion | SOC02/SOC03/SOC08 labs | Detection-control evidence | Sensor detection evidence | Clinical network monitoring evidence |
 | Full packet capture / NSM | Arkime | network-2-7 indexed session triage lab | Aggregate session evidence and links; no PCAP or payload (OpenGRC ADR 0060) | Sensor context | Clinical network investigation reference |
-| Web/VM scanning | OpenVAS, Nessus, Nikto, OWASP ZAP | Web application security labs and the ZAP scan planner (`docs/ZAP-SCAN-PLANNER.md`); a dedicated ZAP lab is the next Web pathway step | Vulnerability-management control evidence | Web service exposure evidence | Clinical web app vulnerability evidence |
+| Web/VM scanning | OpenVAS, Nessus, Nikto, OWASP ZAP | Web application security labs, the ZAP scan planner, and `web-11-11-zap-baseline-triage` | Vulnerability-management control evidence | Web service exposure evidence | Clinical web app vulnerability evidence |
 | Asset ownership | Ralph, NetBox | Asset ownership report | Asset/control scope | Data-source ownership | Clinical asset ownership |
 | Endpoint compliance | Fleet | Endpoint compliance report | Control evidence | Collector posture | Clinical device posture |
 | Containers/Kubernetes | Docker, Kubernetes, Cilium, Calico, Istio | PLAT01/PLAT02/PLAT06/PLAT07/PLAT08 labs | SDLC and platform control evidence | Collector deployment | Clinical service platform evidence |
@@ -76,7 +76,7 @@ reference only. See `docs/DETECTION-ENGINEERING-PATHWAY.md` (DET-08) and the
 `network-2-7-arkime-session-triage` lab.
 
 OWASP ZAP is a desktop scanner. OCR exposes a first-party scan planner in the
-Tools panel and will use ZAP in a disposable Web application security lab; the
+Tools panel and uses ZAP in the `web-11-11-zap-baseline-triage` Web lab; the
 planner does not bundle or run ZAP. See `docs/ZAP-SCAN-PLANNER.md`.
 
 ### Cloud assessment selection

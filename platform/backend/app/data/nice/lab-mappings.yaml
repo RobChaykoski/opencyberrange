@@ -1,5 +1,5 @@
 framework: NICE
-generated_at: '2026-11-25T03:14:35.933886+00:00'
+generated_at: '2026-11-25T05:19:18.659687+00:00'
 mappings:
   ai-1-1-prompt-injection-basics:
     confidence: medium
@@ -2958,6 +2958,27 @@ mappings:
     - T1318
     - T1052
     - T1079
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  web-11-11-zap-baseline-triage:
+    confidence: medium
+    knowledge:
+    - K0688
+    - K0748
+    - K0877
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0642
+    - S0656
+    source: derived_from_competency_and_category
+    tasks:
+    - T1099
+    - T1119
+    - T1318
     work_roles:
     - DD-WRL-005
     - PD-WRL-007

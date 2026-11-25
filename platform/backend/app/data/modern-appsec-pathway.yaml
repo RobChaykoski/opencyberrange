@@ -215,6 +215,7 @@ modules:
   existing_labs:
   - software-security-1-1-hidden-export-route
   - web-11-6-devsecops-pipeline
+  - web-11-11-zap-baseline-triage
   planned_labs: []
   competencies:
   - id: APP-012

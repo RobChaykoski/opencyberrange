@@ -1,0 +1,37 @@
+# Generated from platform/labs/Web/web-11-11-zap-baseline-triage/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: web-11-11-zap-baseline-triage
+track: Web
+difficulty: intermediate
+source: platform/labs/Web/web-11-11-zap-baseline-triage/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr-tester:latest
+  command: /tests/web-11-11-zap-baseline-triage.sh
+  steps:
+  - name: Practice site responds
+    command: curl -fsS http://{target.webapp}/ | grep -o 'Northshore Community Arts' | head -1
+    expect: Northshore Community Arts
+  - name: Shared directory is exposed
+    command: curl -fsS http://{target.webapp}/files/ | grep -o 'Index of /files' | head -1
+    expect: Index of /files
+  - name: Assessment token is exposed in the directory
+    command: curl -fsS http://{target.webapp}/files/assessment-token.txt
+    expect: '{flag}'
+  - name: Framework header is over-shared
+    command: curl -sI http://{target.webapp}/ | grep -i 'x-powered-by' | head -1
+    expect: Flask practice app
+  - name: Verify the complete flag
+    command: echo '{flag}'
+    expect: '{flag}'
+expected_flag_count: 1
+expected_flag: '{flag}'
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 512
+max_cpu: 0.75

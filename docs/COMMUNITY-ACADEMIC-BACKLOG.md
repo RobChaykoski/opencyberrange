@@ -26,7 +26,7 @@ they are not Enterprise deployment features.
 | CA-L3 | Certification pathway panel on each track | Learners can see entry, core, and advanced vendor certifications and the roles a track can lead toward | Community / Academic curriculum guidance | Implemented on the 2.4.x line; port to 1.1 |
 | CA-L4 | CISO MindMap-informed career breadth | The curriculum should show the wider leadership and governance system around technical work, not only first-job skills | Community / Academic curriculum guidance | Proposed |
 | CA-L5 | Advanced network-emulation showcase | The catalogue has no switch/router topology lab for infrastructure-security learners; a visible VLAN, routing, and firewall topology would demonstrate the next step beyond packet and firewall basics | Community / Academic lab improvement | Proposed; deferred |
-| CA-L6 | ZAP baseline triage lab | The tool catalogue now has a ZAP scan planner, but there is no course-visible ZAP lab where a learner runs a baseline scan, reproduces a finding, and writes a remediation note | Community / Academic lab improvement | Proposed; planner shipped |
+| CA-L6 | ZAP baseline triage lab | The tool catalogue now has a ZAP scan planner, but there is no course-visible ZAP lab where a learner runs a baseline scan, reproduces a finding, and writes a remediation note | Community / Academic lab improvement | Implemented: `web-11-11-zap-baseline-triage` |
 
 ## CA-L1 design note
 
@@ -70,11 +70,13 @@ Do not implement it as part of a Professional analytics or reporting change.
 
 ## CA-L6 design note
 
-The ZAP planner is shipped. The lab is a separate, disposable-target exercise:
-run a baseline scan, triage three findings, reproduce one by hand, and write a
-remediation and retest note. Keep the raw report in the lab; it can contain
-target URLs and response snippets. The full scope, target rules, evidence
-contract, and acceptance checks are in
+The ZAP planner and the lab are now implemented. The lab is
+`platform/labs/Web/web-11-11-zap-baseline-triage`: a disposable Flask practice
+app with a public export directory. The learner runs a baseline scan, triages
+the report, confirms the directory browsing finding by hand, recovers the
+assessment token, and writes a remediation and retest note. Keep the raw report
+in the lab; it can contain target URLs and response snippets. The full scope,
+target rules, evidence contract, and acceptance checks are in
 [`docs/ZAP-SCAN-PLANNER.md`](ZAP-SCAN-PLANNER.md). Do not point a full scan at a
 shared or production service.
 

@@ -104,6 +104,14 @@ documentation pages and does **not** bundle, download, or redistribute ZAP. If a
 future lab image installs OWASP ZAP (Apache-2.0), add the licence text, image
 pin, and SBOM entry to the release record.
 
+## ZAP lab target
+
+The `web-11-11-zap-baseline-triage` target is a locally built Flask application.
+It uses Python 3.12 (PSF) and Flask 3.0.3 / Werkzeug 3.0.6 (BSD-3-Clause). The
+image is not redistributed, contains only synthetic community-arts content, and
+makes no outbound calls. The ZAP scan itself is run by the learner from the
+planner or a local install; it is not bundled with the platform.
+
 ## Open lab datasets and reference sources
 
 The platform registers external lab-building sources in

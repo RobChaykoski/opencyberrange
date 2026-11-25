@@ -5,28 +5,29 @@ when updating the README, release notes, or a deployment record.
 
 | Count | Value | Source |
 |---|---:|---|
-| Lab definitions | **215** | every `platform/labs/**/lab.yaml` |
-| Unique lab slugs | **215** | directory name of each `lab.yaml` |
-| Tester manifests | **215** | `platform/tester/manifests/*.yaml` |
-| Competency contracts | **215** | `platform/backend/app/data/competency-contracts.yaml` |
-| Labs with a workbook link | **205** | non-empty `workbook:` in `lab.yaml` |
-| Labs without a workbook link | **10** | remaining `lab.yaml` files |
-| Registered labs in dev/prod | **215** | `labs` table after discovery |
+| Lab definitions | **217** | every `platform/labs/**/lab.yaml` |
+| Unique lab slugs | **217** | directory name of each `lab.yaml` |
+| Tester manifests | **217** | `platform/tester/manifests/*.yaml` |
+| Competency contracts | **217** | `platform/backend/app/data/competency-contracts.yaml` |
+| Labs with a workbook link | **206** | non-empty `workbook:` in `lab.yaml` |
+| Labs without a workbook link | **11** | remaining `lab.yaml` files |
+| Registered labs in dev/prod | **217** | `labs` table after discovery |
 | Public catalogue labs | **170** | `visibility = 'public'`; what a student sees before course enrolment |
-| Course-scoped labs | **45** | `visibility = 'course'`; visible only inside an assigned course |
+| Course-scoped labs | **47** | `visibility = 'course'`; visible only inside an assigned course |
 | Tracks | **13** | track folders under `platform/labs` |
 
-The badge and headline should use **215 lab definitions** and, when referring
-to workbook coverage, **205 workbook-mapped labs**. A deployment record should
-say **215 registered labs** only after lab discovery has run.
+The badge and headline should use **217 lab definitions** and, when referring
+to workbook coverage, **206 workbook-mapped labs**. A deployment record should
+say **217 registered labs** only after lab discovery has run.
 
 The student dashboard and exercise catalogue show **170 public exercises**,
-because 45 of the 215 are course-scoped. Do not treat the 170 total as a
+because 47 of the 217 are course-scoped. Do not treat the 170 total as a
 missing-content bug; confirm the public/course split before changing the count.
 
 The 5.17.2 wave added 19 pathway labs: 9 Active Directory exercises
 (`windows-11-*`) and 10 modern application-security exercises (`web-11-*`).
-The Cloud IAM lab is deferred to 5.37.0 and is not counted here.
+The November 2026 wave added the course-visible Arkime and ZAP labs. The Cloud
+IAM lab is deferred to 5.37.0 and is not counted here.
 
 ## Curriculum-manifest caveat
 

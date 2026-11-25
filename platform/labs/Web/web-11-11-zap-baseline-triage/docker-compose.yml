@@ -1,0 +1,11 @@
+services:
+  webapp:
+    mem_limit: 256m
+    cpus: 0.5
+    build:
+      context: ./containers/webapp
+      dockerfile: Dockerfile
+    hostname: arts-practice
+    labels:
+      ip_offset: "20"
+    restart: unless-stopped
