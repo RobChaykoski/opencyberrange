@@ -89,14 +89,15 @@ nav:
     - "Celebration Wall": 02_Student_Guide/20_Celebration_Wall.md
     - "Community Events": 02_Student_Guide/23_Community_Events.md
     - "Viewing Your Profile": 02_Student_Guide/16_Viewing_Your_Profile.md
-    - "Navigating your Cyber DNA": 02_Student_Guide/22_Navigating_Your_Cyber_DNA.md
+    - "Navigating Your Cyber DNA": 02_Student_Guide/22_Navigating_Your_Cyber_DNA.md
     - "Career Atlas and Momentum": 02_Student_Guide/21_Career_Atlas_And_Momentum.md
-    - "Workbook Answers": 02_Student_Guide/24_Workbook_Answers.md
-    - "My Evidence": 02_Student_Guide/26_My_Evidence.md
-    - "Your Journey": 02_Student_Guide/27_Your_Journey.md
+    - "Threat Map and Tools": 02_Student_Guide/32_Threat_Map_And_Tools.md
+    - "Analyst Answers": 02_Student_Guide/24_Workbook_Answers.md
+    - "Evidence Portfolio": 02_Student_Guide/26_My_Evidence.md
+    - "Journey & Mission": 02_Student_Guide/27_Your_Journey.md
     - "The Traditions": 02_Student_Guide/30_Traditions.md
     - "Practice Exams": 02_Student_Guide/31_Practice_Exams.md
-    - "Your Impact": 02_Student_Guide/28_Your_Impact.md
+    - "Impact & Recognition": 02_Student_Guide/28_Your_Impact.md
     - "Recognition": 02_Student_Guide/29_Recognition.md
     - "External Skills Frameworks": 02_Student_Guide/25_External_Skills_Frameworks.md
     - "Changing Your Password": 02_Student_Guide/17_Changing_Your_Password.md
@@ -129,7 +130,7 @@ nav:
     - "Session Expired Unexpectedly": 07_Troubleshooting/07_Session_Expired_Unexpectedly.md
   - "Glossary": 08_Glossary/01_Glossary.md
   - "Instructor Guide":
-    - "Instructor Dashboard": 03_Instructor_Guide/01_Instructor_Dashboard.md
+    - "Teaching Overview": 03_Instructor_Guide/01_Instructor_Dashboard.md
     - "Creating a Course": 03_Instructor_Guide/02_Creating_a_Course.md
     - "Managing Course Settings": 03_Instructor_Guide/03_Managing_Course_Settings.md
     - "Generating and Sharing Invite Codes": 03_Instructor_Guide/04_Generating_and_Sharing_Invite_Codes.md

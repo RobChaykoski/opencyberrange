@@ -59,7 +59,7 @@ pages live in the [Professional supplement](09_Professional/index.md) and the
 - **Instructor evidence review.** Instructors and administrators can open
   **Evidence review** to see the queue, the learner's answer, the rubric
   criteria, prior decisions, and the accept / request-more / reject form.
-- **Workbook answers.** Learners can open **Workbook answers** to write a short
+- **Analyst answers.** Learners can open **Analyst answers** to write a short
   analyst answer for any workbook exercise. Each distinct version is snapshotted
   into the evidence ledger for review; editing does not rewrite the old version.
 - **Multi-path career affinity.** The profile can show more than one strong
@@ -85,14 +85,14 @@ for the deployment record.
 - Tracking completion, certificates, and your PDF transcript? See
   [Viewing Your Profile](02_Student_Guide/16_Viewing_Your_Profile.md).
 - Writing an analyst answer for an exercise? See
-  [Workbook Answers](02_Student_Guide/24_Workbook_Answers.md).
+  [Analyst Answers](02_Student_Guide/24_Workbook_Answers.md).
 - Checking your evidence or appealing a rejected record? See
-  [My Evidence](02_Student_Guide/26_My_Evidence.md).
+  [Evidence portfolio](02_Student_Guide/26_My_Evidence.md).
 - Not sure which direction to take? See
-  [Your Journey](02_Student_Guide/27_Your_Journey.md) and
+  [Journey & mission](02_Student_Guide/27_Your_Journey.md) and
   [The Traditions](02_Student_Guide/30_Traditions.md).
 - Want to record what you built, protected, taught, or served? See
-  [Your Impact](02_Student_Guide/28_Your_Impact.md).
+  [Impact & recognition](02_Student_Guide/28_Your_Impact.md).
 - Wondering what the hidden achievements are? See
   [Recognition](02_Student_Guide/29_Recognition.md).
 - Preparing for a certification? See

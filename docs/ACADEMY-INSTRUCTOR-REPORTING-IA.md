@@ -5,6 +5,14 @@ unchanged. This document follows the project design, education-data, and
 program-management skills: preserve routes and permissions, use existing tokens,
 measure learning rather than rank learners, and aggregate before identifying.
 
+> **Update, 24 November 2026.** The learner and instructor sidebar now uses
+> **Workspace**, **Learn**, **Tools**, **Your progress**, **Explore**, and
+> **Teaching**. Routes, roles, and permissions did not change. The navigation
+> also renames several labels: "Analyst answers" (the written-answer workflow,
+> not an answer key), "Evidence portfolio", "Threat map", "Course workspace",
+> and "Exercise authoring". See `AppSidebar.vue` and
+> `docs/THREAT-AWARENESS-OPERATIONS.md`.
+
 ## Current state (audit)
 
 - **Admin** is one flat tab row: Users, Pending, Courses, Exercises, Live

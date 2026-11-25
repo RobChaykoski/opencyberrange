@@ -1,6 +1,6 @@
-# Your journey
+# Journey & mission
 
-**Your journey** starts with a different question: *who are you trying to
+**Journey & mission** starts with a different question: *who are you trying to
 become?*
 
 You choose a mission. The platform suggests practice that produces evidence for
@@ -11,7 +11,7 @@ A journey is a mission, not a label.
 
 ## Choose a journey
 
-1. Open **Your journey** in the sidebar.
+1. Open **Journey & mission** in the sidebar.
 2. Read the mission for each direction. The competencies are listed underneath.
 3. Choose the one that fits what you want to do.
 4. Start with the **First step** shown on the card.
@@ -51,7 +51,7 @@ fills a gap. A new quest template is reviewed like curriculum.
 ## Related pages
 
 - [The Traditions](30_Traditions.md)
-- [My Evidence](26_My_Evidence.md)
-- [Your Impact](28_Your_Impact.md)
+- [Evidence portfolio](26_My_Evidence.md)
+- [Impact & recognition](28_Your_Impact.md)
 - [Recognition](29_Recognition.md)
-- [Workbook Answers](24_Workbook_Answers.md)
+- [Analyst Answers](24_Workbook_Answers.md)

@@ -16,8 +16,8 @@ Deleting a course permanently removes it along with its enrollments, lab assignm
 
 ## Delete a course
 
-1. In the left sidebar, select **My Courses**.
-2. On the **My Courses** tab, find the course card.
+1. In the left sidebar, select **Course workspace**.
+2. On the **Course workspace** tab, find the course card.
 3. Click the **Delete** icon in the card's actions row.
 4. Confirm the deletion when prompted.
 

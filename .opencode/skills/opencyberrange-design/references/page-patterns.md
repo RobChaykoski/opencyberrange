@@ -4,7 +4,15 @@ Use these patterns as defaults. Match the page's actual job before adding a new 
 
 ## Application shell
 
-- `AppSidebar.vue` owns primary navigation: Ops Center, Academy, Instructor (role-gated), Admin (role-gated), and Profile.
+- `AppSidebar.vue` owns primary navigation: **Workspace** (Dashboard,
+  RangeBox), **Learn** (Courses, Exercises, Workbooks, Analyst answers,
+  Practice exams), **Tools** (all roles), **Your progress** (Journey & mission,
+  Impact & recognition, Cyber DNA, Career GPS, Evidence portfolio), **Explore**
+  (Threat map, Events, Celebration wall), **Teaching** (instructor only),
+  **Governance**, **Administration**, **Operations**, and **Resources**.
+- The Tools section is global and uses the same allow-listed keys as the
+  active-lab toolbar. A tool always opens in the shared panel; do not add a
+  second launch path with different behaviour.
 - The main content area scrolls independently; page views start with a page container and a clear title.
 - The theme toggle is global. Do not add a second theme switch inside a page.
 - The SWOCTS footer is global. Do not duplicate it inside views.

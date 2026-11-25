@@ -1,6 +1,6 @@
-# Your impact
+# Impact & recognition
 
-**Your impact** answers a different question from your evidence: not *what can
+**Impact & recognition** answers a different question from your evidence: not *what can
 you do*, but *what did you choose to do with it, and did it last?*
 
 Capability and impact are separate on purpose. A lab flag proves you can do
@@ -19,7 +19,7 @@ protected.
 
 ## Recording a contribution
 
-1. Open **Your impact**.
+1. Open **Impact & recognition**.
 2. Choose the component and the type — for example Build → lab, or Teach →
    mentoring.
 3. Write a short title and say what changed.
@@ -85,7 +85,7 @@ contributions. The platform does not reward presence.
 
 ## Related pages
 
-- [Your Journey](27_Your_Journey.md)
+- [Journey & mission](27_Your_Journey.md)
 - [Recognition](29_Recognition.md)
-- [My Evidence](26_My_Evidence.md)
+- [Evidence portfolio](26_My_Evidence.md)
 - [Tracks, Levels, and Labs](03_Understanding_Tracks_Levels_and_Labs.md)

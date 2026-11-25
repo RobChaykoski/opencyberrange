@@ -68,6 +68,6 @@ score, grade, or readiness label.
 
 - [Navigating your Cyber DNA](22_Navigating_Your_Cyber_DNA.md)
 - [Career Atlas and Momentum](21_Career_Atlas_And_Momentum.md)
-- [Workbook answers](24_Workbook_Answers.md)
+- [Analyst answers](24_Workbook_Answers.md)
 - [SFIA 9 ingestion plan](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/SFIA-9-INGESTION.md)
 - [Competency Framework](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/COMPETENCY-FRAMEWORK.md)

@@ -4,11 +4,31 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
+### Navigation and labels
+
+- Regrouped the learner sidebar into **Workspace**, **Learn**, **Tools**, **Your progress**, and **Explore**. Routes and permissions are unchanged.
+- Renamed labels to match the pages they open: **Analyst answers** (the written-answer workflow, not an answer key), **Journey & mission**, **Impact & recognition**, **Evidence portfolio**, **Threat map**, **Course workspace**, **Exercise authoring**, **Course catalogue**, **Exercise library**, **Sessions & activity**, **System health**, and **Platform settings**.
+- Made the **Tools** section available to every role and moved it above the progress sections so it is reachable without scrolling past two long groups.
+- Made the user manual visible to all authenticated users. The guided tour now points at Dashboard and RangeBox instead of the removed duplicate VPN Setup item.
+
+### Tools
+
+- Added **Tools → All tools** (`/tools`), a single catalogue for CyberChef, OT scan, ATT&CK Navigator, and the new ZAP planner. Every card opens the same allow-listed, sandboxed panel.
+- Added the **OWASP ZAP scan planner** (`/tools/zap-scan/`): baseline and full-scan command builder, Docker/local runner, report formats, authorisation gate, and triage checklist. It does not run a scan or send network requests. See `docs/ZAP-SCAN-PLANNER.md`.
+- Added ZAP to the active-lab toolbar. Documented the follow-up `web-11-11-zap-baseline-triage` lab design; the lab itself is not built yet.
+- Added `worldMap.js` for the threat map from public-domain Natural Earth 110m data.
+
+### Threat awareness
+
+- Replaced the country bar list with an interactive, privacy-safe threat map: country markers, region and bucket filters, a keyboard-friendly hotspot list, a selected-country detail panel, and a local three-question challenge. The map uses aggregate counts only and labels itself as a snapshot, not live telemetry.
+- Limited the ransomware group list to the top eight with a "Show all" control, and fixed the broken "Posts · last 7 days" labels.
+- Added frontend tests for the map, the challenge, the tool catalogue, and the sidebar groups.
+
 ### Labs
 
 - Added `network-2-7-arkime-session-triage`: an advanced, course-visible traffic-analysis lab using Arkime 6.9.2 and OpenSearch 2.19.3. The stack is pinned, runs non-root, keeps OpenSearch off the student bridge and seeds a synthetic capture; the analyst role can search sessions but cannot download the PCAP. The lab maps to the new DET-08 pathway module and passes the three-run live harness.
 
-### Threat awareness
+### Threat awareness data
 
 - Documented GeoIP source options: DB-IP upstream and the WP Statistics mirror, the GeoForge licence and build assessment, and the HackerTarget/ipgeolocation.io rate limits.
 

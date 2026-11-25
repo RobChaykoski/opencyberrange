@@ -52,6 +52,6 @@ they are earned. That is intentional.
 
 ## Related pages
 
-- [Your Journey](27_Your_Journey.md)
-- [Your Impact](28_Your_Impact.md)
+- [Journey & mission](27_Your_Journey.md)
+- [Impact & recognition](28_Your_Impact.md)
 - [Recognition](29_Recognition.md)

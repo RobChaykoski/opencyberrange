@@ -1,12 +1,12 @@
-# Workbook Answers
+# Analyst Answers
 
-Workbook answers are short written analyst notes for an exercise. They capture
+Analyst answers are short written analyst notes for an exercise. They capture
 what you observed, how you know it, what you concluded, and what you would do
 next. Saving an answer sends it to an instructor for review.
 
 ## Open the page
 
-Choose **Workbook answers** under **Academy** in the left navigation. The page
+Choose **Analyst answers** under **Learn** in the left navigation. The page
 loads the exercises that have a workbook page and are available to your account.
 
 ## Save an answer

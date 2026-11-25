@@ -6,7 +6,7 @@ separate from course micro-credentials and separate from the Legacy Score.
 
 ## Verify a contribution
 
-A learner submits a contribution from **Your impact**. It arrives as pending.
+A learner submits a contribution from **Impact & recognition**. It arrives as pending.
 
 1. Open the pending contribution in the review surface.
 2. Check the claim against the evidence. A link, a repository, a workshop

@@ -1,6 +1,6 @@
-# Instructor Dashboard (Ops Center)
+# Teaching overview
 
-The Ops Center is your landing page after you sign in as an instructor. The page gives you a read-only, real-time view of how your students are doing: how many flags they captured today, how many labs are running right now, and how long completions are taking. You use it to take the pulse of your class before drilling into a specific course.
+The Teaching overview is your landing page after you sign in as an instructor. The page gives you a read-only, real-time view of how your students are doing: how many flags they captured today, how many labs are running right now, and how long completions are taking. You use it to take the pulse of your class before drilling into a specific course.
 
 !!! note "One account can be both admin and instructor"
     Community / Academic runs on a single privileged account. That account is the administrator and the instructor at once: it creates courses, enrolls students, and assigns labs from the same login. Professional and Enterprise can also create separate instructor accounts. Where this guide says "instructor," it means whichever account owns the course.
@@ -12,13 +12,13 @@ The Ops Center is your landing page after you sign in as an instructor. The page
 
 ## Where it lives
 
-The Ops Center opens at the **Dashboard** entry in the left sidebar. The platform routes instructor and admin accounts to the Ops Center automatically; students land on the student dashboard instead.
+The Teaching overview opens at the **Dashboard** entry in the left sidebar. The platform routes instructor and admin accounts to the Teaching overview automatically; students land on the student dashboard instead.
 
 <figure markdown>
 
-![Ops Center showing Flags Today, Active Now, Avg Completion cards and the Pulse chart](img/instructor-dashboard.png)
+![Teaching overview showing Flags Today, Active Now, Avg Completion cards and the Pulse chart](img/instructor-dashboard.png)
 
-<figcaption>The Ops Center: three stat cards across the top, the Pulse activity chart, and the Live Operations Feed below.</figcaption>
+<figcaption>The Teaching overview: three stat cards across the top, the Pulse activity chart, and the Live Operations Feed below.</figcaption>
 </figure>
 
 ## Reading the three stat cards
@@ -51,11 +51,11 @@ The cards summarize activity across the students enrolled in your active courses
 
 ## What the dashboard counts
 
-The figure below shows where the Ops Center gets its numbers and how scope is applied before anything renders.
+The figure below shows where the Teaching overview gets its numbers and how scope is applied before anything renders.
 
 ```mermaid
 sequenceDiagram
-    participant UI as Ops Center
+    participant UI as Teaching overview
     participant API as Dashboard API
     participant Scope as Scope filter
     UI->>API: request stats, pulse, feed
@@ -66,7 +66,7 @@ sequenceDiagram
     API-->>UI: cards, chart, feed
 ```
 
-As an instructor, the Ops Center counts only the students in courses you own that are currently **active**. An archived course's students drop out of the figures.
+As an instructor, the Teaching overview counts only the students in courses you own that are currently **active**. An archived course's students drop out of the figures.
 
 !!! note
     Admin diagnostic activity is excluded from every stat, the Pulse chart, and the feed, so platform housekeeping does not skew your class numbers.

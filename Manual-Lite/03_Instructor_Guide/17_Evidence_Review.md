@@ -64,7 +64,7 @@ not edited.
 
 Correct flags and passed exercise knowledge checks are accepted automatically by
 the platform. They use the `automatic-check` rubric and a system review, so they
-do not wait in the instructor queue. Workbook answers use the `analyst-answer`
+do not wait in the instructor queue. Analyst answers use the `analyst-answer`
 rubric and do wait for a human review.
 
 ## Appeals
@@ -100,7 +100,7 @@ reviewed practice record that can contribute to competency coverage.
 
 ## Related pages
 
-- [Workbook answers](../02_Student_Guide/24_Workbook_Answers.md) for the learner
+- [Analyst answers](../02_Student_Guide/24_Workbook_Answers.md) for the learner
   workflow.
 - [Evidence Engine](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/EVIDENCE-ENGINE.md)
   for the data model and review rules.

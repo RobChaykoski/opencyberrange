@@ -5,11 +5,11 @@ You edit an exercise's metadata to fix its name, set the run duration, set diffi
 ## Prerequisites
 
 - An admin account. See [Admin Panel Overview](01_Admin_Panel_Overview.md).
-- The Exercises tab. See [Managing Labs](08_Managing_Labs.md).
+- The Exercise library tab. See [Managing Labs](08_Managing_Labs.md).
 
 ## Open the Details tab
 
-1. On the Exercises tab, find the exercise and click the **Edit exercise** action (the pencil icon) on the row.
+1. On the Exercise library tab, find the exercise and click the **Edit exercise** action (the pencil icon) on the row.
 2. The modal opens with two tabs at the top, **Details** and **Compose**. Stay on **Details**.
 
 <figure markdown>

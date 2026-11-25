@@ -50,14 +50,23 @@ The sidebar groups links into sections. You see only the sections your role allo
 
 | Section | Links | Who sees it |
 | --- | --- | --- |
-| Ops Center | Dashboard, RangeBox, Celebration Wall, Events, VPN Setup | Everyone |
-| Academy | Courses, Exercises, Workbooks | Everyone |
-| Tools | CyberChef | Everyone |
-| Teaching | My Courses, My Exercises, Reports & analytics, Surveys | Instructors and admins |
-| Administration | Users, All courses, All exercises, Live activity, Reports & analytics, System, Settings | Admins only |
-| Resources | Privacy Mode, Take the tour, Profile, Logout, User Manual | Everyone, with moderation items for instructors and admins |
+| Workspace | Dashboard, RangeBox | Learners and instructors |
+| Learn | Courses, Exercises, Workbooks, Analyst answers, Practice exams | Learners and instructors |
+| Tools | All tools, CyberChef, OT scan, ATT&CK, ZAP scan | Everyone |
+| Your progress | Journey & mission, Impact & recognition, Cyber DNA, Career GPS, Evidence portfolio | Learners and instructors |
+| Explore | Threat map, Events, Celebration wall | Learners and instructors |
+| Teaching | Course workspace, Exercise authoring, Evidence review, Contract review, Reports & analytics, Surveys | Instructors |
+| Governance | Privacy & audit, Contract review | Admin, institution admin, privacy officer, and auditor roles |
+| Administration | Users, Course catalogue, Exercise library, Evidence review | Admins |
+| Operations | Sessions & activity, Reports & analytics, Surveys, System health, Platform settings | Admins |
+| Resources | User manual | Everyone |
 
-**Reports & analytics** opens at `/reports` and is not an Admin Panel tab. Admins see it in the Administration section; instructors see it in Teaching. **Surveys** opens at `/surveys` for instructors and admins. See [Reporting and Analytics](../04_Admin_Guide/28_Reporting_And_Analytics.md).
+**Reports & analytics** opens at `/reports`. Admins see it in Operations; instructors see it in Teaching. **Surveys** opens at `/surveys` for instructors and admins. See [Reporting and Analytics](../04_Admin_Guide/28_Reporting_And_Analytics.md).
+
+**Tools** is one catalogue for every role. **All tools** opens `/tools`; the
+shortcuts open the same allow-listed panel as the active-lab toolbar. The
+**ZAP scan** planner writes a command for a practice target; it does not run a
+scan. See [Threat map and tools](../02_Student_Guide/32_Threat_Map_And_Tools.md).
 
 **Events** replaces the older Team Challenges module: it lists opt-in,
 time-boxed competitions and the community calendar. Events appear only when an

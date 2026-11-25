@@ -72,7 +72,7 @@ an inward arrow for decline, and a flat marker for no movement.
 ## Admin controls and feature flags
 
 - **Advanced DNA Insights** is the feature flag for the Careers and Portfolio
-  tabs, Momentum, the Career Atlas, and the Cyber GPS. Find it under
+  tabs, Momentum, the Career Atlas, and the Career GPS. Find it under
   **Admin -> Settings -> Features**.
 - There is no admin field that directly edits a learner's Cyber DNA score. The
   score is derived from the learner record on every read.
@@ -175,9 +175,9 @@ without a separate data-governance review.
 ## Verification after an upgrade
 
 1. Confirm the deployed version and the formula version on a learner profile.
-2. Open **Profile -> Skill tree** and check that the six branches render, the
+2. Open **Profile -> Cyber DNA** and check that the six branches render, the
    overall score is at most 99, and the continuing-education card appears.
-3. Open **Profile -> Careers** and check that the Cyber GPS signal badge and the
+3. Open **Profile -> Career GPS** and check that the Career GPS signal badge and the
    fading-interest prompt render.
 4. Launch a RangeBox lab and check the stream quality selector, Ctrl+Alt+Del,
    clipboard text transfer, flag capture, and pop-out window.

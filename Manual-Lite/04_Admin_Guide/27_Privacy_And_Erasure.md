@@ -10,7 +10,7 @@ that keep a deleted account from coming back.
 
 ## Consent withdrawal is not account deletion
 
-A learner can revoke Cyber DNA, Cyber GPS, the professional portfolio,
+A learner can revoke Cyber DNA, Career GPS, the professional portfolio,
 portfolio sharing, AI coaching, or research from **Profile → Security & privacy
 → AI and career data** without deleting the account. This is a separate
 destruction workflow:

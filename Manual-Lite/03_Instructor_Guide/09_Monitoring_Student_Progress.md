@@ -9,8 +9,8 @@ The Students sub-tab inside a course shows your roster and, for each student, a 
 
 ## Open the roster
 
-1. In the left sidebar, select **My Courses**.
-2. On the **My Courses** tab, click **Manage** on the course card.
+1. In the left sidebar, select **Course workspace**.
+2. On the **Course workspace** tab, click **Manage** on the course card.
 3. Click the **Students** sub-tab.
 
 **What you should see:** a table with one row per enrolled student, listing **Username**, **Email**, **Enrolled** date, and an **Actions** column. Usernames and emails show in full by default; turn on Privacy Mode, the optional sidebar toggle, to mask them to a partial value.
@@ -29,9 +29,9 @@ The Students sub-tab inside a course shows your roster and, for each student, a 
 
 **What you should see:** a per-lab table with columns **Exercise**, **Status** (Completed or Incomplete), **Score**, **Attempts**, **Hints**, and a **Reset** action. The Reset button appears only on labs the student has already completed. To reset one, see [11_Resetting_a_Student_Lab.md](11_Resetting_a_Student_Lab.md).
 
-## Watch live activity in the Ops Center
+## Watch live activity in the Teaching overview
 
-The course roster gives you a point-in-time view. For a running feed across all your courses, open the Ops Center.
+The course roster gives you a point-in-time view. For a running feed across all your courses, open the Teaching overview.
 
 1. In the left sidebar, select **Dashboard**.
 2. Read the **Flags Today**, **Active Now**, and **Avg Completion** cards.
@@ -42,7 +42,7 @@ The course roster gives you a point-in-time view. For a running feed across all 
 The feed refreshes when you click **Refresh** or **Load More**. It does not stream on its own, so refresh to see the latest events.
 
 !!! note
-    Ops Center stats count only your **active** courses. An archived course's students drop out of the cards and feed. See [13_Archiving_a_Course.md](13_Archiving_a_Course.md) for how archive state affects reporting.
+    Teaching overview stats count only your **active** courses. An archived course's students drop out of the cards and feed. See [13_Archiving_a_Course.md](13_Archiving_a_Course.md) for how archive state affects reporting.
 
 !!! tip
     Turn on Privacy Mode, the optional sidebar toggle that is off by default, to mask identifiers in both the roster and the feed. Avoid screenshotting or sharing rosters that contain real student emails.

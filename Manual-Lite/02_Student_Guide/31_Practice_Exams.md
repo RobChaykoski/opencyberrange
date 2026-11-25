@@ -63,4 +63,4 @@ domain. Use the domain accuracy to decide what to drill next, not as a grade.
 
 - [Certification pathways](25_External_Skills_Frameworks.md)
 - [Tracking your progress](11_Tracking_Your_Progress.md)
-- [Workbook answers](24_Workbook_Answers.md)
+- [Analyst answers](24_Workbook_Answers.md)

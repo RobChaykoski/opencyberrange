@@ -26,8 +26,8 @@ flowchart TD
 
 ## Create an assignment
 
-1. In the left sidebar, select **My Courses**.
-2. On the **My Courses** tab, click **Manage** on the course card.
+1. In the left sidebar, select **Course workspace**.
+2. On the **Course workspace** tab, click **Manage** on the course card.
 3. Click the **Assignments** sub-tab.
 4. Click **+ New Assignment**.
 5. Fill in the name, **start datetime**, **due datetime**, and an optional description.

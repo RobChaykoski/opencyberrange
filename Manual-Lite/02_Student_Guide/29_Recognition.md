@@ -8,7 +8,7 @@ never unlocks a permission, and never appears in a ranking.
 
 ## Earned and unearned
 
-On **Your impact** you will see:
+On **Impact & recognition** you will see:
 
 - **Earned** — the title, category, and short message.
 - **Clues** — some achievements show only a clue before they are earned.
@@ -54,6 +54,6 @@ behaving in ways that reflect the community you want to belong to. If you hear
 
 ## Related pages
 
-- [Your Impact](28_Your_Impact.md)
-- [Your Journey](27_Your_Journey.md)
-- [My Evidence](26_My_Evidence.md)
+- [Impact & recognition](28_Your_Impact.md)
+- [Journey & mission](27_Your_Journey.md)
+- [Evidence portfolio](26_My_Evidence.md)

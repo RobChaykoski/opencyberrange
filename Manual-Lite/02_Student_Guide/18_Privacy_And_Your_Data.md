@@ -5,7 +5,7 @@ account data, or delete your account from **Profile > Security & privacy**.
 
 ## Choose how your data is used
 
-Cyber DNA, Cyber GPS, the professional portfolio, portfolio sharing, AI
+Cyber DNA, Career GPS, the professional portfolio, portfolio sharing, AI
 coaching, and research are separate choices. Open **Profile > Security &
 privacy > AI and career data** to review each one.
 
@@ -19,7 +19,7 @@ privacy > AI and career data** to review each one.
 | Consent | What it enables | Default |
 |---|---|---|
 | Cyber DNA | competency evidence, behaviour/interest profiles, affinity signals, DNA snapshots | Off — explicit opt-in |
-| Cyber GPS | direction finding, learning routes, gap analysis, readiness | Off — explicit opt-in |
+| Career GPS | direction finding, learning routes, gap analysis, readiness | Off — explicit opt-in |
 | Professional portfolio | stored portfolio and career/report snapshots | Off — explicit opt-in |
 | Portfolio sharing | employer/public share links and public profiles | Off |
 | AI coach | conversations, prompt context, embeddings, and memory | Off |

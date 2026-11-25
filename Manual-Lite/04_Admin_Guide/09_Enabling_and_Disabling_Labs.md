@@ -5,7 +5,7 @@ You enable an exercise to make it available and disable one to take it out of ci
 ## Prerequisites
 
 - An admin account. See [Admin Panel Overview](01_Admin_Panel_Overview.md).
-- The Exercises tab. See [Managing Labs](08_Managing_Labs.md).
+- The Exercise library tab. See [Managing Labs](08_Managing_Labs.md).
 
 ## Two independent gates
 
@@ -30,14 +30,14 @@ flowchart TD
 
 ## Enable or disable one exercise
 
-1. On the Exercises tab, use the **Status** sidebar to filter to **Disabled** or **Enabled**, or search for the exercise.
+1. On the Exercise library tab, use the **Status** sidebar to filter to **Disabled** or **Enabled**, or search for the exercise.
 2. Click the **Disable/Enable** toggle (the eye icon) on the row. The tooltip reads "Enable" on a disabled row and "Disable" on an enabled one.
 
 **What you should see:** the row's state flips. A disabled row appears dimmed and moves under the Disabled status filter; an enabled row appears under Enabled.
 
 <figure markdown>
 
-![Exercises table showing enabled and disabled rows with the Status filter](img/admin-exercises.png)
+![Exercise library table showing enabled and disabled rows with the Status filter](img/admin-exercises.png)
 
 <figcaption>The Status sidebar separates enabled from disabled exercises, and the eye toggle flips an exercise's active state.</figcaption>
 </figure>

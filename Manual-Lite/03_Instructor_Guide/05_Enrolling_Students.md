@@ -15,7 +15,7 @@ The figure shows both routes into a course and who can take each.
 flowchart TD
     A[Course exists and is active] --> B{Who enrolls}
     B -->|Instructor path| C[Share invite code]
-    C --> D[Student enters code on My Courses]
+    C --> D[Student enters code on Courses]
     D --> F[Student enrolled]
     B -->|Admin path| E[Admin bulk enrolls from roster]
     E --> F
@@ -23,7 +23,7 @@ flowchart TD
 
 ### Instructor path: share the invite code
 
-The path available to you. Copy the course invite code and give it to your students; each student enters it on their My Courses screen and joins on their own. See [Generating and Sharing Invite Codes](04_Generating_and_Sharing_Invite_Codes.md) and the student-side [Joining a Course](../02_Student_Guide/12_Joining_a_Course.md).
+The path available to you. Copy the course invite code and give it to your students; each student enters it on their Courses screen and joins on their own. See [Generating and Sharing Invite Codes](04_Generating_and_Sharing_Invite_Codes.md) and the student-side [Joining a Course](../02_Student_Guide/12_Joining_a_Course.md).
 
 ### Admin path: bulk enrollment
 

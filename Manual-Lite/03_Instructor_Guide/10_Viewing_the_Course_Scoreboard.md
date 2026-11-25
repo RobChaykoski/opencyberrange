@@ -12,8 +12,8 @@ points table, or student league table.
 
 ## Open the course workspace
 
-1. In the left sidebar, select **My Courses**.
-2. On the **My Courses** tab, click **Manage** on the course card.
+1. In the left sidebar, select **Course workspace**.
+2. On the **Course workspace** tab, click **Manage** on the course card.
 3. Use the course tabs.
 
 ## What each tab shows

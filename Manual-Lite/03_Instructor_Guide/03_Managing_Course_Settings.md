@@ -8,8 +8,8 @@ The Settings sub-tab is where you edit the descriptive details of a course you o
 
 ## Opening the settings form
 
-1. Open the **My Courses** entry in the **Instructor** section of the left sidebar.
-2. On the **My Courses** tab, click **Manage** on the course you want to edit.
+1. Open the **Course workspace** entry in the **Teaching** section of the left sidebar.
+2. On the **Course workspace** tab, click **Manage** on the course you want to edit.
 3. Select the **Settings** sub-tab.
 
 <figure markdown>

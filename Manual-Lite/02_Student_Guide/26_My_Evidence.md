@@ -1,6 +1,6 @@
-# My Evidence
+# Evidence portfolio
 
-**My evidence** lists your practice records and their review state. It is the
+**Evidence portfolio** lists your practice records and their review state. It is the
 learner-side view of the evidence ledger.
 
 ## What appears here
@@ -17,7 +17,7 @@ Each card shows:
 - any appeals you have submitted.
 
 Automatically verified flags and knowledge checks appear as **accepted**.
-Workbook answers wait as **collected** or **in review** until an instructor
+Analyst answers wait as **collected** or **in review** until an instructor
 decides.
 
 ## Provisional competency mapping
@@ -51,6 +51,6 @@ by itself; a reviewer must score the record again.
 
 ## Related pages
 
-- [Workbook Answers](24_Workbook_Answers.md)
+- [Analyst Answers](24_Workbook_Answers.md)
 - [Evidence Review](../03_Instructor_Guide/17_Evidence_Review.md)
 - [Navigating your Cyber DNA](22_Navigating_Your_Cyber_DNA.md)

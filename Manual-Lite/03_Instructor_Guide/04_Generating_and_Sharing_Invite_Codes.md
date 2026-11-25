@@ -1,6 +1,6 @@
 # Generating and Sharing Invite Codes
 
-Every course has an invite code. The code is how students self-enroll: they enter it on their My Courses screen and join the course without any action from you or an administrator. The page shows you how to find, share, and regenerate the code.
+Every course has an invite code. The code is how students self-enroll: they enter it on their Course workspace screen and join the course without any action from you or an administrator. The page shows you how to find, share, and regenerate the code.
 
 ## Prerequisites
 
@@ -12,7 +12,7 @@ Every course has an invite code. The code is how students self-enroll: they ente
 The invite code appears on the course card and on the course Students sub-tab.
 
 1. Open the **Instructor** entry in the left sidebar.
-2. On the **My Courses** tab, find the course card. The footer shows the invite code as a chip.
+2. On the **Course workspace** tab, find the course card. The footer shows the invite code as a chip.
 3. Click the invite chip to copy the code to your clipboard.
 
 <figure markdown>
@@ -26,7 +26,7 @@ The invite code appears on the course card and on the course Students sub-tab.
 
 ## How students use the code
 
-A student opens their **My Courses** screen, enters the invite code, and joins. The student must hold a student-role account and the course must be active. See [Joining a Course](../02_Student_Guide/12_Joining_a_Course.md) for the student-side steps.
+A student opens their **Courses** screen, enters the invite code, and joins. The student must hold a student-role account and the course must be active. See [Joining a Course](../02_Student_Guide/12_Joining_a_Course.md) for the student-side steps.
 
 ## Regenerating the code
 

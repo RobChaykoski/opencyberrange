@@ -9,13 +9,13 @@ ranking, or a prediction of employability.
 
 ![Cyber DNA section showing the class card and the six branch cards with scores and evidence counts](img/profile-cyber-dna.png)
 
-<figcaption>The Cyber DNA section on the Skill tree tab. The class card and branch cards all come from the same practice record.</figcaption>
+<figcaption>The Cyber DNA section on the Cyber DNA tab. The class card and branch cards all come from the same practice record.</figcaption>
 </figure>
 
 ## Open your Cyber DNA
 
 1. Click **Profile** in the sidebar.
-2. Choose the **Skill tree** tab.
+2. Choose the **Cyber DNA** tab.
 3. Read the **Six branches, one practice map** chart first, then the branch
    cards below it for the evidence and a practical next step.
 

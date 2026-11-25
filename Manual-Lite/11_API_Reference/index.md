@@ -10779,7 +10779,7 @@ Upload a ZIP of markdown files for a workbook chapter.  - **file**: ZIP archive 
 - `200`: Successful Response
 - `422`: Validation Error — `HTTPValidationError`
 
-## Workbook answers
+## Analyst answers
 
 ### `GET /api/workbook-answers`
 

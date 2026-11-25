@@ -15,9 +15,22 @@ The Admin Panel is the operator console for the platform. You open it to approve
 
 ## Where the Admin Panel lives
 
-The Admin Panel is reached at `/admin`. Sign in as an admin, then open the **Admin** section of the left sidebar. The sidebar exposes seven admin links: **Users**, **Courses**, **Exercises**, **Live activity**, **Reports & analytics**, **System**, and **Settings**, plus an external **Wiki** link. There is no top navigation bar; you move between areas from the sidebar.
+The Admin Panel is reached at `/admin`. Sign in as an admin, then open the
+**Administration** section of the left sidebar. The sidebar groups the admin
+links into:
 
-The whole Admin Panel is one screen. Each admin tab link sets a `?tab=` value on the `/admin` route and swaps the main area, so Users is `/admin?tab=users`, Live activity is `/admin?tab=monitoring`, and so on. The manual pages in this guide are task oriented, so several of them describe controls that live under the same tab.
+- **Administration:** Users, Course catalogue, Exercise library, Evidence review.
+- **Operations:** Sessions & activity, Reports & analytics, Surveys, System
+  health, Platform settings.
+
+Tools, Governance, and Resources are separate sections. There is no top
+navigation bar; you move between areas from the sidebar.
+
+The whole Admin Panel is one screen. Each admin tab link sets a `?tab=` value on
+the `/admin` route and swaps the main area, so Users is `/admin?tab=users`,
+Sessions & activity is `/admin?tab=monitoring`, and so on. The manual pages in
+this guide are task oriented, so several of them describe controls that live
+under the same tab.
 
 **Reports & analytics** is the exception: it opens the separate `/reports` page rather than a tab inside `/admin`. The Admin Panel keeps its current tab while you review reporting, and the Report link is highlighted in the sidebar. See [Reporting and Analytics](28_Reporting_And_Analytics.md).
 
@@ -39,27 +52,30 @@ The top of the panel shows stat cards that summarize platform state:
 
 | Card | Shows | Click action |
 | --- | --- | --- |
-| System / Firewall / Security | Health rollup; reads "Checking..." until health loads | Opens System Health |
+| System / Firewall / Security | Health rollup; reads "Checking..." until health loads | Opens System health |
 | Pending | Count of accounts awaiting approval | Opens the Pending list |
 | Locked | Count of locked accounts | Opens the Users tab |
-| Active Exercises | Count of running lab sessions | Opens Live activity |
-| VPN Peers | Count of registered WireGuard peers | Opens Live activity |
+| Active Exercises | Count of running lab sessions | Opens Sessions & activity |
+| VPN Peers | Count of registered WireGuard peers | Opens Sessions & activity |
 
 The Pending card is the only way to reach the pending list; there is no separate sidebar link for it. See [Approving New Users](02_Approving_New_Users.md).
 
 ## Tab and sub-tab map
 
-The Admin Panel groups every operator task under seven tabs. Some tabs hold sub-tabs or sub-views; one opens a modal. The map below shows which tab holds each task this guide covers.
+The Admin Panel groups every operator task under nine tabs in four groups:
+People, Learning, Operations, and Configuration. Some tabs hold sub-tabs or
+sub-views; one opens a modal. The map below shows which tab holds each task this
+guide covers.
 
 ```mermaid
 flowchart TD
   A[Admin Panel /admin] --> U[Users tab]
   A --> P[Pending list]
-  A --> E[Exercises tab]
-  A --> M[Live activity tab]
-  A --> C[Courses tab]
-  A --> SET[Settings tab]
-  A --> SYS[System tab]
+  A --> E[Exercise library tab]
+  A --> M[Sessions & activity tab]
+  A --> C[Course catalogue tab]
+  A --> SET[Platform settings tab]
+  A --> SYS[System health tab]
   A --> R[Reports & analytics page]
 
   U --> U1[Create, edit, unlock, disable, delete users]
@@ -87,7 +103,7 @@ health. It sits outside the Admin Panel tabs and opens at `/reports`.
   feedback, and red/amber/green signal counts.
 - A course table with completion, abandonment, learning, feedback, confidence,
   pulse, and signal reason per course.
-- A skill-tree radar for exercise coverage across the five Skill DNA branches,
+- A Cyber DNA radar for exercise coverage across the five Skill DNA branches,
   with an all-courses or single-course scope selector.
 - Trending topics from optional pulse surveys.
 - CSV and PDF export, each requiring a reason of at least five characters. The
@@ -153,9 +169,9 @@ Older bookmarks still resolve. The following query values redirect to the curren
 
 | Old link | Resolves to |
 | --- | --- |
-| `?tab=sessions` | Live activity, Sessions sub-tab |
-| `?tab=vpn` | Live activity, VPN Peers sub-tab |
-| `?tab=activity` | Live activity, Activity Log sub-tab |
+| `?tab=sessions` | Sessions & activity, Sessions sub-tab |
+| `?tab=vpn` | Sessions & activity, VPN Peers sub-tab |
+| `?tab=activity` | Sessions & activity, Activity Log sub-tab |
 | `?tab=labs` | Exercises, manage view |
 | `?tab=curriculum` | Exercises, Tracks and Levels view |
 
@@ -163,4 +179,4 @@ Older bookmarks still resolve. The following query values redirect to the curren
     Privacy Mode is an optional toggle in the instructor and admin sidebar, off by default. Turn it on to mask usernames and emails in the Users table and any roster, session, or activity view, so you can share the panel during a class even when real accounts are present.
 
 !!! tip "Health card reads Checking..."
-    A health card that reads "Checking..." has not finished its first poll. Give it a moment, or open System Health directly from the card.
+    A health card that reads "Checking..." has not finished its first poll. Give it a moment, or open System health directly from the card.

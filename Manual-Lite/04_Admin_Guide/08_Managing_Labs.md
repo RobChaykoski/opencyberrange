@@ -1,12 +1,12 @@
 # Managing Labs
 
-The Exercises tab is where you browse, filter, and act on every lab on the platform. You work here to find an exercise, change its visibility, run a quick test, clear cached images, or open it for editing. The platform calls each lab an Exercise.
+The Exercise library tab is where you browse, filter, and act on every lab on the platform. You work here to find an exercise, change its visibility, run a quick test, clear cached images, or open it for editing. The platform calls each lab an Exercise.
 
 ## Prerequisites
 
 - An admin account. See [Admin Panel Overview](01_Admin_Panel_Overview.md).
 
-## Open the Exercises tab
+## Open the Exercise library tab
 
 1. Open the Admin Panel and click **Exercises** in the sidebar. The route is `/admin?tab=labs`.
 
@@ -16,7 +16,7 @@ The Exercises tab is where you browse, filter, and act on every lab on the platf
 
 ![Exercises management tab with the lab table and the Topics, Status, and Management sidebar](img/admin-exercises.png)
 
-<figcaption>The Exercises tab lists every exercise, with a left sidebar for topic, status, and management views.</figcaption>
+<figcaption>The Exercise library tab lists every exercise, with a left sidebar for topic, status, and management views.</figcaption>
 </figure>
 
 ## Review status
@@ -70,7 +70,7 @@ The Visibility select in each row sets Public, Course, Pending, or Draft.
 
 ```mermaid
 flowchart LR
-  S[Exercises tab] --> T[Pick track or All]
+  S[Exercise library tab] --> T[Pick track or All]
   T --> F[Filter and search]
   F --> A[Act on a row]
   A --> E[Edit]

@@ -46,18 +46,27 @@ The sidebar sections and the roles that see them:
 
 ```mermaid
 flowchart TB
-  Student --> OC[Ops Center]
-  Student --> AC[Academy]
-  Instructor --> OC
-  Instructor --> AC
-  Instructor --> IN[Instructor section]
-  Admin --> OC
-  Admin --> AC
-  Admin --> IN
-  Admin --> AD[Admin section]
+  Student --> WS[Workspace]
+  Student --> LE[Learn]
+  Student --> TL[Tools]
+  Student --> PR[Your progress]
+  Student --> EX[Explore]
+  Instructor --> WS
+  Instructor --> LE
+  Instructor --> TL
+  Instructor --> PR
+  Instructor --> EX
+  Instructor --> TE[Teaching]
+  Admin --> TL
+  Admin --> GV[Governance]
+  Admin --> AD[Administration]
+  Admin --> OP[Operations]
 ```
 
-Ops Center and Academy are visible to everyone. The Instructor section appears for instructors and admins. The Admin section appears for admins only. Team Challenges items appear only when an admin enables the matching module, so they may be absent in your deployment.
+Workspace, Learn, Tools, Your progress, and Explore are visible to learners and
+instructors. Teaching appears for instructors. Administrators work from Tools,
+Governance, Administration, and Operations rather than a second copy of the
+learner menu. The user manual under Resources is visible to everyone.
 
 For a guided tour of every sidebar item, see [Navigating the Interface](06_Navigating_the_Interface.md).
 

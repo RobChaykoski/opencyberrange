@@ -1,7 +1,9 @@
 # MITRE ATT&CK Navigator tool
 
 The platform exposes the [MITRE ATT&CK Navigator](https://mitre-attack.github.io/attack-navigator/)
-in the same Tools panel as CyberChef and the OT scan assistant.
+in the same Tools panel as CyberChef, the OT scan assistant, and the OWASP ZAP
+scan planner. **Tools → All tools** in the sidebar opens the catalogue; the
+same keys are available from the active-lab toolbar.
 
 ## What it is for
 

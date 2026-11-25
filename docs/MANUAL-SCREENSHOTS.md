@@ -8,9 +8,10 @@ images do not drift when the interface changes.
 
 - Guest pages: login, registration, and the login screen used by troubleshooting.
 - Student pages: dashboard, sidebar navigation, exercises hub, track page, lab
-  statuses, courses, course overview, VPN setup, profile sections (including the
-  AI and career data consent panel), community events, change password, the
-  mobile shell, and a workbook in its own tab.
+  statuses, courses, course overview, VPN setup, the threat map, the tools
+  catalogue (including the ZAP card), profile sections (including the AI and
+  career data consent panel), community events, change password, the mobile
+  shell, and a workbook in its own tab.
 - Lab workspace (opt-in): the active-lab panel, timer controls, flag form, hints,
   and the workbook pane, including the resizable desktop/details/workbook split.
 - Instructor pages: panel overview, course cards, and every course-management

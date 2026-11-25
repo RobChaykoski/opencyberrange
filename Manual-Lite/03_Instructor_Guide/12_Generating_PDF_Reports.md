@@ -15,14 +15,14 @@ The platform produces graded PDF reports at three levels inside a course: the fu
 | Per-student report | Students sub-tab, **Download PDF** in a student's row | One student's full breakdown |
 | Per-assignment report | Assignments sub-tab, report button on an assignment card | One assignment's results across students |
 
-The Ops Center also exports a filtered activity report in PDF or CSV from the **Download Report** control. The three course reports above are PDF only.
+The Teaching overview also exports a filtered activity report in PDF or CSV from the **Download Report** control. The three course reports above are PDF only.
 
-For the cross-course teaching view, open **Reports & analytics** in the Instructor section of the sidebar. That page summarises every course you own and links back to the Analytics tab for the evidence; it also exports CSV and PDF. See [Reporting and Analytics](../04_Admin_Guide/28_Reporting_And_Analytics.md).
+For the cross-course teaching view, open **Reports & analytics** in the Teaching section of the sidebar. That page summarises every course you own and links back to the Analytics tab for the evidence; it also exports CSV and PDF. See [Reporting and Analytics](../04_Admin_Guide/28_Reporting_And_Analytics.md).
 
 ## Download the full class report
 
-1. In the left sidebar, select **My Courses**.
-2. On the **My Courses** tab, click **Manage** on the course card.
+1. In the left sidebar, select **Course workspace**.
+2. On the **Course workspace** tab, click **Manage** on the course card.
 3. Click the **Reports** sub-tab.
 4. Click **Download Full Class Report (PDF)**.
 5. Enter a reason of at least five characters when prompted. The reason is recorded in the audit log with your username and the report scope.

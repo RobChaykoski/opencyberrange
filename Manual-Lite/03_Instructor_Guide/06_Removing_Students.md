@@ -10,7 +10,7 @@ Removing a student takes that student off the course roster. You do it when some
 ## Removing a student from the roster
 
 1. Open the **Instructor** entry in the left sidebar.
-2. On the **My Courses** tab, click **Manage** on the course card.
+2. On the **Course workspace** tab, click **Manage** on the course card.
 3. Select the **Students** sub-tab.
 4. Find the student's row and click the **Remove** (trash) button in that row's actions.
 

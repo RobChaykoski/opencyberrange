@@ -206,8 +206,8 @@ if (student) {
   await go(page, '/profile')
   await viewportShot(page, path.join(IMG.student, 'profile.png'), 'profile overview')
   const tab = (name) => page.locator('.profile-tab', { hasText: name }).first()
-  if (await tab('Skill tree').count()) {
-    await tab('Skill tree').click()
+  if (await tab('Cyber DNA').count()) {
+    await tab('Cyber DNA').click()
     await page.waitForTimeout(1200)
     await shot(page, '.dna-layout', path.join(IMG.student, 'profile-cyber-dna.png'), 'dna layout')
     await shot(page, '.dna-class-card', path.join(IMG.student, 'profile-dna-class.png'), 'dna class')
@@ -215,10 +215,10 @@ if (student) {
     await shot(page, '.dna-ce', path.join(IMG.student, 'profile-dna-continuing-education.png'), 'dna continuing education')
     await shot(page, '.momentum', path.join(IMG.student, 'profile-momentum.png'), 'momentum')
   }
-  if (await tab('Cyber GPS').count()) {
-    await tab('Cyber GPS').click()
+  if (await tab('Career GPS').count()) {
+    await tab('Career GPS').click()
     await page.waitForTimeout(1200)
-    await shot(page, '.gps-panel', path.join(IMG.student, 'profile-cyber-gps.png'), 'cyber gps')
+    await shot(page, '.gps-panel', path.join(IMG.student, 'profile-cyber-gps.png'), 'career gps')
     await shot(page, '.gps-revisit', path.join(IMG.student, 'profile-cyber-gps-signal.png'), 'fading signal')
     await shot(page, '.atlas', path.join(IMG.student, 'profile-careers.png'), 'career atlas')
   }
@@ -230,6 +230,13 @@ if (student) {
 
   await go(page, '/events')
   await shot(page, '.community-events', path.join(IMG.student, 'community-events-calendar.png'), 'community events')
+
+  await go(page, '/threat-awareness')
+  await shot(page, '.threat-map', path.join(IMG.student, 'threat-map.png'), 'threat map')
+  await viewportShot(page, path.join(IMG.student, 'threat-map-page.png'), 'threat map page')
+
+  await go(page, '/tools')
+  await viewportShot(page, path.join(IMG.student, 'tools-catalogue.png'), 'tools catalogue')
 
   await go(page, '/change-password')
   await viewportShot(page, path.join(IMG.student, 'change-password.png'), 'change password')

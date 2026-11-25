@@ -9,7 +9,7 @@ Assigning labs is how you build the practical content of a course. From the Exer
 ## Opening the Exercises sub-tab
 
 1. Open the **Instructor** entry in the left sidebar.
-2. On the **My Courses** tab, click **Manage** on the course card.
+2. On the **Course workspace** tab, click **Manage** on the course card.
 3. Select the **Exercises** sub-tab.
 
 <figure markdown>

@@ -14,8 +14,8 @@ normal track order.
 
 ## Open the exercise plan
 
-1. Open the **Instructor** section in the left sidebar.
-2. On the **My Courses** tab, click **Manage** on the course card.
+1. Open the **Teaching** section in the left sidebar.
+2. On the **Course workspace** tab, click **Manage** on the course card.
 3. Select **Exercise plan**.
 
 <figure markdown>

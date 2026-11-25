@@ -8,7 +8,7 @@ positive. They are not grades, rankings, job predictions, or salary promises.
 !!! note "Development preview"
     These surfaces are gated by **Admin -> Settings -> Features -> Advanced DNA
     Insights**. A development host may show them while production keeps the
-    setting off. If the **Careers** tab is missing from your profile, the feature
+    setting off. If the **Career GPS** tab is missing from your profile, the feature
     is not enabled on your deployment. Ask an administrator.
 
 The Cyber DNA formula itself does not change. The six traits still use formula
@@ -19,9 +19,9 @@ change your trait scores.
 ## Open the surfaces
 
 1. Open **Profile** in the sidebar.
-2. Choose **Skill tree** to see **Momentum and friction** below the Cyber DNA
+2. Choose **Cyber DNA** to see **Momentum and friction** below the Cyber DNA
    section.
-3. Choose **Careers** to open the Cyber GPS and the Career Atlas. The tab
+3. Choose **Career GPS** to open the Career GPS and the Career Atlas. The tab
    appears only when the feature is enabled.
 
 <figure markdown>
@@ -173,7 +173,7 @@ job application, advising conversation, or programme decision.
 
 ## Career profile exports
 
-The **Skill tree** tab still offers the career-profile downloads. When Advanced
+The **Cyber DNA** tab still offers the career-profile downloads. When Advanced
 DNA Insights is enabled, the Markdown and printable HTML dossiers also include
 the Momentum section and the Career Atlas, including the salary source notes.
 The export contains only your own data, is logged for accountability, and is not
@@ -181,7 +181,7 @@ shared automatically. See [Viewing Your Profile](16_Viewing_Your_Profile.md).
 
 ## Portfolio tab: readiness and the evidence record
 
-When the preview is enabled, a **Portfolio** tab sits beside **Careers**. It
+When the preview is enabled, a **Portfolio** tab sits beside **Career GPS**. It
 turns the Atlas from a map into an answer:
 
 - **Role readiness** for the pathway you choose, with skills held, next
@@ -189,13 +189,13 @@ turns the Atlas from a map into an answer:
 - **Professional portfolio**, the printable record with a portfolio ID.
 - **Competency taxonomy**, the domain-by-domain assessment view.
 
-The **Careers** tab holds the **Cybersecurity GPS**, an optional direction finder
+The **Career GPS** tab holds the **Cybersecurity GPS**, an optional direction finder
 built from evidence, recent growth, and a few questions you can skip. Readiness
 is a curriculum-coverage estimate, not a grade or a hiring prediction. The
 platform does not track employment outcomes. See
 [Career readiness and the Cybersecurity GPS](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/CAREER-READINESS-AND-GPS.md).
 
-## Cyber GPS signal and fading interest
+## Career GPS signal and fading interest
 
 The GPS also shows whether your practice signal is active or fading. The signal
 is based on completions in the last 30 days, not on your answers to the optional
@@ -203,7 +203,7 @@ questions.
 
 <figure markdown>
 
-![Cyber GPS showing the signal active badge, domain evidence, strongest competencies, and a fading interest prompt](img/profile-cyber-gps.png)
+![Career GPS showing the signal active badge, domain evidence, strongest competencies, and a fading interest prompt](img/profile-cyber-gps.png)
 
 <figcaption>The GPS header shows whether the practice signal is active. Domain cards shimmer when they have recent work and fade when a domain has gone quiet.</figcaption>
 </figure>
@@ -220,7 +220,7 @@ turns a fading domain into a deficit label or a ranking.
 
 <figure markdown>
 
-![Cyber GPS signal panel showing a fading interest prompt for a domain with evidence but no recent work](img/profile-cyber-gps-signal.png)
+![Career GPS signal panel showing a fading interest prompt for a domain with evidence but no recent work](img/profile-cyber-gps-signal.png)
 
 <figcaption>The signal panel keeps the evidence visible while naming a domain that has gone quiet. It is a prompt to revisit, not a negative score.</figcaption>
 </figure>

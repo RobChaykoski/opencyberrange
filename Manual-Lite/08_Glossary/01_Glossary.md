@@ -253,7 +253,7 @@ taxonomies because they do not describe threat intelligence.
 | Track | A themed collection of labs, such as Network Security or Malware Analysis. |
 | Level | A difficulty grouping inside a track. |
 | Course | An instructor-created collection of labs, students, assignments, and due dates. |
-| Academy | The course area of the platform. Students see their courses; staff see the programme and course workspaces. |
+| Learn | The course area of the platform. Students see their courses; staff see the programme and course workspaces. |
 | Programme | An optional institutional grouping of courses and semester goals. A course can exist without a programme. |
 | Course workspace | The course page with Overview, Feedback, and Analytics (staff). |
 | Flag | The token a student submits to prove completion, usually in `OCR{...}` format. It is a training marker, not an IOC. |
@@ -479,7 +479,7 @@ descriptive, not grades or predictions.
 | Individual success profile | The eight-dimension view used by a student and their instructor: progress, pace, independence, persistence, understanding, experience, capability, and support. It ends with one next step. |
 | Dean | The institutional role that sets semester goals, reviews programme health, supports instructors, and owns the end-of-term evidence. In 2.5.0 it maps to an administrator or programme lead; it is not a separate database role. |
 | Programme lead | The staff role that turns semester goals into a course portfolio and supports instructors. |
-| Executive view | The staff-only Academy view of overall progress: goals, trends, projections, course portfolio, student voice, and risks. |
+| Executive view | The staff-only programme view of overall progress: goals, trends, projections, course portfolio, student voice, and risks. |
 | Projection (forecast) | A transparent estimate of where a programme metric may land, using goal pace, run rate, a moving average, or a trend direction. It always includes a method, sample size, and uncertainty band. It is not an individual prediction. |
 | Baseline | The starting value for a goal or course. A projection without a baseline is not a trend. |
 | Feeling vs doing | Two separate signals: self-reported feeling from the check-in, and progress against assigned work. They are shown together to prompt a conversation, never as a grade. |

@@ -14,7 +14,7 @@ The six settings categories and what each one controls.
 
 ```mermaid
 flowchart LR
-  S[Settings tab] --> G[General]
+  S[Platform settings tab] --> G[General]
   S --> SE[Security]
   S --> L[Exercises]
   S --> V[VPN]
@@ -43,9 +43,9 @@ flowchart LR
 
 <figure markdown>
 
-![Admin Settings tab showing the category tabs and editable setting rows](img/admin-settings.png)
+![Admin Platform settings tab showing the category tabs and editable setting rows](img/admin-settings.png)
 
-<figcaption>The Settings tab with category tabs across the top and one editable row per value.</figcaption>
+<figcaption>The Platform settings tab with category tabs across the top and one editable row per value.</figcaption>
 </figure>
 
 ## What you should see
@@ -233,7 +233,7 @@ The **Features** tab contains **Advanced DNA Insights**
 adds three learner-facing surfaces:
 
 - **Momentum and friction** below the Cyber DNA skill tree.
-- A **Careers** profile tab with the Career Atlas.
+- A **Career GPS** profile tab with the Career Atlas.
 - Momentum and Career Atlas sections in the career-profile Markdown and
   printable HTML dossiers.
 
@@ -254,7 +254,7 @@ To enable it on a development host:
 1. Open **Admin -> Settings -> Features**.
 2. Set **Advanced DNA Insights** to **Enabled**.
 3. Click **Save Settings**.
-4. Ask the learner to reload the profile. The **Careers** tab appears when the
+4. Ask the learner to reload the profile. The **Career GPS** tab appears when the
    profile API returns the new data.
 
 To disable it, set the same toggle to **Disabled** and save. The surfaces and
@@ -283,7 +283,7 @@ is applied without restarting the platform.
 
 **Run ceiling test** starts a Level 4 RangeBox VNC load test at the computed
 maximum. The test spawns real desktop containers, so run it on an idle host and
-follow progress in **System → Stress Tester**. A run that attempts at least 90%
+follow progress in **System â†’ Stress Tester**. A run that attempts at least 90%
 of the computed maximum is recorded as the measured ceiling and the live cap is
 recalculated from it. Lower the percentage if the test reports failed first-frame
 latency or host pressure.

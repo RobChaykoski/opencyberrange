@@ -24,15 +24,15 @@ teaching review or accreditation file.
 
 Open **Reports & analytics** in the left sidebar:
 
-- An administrator finds it in the **Admin** section, between **Live activity** and
-  **System**.
-- An instructor finds it in the **Instructor** section, below **Exercises**.
+- An administrator finds it in the **Operations** section, between **Sessions & activity** and
+  **Surveys**.
+- An instructor finds it in the **Teaching** section, below **Exercise authoring**.
 
 The page uses the `/reports` route. It is separate from the Admin Panel tabs, so
 opening it does not change the tab you last used in `/admin`.
 
 !!! note "Surveys are nearby"
-    The **Surveys** link in the Instructor section opens the survey builder and
+    The **Surveys** link in the Teaching section opens the survey builder and
     response history. Reporting and survey results are separate pages but share
     the same consent and privacy rules. See
     [Survey privacy](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/SURVEY-PRIVACY.md) if you distribute surveys.
