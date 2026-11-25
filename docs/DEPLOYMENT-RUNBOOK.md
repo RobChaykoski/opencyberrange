@@ -101,6 +101,17 @@ docker ps | grep ocr-
 docker exec ocr-frontend nginx -t
 ```
 
+After the backend is healthy, run lab discovery so new or changed labs enter the
+catalogue:
+
+```bash
+docker exec ocr-backend python /app/app/scripts/discover_labs.py
+```
+
+The command is idempotent. It creates new labs, updates changed ones, and leaves
+the existing course assignments alone. Confirm the lab count and the new slug
+before calling the deployment complete.
+
 ### Split layout
 
 If the host has a root `docker-compose.yml` and deployed `backend/`/`frontend/`

@@ -1,6 +1,6 @@
 # Production deployment statement
 
-**Statement date:** 24 November 2026
+**Statement date:** 25 November 2026
 
 This is the authoritative statement for the current production deployment. If
 another document disagrees, this page and the signed tag win.
@@ -8,6 +8,26 @@ another document disagrees, this page and the signed tag win.
 > **Public copy.** Real addresses, hostnames, and deployment accounts are
 > replaced with placeholders. The private deployment inventory holds the live
 > values. See [`PUBLICATION-METADATA-POLICY.md`](PUBLICATION-METADATA-POLICY.md).
+
+## 5.51.1 deployment verification
+
+| Check | Result |
+|---|---|
+| `/api/version` | `5.51.1` on production and development |
+| Alembic | **`0067_course_content_rls` (head)** |
+| Health | `200` |
+| Alembic drift | **`0` operations** |
+| Lab definitions | **217**; ZAP lab `web-11-11-zap-baseline-triage` registered |
+| Tools route | `/toolbox` returns `200`; `/tools/zap-scan/` returns `200` |
+| Threat map | `/threat-awareness` returns `200` |
+| Pre-deploy backup | `~/backups/ocr-backup-20261125-061815.dump` |
+| Post-deploy backup | `~/backups/ocr-backup-20261125-062518.dump` |
+| Rollback images | `opencyberrange-backend:pre-v5.51.1`, `ocr-frontend:pre-v5.51.1` |
+| Restore drill | **PASSED** (69 users, 217 labs, 2 courses, 64 enrollments, 134 completions, 497 achievements, 1,577 activity events) |
+| Restore-drift gate | **PASSED** at `0` operations |
+
+5.51.0 was a development-only build; 5.51.1 superseded it before production
+because `/tools` collided with the static tool directory route.
 
 ## 5.50.1 deployment verification
 

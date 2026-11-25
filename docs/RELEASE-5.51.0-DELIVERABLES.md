@@ -74,8 +74,8 @@ a 403.
 
 | Environment | Version | Status |
 |---|---|---|
-| Development | `5.51.0` | Pending |
-| Production | `5.51.0` | Pending |
+| Development | `5.51.0` | Deployed briefly, then superseded by 5.51.1 |
+| Production | `5.51.0` | Not deployed; 5.51.1 was the production release |
 
 Post-deploy checks: `/api/version` on both hosts, nginx test, backend/frontend
 health, wiki builder, new lab prebuild, backup and restore drill.

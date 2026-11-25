@@ -26,7 +26,7 @@ Releases 5.46.0 and 5.46.1 skipped step 3, so the committed manifest still said
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.51.1` | SWOCTS Cyber Range Release 5.51.1 | Signed annotated tag: the 5.51.0 navigation, tools, threat-map and lab release, with the tools catalogue moved from `/tools` to `/toolbox` after nginx served the static `/tools/` directory as a 403. Deployment pending; update after the development and production cutover. |
+| `v5.51.1` | SWOCTS Cyber Range Release 5.51.1 | Signed annotated tag: the 5.51.0 navigation, tools, threat-map and lab release, with the tools catalogue moved from `/tools` to `/toolbox` after nginx served the static `/tools/` directory as a 403. Deployed to development and production on 25 November 2026; 217 labs registered, post-deploy backup, restore drill and restore-drift gate at `0` passed. |
 
 Deliverables: [Release 5.51.1 deliverables](RELEASE-5.51.1-DELIVERABLES.md).
 
@@ -494,17 +494,3 @@ that feed Cyber DNA are Release 5.
 2. Keep `1.1.x` only for an existing Community / Academic maintenance install.
 3. Do not deploy a `v2.2.x`, `v2.3.x`, or `v3.x` tag as the current platform.
 4. Check `docs/SUPPORTED-VERSIONS.md` before changing a dependency or host OS.
-
-
-
-
-
-
-
-
-
-
-
-
-
-

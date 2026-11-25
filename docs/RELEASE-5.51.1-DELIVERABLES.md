@@ -1,6 +1,7 @@
 # Release 5.51.1 deliverables
 
-Status: **release prepared; deployment pending**.
+Status: **released and deployed** to development and production on 25 November
+2026.
 
 | Item | Value |
 |---|---|
@@ -44,16 +45,19 @@ Status: **release prepared; deployment pending**.
 | Link check | `1,215` Markdown files, no broken links |
 | Manual build | Passed |
 | Supply-chain lock | Updated and signed |
+| Production `/toolbox` | `200` |
+| Production registered labs | `217` |
+| Production restore drill | **PASSED**, 217 labs |
+| Production restore-drift gate | **PASSED** at `0` |
 
 ## Deployment
 
 | Environment | Version | Status |
 |---|---|---|
-| Development | `5.51.1` | Pending |
-| Production | `5.51.1` | Pending |
+| Development | `5.51.1` | Deployed and verified |
+| Production | `5.51.1` | Deployed and verified |
 
-Post-deploy checks: `/api/version`, `/toolbox`, nginx test, backend/frontend
-health, wiki builder, new lab prebuild, backup and restore drill.
+Post-deploy checks: `/api/version` on both hosts, `/toolbox` `200`, `/tools/zap-scan/` `200`, nginx test, backend/frontend health, wiki builder, new lab prebuild, 217 registered labs, pre/post backups, restore drill and restore-drift gate at `0`.
 
 ## Known limitations
 
