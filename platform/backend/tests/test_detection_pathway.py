@@ -16,7 +16,7 @@ TAXONOMY = DATA / "competency-taxonomy.yaml"
 LABS = ROOT / "platform/labs"
 
 PROHIBITED = ["keystrokes", "mouse_movement", "exhaustive_terminal_history"]
-REQUIRED_MODULES = [f"DET-{index:02d}" for index in range(1, 8)]
+REQUIRED_MODULES = [f"DET-{index:02d}" for index in range(1, 9)]
 
 
 def _pathway() -> dict:

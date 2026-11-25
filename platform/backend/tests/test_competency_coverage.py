@@ -1,4 +1,4 @@
-"""Competency coverage reports the Release 6 review backlog from data."""
+﻿"""Competency coverage reports the Release 6 review backlog from data."""
 
 from app.services.competency_coverage import (
     build_review_packet,
@@ -10,17 +10,17 @@ from app.services.competency_coverage import (
 
 def test_coverage_summary_matches_the_contracts():
     summary = coverage_summary()
-    assert summary["total"] == 215
+    assert summary["total"] == 217
     assert summary["reviewed"] == 25
-    assert summary["pending"] == 190
+    assert summary["pending"] == 192
     assert summary["reviewed"] + summary["pending"] == summary["total"]
     assert 0 < summary["coverage_percent"] < 100
 
 
 def test_release6_audit_has_no_structural_mapping_gaps():
     audit = release6_audit()
-    assert audit["labs"]["total"] == 215
-    assert audit["labs"]["contracts"] == 215
+    assert audit["labs"]["total"] == 217
+    assert audit["labs"]["contracts"] == 217
     assert audit["labs"]["missing_contract"] == []
     assert audit["labs"]["missing_competencies"] == []
     assert audit["labs"]["unknown_competencies"] == []
@@ -30,7 +30,7 @@ def test_release6_audit_has_no_structural_mapping_gaps():
     assert audit["quiz_pathways"]["unmapped"] == []
     assert audit["exercise_quizzes"]["without_contract"] == []
     assert audit["structural_gaps"] is False
-    assert audit["foundation_ready"] is False  # 190 contracts still pending
+    assert audit["foundation_ready"] is False  # 192 contracts still pending
     assert audit["release_6_ready"] is False
 
 
@@ -63,3 +63,4 @@ def test_pending_labs_are_limited_and_labelled():
         assert lab["slug"]
         assert lab["track"]
         assert lab["status"] != "reviewed"
+

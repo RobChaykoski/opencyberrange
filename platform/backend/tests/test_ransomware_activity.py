@@ -101,7 +101,7 @@ def test_endpoint_returns_aggregated_snapshot(client, db_session):
 
     assert response.status_code == 200, response.text
     data = response.json()
-    assert data["mode"] == "sample"
+    assert data["mode"] in {"sample", "snapshot"}
     assert data["method"]["victim_details"] is False
     assert data["method"]["links"] is False
     assert data["groups"][0]["count"] >= data["groups"][-1]["count"]

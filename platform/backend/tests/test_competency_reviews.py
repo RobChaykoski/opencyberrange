@@ -1,4 +1,4 @@
-"""Competency contract review cycles and instructor sign-off."""
+﻿"""Competency contract review cycles and instructor sign-off."""
 
 from __future__ import annotations
 
@@ -87,7 +87,7 @@ def test_queue_starts_with_pending_contracts(client, db_session):
         )
         assert response.status_code == 200, response.text
         body = response.json()
-        assert body["total"] == 215
+        assert body["total"] == 217
         assert body["counts"]["pending"] >= 190
         assert body["contracts"][0]["status"] == "pending"
     finally:
@@ -364,3 +364,4 @@ def test_evidence_source_maps_to_contract_status(client, db_session):
         assert statuses[LAB]["provisional"] is True
     finally:
         _cleanup(db_session, [learner])
+

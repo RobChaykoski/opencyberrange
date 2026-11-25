@@ -470,6 +470,7 @@ and screenshots to `UI_ARTIFACT_DIR` (default names vary by script).
 | Check | Script | Needs |
 |---|---|---|
 | Deployment smoke | `scripts/ui-smoke.mjs` | `UI_BASE_URL`, `UI_SMOKE_TOKEN` or `UI_SMOKE_USERNAME`/`UI_SMOKE_PASSWORD` |
+| Threat map and tools | `scripts/ui-tools-map-smoke.mjs` | `UI_BASE_URL`, `UI_SMOKE_TOKEN`; local mode uses `UI_MOCK_API=1` and a preview on port 4173 |
 | Learning gating | `scripts/ui-learning-smoke.mjs` | `UI_BASE_URL`, `UI_USERNAME`, `UI_PASSWORD` |
 | Exercise workspace | `scripts/ui-workspace-regression.mjs` | `UI_BASE_URL`, student and instructor credentials |
 | Public verification | `scripts/ui-verify-public.mjs` | `UI_VERIFY_URLS` (public certificate URLs) |
