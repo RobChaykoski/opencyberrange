@@ -4,6 +4,12 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
+No unreleased changes.
+
+## [5.51.0] - 2026-11-25
+
+Navigation, tools, the interactive threat map, and the ZAP baseline triage lab.
+
 ### Navigation and labels
 
 - Regrouped the learner sidebar into **Workspace**, **Learn**, **Tools**, **Your progress**, and **Explore**. Routes and permissions are unchanged.
@@ -15,7 +21,7 @@ All notable changes to OpenCyberRange are recorded here.
 
 - Added **Tools → All tools** (`/tools`), a single catalogue for CyberChef, OT scan, ATT&CK Navigator, and the new ZAP planner. Every card opens the same allow-listed, sandboxed panel.
 - Added the **OWASP ZAP scan planner** (`/tools/zap-scan/`): baseline and full-scan command builder, Docker/local runner, report formats, authorisation gate, and triage checklist. It does not run a scan or send network requests. See `docs/ZAP-SCAN-PLANNER.md`.
-- Added ZAP to the active-lab toolbar. Documented the follow-up `web-11-11-zap-baseline-triage` lab design; the lab itself is not built yet.
+- Added ZAP to the active-lab toolbar and shipped the `web-11-11-zap-baseline-triage` lab.
 - Added `worldMap.js` for the threat map from public-domain Natural Earth 110m data.
 
 ### Threat awareness

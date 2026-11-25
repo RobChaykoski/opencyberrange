@@ -9,9 +9,9 @@
 # docs/decisions/0004-single-platform-release-version.md.
 platform:
   name: "SWOCTS Cyber Range"
-  version: "5.50.1"
+  version: "5.51.0"
   status: "release"
-  date: "2026-11-24"
+  date: "2026-11-25"
 
 editions:
   community_academic:
@@ -41,17 +41,17 @@ maintenance_lines:
     note: "Existing single-host teaching installs; new installs use the Release 5 tree with the Community / Academic profile."
 
 release:
-  version: "5.50.1"
+  version: "5.51.0"
   status: "release"
-  date: "2026-11-24"
+  date: "2026-11-25"
 
 development:
-  version: "5.51.0"
-  focus: "Consent RLS wave and the competency review campaign"
+  version: "5.52.0"
+  focus: "Next feature line after the navigation, tools, threat map and ZAP lab release"
 
 policy:
   name: latest-supported-ga
-  reviewed: "2026-11-23"
+  reviewed: "2026-11-25"
   platform_only: true
   rules:
     - no_alpha_beta_rc_or_nightly_for_platform_services
