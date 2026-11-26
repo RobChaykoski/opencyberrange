@@ -1,6 +1,6 @@
 # Next steps
 
-Status: **Release 5.55.0 is deployed to development and production.** The
+Status: **Release 5.55.1 is deployed to development and production.** The
 read-only HA status panel (endpoint, Admin card, witness endpoint, host
 collector) is implemented; the witness/collector install and live drills
 remain. The exercise workspace now has a read-only Briefing tab and pop-out.
@@ -10,6 +10,20 @@ Dependabot backlog; runtime and OS updates remain for review. This page tracks
 what is left; the deployment record is
 [`RELEASE-5-PRODUCTION-READINESS.md`](RELEASE-5-PRODUCTION-READINESS.md).
 
+## 5.55.1
+
+- **URL-backed focus.** `?view=focused|all` and `?target=<pathway>` survive
+  refresh, shared links, and back/forward.
+- **Server-side narrowing.** `GET /api/exercises/tracks?role=<pathway>` filters
+  after the existing visibility and course-assignment checks, so a focused page
+  downloads only the visible tracks for that pathway. The response includes
+  `total_tracks` for the "X of Y" label.
+- **Least privilege.** The pathway filter can only narrow the visible set; it
+  cannot add a hidden or unavailable track. Unknown pathways return an empty
+  focused list and the UI offers the full catalogue.
+- **Cleanup:** the pathway catalogue no longer exposes the unused `categories`
+  field, and the API manual documents the `role` query parameter.
+
 ## 5.55.0
 
 - **Career-focused exercise catalogue.** New learners start on the
@@ -18,9 +32,9 @@ what is left; the deployment record is
   catalogue is one click away, and completing every focused track marks the
   pathway complete and invites exploration. The dashboard track list follows the
   same focus.
-- **Role catalogue:** `GET /api/profile/roles` now exposes each pathway's
-  `tracks` and `categories`, so the catalogue and dashboard use one source of
-  truth.
+- **Role catalogue:** `GET /api/profile/roles` exposes each pathway's `tracks`,
+  so the catalogue and dashboard use one source of truth. Release 5.55.1 removes
+  the unused `categories` field and adds the server-side filter.
 
 ## 5.54.0-5.54.2
 
@@ -59,7 +73,7 @@ what is left; the deployment record is
   feeds; RansomLook is refreshed. A weekly ops automation and helper script
   keep the review moving.
 - **Maintenance.** Fixed the duplicate `psycopg` pin, documented `ws_tickets`,
-  and merged the green dev/tooling dependency PRs. Backend tests are 669;
+  and merged the green dev/tooling dependency PRs. Backend tests are 670;
   frontend 77; HA 91.
 
 ## Earlier completed

@@ -2,6 +2,26 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.55.1] - 2026-11-26
+
+### Changed
+
+- **URL-backed exercise focus:** the Exercises hub now keeps `view` and
+  `target` in the URL (`?view=focused&target=...` or `?view=all`), so refresh,
+  deep links, and back/forward restore the same state.
+- **Server-side narrowing:** `GET /api/exercises/tracks` accepts an optional
+  `role` career-pathway id and returns only the tracks visible to that learner
+  and aligned with the pathway. The response includes `total_tracks` for the
+  "X of Y" label, so a focused page does not download the full catalogue.
+- **Least privilege:** the role filter is applied after the existing visibility
+  and course-assignment checks. It can only narrow the result, never add a
+  hidden or unavailable track. An unknown pathway returns an empty focused list,
+  and the UI offers the full catalogue.
+- **API manual:** the tracks endpoint now documents the optional `role` query
+  parameter.
+- **Role catalogue cleanup:** the pathway catalogue exposes the `tracks` mapping
+  needed by the catalogue and no longer carries the unused `categories` field.
+
 ## [5.55.0] - 2026-11-26
 
 ### Added

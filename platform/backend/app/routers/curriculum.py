@@ -39,6 +39,7 @@ from app.services.docker_manager import DockerManager
 from app.services.lab_text import render_lab_text
 from app.services.curriculum_manifest import chapter_label
 from app.services.learning_metadata import aggregate_difficulty
+from app.services.role_readiness import role_track_slugs
 from app.services.activity import log_activity, EventTypes
 from app.services import competency_reviews, settings_service
 from app.config import settings
@@ -603,10 +604,20 @@ async def list_workbooks(
 
 @router.get("/tracks")
 async def list_tracks(
+    role: str | None = Query(
+        None,
+        max_length=64,
+        description="Optional career-pathway id. Narrows the response to that pathway's visible tracks.",
+    ),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
-    """Get all tracks with user progress"""
+    """Get all tracks with user progress.
+
+    ``role`` is an optional career-pathway filter. The router intersects the
+    pathway's track list with the tracks already visible to this learner, so
+    the filter can only narrow the response, never expand access.
+    """
     tracks = db.query(Track).filter(Track.is_active == True).order_by(Track.sort_order).all()
     completed_ids = get_user_completions(db, current_user.id)
     accessible_course_lab_ids = get_accessible_exclusive_lab_ids(db, current_user.id)
@@ -689,7 +700,14 @@ async def list_tracks(
             item["difficulty_rank"], item["sort_order"], item["name"].lower()
         ))
 
-    return {"tracks": result}
+    # Count what this learner can actually see before narrowing to the chosen
+    # pathway. The client uses the count for "X of Y" without fetching all rows.
+    total_tracks = len(result)
+    if role:
+        wanted = set(role_track_slugs(role))
+        result = [item for item in result if item["slug"] in wanted]
+
+    return {"tracks": result, "total_tracks": total_tracks}
 
 
 def _certificate_achievements(

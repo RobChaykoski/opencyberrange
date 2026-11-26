@@ -19,12 +19,12 @@
     >
       <p class="catalogue-scope__text">
         <template v-if="viewMode === 'focused'">
-          Showing {{ visibleTracks.length }} of {{ tracks.length }} tracks aligned with
+          Showing {{ tracks.length }} of {{ totalTracks }} tracks aligned with
           <strong>{{ selectedRoleTitle }}</strong>. Switch target or open the full
           catalogue at any time.
         </template>
         <template v-else>
-          Showing all {{ tracks.length }} tracks. Your focused list is one click away.
+          Showing all {{ totalTracks }} tracks. Your focused list is one click away.
         </template>
       </p>
       <div class="catalogue-scope__actions">
@@ -34,7 +34,7 @@
           class="btn btn--secondary btn--sm"
           @click="setView('all')"
         >
-          Show all {{ tracks.length }} tracks
+          Show all {{ totalTracks }} tracks
         </button>
         <button
           v-else
@@ -57,7 +57,7 @@
         <h2 class="catalogue-scope__title">The full catalogue is ready</h2>
         <p class="catalogue-scope__text">
           You finished every track in this focus. Explore another pathway or open all
-          {{ tracks.length }} tracks to choose your next direction.
+          {{ totalTracks }} tracks to choose your next direction.
         </p>
       </div>
       <div class="catalogue-scope__actions">
@@ -68,7 +68,7 @@
     </section>
 
     <!-- Overall Progress Summary -->
-    <div v-if="visibleTracks.length > 0" class="progress-summary">
+    <div v-if="tracks.length > 0" class="progress-summary">
       <div class="progress-summary__stat">
         <span class="progress-summary__value">{{ visibleProgress.completed }}</span>
         <span class="progress-summary__label">Completed</span>
@@ -86,7 +86,7 @@
     <!-- Track Cards Grid -->
     <div class="track-grid" ref="gridRef">
       <div
-        v-for="track in visibleTracks"
+        v-for="track in tracks"
         :key="track.id"
         class="track-card-wrapper"
         :class="{ 'track-card-wrapper--reorderable': canReorder }"
@@ -154,13 +154,13 @@
     </div>
 
     <!-- Empty State -->
-    <div v-if="!loading && visibleTracks.length === 0" class="empty-state">
-      <p v-if="viewMode === 'focused' && tracks.length">
+    <div v-if="!loading && tracks.length === 0" class="empty-state">
+      <p v-if="viewMode === 'focused' && totalTracks">
         No active tracks match {{ selectedRoleTitle }} right now.
       </p>
       <p v-else>No learning paths available yet. Check back soon.</p>
       <button
-        v-if="viewMode === 'focused' && tracks.length"
+        v-if="viewMode === 'focused' && totalTracks"
         type="button"
         class="btn btn--secondary btn--sm"
         @click="setView('all')"
@@ -177,7 +177,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, nextTick, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from '../api/axios'
 import { isAdmin, isInstructor } from '../utils/roles'
@@ -190,8 +190,6 @@ import TargetRoleSwitcher from '../components/TargetRoleSwitcher.vue'
 import { useCareerGoal } from '../composables/useCareerGoal'
 import { useCareerRoles } from '../composables/useCareerRoles'
 import {
-  defaultExerciseView,
-  focusTracks,
   focusedComplete as isFocusedComplete,
   readStoredExerciseView,
   scopeProgress,
@@ -207,13 +205,17 @@ const gridRef = ref(null)
 
 const canReorder = computed(() => isAdmin() || isInstructor())
 
-const { selectedRole } = useCareerGoal()
+const { selectedRole, setGoal } = useCareerGoal()
 const { roles, load: loadCareerRoles } = useCareerRoles()
-const viewMode = ref(readStoredExerciseView())
-
-const totalCompleted = computed(() =>
-  tracks.value.reduce((sum, t) => sum + Number(t.completed_labs || 0), 0)
+const queryView = String(route.query.view || '')
+const viewMode = ref(
+  queryView === 'all' || queryView === 'focused'
+    ? queryView
+    : readStoredExerciseView() || 'focused'
 )
+const totalTracks = ref(0)
+const routeReady = ref(false)
+const syncingRoute = ref(false)
 
 const selectedRoleTitle = computed(
   () => roles.value.find((role) => role.id === selectedRole.value)?.title || 'your career target'
@@ -221,15 +223,16 @@ const selectedRoleTitle = computed(
 const selectedRoleTracks = computed(
   () => roles.value.find((role) => role.id === selectedRole.value)?.tracks || []
 )
-const focusedTracks = computed(() => focusTracks(tracks.value, selectedRoleTracks.value))
 const focusAvailable = computed(
-  () => !canReorder.value && focusedTracks.value.length > 0
+  () => !canReorder.value && selectedRoleTracks.value.length > 0
 )
-const focusedComplete = computed(() => isFocusedComplete(focusedTracks.value))
-const visibleTracks = computed(() =>
-  focusAvailable.value && viewMode.value === 'focused' ? focusedTracks.value : tracks.value
+const focusedComplete = computed(
+  () =>
+    viewMode.value === 'focused' &&
+    focusAvailable.value &&
+    isFocusedComplete(tracks.value)
 )
-const visibleProgress = computed(() => scopeProgress(visibleTracks.value))
+const visibleProgress = computed(() => scopeProgress(tracks.value))
 const scopeLabel = computed(() =>
   focusAvailable.value && viewMode.value === 'focused' ? 'Focused' : 'Overall'
 )
@@ -239,10 +242,54 @@ function setView(next) {
   storeExerciseView(viewMode.value)
 }
 
-function applyDefaultView() {
-  if (viewMode.value) return
-  viewMode.value = defaultExerciseView(totalCompleted.value, focusedTracks.value.length)
+function syncRoute() {
+  if (!routeReady.value) return
+  const nextView = viewMode.value
+  const nextTarget = selectedRole.value
+  if (
+    String(route.query.view || '') === nextView &&
+    String(route.query.target || '') === nextTarget
+  ) {
+    return
+  }
+  syncingRoute.value = true
+  router
+    .replace({
+      path: route.path,
+      query: { ...route.query, view: nextView, target: nextTarget },
+    })
+    .finally(() => {
+      syncingRoute.value = false
+    })
 }
+
+watch([viewMode, selectedRole], async ([view, role], [oldView, oldRole]) => {
+  if (!routeReady.value) return
+  syncRoute()
+  const viewChanged = view !== oldView
+  const roleChanged = role !== oldRole
+  if (viewChanged || (view === 'focused' && roleChanged)) {
+    await fetchTracks()
+  }
+})
+
+watch(
+  () => [route.query.view, route.query.target],
+  ([view, target]) => {
+    if (!routeReady.value || syncingRoute.value) return
+    if ((view === 'all' || view === 'focused') && view !== viewMode.value) {
+      viewMode.value = view
+      storeExerciseView(view)
+    }
+    if (
+      target &&
+      target !== selectedRole.value &&
+      roles.value.some((role) => role.id === target)
+    ) {
+      setGoal(String(target))
+    }
+  }
+)
 
 
 // ── SortableJS drag-and-drop ─────────────────────────────────────────
@@ -300,19 +347,28 @@ const fetchTracks = async ({ silent = false } = {}) => {
       router.push('/login')
       return
     }
+    const params = {}
+    if (viewMode.value === 'focused' && focusAvailable.value) {
+      params.role = selectedRole.value
+    }
     const { data } = await axios.get('/exercises/tracks', {
-      headers: { 'Authorization': `Bearer ${token}` }
+      headers: { 'Authorization': `Bearer ${token}` },
+      params,
     })
     tracks.value = data.tracks || []
+    totalTracks.value = Number(data.total_tracks ?? tracks.value.length)
   } catch (error) {
     console.error('Failed to fetch tracks:', error)
     if (error.response?.status === 401) {
       localStorage.removeItem('token')
-    localStorage.removeItem('refresh_token')
+      localStorage.removeItem('refresh_token')
       localStorage.removeItem('user')
       router.push('/login')
     }
-    if (!silent) tracks.value = []
+    if (!silent) {
+      tracks.value = []
+      totalTracks.value = 0
+    }
   } finally {
     if (!silent) loading.value = false
   }
@@ -360,13 +416,18 @@ onMounted(async () => {
       console.error('Failed to resolve lab track for deep-link:', e)
     }
   }
-  await fetchTracks()
   try {
     await loadCareerRoles()
   } catch {
     // The catalogue still works without the pathway metadata.
   }
-  applyDefaultView()
+  const target = String(route.query.target || '')
+  if (target && roles.value.some((role) => role.id === target)) {
+    setGoal(target)
+  }
+  await fetchTracks()
+  routeReady.value = true
+  syncRoute()
   await nextTick()
   initSortable()
 })

@@ -9,7 +9,7 @@ export const DEFAULT_CAREER_GOAL = 'cybersecurity-foundations'
 function readStoredGoal() {
   try {
     return localStorage.getItem(STORAGE_KEY) || DEFAULT_CAREER_GOAL
-  } catch (e) {
+  } catch {
     return DEFAULT_CAREER_GOAL
   }
 }
@@ -24,7 +24,7 @@ export function useCareerGoal() {
     selectedRole.value = roleId
     try {
       localStorage.setItem(STORAGE_KEY, roleId)
-    } catch (e) {
+    } catch {
       // Storage can be unavailable in private modes; the in-memory value is enough.
     }
   }

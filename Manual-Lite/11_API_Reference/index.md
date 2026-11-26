@@ -6948,13 +6948,20 @@ Get user's overall progress across all tracks
 
 **List Tracks**
 
-Get all tracks with user progress
+Get all tracks with user progress.  ``role`` is an optional career-pathway filter. The router intersects the pathway's track list with the tracks already visible to this learner, so the filter can only narrow the response, never expand access.
 
 **Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `role` | query | string or null | no | Optional career-pathway id. Narrows the response to that pathway's visible tracks. |
 
 **Responses**
 
 - `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
 
 ### `GET /api/exercises/tracks/{track_slug}`
 

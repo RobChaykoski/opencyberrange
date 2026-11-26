@@ -28,6 +28,8 @@ Your **career target** sets a shorter, focused catalogue. The selector at the to
 - The full catalogue is always one click away. The focus is a starting point, not a lock.
 - When every track in the focus is complete, the page marks the pathway complete and invites you to explore all tracks.
 
+The page keeps the current view and career target in the URL, for example `?view=focused&target=cybersecurity-foundations` or `?view=all`. Refreshing or sharing the link restores the same focus. The focused request asks the server for that pathway's visible tracks only, so the page does not download every track just to hide them.
+
 The progress summary follows the view: it counts the exercises in the focused tracks while the focus is active, and every track when you open the full catalogue. Your career target is a preference, not a grade; changing it never changes your completed work.
 
 Each track card shows:

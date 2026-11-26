@@ -56,7 +56,6 @@ def roles_catalogue() -> dict:
                 "aliases": role.get("aliases", []),
                 "summary": role.get("summary"),
                 "tracks": role.get("tracks", []),
-                "categories": role.get("categories", []),
                 "level_requirements": role.get("level_requirements", {}),
                 "capstone": {
                     "title": (role.get("capstone") or {}).get("title"),
@@ -74,6 +73,18 @@ def _role(role_id: str) -> dict | None:
         (role for role in load_roles().get("pathways", []) if role["id"] == role_id),
         None,
     )
+
+
+def role_track_slugs(role_id: str | None) -> list[str]:
+    """Return the track slugs a career pathway claims, or an empty list.
+
+    The curriculum router intersects this list with the tracks already visible
+    to the learner. It never expands access; it only narrows the catalogue.
+    """
+    if not role_id:
+        return []
+    role = _role(role_id)
+    return [str(slug) for slug in (role or {}).get("tracks") or []]
 
 
 def _flatten_competencies(profile: dict) -> dict[str, dict]:

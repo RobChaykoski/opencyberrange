@@ -13,6 +13,7 @@ from app.services.role_readiness import (
     _rating,
     _status,
     load_roles,
+    role_track_slugs,
     roles_catalogue,
 )
 
@@ -46,7 +47,12 @@ def test_roles_catalogue_exposes_track_focus():
     )
     assert role["tracks"]
     assert "netfor" in role["tracks"]
-    assert role["categories"]
+
+
+def test_role_track_slugs_narrows_without_expanding():
+    assert "netfor" in role_track_slugs("cybersecurity-foundations")
+    assert role_track_slugs("not-a-real-pathway") == []
+    assert role_track_slugs(None) == []
 
 
 def test_every_critical_competency_exists_in_taxonomy():
