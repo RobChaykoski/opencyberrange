@@ -344,45 +344,46 @@
             <h2>{{ activeLab.lab.name }}</h2>
             <span v-if="activeLab.session" class="active-badge">Active</span>
             <span v-else-if="activeLab.lab.is_completed" class="completed-badge">Completed</span>
-            <button
-              @click="openKnowledgeCheck(activeLab.lab)"
-              class="btn btn--secondary btn--sm"
-              title="Optional benchmark; most useful after the exercise"
-            >
-              Knowledge check
-            </button>
-            <button
-              type="button"
-              class="btn btn--secondary btn--sm"
-              title="Open CyberChef in a panel for encoding and decoding practice"
-              @click="toggleTool('cyberchef')"
-            >
-              CyberChef
-            </button>
-            <button
-              type="button"
-              class="btn btn--secondary btn--sm"
-              title="Build a slow, scoped nmap command for this lab network"
-              @click="toggleTool('otscan')"
-            >
-              OT Scan
-            </button>
-            <button
-              type="button"
-              class="btn btn--secondary btn--sm"
-              title="Open MITRE ATT&CK Navigator for technique coverage"
-              @click="toggleTool('attacknavigator')"
-            >
-              ATT&amp;CK
-            </button>
-            <button
-              type="button"
-              class="btn btn--secondary btn--sm"
-              title="Build an authorised OWASP ZAP baseline or full scan"
-              @click="toggleTool('zap')"
-            >
-              ZAP
-            </button>
+            <details class="lab-tools-menu">
+              <summary class="btn btn--secondary btn--sm">Tools</summary>
+              <div class="lab-tools-menu__items">
+                <button
+                  type="button"
+                  class="btn btn--secondary btn--sm"
+                  @click="openKnowledgeCheck(activeLab.lab)"
+                >
+                  Knowledge check
+                </button>
+                <button
+                  type="button"
+                  class="btn btn--secondary btn--sm"
+                  @click="toggleTool('cyberchef')"
+                >
+                  CyberChef
+                </button>
+                <button
+                  type="button"
+                  class="btn btn--secondary btn--sm"
+                  @click="toggleTool('otscan')"
+                >
+                  OT Scan
+                </button>
+                <button
+                  type="button"
+                  class="btn btn--secondary btn--sm"
+                  @click="toggleTool('attacknavigator')"
+                >
+                  ATT&amp;CK
+                </button>
+                <button
+                  type="button"
+                  class="btn btn--secondary btn--sm"
+                  @click="toggleTool('zap')"
+                >
+                  ZAP
+                </button>
+              </div>
+            </details>
             <button
               v-if="activeLab.session"
               @click="stopLab"
@@ -526,20 +527,15 @@
 
         <p v-if="stopError" class="stop-error" role="alert">{{ stopError }}</p>
 
-        <!-- Quick reaction: visible at the top of the exercise once started -->
+        <!-- Quick reaction: only after the exercise is completed. -->
         <div
-          v-if="!isAdminUser"
+          v-if="!isAdminUser && activeLab.lab.is_completed"
           class="exercise-reaction-bar"
-          :class="{ 'exercise-reaction-bar--disabled': !(activeLab.session || activeLab.lab.is_completed) }"
           aria-label="Exercise feedback"
         >
           <div class="exercise-reaction-bar__text">
-            <strong>{{ activeLab.session || activeLab.lab.is_completed ? 'Was this exercise useful?' : 'Exercise feedback' }}</strong>
-            <span>
-              {{ activeLab.session || activeLab.lab.is_completed
-                ? 'Your instructor sees totals, not your name.'
-                : 'Start the exercise to enable feedback.' }}
-            </span>
+            <strong>Was this exercise useful?</strong>
+            <span>Your instructor sees totals, not your name.</span>
           </div>
           <div class="exercise-reaction-bar__actions" role="group" aria-label="Exercise feedback">
             <button
@@ -547,7 +543,7 @@
               class="exercise-reaction__btn"
               :class="{ 'exercise-reaction__btn--active': reaction === 'like' }"
               :aria-pressed="reaction === 'like'"
-              :disabled="reactionSaving || !(activeLab.session || activeLab.lab.is_completed)"
+              :disabled="reactionSaving"
               @click="setReaction('like')"
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -561,7 +557,7 @@
               class="exercise-reaction__btn"
               :class="{ 'exercise-reaction__btn--active': reaction === 'dislike' }"
               :aria-pressed="reaction === 'dislike'"
-              :disabled="reactionSaving || !(activeLab.session || activeLab.lab.is_completed)"
+              :disabled="reactionSaving"
               @click="setReaction('dislike')"
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -733,7 +729,7 @@
               :class="{ 'lab-details--workspace': workspaceMode }"
             >
             <!-- Beginner labs are workbook-led: keep the walkthrough in view. -->
-            <div v-if="workspaceMode && isBeginnerLab" class="beginner-workbook-callout">
+            <div v-if="workspaceMode && isBeginnerLab && !wideWorkspace" class="beginner-workbook-callout">
               <div>
                 <strong>New to this exercise?</strong>
                 <p>
@@ -1099,10 +1095,7 @@
               aria-valuemin="35"
               aria-valuemax="80"
               tabindex="0"
-              :style="{
-                left: `calc(${splitV}% - 0.5rem)`,
-                height: `calc(${effectiveSplitH}% - 0.5rem)`,
-              }"
+              :style="{ left: `calc(${splitV}% - 0.5rem)` }"
               @pointerdown.prevent="startWorkspaceSplit('vertical', $event)"
               @keydown.left.prevent="adjustWorkspaceSplit('vertical', -4)"
               @keydown.right.prevent="adjustWorkspaceSplit('vertical', 4)"
@@ -1115,9 +1108,12 @@
               aria-label="Resize the workspace and workbook"
               :aria-valuenow="Math.round(effectiveSplitH)"
               aria-valuemin="35"
-              aria-valuemax="82"
+              aria-valuemax="78"
               tabindex="0"
-              :style="{ top: `calc(${effectiveSplitH}% - 0.5rem)` }"
+              :style="{
+                top: `calc(${effectiveSplitH}% - 0.5rem)`,
+                width: `calc(${splitV}% - 0.5rem)`,
+              }"
               @pointerdown.prevent="startWorkspaceSplit('horizontal', $event)"
               @keydown.up.prevent="adjustWorkspaceSplit('horizontal', -4)"
               @keydown.down.prevent="adjustWorkspaceSplit('horizontal', 4)"
@@ -1620,7 +1616,7 @@ const workbookExpanded = ref(false)
 // on the next exercise. The middle handle resizes desktop/details; the lower
 // handle resizes the workspace/workbook rows.
 const WORKSPACE_SPLIT_V_KEY = 'ocr.workspace.split.v'
-const WORKSPACE_SPLIT_H_KEY = 'ocr.workspace.split.h'
+const WORKSPACE_SPLIT_H_KEY = 'ocr.workspace.split.h.v2'
 const clampSplit = (value, min, max) => Math.min(max, Math.max(min, value))
 const loadSplit = (key, fallback, min, max) => {
   if (typeof window === 'undefined') return fallback
@@ -1629,20 +1625,20 @@ const loadSplit = (key, fallback, min, max) => {
 }
 const workspaceGrid = ref(null)
 const splitV = ref(loadSplit(WORKSPACE_SPLIT_V_KEY, 60, 35, 80))
-const splitH = ref(loadSplit(WORKSPACE_SPLIT_H_KEY, 64, 35, 82))
-const effectiveSplitH = computed(() =>
-  workbookExpanded.value ? 46 : splitH.value
-)
+const splitH = ref(loadSplit(WORKSPACE_SPLIT_H_KEY, 58, 35, 78))
+const effectiveSplitH = computed(() => splitH.value)
 const workspaceGridStyle = computed(() => {
   if (!wideWorkspace.value) return {}
-  const columns = `minmax(0, ${splitV.value}fr) minmax(280px, ${100 - splitV.value}fr)`
+  const top = effectiveSplitH.value
   if (!activeLab.value?.lab?.workbook) {
     return {
-      gridTemplateColumns: columns,
-      gridTemplateRows: 'minmax(0, 1fr)',
+      gridTemplateColumns: 'minmax(0, 1fr)',
+      gridTemplateRows: `minmax(0, ${top}fr) minmax(180px, ${100 - top}fr)`,
     }
   }
-  const top = effectiveSplitH.value
+  const columns = workbookExpanded.value
+    ? 'minmax(0, 1fr) minmax(460px, 1.25fr)'
+    : `minmax(0, ${splitV.value}fr) minmax(340px, ${100 - splitV.value}fr)`
   return {
     gridTemplateColumns: columns,
     gridTemplateRows: `minmax(0, ${top}fr) minmax(180px, ${100 - top}fr)`,
@@ -1680,7 +1676,7 @@ const onWorkspaceSplitMove = (event) => {
     splitH.value = clampSplit(
       ((event.clientY - drag.rect.top) / drag.rect.height) * 100,
       35,
-      82
+      78
     )
   }
 }
@@ -1753,14 +1749,14 @@ const adjustWorkspaceSplit = (axis, delta) => {
     splitV.value = clampSplit(splitV.value + delta, 35, 80)
   } else {
     workbookExpanded.value = false
-    splitH.value = clampSplit(splitH.value + delta, 35, 82)
+    splitH.value = clampSplit(splitH.value + delta, 35, 78)
   }
   persistWorkspaceSplit()
 }
 
 const resetWorkspaceSplit = () => {
   splitV.value = 60
-  splitH.value = 64
+  splitH.value = 58
   workbookExpanded.value = false
   persistWorkspaceSplit()
 }
@@ -1940,19 +1936,19 @@ const workbookSandbox = computed(() => {
   }
 })
 
-const openWorkbook = () => {
+const openWorkbook = async () => {
   const url = activeLab.value?.lab?.workbook && workbookUrl(activeLab.value.lab.workbook)
   if (url) {
+    await setWikiAuthCookie()
     window.open(url, '_blank', 'noopener,noreferrer')
-    setWikiAuthCookie()
   }
 }
 
-const openWorkbookForLab = (lab) => {
+const openWorkbookForLab = async (lab) => {
   const url = lab.workbook && workbookUrl(lab.workbook)
   if (url) {
+    await setWikiAuthCookie()
     window.open(url, '_blank', 'noopener,noreferrer')
-    setWikiAuthCookie()
   }
 }
 
@@ -2057,13 +2053,14 @@ const openActiveLab = async (lab) => {
       params
     })
     activeLab.value = data
-    workbookLoaded.value = wideWorkspace.value || workspaceTab.value === 'workbook'
     loadReaction(data.lab?.id || lab.id)
     loadReviewRequest()
 
-    // The framed workbook loads from the wiki origin; make sure the
-    // wiki auth cookie is present before the iframe requests it.
-    if (data.lab?.workbook) setWikiAuthCookie()
+    // The framed workbook loads from the wiki origin; wait for the wiki auth
+    // cookie before revealing the iframe, otherwise the first request is
+    // redirected to the login shell.
+    if (data.lab?.workbook) await setWikiAuthCookie()
+    workbookLoaded.value = wideWorkspace.value || workspaceTab.value === 'workbook'
 
     if (data.session) {
       if (data.session.time_remaining_seconds !== undefined) {
@@ -3915,6 +3912,43 @@ watch(timeRemaining, (val) => {
   min-width: 0;
 }
 
+.lab-tools-menu {
+  position: relative;
+}
+
+.lab-tools-menu > summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+.lab-tools-menu > summary::-webkit-details-marker {
+  display: none;
+}
+
+.lab-tools-menu > summary::marker {
+  content: '';
+}
+
+.lab-tools-menu__items {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  left: 0;
+  z-index: 40;
+  display: grid;
+  gap: 0.35rem;
+  min-width: 190px;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-secondary);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.28);
+}
+
+.lab-tools-menu__items .btn {
+  justify-content: flex-start;
+  width: 100%;
+}
+
 .contract-notice {
   display: flex;
   flex-wrap: wrap;
@@ -4219,11 +4253,11 @@ watch(timeRemaining, (val) => {
   position: relative;
   flex: 1 1 auto;
   display: grid;
-  grid-template-columns: minmax(0, 1.55fr) minmax(320px, 1fr);
-  grid-template-rows: minmax(0, 1fr) minmax(240px, 36vh);
+  grid-template-columns: minmax(0, 1.5fr) minmax(340px, 1fr);
+  grid-template-rows: minmax(0, 1.2fr) minmax(260px, 42vh);
   grid-template-areas:
-    "rangebox details"
-    "workbook workbook";
+    "rangebox workbook"
+    "details workbook";
   gap: 1rem;
   min-height: 0;
 }
@@ -4247,7 +4281,7 @@ watch(timeRemaining, (val) => {
 
 .workspace-splitter--horizontal {
   left: 0;
-  right: 0;
+  right: auto;
   height: 16px;
   margin-top: -8px;
   cursor: row-resize;
@@ -4295,12 +4329,15 @@ watch(timeRemaining, (val) => {
 }
 
 .active-lab-grid--workspace.active-lab-grid--workbook-expanded {
-  grid-template-rows: minmax(0, 1fr) minmax(320px, 46vh);
+  grid-template-columns: minmax(0, 1fr) minmax(460px, 1.25fr);
 }
 
 .active-lab-grid--workspace.active-lab-grid--no-workbook {
-  grid-template-rows: minmax(0, 1fr);
-  grid-template-areas: "rangebox details";
+  grid-template-columns: 1fr;
+  grid-template-rows: minmax(0, 1fr) minmax(260px, 42vh);
+  grid-template-areas:
+    "rangebox"
+    "details";
 }
 
 .lab-details {
@@ -4317,21 +4354,31 @@ watch(timeRemaining, (val) => {
   padding-right: 0.25rem;
 }
 
-/* Keep the flag visible without hiding the details above it. The flag is
-   visually last; hints sit before it, and both scroll with the details. */
-.lab-details--workspace #lab-hints {
-  order: 98;
+/* The workspace details pane puts the working essentials first: briefing,
+   targets, then the flag. Supporting evidence and help follow in the scroll. */
+.lab-details--workspace #lab-briefing {
+  order: 1;
+}
+
+.lab-details--workspace #lab-targets {
+  order: 2;
 }
 
 .lab-details--workspace #lab-flag {
-  order: 99;
-  position: sticky;
-  bottom: 0;
-  z-index: 3;
+  order: 3;
+  position: static;
   padding: 0.75rem 0.9rem;
   border: 1px solid var(--border-color);
   border-left: 3px solid var(--accent);
-  box-shadow: 0 -8px 18px rgba(0, 0, 0, 0.18);
+  box-shadow: none;
+}
+
+.lab-details--workspace .panel-disclosure {
+  order: 20;
+}
+
+.lab-details--workspace #lab-hints {
+  order: 30;
 }
 
 .lab-details--workspace #lab-flag .section-title {
@@ -4379,10 +4426,15 @@ watch(timeRemaining, (val) => {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
   padding: 0.55rem 0.8rem;
   background: var(--bg-secondary);
   border-bottom: 1px solid var(--border-color);
+}
+
+.active-lab-grid--workspace .workspace-frame__hint {
+  display: none;
 }
 
 .workspace-frame__head .section-title {
@@ -4393,6 +4445,8 @@ watch(timeRemaining, (val) => {
 .workspace-frame__actions {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 0.5rem;
   margin-left: auto;
   min-width: 0;
