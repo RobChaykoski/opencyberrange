@@ -27,10 +27,10 @@ Enterprise bundle are licensed per customer under a commercial agreement.
 Nothing in the PolyForm grant extends to them. Contact the owner for
 commercial terms.
 
-## Current release status (5.52.5)
+## Current release status (5.52.6)
 
 - Platform source and content: **PolyForm Noncommercial License 1.0.0**.
-- Release artefact: `v5.52.5` is a **signed** annotated tag. The supply-chain
+- Release artefact: `v5.52.6` is a **signed** annotated tag. The supply-chain
   lock is signed by the release key and verified with
   `scripts/supply_chain.py --check --signature supply-chain.lock.json.asc`.
   This supersedes the unsigned-tag notes in the older release sections below.

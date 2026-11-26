@@ -2,6 +2,26 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.52.6] - 2026-11-26
+
+### Fixed
+
+- **RangeBox proxy reattach:** after a backend restart, sessions allocated to a
+  later `/29` block were reattached with an out-of-subnet `.3` address and lost
+  their VNC path. The reattach address is now derived from the network's real
+  subnet.
+- **Workbook origin default:** a TLS deployment derives
+  `https://<host>:8443` when `wiki_origin` is empty, so a fresh install gets the
+  cross-origin workbook frame instead of the opaque same-origin sandbox that
+  makes MkDocs Material throw `SecurityError` on `localStorage`. Enrolled and
+  admin course wikis now receive the dynamic `frame-ancestors` value too.
+- **Publication hygiene:** release notes use placeholders instead of the live
+  platform hostname, and the Arkime lab README no longer prints its flag.
+
+### Changed
+
+- The API reference manual is regenerated for the current OpenAPI schema.
+
 ## [5.52.5] - 2026-11-26
 
 ### Fixed
