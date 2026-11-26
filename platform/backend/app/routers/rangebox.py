@@ -751,9 +751,9 @@ async def admin_rangebox_vnc_proxy(
         db.close()
 
     # ── 4. Resolve target student's RangeBox IP ──────────────────
-    # Try lab-specific RangeBox first, then fall back to standalone.
-    # get_rangebox_ip() always returns a computed IP (never None),
-    # so we verify the container actually exists before using it.
+    # Try lab-specific RangeBox first, then fall back to standalone. The
+    # lab-specific resolver returns None when its proxy network is missing,
+    # so a missing session cannot fall through to another lab's address.
     rangebox_ip = None
     if has_session_rangebox:
         lab_rb_status = docker_manager.get_rangebox_status(target_user_id, lab_slug, include_stats=False)

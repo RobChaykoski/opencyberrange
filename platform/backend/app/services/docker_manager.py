@@ -3637,19 +3637,30 @@ fi
 
     def get_rangebox_ip(self, user_id: int, lab_slug: str) -> Optional[str]:
         """Return the RangeBox IP on the proxy network (reachable by backend).
-        The proxy network isolates backend-to-RangeBox traffic from the lab network."""
+
+        The proxy network isolates backend-to-RangeBox traffic from the lab
+        network. Return ``None`` when the network or its subnet is missing:
+        falling back to the base ``.2`` address can point at another lab's
+        RangeBox now that the allocator assigns later ``/29`` blocks.
+        """
+        if not getattr(self, "client", None):
+            return None
+        name = f"ocr-proxy-{user_id}-{lab_slug}"
         try:
-            network = self.client.networks.get(f"ocr-proxy-{user_id}-{lab_slug}")
+            network = self.client.networks.get(name)
             configs = network.attrs.get("IPAM", {}).get("Config", [])
             subnets = [c.get("Subnet") for c in configs if c.get("Subnet")]
-            if subnets:
-                rangebox_ip, _ = proxy_peer_ips(subnets[0])
-                return rangebox_ip
-        except Exception:
-            pass
-
-        _, third_octet = get_subnet_id(user_id, lab_slug)
-        return f"10.200.{third_octet}.2"
+            if not subnets:
+                logger.warning("Proxy network %s has no subnet", name)
+                return None
+            rangebox_ip, _ = proxy_peer_ips(subnets[0])
+            return rangebox_ip
+        except docker.errors.NotFound:
+            logger.debug("Proxy network %s not found", name)
+            return None
+        except Exception as exc:
+            logger.warning("Could not resolve proxy network %s: %s", name, exc)
+            return None
 
     def get_rangebox_status(self, user_id: int, lab_slug: str, include_stats: bool = True) -> dict:
         """Get RangeBox container status and resource usage."""

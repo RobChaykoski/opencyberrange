@@ -22,6 +22,14 @@ Steps 2 and 3 order matters: the manifest copies the lock's `release` field.
 Releases 5.46.0 and 5.46.1 skipped step 3, so the committed manifest still said
 `5.45.0` and the CI integrity gate failed.
 
+## Release 5.52.10
+
+| Tag | Release | Status |
+|---|---|---|
+| `v5.52.10` | SWOCTS Cyber Range Release 5.52.10 | Signed annotated tag: RangeBox proxy lookup fails closed instead of falling back to the base `.2` address, with tests for missing networks, missing subnets, and the legacy `/30` layout. |
+
+Deliverables: [Release 5.52.10 deliverables](RELEASE-5.52.10-DELIVERABLES.md).
+
 ## Release 5.52.9
 
 | Tag | Release | Status |

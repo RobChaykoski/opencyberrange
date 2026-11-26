@@ -1,4 +1,6 @@
 """RangeBox image availability and error-path tests."""
+from types import SimpleNamespace
+
 import docker
 
 from app.services.docker_manager import DockerManager, RangeBoxImageUnavailableError
@@ -61,10 +63,27 @@ def test_unavailable_image_error_names_the_image_and_shorthand():
 
 def test_rangebox_proxy_ip_is_not_the_docker_gateway():
     manager = DockerManager.__new__(DockerManager)
+    manager.client = SimpleNamespace(
+        networks=SimpleNamespace(
+            get=lambda name: SimpleNamespace(
+                attrs={"IPAM": {"Config": [{"Subnet": "10.200.214.0/29"}]}}
+            )
+        )
+    )
 
     # Docker reserves .1 as the gateway on the proxy subnet. The desktop must
     # be reachable at a real container address, not the gateway.
     proxy_ip = manager.get_rangebox_ip(214, "high-school-9-1-rangebox-first-steps")
 
-    assert proxy_ip.endswith(".2"), proxy_ip
-    assert not proxy_ip.endswith(".1"), proxy_ip
+    assert proxy_ip == "10.200.214.2"
+    assert not proxy_ip.endswith(".1")
+
+
+def test_rangebox_proxy_ip_is_none_without_a_client():
+    manager = DockerManager.__new__(DockerManager)
+    manager.client = None
+
+    assert (
+        manager.get_rangebox_ip(214, "high-school-9-1-rangebox-first-steps")
+        is None
+    )

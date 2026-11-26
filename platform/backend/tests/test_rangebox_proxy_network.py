@@ -107,6 +107,26 @@ def test_get_rangebox_ip_reads_the_allocated_subnet():
     assert DockerManager.get_rangebox_ip(_manager(networks), 212, "lab-a") == "10.200.212.10"
 
 
+def test_get_rangebox_ip_returns_none_when_the_network_is_missing():
+    networks = _FakeNetworks()
+
+    assert DockerManager.get_rangebox_ip(_manager(networks), 212, "lab-a") is None
+
+
+def test_get_rangebox_ip_returns_none_without_a_subnet():
+    name = "ocr-proxy-212-lab-a"
+    networks = _FakeNetworks(existing={name: _FakeNetwork(name)})
+
+    assert DockerManager.get_rangebox_ip(_manager(networks), 212, "lab-a") is None
+
+
+def test_get_rangebox_ip_keeps_the_legacy_slash_30_address():
+    name = "ocr-proxy-212-lab-a"
+    networks = _FakeNetworks(existing={name: _FakeNetwork(name, "10.200.212.0/30")})
+
+    assert DockerManager.get_rangebox_ip(_manager(networks), 212, "lab-a") == "10.200.212.2"
+
+
 def test_allocator_fails_when_every_block_is_taken():
     networks = _FakeNetworks(
         blocked={f"10.200.212.{offset}/29" for offset in range(0, 256, 8)}

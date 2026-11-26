@@ -2,6 +2,15 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.52.10] - 2026-11-26
+
+### Fixed
+
+- **RangeBox proxy lookup:** `get_rangebox_ip()` now returns `None` when the
+  proxy network or its subnet is missing instead of falling back to the base
+  `.2` address, which can belong to another lab now that proxy blocks move. The
+  VNC and admin status paths already fail closed.
+
 ## [5.52.9] - 2026-11-26
 
 ### Fixed
