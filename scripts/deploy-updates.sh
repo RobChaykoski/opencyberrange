@@ -587,72 +587,54 @@ YAML
     log "${GREEN}[ok] docker-compose.override.yml created with Redis${NC}"
 }
 
-# Seed the workbook volume with source files and build all wikis.
-# Copies Workbook/, mkdocs.yml, and all mkdocs-*.yml configs into the
-# workbook_data volume, then triggers a full multi-wiki build.
+# Build the namespaced wiki tree into the shared wiki_data volume.
+# Uses the same one-shot wiki-builder as production. The builder reads
+# Workbook/, Manual-Lite/, tools/wiki-gen/, mkdocs*.yml, and wikis.yaml from
+# the repository, so it does not depend on a root mkdocs.yml.
 seed_workbook() {
-    log "${BLUE}Seeding workbook and building all wikis...${NC}"
+    log "${BLUE}Building all wikis...${NC}"
 
     if [ "$DRY_RUN" = true ]; then
-        log "${YELLOW}[DRY RUN] Would seed workbook and build all wikis${NC}"
+        log "${YELLOW}[DRY RUN] Would build all wikis${NC}"
         return 0
     fi
 
     cd "$PLATFORM_DIR"
 
-    # Copy workbook source into the container's /workbook volume
-    if [ -d "$REPO_DIR/Workbook" ] && [ -f "$REPO_DIR/mkdocs.yml" ]; then
-        log "Copying workbook source files..."
-        # Copy all mkdocs configs (main + course-specific)
-        docker compose cp "$REPO_DIR/mkdocs.yml" backend:/workbook/mkdocs.yml 2>/dev/null || true
-        for cfg in "$REPO_DIR"/mkdocs-*.yml; do
-            [ -f "$cfg" ] || continue
-            docker compose cp "$cfg" "backend:/workbook/$(basename "$cfg")" 2>/dev/null || true
-        done
-        # Use tar to copy directory contents into the volume
-        tar -cf - -C "$REPO_DIR" Workbook | docker compose exec -T backend tar -xf - -C /workbook/ 2>/dev/null || true
-        log "${GREEN}[ok] Workbook source copied${NC}"
-    else
-        log "${YELLOW}[warn] Workbook/ or mkdocs.yml not found in repo — skipping seed${NC}"
+    if ! grep -q "wiki_data" docker-compose.yml 2>/dev/null; then
+        log "${YELLOW}[warn] wiki_data volume not found; skipping wiki build${NC}"
         return 0
     fi
 
-    # Build all wikis (default + admin + static configs + dynamic course wikis)
+    local compose_args=(-f docker-compose.yml)
+    if [ -f docker-compose.override.yml ]; then
+        compose_args+=(-f docker-compose.override.yml)
+    fi
+
+    # Legacy split installs predate the wiki-builder service. Add it through a
+    # local override instead of rewriting the operator-managed compose file.
+    if ! docker compose "${compose_args[@]}" --profile tools config --services 2>/dev/null | grep -qx wiki-builder; then
+        log "Adding the one-shot wiki-builder service..."
+        cat > docker-compose.wiki-builder.yml <<'YAML'
+services:
+  wiki-builder:
+    build:
+      context: ./platform/wiki-builder
+      dockerfile: Dockerfile
+    image: ocr-wiki-builder:latest
+    profiles: ["tools"]
+    volumes:
+      - .:/repo:ro
+      - wiki_data:/out
+    environment:
+      TZ: UTC
+    restart: "no"
+YAML
+        compose_args+=(-f docker-compose.wiki-builder.yml)
+    fi
+
     log "Building all wikis (mkdocs build)..."
-    if docker compose exec -T backend python -c "
-from app.services.workbook_builder import build_all_wikis
-
-# Gather dynamic course data from the database
-courses = []
-try:
-    from app.database import SessionLocal
-    from app.models import Course, CourseLabAssignment
-    db = SessionLocal()
-    try:
-        for course in db.query(Course).filter(Course.wiki_slug.isnot(None)).all():
-            assignments = db.query(CourseLabAssignment).filter(
-                CourseLabAssignment.course_id == course.id,
-            ).order_by(CourseLabAssignment.sort_order).all()
-            paths = [a.lab.workbook for a in assignments if a.lab and a.lab.workbook]
-            courses.append({
-                'slug': course.wiki_slug,
-                'name': course.name,
-                'theme_color': course.wiki_theme_color or 'blue',
-                'workbook_paths': paths,
-            })
-    finally:
-        db.close()
-except Exception as e:
-    print(f'Warning: could not load courses from DB ({e}), building static configs only')
-
-result = build_all_wikis(courses=courses if courses else None)
-print(f\"Built {result['succeeded']} wikis OK, {result['failed']} failed in {result['total_duration_seconds']}s\")
-for r in result['results']:
-    status = 'OK' if r['success'] else 'FAIL'
-    print(f\"  [{status}] {r['slug']} ({r['duration_seconds']}s)\")
-    if not r['success']:
-        print(f\"         {r['output'][:200]}\")
-" 2>&1; then
+    if docker compose "${compose_args[@]}" --profile tools run --rm wiki-builder 2>&1; then
         log "${GREEN}[ok] All wikis built successfully${NC}"
     else
         log "${YELLOW}[warn] Wiki build had issues (some pages may still work)${NC}"
