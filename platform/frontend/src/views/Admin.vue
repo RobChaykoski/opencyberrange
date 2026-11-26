@@ -2705,6 +2705,14 @@
             </section>
 
             <!-- Minimal status (default; plain-language, install-aware, this-install only) -->
+            <HaStatusCard
+              :status="haStatus"
+              :loading="haStatusLoading"
+              @refresh="fetchHaStatus"
+            />
+            <p v-if="haStatusError" class="release-panel__error" role="alert">
+              {{ haStatusError }}
+            </p>
             <div class="panel-header">
               <h3 class="section-title">Status</h3>
               <button @click="fetchSystemStatus" :disabled="systemStatusLoading" class="btn btn--secondary btn--sm">
@@ -4868,6 +4876,7 @@ import CopyCode from '../components/CopyCode.vue'
 import Toast, { showToast } from '../components/Toast.vue'
 import PrivacyText from '../components/PrivacyText.vue'
 import MobileEfficiencyNotice from '../components/MobileEfficiencyNotice.vue'
+import HaStatusCard from '../components/HaStatusCard.vue'
 import { getUserTimeZone } from '../utils/timezone'
 import { requireExportReason } from '../utils/exportReason'
 import { downloadBlob, filenameFromDisposition } from '../utils/download'
@@ -5199,6 +5208,7 @@ function selectAdminTab(tab) {
 function openHealth() {
   selectAdminTab('system')
   systemSubTab.value = 'health'
+  fetchHaStatus()
 }
 
 function openIntegrity() {
@@ -6123,6 +6133,9 @@ const eventTypeLabel = (et) => {
 // System status state
 const systemStatus = ref({})
 const systemStatusLoading = ref(false)
+const haStatus = ref(null)
+const haStatusLoading = ref(false)
+const haStatusError = ref('')
 const releaseCheck = ref(null)
 const releaseCheckLoading = ref(false)
 const releaseCheckError = ref('')
@@ -6981,6 +6994,22 @@ const fetchSystemStatus = async () => {
     showAlert('Failed to load status', 'error')
   } finally {
     systemStatusLoading.value = false
+  }
+}
+
+const fetchHaStatus = async () => {
+  haStatusLoading.value = true
+  haStatusError.value = ''
+  try {
+    const { data } = await axios.get('/admin/system/ha')
+    haStatus.value = data
+  } catch (e) {
+    // The HA endpoint is optional on single-node installs; never block the
+    // rest of the health page on it.
+    haStatusError.value =
+      e.response?.data?.detail || 'Unable to load high-availability status'
+  } finally {
+    haStatusLoading.value = false
   }
 }
 
@@ -10310,6 +10339,7 @@ watch(activeTab, (tab) => {
   }
   if (tab === 'system') {
     fetchSystemStatus()
+    fetchHaStatus()
     fetchBackups()
     fetchActivityCalendar()
     if (systemSubTab.value === 'tester') {

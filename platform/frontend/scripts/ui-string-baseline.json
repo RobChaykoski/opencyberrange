@@ -1,5 +1,5 @@
 {
-  "total": 5412,
+  "total": 5419,
   "files": {
     "src/App.vue": 13,
     "src/components/AchievementStudio.vue": 54,
@@ -26,6 +26,7 @@
     "src/components/FlagCelebration.vue": 4,
     "src/components/GradingReport.vue": 29,
     "src/components/GuidedTour.vue": 4,
+    "src/components/HaStatusCard.vue": 7,
     "src/components/IcsCoveragePanel.vue": 18,
     "src/components/IdentityProvidersPanel.vue": 94,
     "src/components/ImpersonationBanner.vue": 2,
