@@ -114,6 +114,7 @@
     "osint-1-1-public-footprint": "16f566a0674e47513bcd87eb685ba2725e5dc020f6425a2863e5ccc99315ab76",
     "osint-1-2-image-intelligence": "dc0378f9450892c7c35f605273adac3e7071d11f65c254ca47fc7b6e36933053",
     "osint-1-3-exif-metadata": "cc80cec14afc4606cc0537d8488e6b7f6ba28990fa548d30207842db44c59edb",
+    "osint-1-4-researcher-self-audit": "56f99f44a821c47685268e9c0594aa1fd687e6521beacc7e444a3b2d7b9e228d",
     "osint-2-1-source-code-intelligence": "49c642feba02af62d2116755531127cabb87629767eb1614c168b5d2ee06d3ea",
     "osint-2-2-public-homepage": "276d2160f50303918315f09e4df108cbb87240b0f5fb21438b25c81525f52f6f",
     "osint-2-3-responsive-leak": "430c1a53e4a4b70384bcc0b5c44ee0d1c19af301789f588d1a9dcb4d032f2766",
@@ -219,7 +220,7 @@
     "windows-9-2-multi-service-exploitation": "26eb01bca4408b0bef4dcdbe4542906cd02d2f4c7e12b99dd9c0756abaf4162b",
     "windows-9-3-complete-windows-penetration-test": "a7267f4dc93846dd833ceb86456bf76367c3c8d2d72a9868b44e051fb01a847d"
   },
-  "release": "5.55.2",
+  "release": "5.56.0",
   "schema": 1,
   "source_lock": "supply-chain.lock.json"
 }

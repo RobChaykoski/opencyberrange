@@ -13,7 +13,7 @@ Operational commands for the two deployed environments.
 > [`MICROSOFT-LEGAL-NOTICE.md`](MICROSOFT-LEGAL-NOTICE.md) and
 > [`WINDOWS-ARTIFACT-POLICY.md`](WINDOWS-ARTIFACT-POLICY.md).
 
-**Current release:** `5.55.2` (signed tag `v5.55.2`, Alembic
+**Current release:** `5.56.0` (signed tag `v5.56.0`, Alembic
 `0067_course_content_rls`). The admin **System → Health → Release status**
 panel compares the installed version with the latest GitHub release or tag.
 The authoritative deployment state, including whether cutover has run, is in

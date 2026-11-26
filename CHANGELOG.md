@@ -2,6 +2,24 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.56.0] - 2026-11-26
+
+### Added
+
+- **Researcher self-audit lab:** `osint-1-4-researcher-self-audit` adds a safe,
+  offline OSINT target where learners audit a fictional researcher's public
+  profile, search results, synthetic breach record, photo metadata, and stale
+  forum trail. The workbook asks for a finding, action, owner, and verification
+  date, and the review ticket reveals the flag in its source. Every person and
+  record is synthetic; no live target is used.
+- **Workbook and assessment:** the OSINT Foundations chapter now has a sixth
+  exercise, a self-audit walkthrough, a remediation table, and a chapter-review
+  update. The generated tester manifest and competency contract are included.
+- **Reference path:** the chapter review links the University of Toronto OSINT
+  self-audit guide as additional reading, not as copied lab content.
+- **Content counts:** the catalogue now has 218 lab definitions, 207
+  workbook-mapped labs, and 171 public exercises.
+
 ## [5.55.2] - 2026-11-26
 
 ### Fixed

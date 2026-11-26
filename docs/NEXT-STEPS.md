@@ -1,6 +1,6 @@
 # Next steps
 
-Status: **Release 5.55.2 is deployed to development and production.** The
+Status: **Release 5.56.0 is deployed to development and production.** The
 read-only HA status panel (endpoint, Admin card, witness endpoint, host
 collector) is implemented; the witness/collector install and live drills
 remain. The exercise workspace now has a read-only Briefing tab and pop-out.
@@ -9,6 +9,19 @@ automation is scheduled. Dependency maintenance cleared the dev/tooling
 Dependabot backlog; runtime and OS updates remain for review. This page tracks
 what is left; the deployment record is
 [`RELEASE-5-PRODUCTION-READINESS.md`](RELEASE-5-PRODUCTION-READINESS.md).
+
+## 5.56.0
+
+- **Researcher self-audit lab.** `osint-1-4-researcher-self-audit` is a safe,
+  offline mirror of a fictional researcher's search footprint, breach record,
+  photo metadata, and stale forum trail. Learners write a finding, action,
+  owner, and verification step, then recover the flag from the review ticket
+  source.
+- **Workbook integration:** OSINT Foundations now has six exercises, the chapter
+  review includes the self-audit, and the chapter links the University of
+  Toronto OSINT self-audit guide as additional reading.
+- **Content counts:** 218 lab definitions, 207 workbook-mapped labs, 171 public
+  exercises, and 218 tester manifests/contracts.
 
 ## 5.55.2
 
