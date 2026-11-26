@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@novnc/novnc": "^1.7.0",
-    "axios": "^1.21.0",
+    "axios": "^1.21.1",
     "dompurify": "^3.4.17",
     "echarts": "^6.1.0",
     "marked": "^18.1.2",
