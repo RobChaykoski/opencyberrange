@@ -9,6 +9,23 @@ another document disagrees, this page and the signed tag win.
 > replaced with placeholders. The private deployment inventory holds the live
 > values. See [`PUBLICATION-METADATA-POLICY.md`](PUBLICATION-METADATA-POLICY.md).
 
+## 5.56.1 deployment verification
+
+| Check | Result |
+|---|---|
+| `/api/version` | `5.56.1` on production and development |
+| Alembic | **`0067_course_content_rls` (head)** |
+| Health | Production and development backend/frontend containers `healthy`; nginx `-t` passes |
+| Assessment metadata | The release ships the regenerated lab-outcome, competency-review, and NICE v2.2.0 mapping files |
+| New lab | `osint-1-4-researcher-self-audit` remains public and active in the 218-lab catalogue |
+| Production wiki | **14** sites rebuilt |
+| Pre-deploy backup (production) | `~/backups/ocr-backup-20261126-225908.dump` |
+| Pre-deploy backup (development) | `~/opencyberrange/.backups/20261126_230227` |
+| Rollback images | `opencyberrange-backend:pre-v5.56.1`, `ocr-frontend:pre-v5.56.1` on production; development rolls back by rebuilding `v5.56.0` |
+
+5.56.1 is a generated-metadata and test follow-up to 5.56.0. Alembic stays at
+`0067_course_content_rls`; no lab target changed.
+
 ## 5.56.0 deployment verification
 
 | Check | Result |
