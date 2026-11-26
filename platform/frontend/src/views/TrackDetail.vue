@@ -1091,11 +1091,11 @@
               role="separator"
               aria-orientation="vertical"
               aria-label="Resize the RangeBox desktop and exercise details"
-              :aria-valuenow="Math.round(splitV)"
+              :aria-valuenow="Math.round(workspaceLeftPercent)"
               aria-valuemin="35"
               aria-valuemax="80"
               tabindex="0"
-              :style="{ left: `calc(${splitV}% - 0.5rem)` }"
+              :style="{ left: `calc(${workspaceLeftPercent}% - 0.5rem)` }"
               @pointerdown.prevent="startWorkspaceSplit('vertical', $event)"
               @keydown.left.prevent="adjustWorkspaceSplit('vertical', -4)"
               @keydown.right.prevent="adjustWorkspaceSplit('vertical', 4)"
@@ -1112,7 +1112,7 @@
               tabindex="0"
               :style="{
                 top: `calc(${effectiveSplitH}% - 0.5rem)`,
-                width: `calc(${splitV}% - 0.5rem)`,
+                width: `calc(${workspaceLeftPercent}% - 0.5rem)`,
               }"
               @pointerdown.prevent="startWorkspaceSplit('horizontal', $event)"
               @keydown.up.prevent="adjustWorkspaceSplit('horizontal', -4)"
@@ -1627,6 +1627,11 @@ const workspaceGrid = ref(null)
 const splitV = ref(loadSplit(WORKSPACE_SPLIT_V_KEY, 60, 35, 80))
 const splitH = ref(loadSplit(WORKSPACE_SPLIT_H_KEY, 58, 35, 78))
 const effectiveSplitH = computed(() => splitH.value)
+// The Expand toggle fixes the columns at 1fr / 1.25fr; the divider has to sit
+// on that boundary rather than the stored split while it is active.
+const workspaceLeftPercent = computed(() =>
+  workbookExpanded.value ? (100 / 2.25) : splitV.value
+)
 const workspaceGridStyle = computed(() => {
   if (!wideWorkspace.value) return {}
   const top = effectiveSplitH.value
@@ -1714,7 +1719,12 @@ const endWorkspaceSplit = (event) => {
 
 const startWorkspaceSplit = (axis, event) => {
   if (!wideWorkspace.value || !workspaceGrid.value) return
-  if (axis === 'horizontal') workbookExpanded.value = false
+  // Expanding the workbook overrides the stored split; collapse it first so the
+  // divider follows the pointer from where it is drawn.
+  if (workbookExpanded.value) {
+    splitV.value = clampSplit(100 / 2.25, 35, 80)
+    workbookExpanded.value = false
+  }
   // Pointer capture keeps move/up events on the splitter even when the cursor
   // crosses the RangeBox iframe. Without it the iframe receives the pointerup,
   // the document never sees the release, and the drag appears stuck.
@@ -1746,6 +1756,10 @@ const startWorkspaceSplit = (axis, event) => {
 
 const adjustWorkspaceSplit = (axis, delta) => {
   if (axis === 'vertical') {
+    if (workbookExpanded.value) {
+      splitV.value = clampSplit(100 / 2.25, 35, 80)
+      workbookExpanded.value = false
+    }
     splitV.value = clampSplit(splitV.value + delta, 35, 80)
   } else {
     workbookExpanded.value = false
