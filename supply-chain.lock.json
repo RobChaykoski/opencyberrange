@@ -208,7 +208,7 @@
       "sha256": "b6722dd013e620bc829bbeba74ce77a8a3fdac42f75d6f9804d74dc91f75196f"
     },
     "platform/backend/requirements-dev.txt": {
-      "sha256": "81a2c9bc2fff87a966d60c258b381bc96f74073ec1679b7b75cca32101b9317b"
+      "sha256": "f7a77b4cc4ea6a3c53771674b2773c5d650abbb612d4d6849cd00d7caff221eb"
     },
     "platform/backend/requirements.txt": {
       "sha256": "b5fe895712c24da914c0f6130dd853f30f94a61d95e5b2939b6a46fe81547c50"
@@ -238,10 +238,10 @@
       "sha256": "6c3dfe917751fbc587c5841d923e4050defe97756f6c2e93827d3251adf345d4"
     },
     "platform/frontend/package-lock.json": {
-      "sha256": "636acd4cc9d31b301ab184834a310763888c6925d29a73c40058c5884301a59e"
+      "sha256": "5d543fec811bc24f4767fb12aaa9b7222a5d966d398e4338e0933f1728067b25"
     },
     "platform/frontend/package.json": {
-      "sha256": "5f1f03b6e448cdcbe0215746e164498d09c4e1d831e30aad58f3dcb1daa37af7"
+      "sha256": "606b207ccaff84b7e5dc77025e36698765afee560d23f738b3f65495d3f8de43"
     },
     "platform/frontend/security-headers.conf": {
       "sha256": "dedacc7cf8e9ae24225045f3cb3c47a5f5fa3141cab22ce59fc9b51eff25053f"
