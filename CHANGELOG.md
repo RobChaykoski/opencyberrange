@@ -2,6 +2,24 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.52.5] - 2026-11-26
+
+### Fixed
+
+- **RangeBox proxy networks:** a second lab for the same user reused the same
+  `10.200.<user>.0/29` block while the previous lab's proxy network still
+  existed, so Docker answered `invalid pool request: Pool overlaps` and the new
+  desktop lost its VNC path. The allocator now walks the user's `/24` in `/29`
+  steps, and the RangeBox/backend addresses are derived from the block actually
+  allocated instead of assuming `.2`/`.3`.
+- **Workbook sandbox:** production serves the wiki from
+  `https://<host>:8443` (`wiki_origin`), so the framed workbook is a separate
+  origin. MkDocs Material can use `localStorage` again; the same-origin
+  sandbox had thrown `SecurityError` on every page.
+- **Workspace regression:** the walkthrough now verifies the framed workbook
+  rendered a page, follows the workbook size labels, accepts the in-app Stop
+  confirmation, and ignores KasmVNC teardown noise.
+
 ## [5.52.4] - 2026-11-26
 
 ### Fixed

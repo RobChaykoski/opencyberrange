@@ -4,6 +4,7 @@ Handles creation, management, and cleanup of Docker containers and networks
 """
 
 import docker
+import ipaddress
 import yaml
 import logging
 import os
@@ -346,6 +347,18 @@ def get_subnet_id(user_id: int, lab_slug: str = None) -> tuple:
             second_octet = 100 + (second_octet % 155)
 
     return (second_octet, third_octet)
+
+
+def proxy_peer_ips(subnet: str) -> tuple[str, str]:
+    """Addresses for the RangeBox and backend on a RangeBox proxy /29.
+
+    Docker reserves the network address and the first host of a subnet as the
+    gateway. The original /29 layouts used .2 and .3; deriving the addresses
+    from the network keeps that true when the allocator moves to a later block
+    (for example 10.200.212.8/29 -> .10 and .11).
+    """
+    network = ipaddress.ip_network(subnet, strict=False)
+    return str(network.network_address + 2), str(network.network_address + 3)
 
 
 class DockerManager:
@@ -3480,43 +3493,21 @@ fi
             # Docker reserves the first address in a subnet as the gateway, so
             # a /30 cannot hold both peers: .1 is the gateway, leaving only .2.
             # Use a /29 with the RangeBox at .2 and the backend at .3.
+            #
+            # The subnet is per user, not per lab, so a previous session's
+            # network can still hold 10.200.<user>.0/29 when the next lab
+            # starts. Trying only the base block made Docker answer "Pool
+            # overlaps with other one on this address space" and the new
+            # RangeBox lost its VNC path. Walk the user's /24 in /29 steps and
+            # use the first block no other network owns.
             proxy_network_name = f"ocr-proxy-{user_id}-{lab_slug}"
-            proxy_subnet = f"10.200.{third_octet}.0/29"
-            proxy_rangebox_ip = f"10.200.{third_octet}.2"
-            proxy_backend_ip = f"10.200.{third_octet}.3"
             try:
-                try:
-                    proxy_net = self.client.networks.get(proxy_network_name)
-                    configs = proxy_net.attrs.get("IPAM", {}).get("Config", [])
-                    if any((c.get("Subnet") or "").endswith("/30") for c in configs):
-                        # Replace a legacy /30 network whose .1 address was the
-                        # Docker gateway, which made the VNC proxy unreachable.
-                        logger.info(
-                            "Replacing legacy /30 RangeBox proxy network %s",
-                            proxy_network_name,
-                        )
-                        for container_id in list(
-                            (proxy_net.attrs.get("Containers") or {}).keys()
-                        ):
-                            try:
-                                attached = self.client.containers.get(container_id)
-                                proxy_net.disconnect(attached, force=True)
-                            except Exception as e:
-                                logger.debug(
-                                    "Could not detach %s from legacy proxy network: %s",
-                                    container_id, e,
-                                )
-                        proxy_net.remove()
-                        raise docker.errors.NotFound(proxy_network_name)
-                except docker.errors.NotFound:
-                    proxy_net = self.client.networks.create(
-                        proxy_network_name,
-                        driver="bridge",
-                        ipam=docker.types.IPAMConfig(
-                            pool_configs=[docker.types.IPAMPool(subnet=proxy_subnet)]
-                        ),
-                        labels={"ocr.role": "rangebox-proxy", "ocr.user_id": str(user_id)},
-                    )
+                proxy_net, proxy_subnet = self._ensure_proxy_network(
+                    proxy_network_name, user_id, third_octet
+                )
+                proxy_rangebox_ip, proxy_backend_ip = proxy_peer_ips(
+                    proxy_subnet or f"10.200.{third_octet}.0/29"
+                )
                 proxy_net.connect(container, ipv4_address=proxy_rangebox_ip)
                 # Attach backend to proxy network (not the lab network)
                 backend = self.client.containers.get(_BACKEND_CONTAINER)
@@ -3541,6 +3532,69 @@ fi
         except Exception as e:
             logger.error(f"Failed to spawn RangeBox for user {user_id}: {e}")
             return None
+
+    def _ensure_proxy_network(self, name: str, user_id: int, third_octet: int):
+        """Return the RangeBox proxy network and its subnet.
+
+        Docker rejects a network whose subnet overlaps an existing one. The
+        base block is per user, so a lab that starts before the previous
+        session's network is released would otherwise lose its VNC path. Try
+        the base /29, then the remaining /29 blocks in the user's /24, and use
+        the first one Docker accepts.
+        """
+        try:
+            proxy_net = self.client.networks.get(name)
+            configs = proxy_net.attrs.get("IPAM", {}).get("Config", [])
+            subnets = [c.get("Subnet") for c in configs if c.get("Subnet")]
+            if subnets and not any(subnet.endswith("/30") for subnet in subnets):
+                return proxy_net, subnets[0]
+
+            # Replace a legacy /30 network whose .1 address was the Docker
+            # gateway, which made the VNC proxy unreachable.
+            logger.info("Replacing legacy /30 RangeBox proxy network %s", name)
+            for container_id in list((proxy_net.attrs.get("Containers") or {}).keys()):
+                try:
+                    attached = self.client.containers.get(container_id)
+                    proxy_net.disconnect(attached, force=True)
+                except Exception as exc:
+                    logger.debug(
+                        "Could not detach %s from legacy proxy network: %s",
+                        container_id,
+                        exc,
+                    )
+            proxy_net.remove()
+        except docker.errors.NotFound:
+            pass
+
+        candidates = [f"10.200.{third_octet}.0/29"]
+        candidates += [
+            f"10.200.{third_octet}.{offset}/29"
+            for offset in range(8, 256, 8)
+        ]
+
+        last_error = None
+        for subnet in candidates:
+            try:
+                proxy_net = self.client.networks.create(
+                    name,
+                    driver="bridge",
+                    ipam=docker.types.IPAMConfig(
+                        pool_configs=[docker.types.IPAMPool(subnet=subnet)]
+                    ),
+                    labels={"ocr.role": "rangebox-proxy", "ocr.user_id": str(user_id)},
+                )
+                logger.info("Created RangeBox proxy network %s on %s", name, subnet)
+                return proxy_net, subnet
+            except Exception as exc:
+                last_error = exc
+                message = str(exc).lower()
+                if "pool overlaps" in message or "invalid pool request" in message:
+                    continue
+                raise
+
+        raise RuntimeError(
+            f"No free /29 block for RangeBox proxy network {name}: {last_error}"
+        )
 
     def destroy_rangebox(self, user_id: int, lab_slug: str):
         """Stop and remove the RangeBox container for a lab session."""
@@ -3584,6 +3638,16 @@ fi
     def get_rangebox_ip(self, user_id: int, lab_slug: str) -> Optional[str]:
         """Return the RangeBox IP on the proxy network (reachable by backend).
         The proxy network isolates backend-to-RangeBox traffic from the lab network."""
+        try:
+            network = self.client.networks.get(f"ocr-proxy-{user_id}-{lab_slug}")
+            configs = network.attrs.get("IPAM", {}).get("Config", [])
+            subnets = [c.get("Subnet") for c in configs if c.get("Subnet")]
+            if subnets:
+                rangebox_ip, _ = proxy_peer_ips(subnets[0])
+                return rangebox_ip
+        except Exception:
+            pass
+
         _, third_octet = get_subnet_id(user_id, lab_slug)
         return f"10.200.{third_octet}.2"
 
