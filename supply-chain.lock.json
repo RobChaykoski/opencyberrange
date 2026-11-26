@@ -163,7 +163,7 @@
       "sha256": "d073d2202db1e15c9b259640ea31cde86fc10329b3918c9fdc18fab906fd4d4d"
     },
     "platform/backend/app/data/lab-outcomes.yaml": {
-      "sha256": "ba949c6686b92181aceae0ed725b51b4e2f086efbb6d1be6c0033a36308d6cf3"
+      "sha256": "ab5d1013c8c97360107adc181db5f19601b58973aa4e7e5216ae9f32429aa724"
     },
     "platform/backend/app/data/malware-samples.yaml": {
       "sha256": "4e6a00ce7febc54336c44fe167b45180fbc8ae8cbb4343f772b2ad0554cc77be"
@@ -178,7 +178,7 @@
       "sha256": "877500e2e2d33af4263cae4b4b208166f4c500c8e4648d6b5b8d24ac122829c1"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "f51e639cf50c59f6cb39c0c9c90390ba5373e0ffc36b21be71f33257de7a7754"
+      "sha256": "5cb50d4f02e7b0c0823ce2cc89c1406ca916341227dd755f1c64646d667aad84"
     },
     "platform/backend/app/data/threat-awareness.json": {
       "sha256": "78703d33386e1b62becfa5cfb1b27a22f770fff20a3e38411b0787e76f7c48ea"
@@ -199,7 +199,7 @@
       "sha256": "18f211d07b779cb88dbb4e5c71c6ae4d62f4f6e38c71104b901ede93df31f6bd"
     },
     "platform/backend/app/version.py": {
-      "sha256": "bddeed44631db2e8dc7896a1c54d3d0a0c700a51f4c69202050581acb7ffd937"
+      "sha256": "e0b857caa377cc8d4a0c462b00a39260c298e16e867d945e8e0a78a44aab6b21"
     },
     "platform/backend/lab_metadata.schema.json": {
       "sha256": "7590d5bf2a3a9ea2ecf275ba18c82394dfec252b0a39fe0846d18e57d746c36c"
@@ -238,10 +238,10 @@
       "sha256": "6c3dfe917751fbc587c5841d923e4050defe97756f6c2e93827d3251adf345d4"
     },
     "platform/frontend/package-lock.json": {
-      "sha256": "0fb0e75fd4afa84b8c326d9a10c298a2305890ebc32446a7d1dd13fc77b809e8"
+      "sha256": "a7899ec1c70571835c50280650acf6c014d634c5de37506d4434fcdea3c9d463"
     },
     "platform/frontend/package.json": {
-      "sha256": "fd36fa392fe6c1f38811f8001284bf410732227c05291e7b1b52ed7fcb219c39"
+      "sha256": "277775705bbd6dcf6f185a77b1ed97aa907420c3fc291a07404b4b07008b13f9"
     },
     "platform/frontend/security-headers.conf": {
       "sha256": "dedacc7cf8e9ae24225045f3cb3c47a5f5fa3141cab22ce59fc9b51eff25053f"
@@ -424,7 +424,7 @@
       "sha256": "f08f563a56860357a3c246993e4fd3da16cf1df35cce49f9890c0b09eb1ab769"
     },
     "versions.yaml": {
-      "sha256": "922f72e96ea09cbf3d302e14f7aa351c629d80954c4f0441a3ef3f4653493fce"
+      "sha256": "dce14f2acf2af50ce00b988329c0b671272c49db79fd32380a9b2c2abbd2f6b8"
     }
   },
   "generator": "scripts/supply_chain.py",
@@ -1757,6 +1757,6 @@
       ]
     }
   },
-  "release": "5.56.0",
+  "release": "5.56.1",
   "schema": 1
 }

@@ -2,6 +2,19 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.56.1] - 2026-11-26
+
+### Fixed
+
+- **Generated assessment records:** regenerated the competency review queue,
+  lab outcomes, and NICE lab mappings for the new 218-lab catalogue. The new
+  researcher self-audit lab now has a provisional NICE mapping.
+- **Count assertions:** the competency coverage, metadata-contract, lab-outcome,
+  and competency-review tests now assert 218 labs and 193 pending reviews.
+- **NICE reference:** the NICE mapping matrix records the v2.2.0 snapshot, the
+  26 November 2026 review date, and the NIST CPRT catalogue link. The OSINT row
+  now lists six labs, including the self-audit.
+
 ## [5.56.0] - 2026-11-26
 
 ### Added

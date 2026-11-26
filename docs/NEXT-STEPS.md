@@ -1,6 +1,6 @@
 # Next steps
 
-Status: **Release 5.56.0 is deployed to development and production.** The
+Status: **Release 5.56.1 is deployed to development and production.** The
 read-only HA status panel (endpoint, Admin card, witness endpoint, host
 collector) is implemented; the witness/collector install and live drills
 remain. The exercise workspace now has a read-only Briefing tab and pop-out.
@@ -9,6 +9,15 @@ automation is scheduled. Dependency maintenance cleared the dev/tooling
 Dependabot backlog; runtime and OS updates remain for review. This page tracks
 what is left; the deployment record is
 [`RELEASE-5-PRODUCTION-READINESS.md`](RELEASE-5-PRODUCTION-READINESS.md).
+
+## 5.56.1
+
+- **Generated records:** refreshed the competency review queue, lab outcomes,
+  and NICE v2.2.0 provisional mappings for all 218 labs.
+- **NICE reference:** the mapping matrix now cites the NIST CPRT catalogue and
+  records the v2.2.0 snapshot and review date.
+- **Tests:** the catalogue-size and pending-review assertions now cover 218
+  labs and 193 pending reviews.
 
 ## 5.56.0
 

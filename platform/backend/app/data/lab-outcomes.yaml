@@ -6039,6 +6039,59 @@ labs:
         reviewed.
     review_status: baseline_derived
     reviewed_at: null
+  osint-1-4-researcher-self-audit:
+    track: OSINT
+    difficulty: beginner
+    expected_duration_minutes: 45
+    workbook: wiki/range/osint/CH_OSINT01_OSINT_Foundations/06_Researcher_Self_Audit/
+    skills_earned:
+    - id: OSINT-001
+      name: Intelligence Lifecycle
+      weight: 0.4
+    - id: OSINT-002
+      name: Search Operator Usage
+      weight: 0.3
+    - id: OSINT-003
+      name: Advanced Search Techniques
+      weight: 0.2
+    - id: OSINT-005
+      name: Domain Research
+      weight: 0.1
+    competencies_proven:
+    - id: OSINT-001
+      name: Intelligence Lifecycle
+      weight: 0.4
+      category: Collection
+    - id: OSINT-002
+      name: Search Operator Usage
+      weight: 0.3
+      category: Collection
+    - id: OSINT-003
+      name: Advanced Search Techniques
+      weight: 0.2
+      category: Collection
+    - id: OSINT-005
+      name: Domain Research
+      weight: 0.1
+      category: Collection
+    knowledge_domains:
+    - id: OSINT
+      label: OSINT
+    practice_axes:
+    - OSINT
+    evidence_artifacts:
+    - flag
+    - automated validation
+    - analyst finding
+    - submitted artifact
+    confidence:
+      score: 0.65
+      level: medium
+      basis: Baseline contract derived from the reviewed competency mapping. The evidence types and weights
+        are explicit; live harness evidence and analyst-answer moderation are required before marking
+        reviewed.
+    review_status: baseline_derived
+    reviewed_at: null
   osint-2-1-source-code-intelligence:
     track: OSINT
     difficulty: intermediate

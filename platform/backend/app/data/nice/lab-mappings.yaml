@@ -1,5 +1,5 @@
 framework: NICE
-generated_at: '2026-11-25T05:19:18.659687+00:00'
+generated_at: '2026-11-26T22:56:05.686244+00:00'
 mappings:
   ai-1-1-prompt-injection-basics:
     confidence: medium
@@ -2469,6 +2469,27 @@ mappings:
     - T1325
     - T1187
     - T1199
+    work_roles:
+    - PD-WRL-006
+    - IN-WRL-001
+    - PD-WRL-003
+  osint-1-4-researcher-self-audit:
+    confidence: medium
+    knowledge:
+    - K0480
+    - K0655
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0512
+    - S0514
+    - S0579
+    source: derived_from_competency_and_category
+    tasks:
+    - T1119
+    - T1196
+    - T1251
     work_roles:
     - PD-WRL-006
     - IN-WRL-001

@@ -1,10 +1,11 @@
 # NICE mapping matrix
 
 This matrix maps the platform's tracks to the **NICE Workforce Framework for
-Cybersecurity** (NIST SP 800-181r1). It is an indicative curriculum crosswalk,
-not a formal certification, accreditation, or work-role validation. Validate
-work-role names, task IDs, and KSA IDs against the current NICE Framework before
-using this in a programme review, grant application, or REB submission.
+Cybersecurity** (NIST SP 800-181r1; NICE Framework v2.2.0 snapshot). It is an
+indicative curriculum crosswalk, not a formal certification, accreditation, or
+work-role validation. Validate work-role names, task IDs, and KSA IDs against the
+[current NICE Framework](https://csrc.nist.gov/projects/cprt/catalog#/cprt/framework/version/SP_800_181_2_1_0/home?element=all)
+before using this in a programme review, grant application, or REB submission.
 
 ## How to read the matrix
 
@@ -30,7 +31,7 @@ using this in a programme review, grant application, or REB submission.
 | **Malware Analysis** | Analyze (AN); Protect and Defend (PR); Investigate (IN) | Cyber Defense Forensics Analyst; Cyber Defense Analyst; Exploitation Analyst | Static and dynamic triage, strings and PE analysis, Ghidra reversing, C2 traffic, document and attachment analysis | 8 labs, evidence workstations, PCAPs, workbook walkthroughs |
 | **OT/ICS Security** | Protect and Defend (PR); Operate and Maintain (OM) | Cyber Defense Analyst; Cyber Defense Incident Responder | Modbus/ICS discovery, safe scanning, register analysis, OT incident response | 1 foundational lab; suitable as an entry point before a fuller ICS programme |
 | **AI Hacking** | Analyze (AN); Securely Provision (SP) | Exploitation Analyst; Secure Software Assessor | Prompt injection, jailbreak policy bypass, indirect prompt injection, agent hijacking, AI application testing and remediation | 4 labs, chatbot and tool-calling targets, flags, workbook analysis |
-| **OSINT** | Collect and Operate (CO); Analyze (AN) | Exploitation Analyst; Cyber Operations Planner | Public-surface mapping, image metadata and steganography, source-code and public-repository leaks, responsible collection | 5 labs, OSINT workbook, synthetic personas, flags |
+| **OSINT** | Collect and Operate (CO); Analyze (AN) | Exploitation Analyst; Cyber Operations Planner | Public-surface mapping, image metadata and steganography, source-code and public-repository leaks, responsible collection, and a self-audit/remediation exercise | 6 labs, OSINT workbook, synthetic personas, flags |
 | **Beginner Cybersecurity** | Operate and Maintain (OM); Protect and Defend (PR) | Network Operations Specialist; Cyber Defense Analyst (entry) | Digital safety, link and file inspection, command line, permissions, processes, networking, service observation, defensive log reading, evidence notes, and applied RangeBox practice | 18 labs across four beginner stages, browser-first targets, workbook pages, certificates |
 | **Software Security** | Securely Provision (SP); Protect and Defend (PR) | Secure Software Assessor; Vulnerability Assessment Analyst | Source review, hidden export routes, command injection, secure coding and remediation | 2 labs, source-review targets, flags, workbook exercises |
 | **Identity & Access** | Securely Provision (SP); Protect and Defend (PR); Operate and Maintain (OM) | Security Architect; Systems Administrator; Cyber Defense Analyst | Sessions, MFA, OAuth/OIDC, SSO, token trust, joiner/mover/leaver, access reviews, non-human identity, and leaked service credentials | 4 labs, browser and terminal targets, workbook exercises, flags |
@@ -75,6 +76,20 @@ Review this matrix at least annually or when the NICE Framework is updated:
 3. Record the NICE Framework version and review date in the change log.
 4. Keep the wording behavioural: describe what learners do, not what they are
    guaranteed to become.
+
+## Framework version and review
+
+| Item | Value |
+|---|---|
+| NICE Framework snapshot | v2.2.0 (`nice-v2.2.0.json.gz`) |
+| Crosswalk review date | 26 November 2026 |
+| Authoritative catalogue | [NIST CPRT, SP 800-181](https://csrc.nist.gov/projects/cprt/catalog#/cprt/framework/version/SP_800_181_2_1_0/home?element=all) |
+| Lab mapping state | Generated provisional mappings; reviewers confirm or replace them |
+
+The repository uses the v2.2.0 component snapshot so component codes stay stable
+offline. The CPRT catalogue remains the source for checking names, tasks, and
+KSAs before a formal programme review. The array of per-lab provisional
+mappings is in `platform/backend/app/data/nice/lab-mappings.yaml`.
 
 ## Related documents
 
