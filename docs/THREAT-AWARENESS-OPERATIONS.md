@@ -150,7 +150,7 @@ Expected: `snapshot` mode, a recent `generated_at`, and no `sample` banner.
 | Snapshot | Suggested cadence | Notes |
 |---|---|---|
 | FireHOL | Weekly or monthly | Re-download the monthly DB-IP file with the feed |
-| RansomLook | Weekly | The public totals move daily |
+| RansomLook | Every 1–3 days | The public totals move daily; weekly at minimum |
 
 Do not schedule a refresh inside the platform. Run it on an operations host,
 review the diff, and ship it as a release.

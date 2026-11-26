@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "mode": "snapshot",
-  "generated_at": "2026-11-24T21:58:47Z",
+  "generated_at": "2026-11-26T16:47:27Z",
   "window_days": 7,
   "source": {
     "name": "RansomLook",
@@ -16,28 +16,28 @@
     "crypto_addresses": false
   },
   "totals": {
-    "posts_24h": 34,
-    "posts_month": 1080,
-    "posts_90d": 3393,
-    "posts_year": 10240,
-    "posts_total": 37484,
-    "groups": 654,
-    "groups_online": 733,
+    "posts_24h": 64,
+    "posts_month": 1217,
+    "posts_90d": 3481,
+    "posts_year": 10381,
+    "posts_total": 37625,
+    "groups": 657,
+    "groups_online": 486,
     "markets": 162,
-    "window_posts": 291
+    "window_posts": 325
   },
   "groups": [
     {
       "name": "n0n",
-      "count": 61
+      "count": 71
+    },
+    {
+      "name": "the gentlemen",
+      "count": 40
     },
     {
       "name": "safepay",
       "count": 19
-    },
-    {
-      "name": "the gentlemen",
-      "count": 18
     },
     {
       "name": "pixelleaks",
@@ -45,47 +45,47 @@
     },
     {
       "name": "leakeddata",
-      "count": 14
-    },
-    {
-      "name": "inc ransom",
-      "count": 14
-    },
-    {
-      "name": "vortex",
-      "count": 13
-    },
-    {
-      "name": "qilin",
-      "count": 12
-    },
-    {
-      "name": "rhysida",
-      "count": 11
+      "count": 15
     },
     {
       "name": "aurora",
-      "count": 11
+      "count": 14
+    },
+    {
+      "name": "qilin",
+      "count": 13
+    },
+    {
+      "name": "inc ransom",
+      "count": 13
+    },
+    {
+      "name": "rhysida",
+      "count": 12
     },
     {
       "name": "everest",
-      "count": 10
-    },
-    {
-      "name": "hyflock",
-      "count": 9
+      "count": 12
     },
     {
       "name": "space bears",
+      "count": 12
+    },
+    {
+      "name": "scarlettgroup",
       "count": 8
     },
     {
-      "name": "lockbit5",
+      "name": "inception",
       "count": 7
     },
     {
       "name": "pear",
       "count": 6
+    },
+    {
+      "name": "orova",
+      "count": 5
     }
   ],
   "notes": [

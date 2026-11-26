@@ -2,6 +2,19 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.52.7] - 2026-11-26
+
+### Changed
+
+- **Threat-awareness snapshots:** refreshed both release snapshots. Hostile
+  infrastructure now reports `467,952` entries across `147` countries from the
+  FireHOL feeds with DB-IP Lite `2026-11` attribution; ransomware activity
+  reports `325` posts in the last seven days across `15` groups from RansomLook.
+  Both remain aggregated, address-free release artifacts.
+- **Refresh cadence:** the operations guide now suggests refreshing RansomLook
+  every one to three days (weekly at minimum) and FireHOL weekly alongside the
+  monthly DB-IP file.
+
 ## [5.52.6] - 2026-11-26
 
 ### Fixed

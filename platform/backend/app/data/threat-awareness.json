@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "mode": "snapshot",
-  "generated_at": "2026-11-24T22:12:13Z",
+  "generated_at": "2026-11-26T16:47:21Z",
   "window_hours": 24,
   "source": {
     "name": "FireHOL threat intelligence feeds",
@@ -17,11 +17,11 @@
     "attack_paths": "not included"
   },
   "totals": {
-    "entries_observed": 469828,
-    "entries_reported": 469828,
+    "entries_observed": 467952,
+    "entries_reported": 467952,
     "categories": 8,
-    "countries": 148,
-    "buckets_suppressed": 72
+    "countries": 147,
+    "buckets_suppressed": 73
   },
   "categories": [
     {
@@ -32,27 +32,27 @@
     {
       "id": "abusers_30d",
       "label": "30-day abusers",
-      "count": 178394
+      "count": 177974
     },
     {
       "id": "firehol_level2",
       "label": "Level 2 - moderate risk",
-      "count": 15693
+      "count": 15780
     },
     {
       "id": "firehol_level3",
       "label": "Level 3 - low risk",
-      "count": 13923
+      "count": 13301
     },
     {
       "id": "abusers_24h",
       "label": "24-hour abusers",
-      "count": 5674
+      "count": 4765
     },
     {
       "id": "firehol_level1",
       "label": "Level 1 - high risk",
-      "count": 4632
+      "count": 4620
     },
     {
       "id": "web_server",
@@ -69,222 +69,222 @@
     {
       "code": "US",
       "label": "United States",
-      "count": 140032
+      "count": 140023
     },
     {
       "code": "IN",
       "label": "India",
-      "count": 32250
+      "count": 32270
     },
     {
       "code": "DE",
       "label": "Germany",
-      "count": 23111
+      "count": 23115
     },
     {
       "code": "RU",
       "label": "Russia",
-      "count": 17967
-    },
-    {
-      "code": "JP",
-      "label": "Japan",
-      "count": 16949
+      "count": 17888
     },
     {
       "code": "GB",
       "label": "United Kingdom",
-      "count": 16828
+      "count": 16911
+    },
+    {
+      "code": "JP",
+      "label": "Japan",
+      "count": 16902
     },
     {
       "code": "SG",
       "label": "Singapore",
-      "count": 16582
-    },
-    {
-      "code": "CA",
-      "label": "Canada",
-      "count": 16447
+      "count": 16519
     },
     {
       "code": "AU",
       "label": "Australia",
-      "count": 15667
+      "count": 15705
+    },
+    {
+      "code": "CA",
+      "label": "Canada",
+      "count": 15629
     },
     {
       "code": "FR",
       "label": "France",
-      "count": 12880
+      "count": 12857
     },
     {
       "code": "KR",
       "label": "South Korea",
-      "count": 12096
+      "count": 12142
     },
     {
       "code": "BR",
       "label": "Brazil",
-      "count": 10546
+      "count": 10169
     },
     {
       "code": "CN",
       "label": "China",
-      "count": 10401
+      "count": 10018
     },
     {
       "code": "SE",
       "label": "Sweden",
-      "count": 9309
+      "count": 9272
     },
     {
       "code": "VN",
       "label": "Vietnam",
-      "count": 9253
+      "count": 9248
     },
     {
       "code": "NL",
       "label": "The Netherlands",
-      "count": 8406
+      "count": 8307
     },
     {
       "code": "PK",
       "label": "Pakistan",
-      "count": 7358
+      "count": 7310
     },
     {
       "code": "HK",
       "label": "Hong Kong",
-      "count": 5631
+      "count": 5714
     },
     {
       "code": "IE",
       "label": "Ireland",
-      "count": 5063
+      "count": 5051
     },
     {
       "code": "IT",
       "label": "Italy",
-      "count": 4992
+      "count": 4990
     },
     {
       "code": "ZA",
       "label": "South Africa",
-      "count": 4717
+      "count": 4727
     },
     {
       "code": "ID",
       "label": "Indonesia",
-      "count": 3738
+      "count": 3886
     },
     {
       "code": "BD",
       "label": "Bangladesh",
-      "count": 3026
+      "count": 3031
     },
     {
       "code": "NZ",
       "label": "New Zealand",
-      "count": 3010
+      "count": 3002
     },
     {
       "code": "ES",
       "label": "Spain",
-      "count": 2918
+      "count": 2935
     },
     {
       "code": "UA",
       "label": "Ukraine",
-      "count": 2634
+      "count": 2575
     },
     {
       "code": "AR",
       "label": "Argentina",
-      "count": 2499
+      "count": 2450
     },
     {
       "code": "BH",
       "label": "Bahrain",
-      "count": 2383
+      "count": 2379
     },
     {
       "code": "TH",
       "label": "Thailand",
-      "count": 2345
+      "count": 2369
     },
     {
       "code": "FI",
       "label": "Finland",
-      "count": 2341
-    },
-    {
-      "code": "PL",
-      "label": "Poland",
-      "count": 2202
+      "count": 2355
     },
     {
       "code": "AE",
       "label": "United Arab Emirates",
-      "count": 2166
+      "count": 2161
+    },
+    {
+      "code": "PL",
+      "label": "Poland",
+      "count": 2135
     },
     {
       "code": "CO",
       "label": "Colombia",
-      "count": 2096
+      "count": 2049
     },
     {
       "code": "MX",
       "label": "Mexico",
-      "count": 2042
+      "count": 2004
     },
     {
       "code": "PH",
       "label": "Philippines",
-      "count": 1930
+      "count": 1902
     },
     {
       "code": "TR",
       "label": "Turkey",
-      "count": 1872
+      "count": 1793
     },
     {
       "code": "NG",
       "label": "Nigeria",
-      "count": 1707
-    },
-    {
-      "code": "MY",
-      "label": "Malaysia",
-      "count": 1373
+      "count": 1709
     },
     {
       "code": "BE",
       "label": "Belgium",
-      "count": 1286
+      "count": 1415
+    },
+    {
+      "code": "MY",
+      "label": "Malaysia",
+      "count": 1392
     },
     {
       "code": "CL",
       "label": "Chile",
-      "count": 1253
+      "count": 1247
     },
     {
       "code": "KZ",
       "label": "Kazakhstan",
-      "count": 1248
+      "count": 1231
     },
     {
       "code": "IQ",
       "label": "Iraq",
-      "count": 1207
+      "count": 1201
     },
     {
       "code": "CH",
       "label": "Switzerland",
-      "count": 1100
+      "count": 1125
     },
     {
       "code": "IL",
       "label": "Israel",
-      "count": 1026
+      "count": 1029
     },
     {
       "code": "SA",
@@ -294,52 +294,47 @@
     {
       "code": "TW",
       "label": "Taiwan",
-      "count": 954
+      "count": 935
     },
     {
       "code": "EC",
       "label": "Ecuador",
-      "count": 916
+      "count": 906
     },
     {
       "code": "RO",
       "label": "Romania",
-      "count": 883
+      "count": 874
     },
     {
       "code": "LT",
       "label": "Lithuania",
-      "count": 830
+      "count": 839
     },
     {
       "code": "IR",
       "label": "Iran",
-      "count": 812
+      "count": 805
     },
     {
       "code": "VE",
       "label": "Venezuela",
-      "count": 812
+      "count": 804
     },
     {
       "code": "EG",
       "label": "Egypt",
-      "count": 774
+      "count": 764
     },
     {
       "code": "BG",
       "label": "Bulgaria",
-      "count": 671
+      "count": 658
     },
     {
       "code": "AT",
       "label": "Austria",
-      "count": 643
-    },
-    {
-      "code": "EE",
-      "label": "Estonia",
-      "count": 608
+      "count": 637
     },
     {
       "code": "BA",
@@ -347,69 +342,74 @@
       "count": 606
     },
     {
+      "code": "EE",
+      "label": "Estonia",
+      "count": 601
+    },
+    {
       "code": "LV",
       "label": "Latvia",
-      "count": 583
+      "count": 584
     },
     {
       "code": "BY",
       "label": "Belarus",
-      "count": 579
+      "count": 576
     },
     {
       "code": "MA",
       "label": "Morocco",
-      "count": 529
+      "count": 524
     },
     {
       "code": "DZ",
       "label": "Algeria",
-      "count": 516
-    },
-    {
-      "code": "CZ",
-      "label": "Czechia",
-      "count": 483
+      "count": 521
     },
     {
       "code": "NO",
       "label": "Norway",
-      "count": 471
+      "count": 491
+    },
+    {
+      "code": "CZ",
+      "label": "Czechia",
+      "count": 461
     },
     {
       "code": "KE",
       "label": "Kenya",
-      "count": 464
+      "count": 447
     },
     {
       "code": "UZ",
       "label": "Uzbekistan",
-      "count": 414
+      "count": 409
     },
     {
       "code": "AM",
       "label": "Armenia",
-      "count": 398
+      "count": 395
     },
     {
       "code": "CW",
       "label": "Curacao",
-      "count": 393
-    },
-    {
-      "code": "KH",
-      "label": "Cambodia",
-      "count": 376
+      "count": 394
     },
     {
       "code": "CM",
       "label": "Cameroon",
-      "count": 375
+      "count": 387
     },
     {
-      "code": "DK",
-      "label": "Denmark",
-      "count": 363
+      "code": "PE",
+      "label": "Peru",
+      "count": 382
+    },
+    {
+      "code": "KH",
+      "label": "Cambodia",
+      "count": 378
     },
     {
       "code": "HU",
@@ -417,59 +417,59 @@
       "count": 363
     },
     {
-      "code": "PY",
-      "label": "Paraguay",
+      "code": "DK",
+      "label": "Denmark",
       "count": 361
     },
     {
-      "code": "PE",
-      "label": "Peru",
-      "count": 357
+      "code": "PY",
+      "label": "Paraguay",
+      "count": 349
     },
     {
       "code": "GE",
       "label": "Georgia",
-      "count": 329
+      "count": 322
     },
     {
       "code": "AZ",
       "label": "Azerbaijan",
-      "count": 326
-    },
-    {
-      "code": "PT",
-      "label": "Portugal",
-      "count": 322
+      "count": 316
     },
     {
       "code": "MD",
       "label": "Moldova",
-      "count": 307
+      "count": 304
+    },
+    {
+      "code": "PT",
+      "label": "Portugal",
+      "count": 302
     },
     {
       "code": "HR",
       "label": "Croatia",
-      "count": 288
+      "count": 287
     },
     {
       "code": "DO",
       "label": "Dominican Republic",
-      "count": 286
+      "count": 287
     },
     {
       "code": "RS",
       "label": "Serbia",
-      "count": 279
+      "count": 284
     },
     {
       "code": "SK",
       "label": "Slovakia",
-      "count": 278
+      "count": 275
     },
     {
       "code": "AL",
       "label": "Albania",
-      "count": 265
+      "count": 263
     },
     {
       "code": "GR",
@@ -479,62 +479,52 @@
     {
       "code": "ET",
       "label": "Ethiopia",
-      "count": 237
+      "count": 240
     },
     {
       "code": "NP",
       "label": "Nepal",
-      "count": 205
-    },
-    {
-      "code": "GH",
-      "label": "Ghana",
-      "count": 188
-    },
-    {
-      "code": "AD",
-      "label": "Andorra",
-      "count": 182
-    },
-    {
-      "code": "BO",
-      "label": "Bolivia",
-      "count": 173
+      "count": 207
     },
     {
       "code": "LK",
       "label": "Sri Lanka",
-      "count": 173
+      "count": 184
+    },
+    {
+      "code": "GH",
+      "label": "Ghana",
+      "count": 179
+    },
+    {
+      "code": "AD",
+      "label": "Andorra",
+      "count": 177
     },
     {
       "code": "KW",
       "label": "Kuwait",
-      "count": 170
-    },
-    {
-      "code": "CR",
-      "label": "Costa Rica",
-      "count": 164
-    },
-    {
-      "code": "PA",
-      "label": "Panama",
-      "count": 163
+      "count": 172
     },
     {
       "code": "TN",
       "label": "Tunisia",
-      "count": 156
+      "count": 171
     },
     {
-      "code": "SI",
-      "label": "Slovenia",
-      "count": 155
+      "code": "BO",
+      "label": "Bolivia",
+      "count": 170
     },
     {
-      "code": "JO",
-      "label": "Jordan",
-      "count": 151
+      "code": "PA",
+      "label": "Panama",
+      "count": 166
+    },
+    {
+      "code": "CR",
+      "label": "Costa Rica",
+      "count": 165
     },
     {
       "code": "QA",
@@ -542,28 +532,43 @@
       "count": 149
     },
     {
-      "code": "UG",
-      "label": "Uganda",
-      "count": 145
+      "code": "JO",
+      "label": "Jordan",
+      "count": 147
     },
     {
       "code": "LU",
       "label": "Luxembourg",
-      "count": 141
+      "count": 146
+    },
+    {
+      "code": "SI",
+      "label": "Slovenia",
+      "count": 146
     },
     {
       "code": "OM",
       "label": "Oman",
-      "count": 132
+      "count": 133
+    },
+    {
+      "code": "UG",
+      "label": "Uganda",
+      "count": 128
     },
     {
       "code": "SN",
       "label": "Senegal",
-      "count": 120
+      "count": 118
     },
     {
       "code": "HN",
       "label": "Honduras",
+      "count": 104
+    },
+    {
+      "code": "IS",
+      "label": "Iceland",
       "count": 103
     },
     {
@@ -572,94 +577,89 @@
       "count": 102
     },
     {
-      "code": "BJ",
-      "label": "Benin",
+      "code": "KG",
+      "label": "Kyrgyzstan",
       "count": 101
-    },
-    {
-      "code": "AF",
-      "label": "Afghanistan",
-      "count": 99
-    },
-    {
-      "code": "MM",
-      "label": "Myanmar",
-      "count": 99
     },
     {
       "code": "MK",
       "label": "North Macedonia",
-      "count": 96
+      "count": 100
     },
     {
-      "code": "CY",
-      "label": "Cyprus",
-      "count": 95
+      "code": "AF",
+      "label": "Afghanistan",
+      "count": 97
     },
     {
-      "code": "JM",
-      "label": "Jamaica",
-      "count": 95
-    },
-    {
-      "code": "MU",
-      "label": "Mauritius",
-      "count": 92
+      "code": "BJ",
+      "label": "Benin",
+      "count": 94
     },
     {
       "code": "TZ",
       "label": "Tanzania",
+      "count": 93
+    },
+    {
+      "code": "MU",
+      "label": "Mauritius",
       "count": 90
     },
     {
-      "code": "MN",
-      "label": "Mongolia",
+      "code": "MM",
+      "label": "Myanmar",
       "count": 89
+    },
+    {
+      "code": "CY",
+      "label": "Cyprus",
+      "count": 87
+    },
+    {
+      "code": "JM",
+      "label": "Jamaica",
+      "count": 87
     },
     {
       "code": "TT",
       "label": "Trinidad and Tobago",
-      "count": 88
+      "count": 86
     },
     {
-      "code": "IS",
-      "label": "Iceland",
-      "count": 87
-    },
-    {
-      "code": "BS",
-      "label": "Bahamas",
+      "code": "MN",
+      "label": "Mongolia",
       "count": 81
-    },
-    {
-      "code": "KG",
-      "label": "Kyrgyzstan",
-      "count": 81
-    },
-    {
-      "code": "UY",
-      "label": "Uruguay",
-      "count": 80
-    },
-    {
-      "code": "ZW",
-      "label": "Zimbabwe",
-      "count": 80
-    },
-    {
-      "code": "MT",
-      "label": "Malta",
-      "count": 77
-    },
-    {
-      "code": "YE",
-      "label": "Yemen",
-      "count": 76
     },
     {
       "code": "SV",
       "label": "El Salvador",
-      "count": 73
+      "count": 78
+    },
+    {
+      "code": "MT",
+      "label": "Malta",
+      "count": 76
+    },
+    {
+      "code": "BS",
+      "label": "Bahamas",
+      "count": 75
+    },
+    {
+      "code": "UY",
+      "label": "Uruguay",
+      "count": 75
+    },
+    {
+      "code": "YE",
+      "label": "Yemen",
+      "count": 74
+    },
+    {
+      "code": "ZW",
+      "label": "Zimbabwe",
+      "count": 74
     },
     {
       "code": "VI",
@@ -669,17 +669,17 @@
     {
       "code": "LB",
       "label": "Lebanon",
-      "count": 71
-    },
-    {
-      "code": "TG",
-      "label": "Togo",
-      "count": 71
+      "count": 70
     },
     {
       "code": "CI",
       "label": "Ivory Coast",
-      "count": 69
+      "count": 68
+    },
+    {
+      "code": "SC",
+      "label": "Seychelles",
+      "count": 65
     },
     {
       "code": "PR",
@@ -687,19 +687,14 @@
       "count": 64
     },
     {
-      "code": "SC",
-      "label": "Seychelles",
+      "code": "TG",
+      "label": "Togo",
+      "count": 64
+    },
+    {
+      "code": "MC",
+      "label": "Monaco",
       "count": 62
-    },
-    {
-      "code": "MZ",
-      "label": "Mozambique",
-      "count": 60
-    },
-    {
-      "code": "PS",
-      "label": "Palestinian Territory",
-      "count": 59
     },
     {
       "code": "SZ",
@@ -707,24 +702,34 @@
       "count": 58
     },
     {
-      "code": "MG",
-      "label": "Madagascar",
-      "count": 52
+      "code": "MZ",
+      "label": "Mozambique",
+      "count": 56
     },
     {
       "code": "ME",
       "label": "Montenegro",
+      "count": 53
+    },
+    {
+      "code": "PS",
+      "label": "Palestinian Territory",
+      "count": 51
+    },
+    {
+      "code": "MG",
+      "label": "Madagascar",
       "count": 50
     },
     {
       "code": "SY",
       "label": "Syria",
-      "count": 50
+      "count": 47
     },
     {
-      "code": "BW",
-      "label": "Botswana",
-      "count": 48
+      "code": "LA",
+      "label": "Laos",
+      "count": 46
     },
     {
       "code": "NI",
@@ -732,8 +737,8 @@
       "count": 44
     },
     {
-      "code": "LA",
-      "label": "Laos",
+      "code": "XK",
+      "label": "Kosovo",
       "count": 43
     },
     {
@@ -744,11 +749,11 @@
     {
       "code": "BZ",
       "label": "Belize",
-      "count": 41
+      "count": 42
     },
     {
-      "code": "XK",
-      "label": "Kosovo",
+      "code": "TJ",
+      "label": "Tajikistan",
       "count": 41
     },
     {
@@ -757,13 +762,8 @@
       "count": 38
     },
     {
-      "code": "TJ",
-      "label": "Tajikistan",
-      "count": 38
-    },
-    {
-      "code": "MC",
-      "label": "Monaco",
+      "code": "BW",
+      "label": "Botswana",
       "count": 34
     },
     {
@@ -772,14 +772,9 @@
       "count": 33
     },
     {
-      "code": "LR",
-      "label": "Liberia",
-      "count": 32
-    },
-    {
       "code": "MO",
       "label": "Macao",
-      "count": 32
+      "count": 33
     },
     {
       "code": "BB",
@@ -787,23 +782,23 @@
       "count": 31
     },
     {
-      "code": "BN",
-      "label": "Brunei",
-      "count": 27
+      "code": "BF",
+      "label": "Burkina Faso",
+      "count": 29
     },
     {
-      "code": "MR",
-      "label": "Mauritania",
+      "code": "LR",
+      "label": "Liberia",
+      "count": 29
+    },
+    {
+      "code": "ML",
+      "label": "Mali",
       "count": 27
     },
     {
       "code": "JE",
       "label": "Jersey",
-      "count": 26
-    },
-    {
-      "code": "ML",
-      "label": "Mali",
       "count": 25
     }
   ],

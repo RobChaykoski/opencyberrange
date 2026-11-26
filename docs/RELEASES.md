@@ -22,6 +22,14 @@ Steps 2 and 3 order matters: the manifest copies the lock's `release` field.
 Releases 5.46.0 and 5.46.1 skipped step 3, so the committed manifest still said
 `5.45.0` and the CI integrity gate failed.
 
+## Release 5.52.7
+
+| Tag | Release | Status |
+|---|---|---|
+| `v5.52.7` | SWOCTS Cyber Range Release 5.52.7 | Signed annotated tag: refreshed threat-awareness snapshots from FireHOL (DB-IP Lite 2026-11) and RansomLook, with a shorter RansomLook refresh cadence. |
+
+Deliverables: [Release 5.52.7 deliverables](RELEASE-5.52.7-DELIVERABLES.md).
+
 ## Release 5.52.6
 
 | Tag | Release | Status |
