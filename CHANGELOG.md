@@ -2,6 +2,17 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.54.1] - 2026-11-26
+
+### Fixed
+
+- **Briefing pop-out workbook link:** the pop-out now computes the workbook URL
+  from the shared wiki-origin reference instead of freezing the value when the
+  route mounts. `App.vue` loads `/api/config/public` asynchronously, so a
+  relative first URL is replaced with the configured wiki origin (for example
+  `https://<host>:8443`) when the config arrives. The regression is covered by
+  a frontend test.
+
 ## [5.54.0] - 2026-11-26
 
 ### Added

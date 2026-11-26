@@ -1,6 +1,6 @@
 # Next steps
 
-Status: **Release 5.54.0 is deployed to development and production.** The
+Status: **Release 5.54.1 is deployed to development and production.** The
 read-only HA status panel (endpoint, Admin card, witness endpoint, host
 collector) is implemented; the witness/collector install and live drills
 remain. The exercise workspace now has a read-only Briefing tab and pop-out.
@@ -10,8 +10,12 @@ Dependabot backlog; runtime and OS updates remain for review. This page tracks
 what is left; the deployment record is
 [`RELEASE-5-PRODUCTION-READINESS.md`](RELEASE-5-PRODUCTION-READINESS.md).
 
-## 5.54.0
+## 5.54.0-5.54.1
 
+- **Briefing workbook link.** The pop-out recomputes the workbook URL from the
+  shared wiki-origin reference, so the link follows `/api/config/public` when
+  that asynchronous config sets a separate wiki origin. Covered by a frontend
+  regression test.
 - **Exercise briefing.** A read-only Briefing tab sits beside Desktop, Exercise,
   and Workbook; the selected tab stays in `?tab=briefing`. **Pop out briefing**
   opens the same `ExerciseBrief` component on
