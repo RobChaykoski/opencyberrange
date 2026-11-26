@@ -36,7 +36,7 @@
 
 <script setup>
 import { computed, onMounted } from 'vue'
-import { useCareerGoal } from '../composables/useCareerGoal'
+import { useCareerGoal, DEFAULT_CAREER_GOAL } from '../composables/useCareerGoal'
 import { useCareerRoles } from '../composables/useCareerRoles'
 
 defineProps({
@@ -57,6 +57,7 @@ const selectedTitle = computed(
 function choosePreferredRole() {
   const preferred =
     roles.value.find((role) => role.id === selectedRole.value) ||
+    roles.value.find((role) => role.id === DEFAULT_CAREER_GOAL) ||
     roles.value.find((role) => role.id === 'soc-analyst') ||
     roles.value.find((role) => role.flagship) ||
     roles.value[0]

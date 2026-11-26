@@ -1,5 +1,5 @@
 {
-  "total": 5443,
+  "total": 5466,
   "files": {
     "src/App.vue": 13,
     "src/components/AchievementStudio.vue": 54,
@@ -78,7 +78,7 @@
     "src/views/ContractReview.vue": 61,
     "src/views/Course.vue": 17,
     "src/views/CourseList.vue": 17,
-    "src/views/Curriculum.vue": 10,
+    "src/views/Curriculum.vue": 28,
     "src/views/Dashboard.vue": 155,
     "src/views/DeepLinkPicker.vue": 8,
     "src/views/Discover.vue": 24,
@@ -104,7 +104,7 @@
     "src/views/ResetPassword.vue": 12,
     "src/views/Setup.vue": 36,
     "src/views/SsoCallback.vue": 4,
-    "src/views/StudentDashboard.vue": 35,
+    "src/views/StudentDashboard.vue": 40,
     "src/views/Surveys.vue": 33,
     "src/views/ThreatAwareness.vue": 37,
     "src/views/Tools.vue": 21,

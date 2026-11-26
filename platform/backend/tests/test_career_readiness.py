@@ -39,6 +39,16 @@ def test_roles_catalogue_has_five_flagship_pathways():
     assert catalogue["readiness_model"]["components"]
 
 
+def test_roles_catalogue_exposes_track_focus():
+    catalogue = roles_catalogue()
+    role = next(
+        item for item in catalogue["roles"] if item["id"] == "cybersecurity-foundations"
+    )
+    assert role["tracks"]
+    assert "netfor" in role["tracks"]
+    assert role["categories"]
+
+
 def test_every_critical_competency_exists_in_taxonomy():
     known = _competency_ids()
     missing = [

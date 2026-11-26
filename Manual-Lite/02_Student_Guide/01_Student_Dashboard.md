@@ -25,10 +25,12 @@ After login the platform routes you to `/dashboard` and renders the student view
 | Next milestone | How many labs remain before the next learning milestone, with a progress bar | None |
 | Trophy case | The badges you earned most recently, with the date | **Full record**, which opens your profile |
 | Next up | The badges closest to completion and the rule for each, such as "Finish exercises without using hints" | None |
-| Track progress | A per-track progress bar for every track you have started | None |
+| Track progress | A per-track progress bar for the tracks in your focus, or every track when you open the full catalogue | **Browse exercises**, which opens the focused catalogue |
 | Recent victories | Recently completed exercises and the points they awarded | None |
 | Learning analytics | Completion, streak, accuracy, and time-on-task statistics | None |
 | Growth indicators | Competency growth by domain for the current period | None |
+
+The **Track progress** card follows the same career target as the Exercises hub. New learners see the tracks in their focus; the **Browse exercises** link opens the focused catalogue, where the full set is one click away. Changing the career target on either page updates the focus.
 
 ## Move from the dashboard into training
 

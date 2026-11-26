@@ -55,6 +55,8 @@ def roles_catalogue() -> dict:
                 "flagship": bool(role.get("flagship")),
                 "aliases": role.get("aliases", []),
                 "summary": role.get("summary"),
+                "tracks": role.get("tracks", []),
+                "categories": role.get("categories", []),
                 "level_requirements": role.get("level_requirements", {}),
                 "capstone": {
                     "title": (role.get("capstone") or {}).get("title"),

@@ -9,26 +9,84 @@
       <p class="page-subtitle">Master cybersecurity through structured, hands-on exercises</p>
     </div>
 
+    <!-- Career focus: show the pathway tracks first, keep the full catalogue one click away. -->
+    <TargetRoleSwitcher v-if="!canReorder" variant="inline" />
+
+    <section
+      v-if="!canReorder && focusAvailable"
+      class="catalogue-scope"
+      aria-label="Exercise catalogue scope"
+    >
+      <p class="catalogue-scope__text">
+        <template v-if="viewMode === 'focused'">
+          Showing {{ visibleTracks.length }} of {{ tracks.length }} tracks aligned with
+          <strong>{{ selectedRoleTitle }}</strong>. Switch target or open the full
+          catalogue at any time.
+        </template>
+        <template v-else>
+          Showing all {{ tracks.length }} tracks. Your focused list is one click away.
+        </template>
+      </p>
+      <div class="catalogue-scope__actions">
+        <button
+          v-if="viewMode === 'focused'"
+          type="button"
+          class="btn btn--secondary btn--sm"
+          @click="setView('all')"
+        >
+          Show all {{ tracks.length }} tracks
+        </button>
+        <button
+          v-else
+          type="button"
+          class="btn btn--secondary btn--sm"
+          @click="setView('focused')"
+        >
+          Focus on {{ selectedRoleTitle }}
+        </button>
+      </div>
+    </section>
+
+    <section
+      v-if="!canReorder && focusAvailable && viewMode === 'focused' && focusedComplete"
+      class="catalogue-scope catalogue-scope--complete"
+      aria-live="polite"
+    >
+      <div class="catalogue-scope__copy">
+        <p class="catalogue-scope__eyebrow">Pathway complete</p>
+        <h2 class="catalogue-scope__title">The full catalogue is ready</h2>
+        <p class="catalogue-scope__text">
+          You finished every track in this focus. Explore another pathway or open all
+          {{ tracks.length }} tracks to choose your next direction.
+        </p>
+      </div>
+      <div class="catalogue-scope__actions">
+        <button type="button" class="btn btn--primary btn--sm" @click="setView('all')">
+          Explore all tracks
+        </button>
+      </div>
+    </section>
+
     <!-- Overall Progress Summary -->
-    <div v-if="tracks.length > 0" class="progress-summary">
+    <div v-if="visibleTracks.length > 0" class="progress-summary">
       <div class="progress-summary__stat">
-        <span class="progress-summary__value">{{ totalCompleted }}</span>
+        <span class="progress-summary__value">{{ visibleProgress.completed }}</span>
         <span class="progress-summary__label">Completed</span>
       </div>
       <div class="progress-summary__stat">
-        <span class="progress-summary__value">{{ totalLabs }}</span>
-        <span class="progress-summary__label">Total Exercises</span>
+        <span class="progress-summary__value">{{ visibleProgress.total }}</span>
+        <span class="progress-summary__label">Exercises in view</span>
       </div>
       <div class="progress-summary__stat">
-        <span class="progress-summary__value">{{ overallPercent }}%</span>
-        <span class="progress-summary__label">Overall Progress</span>
+        <span class="progress-summary__value">{{ visibleProgress.percent }}%</span>
+        <span class="progress-summary__label">{{ scopeLabel }} progress</span>
       </div>
     </div>
 
     <!-- Track Cards Grid -->
     <div class="track-grid" ref="gridRef">
       <div
-        v-for="track in tracks"
+        v-for="track in visibleTracks"
         :key="track.id"
         class="track-card-wrapper"
         :class="{ 'track-card-wrapper--reorderable': canReorder }"
@@ -96,8 +154,19 @@
     </div>
 
     <!-- Empty State -->
-    <div v-if="!loading && tracks.length === 0" class="empty-state">
-      <p>No learning paths available yet. Check back soon.</p>
+    <div v-if="!loading && visibleTracks.length === 0" class="empty-state">
+      <p v-if="viewMode === 'focused' && tracks.length">
+        No active tracks match {{ selectedRoleTitle }} right now.
+      </p>
+      <p v-else>No learning paths available yet. Check back soon.</p>
+      <button
+        v-if="viewMode === 'focused' && tracks.length"
+        type="button"
+        class="btn btn--secondary btn--sm"
+        @click="setView('all')"
+      >
+        Show all tracks
+      </button>
     </div>
 
     <!-- Loading -->
@@ -117,6 +186,17 @@ import Sortable from 'sortablejs'
 import { getTrackIcon } from '../components/icons/trackIcons.js'
 import ChevronRightIcon from '../components/icons/ChevronIcon.vue'
 import PrebuildBanner from '../components/PrebuildBanner.vue'
+import TargetRoleSwitcher from '../components/TargetRoleSwitcher.vue'
+import { useCareerGoal } from '../composables/useCareerGoal'
+import { useCareerRoles } from '../composables/useCareerRoles'
+import {
+  defaultExerciseView,
+  focusTracks,
+  focusedComplete as isFocusedComplete,
+  readStoredExerciseView,
+  scopeProgress,
+  storeExerciseView,
+} from '../utils/exerciseFocus'
 
 const route = useRoute()
 const router = useRouter()
@@ -127,12 +207,43 @@ const gridRef = ref(null)
 
 const canReorder = computed(() => isAdmin() || isInstructor())
 
-const totalCompleted = computed(() => tracks.value.reduce((sum, t) => sum + t.completed_labs, 0))
-const totalLabs = computed(() => tracks.value.reduce((sum, t) => sum + t.total_labs, 0))
-const overallPercent = computed(() => {
-  if (totalLabs.value === 0) return 0
-  return Math.round((totalCompleted.value / totalLabs.value) * 100)
-})
+const { selectedRole } = useCareerGoal()
+const { roles, load: loadCareerRoles } = useCareerRoles()
+const viewMode = ref(readStoredExerciseView())
+
+const totalCompleted = computed(() =>
+  tracks.value.reduce((sum, t) => sum + Number(t.completed_labs || 0), 0)
+)
+
+const selectedRoleTitle = computed(
+  () => roles.value.find((role) => role.id === selectedRole.value)?.title || 'your career target'
+)
+const selectedRoleTracks = computed(
+  () => roles.value.find((role) => role.id === selectedRole.value)?.tracks || []
+)
+const focusedTracks = computed(() => focusTracks(tracks.value, selectedRoleTracks.value))
+const focusAvailable = computed(
+  () => !canReorder.value && focusedTracks.value.length > 0
+)
+const focusedComplete = computed(() => isFocusedComplete(focusedTracks.value))
+const visibleTracks = computed(() =>
+  focusAvailable.value && viewMode.value === 'focused' ? focusedTracks.value : tracks.value
+)
+const visibleProgress = computed(() => scopeProgress(visibleTracks.value))
+const scopeLabel = computed(() =>
+  focusAvailable.value && viewMode.value === 'focused' ? 'Focused' : 'Overall'
+)
+
+function setView(next) {
+  viewMode.value = next === 'all' ? 'all' : 'focused'
+  storeExerciseView(viewMode.value)
+}
+
+function applyDefaultView() {
+  if (viewMode.value) return
+  viewMode.value = defaultExerciseView(totalCompleted.value, focusedTracks.value.length)
+}
+
 
 // ── SortableJS drag-and-drop ─────────────────────────────────────────
 let sortableInstance = null
@@ -250,6 +361,12 @@ onMounted(async () => {
     }
   }
   await fetchTracks()
+  try {
+    await loadCareerRoles()
+  } catch {
+    // The catalogue still works without the pathway metadata.
+  }
+  applyDefaultView()
   await nextTick()
   initSortable()
 })
@@ -278,6 +395,70 @@ onMounted(async () => {
 .page-subtitle {
   color: var(--text-secondary);
   font-size: 1.1rem;
+}
+
+/* Career focus bar */
+.catalogue-scope {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.9rem 1.25rem;
+  max-width: 1200px;
+  margin: 0 auto 1.25rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at 0% 0%, var(--accent-bg), transparent 60%),
+    var(--bg-secondary);
+}
+
+.catalogue-scope--complete {
+  border-color: var(--success);
+}
+
+.catalogue-scope__copy {
+  min-width: 0;
+}
+
+.catalogue-scope__eyebrow {
+  margin: 0 0 0.15rem;
+  color: var(--text-muted);
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.catalogue-scope__title {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1.05rem;
+  line-height: 1.3;
+}
+
+.catalogue-scope__text {
+  margin: 0.25rem 0 0;
+  max-width: 52rem;
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.catalogue-scope__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+@media (max-width: 640px) {
+  .catalogue-scope__actions,
+  .catalogue-scope__actions .btn {
+    width: 100%;
+    margin-left: 0;
+  }
 }
 
 /* Progress Summary */

@@ -2,11 +2,15 @@ import { ref } from 'vue'
 
 const STORAGE_KEY = 'ocr.career-goal'
 
+// New learners start on the foundations pathway. It is deliberately narrower
+// than SOC Analyst and maps to the beginner-first exercise catalogue.
+export const DEFAULT_CAREER_GOAL = 'cybersecurity-foundations'
+
 function readStoredGoal() {
   try {
-    return localStorage.getItem(STORAGE_KEY) || 'soc-analyst'
+    return localStorage.getItem(STORAGE_KEY) || DEFAULT_CAREER_GOAL
   } catch (e) {
-    return 'soc-analyst'
+    return DEFAULT_CAREER_GOAL
   }
 }
 

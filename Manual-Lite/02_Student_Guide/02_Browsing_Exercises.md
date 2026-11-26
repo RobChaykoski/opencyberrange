@@ -17,7 +17,18 @@ The hub lives at `/exercises`. You reach it from the **Exercises** item in the l
 <figcaption>The Exercises hub lists your tracks as cards, each with a progress bar and exercise count.</figcaption>
 </figure>
 
-The page opens with the title "Exercises" and a three-stat **Overall Progress** summary: labs Completed, Total Exercises, and Overall Progress percent. Below the summary sits a grid of track cards.
+The page opens with the title "Exercises" and a three-stat progress summary: labs Completed, Exercises in view, and progress percent. Below the summary sits a grid of track cards.
+
+## Start with a career focus
+
+Your **career target** sets a shorter, focused catalogue. The selector at the top of the page shows the target you are aiming for, and the tracks aligned with that target appear first. A new learner starts in the **Cybersecurity Foundations** focus, which keeps the first screen small and beginner-first.
+
+- Use the career-target selector to choose a different pathway, such as SOC Analyst, Incident Responder, or Penetration Tester.
+- The focus bar tells you how many of the available tracks you are seeing and offers **Show all tracks**.
+- The full catalogue is always one click away. The focus is a starting point, not a lock.
+- When every track in the focus is complete, the page marks the pathway complete and invites you to explore all tracks.
+
+The progress summary follows the view: it counts the exercises in the focused tracks while the focus is active, and every track when you open the full catalogue. Your career target is a preference, not a grade; changing it never changes your completed work.
 
 Each track card shows:
 
@@ -39,15 +50,16 @@ catalogue and **45** are scoped to an assigned course. The available set also
 depends on the edition and content enabled on your server.
 
 1. Open `/exercises` from the sidebar.
-2. Scan the track cards and read the descriptions to pick a path.
-3. Click a track card. The platform opens that track at `/exercises/<slug>`, where the levels and labs appear.
+2. Check the career target at the top. Choose a different pathway if your direction has changed, or select **Show all tracks** to browse everything.
+3. Scan the track cards and read the descriptions to pick a path.
+4. Click a track card. The platform opens that track at `/exercises/<slug>`, where the levels and labs appear.
 
 **What you should see:** the track page loads with its levels listed as an accordion and the labs inside each level. See [Understanding Tracks, Levels, and Labs](03_Understanding_Tracks_Levels_and_Labs.md).
 
 ## When the hub looks empty or different
 
 !!! note "Empty state"
-    If no active tracks are published, the hub shows "No learning paths available yet". Check back later or ask your instructor.
+    If no active tracks are published, the hub shows "No learning paths available yet". If the focused view finds no active tracks for your career target, it says so and offers **Show all tracks**. Check back later or ask your instructor.
 
 !!! tip "Deep links open the right track"
     A link that carries a lab, course, or wiki reference resolves automatically and drops you into the matching track. Instructors and the dashboard use these links so you do not have to hunt for a lab by hand.

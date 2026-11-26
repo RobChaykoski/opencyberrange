@@ -215,13 +215,25 @@
     <!-- Track progress + recent victories -->
     <div class="dashboard-grid dashboard-grid--two">
       <section class="card">
-        <div class="card__header">
-          <span class="card__icon card__icon--purple"><TargetIcon /></span>
-          <h2 class="card__title">Track progress</h2>
+        <div class="card__header card__header--split">
+          <div class="card__heading">
+            <span class="card__icon card__icon--purple"><TargetIcon /></span>
+            <div>
+              <h2 class="card__title">Track progress</h2>
+              <p v-if="trackFocusActive" class="card__subtitle">
+                Showing {{ visibleTrackProgress.length }} of {{ tracks.length }} tracks for
+                <strong>{{ selectedRoleTitle }}</strong>
+              </p>
+              <p v-else class="card__subtitle">All active tracks</p>
+            </div>
+          </div>
+          <router-link to="/exercises" class="btn btn--outline btn--sm">
+            Browse exercises
+          </router-link>
         </div>
-        <div v-if="tracks.length" class="track-list">
+        <div v-if="visibleTrackProgress.length" class="track-list">
           <router-link
-            v-for="track in tracks"
+            v-for="track in visibleTrackProgress"
             :key="track.track_slug"
             :to="`/exercises/${track.track_slug}`"
             class="track-row"
@@ -373,6 +385,13 @@ import CyberDnaBand from '../components/CyberDnaBand.vue'
 import TargetRoleSwitcher from '../components/TargetRoleSwitcher.vue'
 import LearningAnalytics from '../components/LearningAnalytics.vue'
 import AvailableSurveys from '../components/AvailableSurveys.vue'
+import { useCareerGoal } from '../composables/useCareerGoal'
+import { useCareerRoles } from '../composables/useCareerRoles'
+import {
+  defaultExerciseView,
+  focusTracks,
+  readStoredExerciseView,
+} from '../utils/exerciseFocus'
 import TargetIcon from '../components/icons/TargetIcon.vue'
 import TrophyIcon from '../components/icons/TrophyIcon.vue'
 import FlameIcon from '../components/icons/FlameIcon.vue'
@@ -456,6 +475,30 @@ const progressPercent = computed(() => {
   const raw = data.value.progress_percent ?? totals.value.progress_percent ?? 0
   return Math.max(0, Math.min(100, Number(raw) || 0))
 })
+
+const { selectedRole } = useCareerGoal()
+const { roles, load: loadCareerRoles } = useCareerRoles()
+const selectedRoleTitle = computed(
+  () => roles.value.find((role) => role.id === selectedRole.value)?.title || 'your career target'
+)
+const roleTrackSlugs = computed(
+  () => roles.value.find((role) => role.id === selectedRole.value)?.tracks || []
+)
+const focusedTrackProgress = computed(() =>
+  focusTracks(tracks.value, roleTrackSlugs.value)
+)
+const trackFocusActive = computed(
+  () =>
+    focusedTrackProgress.value.length > 0 &&
+    defaultExerciseView(
+      completedLabs.value,
+      focusedTrackProgress.value.length,
+      readStoredExerciseView()
+    ) === 'focused'
+)
+const visibleTrackProgress = computed(() =>
+  trackFocusActive.value ? focusedTrackProgress.value : tracks.value
+)
 
 const noHintCount = computed(
   () => completions.value.filter((item) => (item.hints_used || 0) === 0).length
@@ -810,7 +853,9 @@ const loadDashboard = async () => {
   profileLoading.value = false
 }
 
-onMounted(loadDashboard)
+onMounted(async () => {
+  await Promise.allSettled([loadDashboard(), loadCareerRoles()])
+})
 </script>
 
 <style scoped>
