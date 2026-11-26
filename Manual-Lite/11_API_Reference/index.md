@@ -214,6 +214,7 @@ owner-only unless an explicit share or break-glass grant exists.
 | `GET` | `/api/admin/system/backups/{filename}` | Download Backup | OAuth2PasswordBearer |
 | `GET` | `/api/admin/system/data-integrity` | Get Data Integrity Status | OAuth2PasswordBearer |
 | `POST` | `/api/admin/system/data-integrity/review` | Review Data Integrity Write | OAuth2PasswordBearer |
+| `GET` | `/api/admin/system/ha` | Read-only HA status snapshot | OAuth2PasswordBearer |
 | `GET` | `/api/admin/system/metrics` | Get System Metrics | OAuth2PasswordBearer |
 | `POST` | `/api/admin/system/metrics/sample` | Sample System Metrics | OAuth2PasswordBearer |
 | `GET` | `/api/admin/system/release` | Compare this installation with the latest GitHub release | OAuth2PasswordBearer |
@@ -1860,6 +1861,18 @@ Record an administrator review of an unattributed ledger write.  The ledger itse
 
 - `200`: Successful Response
 - `422`: Validation Error — `HTTPValidationError`
+
+### `GET /api/admin/system/ha`
+
+**Read-only HA status snapshot**
+
+Return the sanitised high-availability snapshot for the admin card.  The host collector writes the file; this endpoint only reads it. There is no query parameter, no write path, and no peer probe.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Responses**
+
+- `200`: Successful Response
 
 ### `GET /api/admin/system/metrics`
 

@@ -4501,7 +4501,16 @@ def system_status(
     except Exception:
         add("Data integrity", "warning", "Could not read the integrity ledger.")
 
-    # 8. Core secrets (rolled up; VPN/operator items live in Advanced)
+    # 8. HA status (only when the host collector installed a snapshot). The
+    #    panel is read-only and a single-node install gets no extra rows.
+    try:
+        from app.services import ha_status
+
+        items.extend(ha_status.attention_items())
+    except Exception:
+        pass
+
+    # 9. Core secrets (rolled up; VPN/operator items live in Advanced)
     try:
         jwt = settings.JWT_SECRET or ""
         db_url = settings.DATABASE_URL or ""
@@ -4520,6 +4529,20 @@ def system_status(
     statuses = [i["status"] for i in items]
     overall = "error" if "error" in statuses else ("warning" if "warning" in statuses else "ok")
     return {"items": items, "overall": overall, "edition": entitlement.edition_name()}
+
+
+@router.get("/system/ha", summary="Read-only HA status snapshot")
+def system_ha_status(
+    _admin: User = Depends(get_current_admin_user),
+):
+    """Return the sanitised high-availability snapshot for the admin card.
+
+    The host collector writes the file; this endpoint only reads it. There is
+    no query parameter, no write path, and no peer probe.
+    """
+    from app.services import ha_status
+
+    return ha_status.snapshot()
 
 
 @router.get("/system/release", summary="Compare this installation with the latest GitHub release")
