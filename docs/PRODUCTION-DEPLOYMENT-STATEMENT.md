@@ -9,6 +9,24 @@ another document disagrees, this page and the signed tag win.
 > replaced with placeholders. The private deployment inventory holds the live
 > values. See [`PUBLICATION-METADATA-POLICY.md`](PUBLICATION-METADATA-POLICY.md).
 
+## 5.54.1 deployment verification
+
+| Check | Result |
+|---|---|
+| `/api/version` | `5.54.1` on production and development |
+| Alembic | **`0067_course_content_rls` (head)** |
+| Health | Production and development backend/frontend containers `healthy`; nginx `-t` passes |
+| Briefing route | `GET /exercises/<track>/briefing?labId=…` returns the SPA shell with `200` on both hosts |
+| Workbook link | The pop-out computes the link from the shared wiki-origin ref; the regression test sets the origin after mount and asserts the link changes |
+| Production wiki | **14** sites rebuilt |
+| Pre-deploy backup (production) | `~/backups/ocr-backup-20261126-205920.dump` |
+| Pre-deploy backup (development) | `~/opencyberrange/.backups/20261126_210238` |
+| Rollback images | `opencyberrange-backend:pre-v5.54.1`, `ocr-frontend:pre-v5.54.1` on production; development rolls back by rebuilding `v5.54.0` |
+| Development | Signed tag `v5.54.1` synced into the split layout; backend/frontend rebuilt and verified. The split script's workbook seed step still looks for a root `mkdocs.yml`, which this repository does not track, so the dev wiki volume was not rebuilt. |
+
+5.54.1 is a frontend patch. The lab definitions and Alembic schema are
+unchanged.
+
 ## 5.54.0 deployment verification
 
 | Check | Result |
