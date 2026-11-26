@@ -9,6 +9,28 @@ another document disagrees, this page and the signed tag win.
 > replaced with placeholders. The private deployment inventory holds the live
 > values. See [`PUBLICATION-METADATA-POLICY.md`](PUBLICATION-METADATA-POLICY.md).
 
+## 5.52.0 deployment verification
+
+| Check | Result |
+|---|---|
+| `/api/version` | `5.52.0` on production and development |
+| Alembic | **`0067_course_content_rls` (head)** |
+| Health | Production and development backend/frontend containers `healthy`; `/api/version` `200` |
+| nginx | `nginx -t` passed on production |
+| Lab definitions | **217** registered; **206** workbook-mapped |
+| Production wiki | **14** sites rebuilt |
+| Frontend assets | Production contains the new **Submit knowledge check** and **Submit quiz for certificate** bundles |
+| Pre-deploy backup (development) | `~/opencyberrange/.backups/20261126_022244` |
+| Pre-deploy backup (production) | `~/backups/ocr-backup-20261126-022642.dump` |
+| Post-deploy backup (production) | `~/backups/ocr-backup-20261126-023027.dump` |
+| Rollback images | `opencyberrange-backend:pre-v5.52.0`, `ocr-frontend:pre-v5.52.0` on production |
+| Development note | The optional `ocr-platform.service` copy needs sudo; the existing unit stayed enabled and active. |
+
+This release unifies the learner quiz experience across practice exams, exercise
+knowledge checks, and level quizzes. It preserves the benchmark versus
+certificate distinction while standardising navigation, unanswered warnings, and
+confirmation.
+
 ## 5.51.2 deployment verification
 
 | Check | Result |

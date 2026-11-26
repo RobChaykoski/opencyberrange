@@ -26,7 +26,7 @@ Releases 5.46.0 and 5.46.1 skipped step 3, so the committed manifest still said
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.52.0` | SWOCTS Cyber Range Release 5.52.0 | Signed annotated tag: consistent quiz navigation and final-submission flow across exercise knowledge checks and level quizzes, shared `QuizQuestionDots` / `QuizNavigation` / `QuizSubmitPanel` components, component tests, and a new student-guide page covering both quiz types. |
+| `v5.52.0` | SWOCTS Cyber Range Release 5.52.0 | Signed annotated tag: consistent quiz navigation and final-submission flow across exercise knowledge checks and level quizzes, shared `QuizQuestionDots` / `QuizNavigation` / `QuizSubmitPanel` components, component tests, and a new student-guide page covering both quiz types. Deployed to development and production on 25 November 2026; 217 registered labs, production wiki rebuilt, and pre/post backups recorded. |
 
 Deliverables: [Release 5.52.0 deliverables](RELEASE-5.52.0-DELIVERABLES.md).
 

@@ -1,6 +1,7 @@
 # Release 5.52.0 deliverables
 
-Status: **release prepared; deployment verification pending.**
+Status: **released and deployed** to development and production on 25 November
+2026.
 
 | Item | Value |
 |---|---|
@@ -40,7 +41,18 @@ Status: **release prepared; deployment verification pending.**
 
 | Environment | Version | Status |
 |---|---|---|
-| Development | `5.52.0` | Pending |
-| Production | `5.52.0` | Pending |
+| Development | `5.52.0` | Deployed and verified |
+| Production | `5.52.0` | Deployed and verified |
 
-Post-deploy checks: `/api/version` on both hosts, nginx test, backend/frontend health, registered labs, and pre/post backups.
+Post-deploy checks: `/api/version` `200` on both hosts, backend/frontend
+containers healthy, production `nginx -t` passed, **217** registered and **206**
+workbook-mapped labs, and **14** production wiki sites rebuilt. Production
+contains the new **Submit knowledge check** and **Submit quiz for certificate**
+frontend bundles. Production pre/post backups:
+`ocr-backup-20261126-022642.dump` and `ocr-backup-20261126-023027.dump`.
+Development pre-deploy backup: `~/opencyberrange/.backups/20261126_022244`.
+Rollback images are tagged `pre-v5.52.0` on production.
+
+The development run ended with a non-blocking warning when the updater tried to
+copy `ocr-platform.service` without sudo. The existing unit remained enabled and
+active, and the deployed containers restarted healthy.
