@@ -19,7 +19,7 @@ Status: **released and deployed** to development and production on 26 November
 |---|---|
 | RangeBox proxy networks | The per-user `/29` was reused by every lab, so starting lab B while lab A's proxy network still existed produced `invalid pool request: Pool overlaps with other one on this address space` and the new desktop had no VNC path. The allocator now tries the base block and then every other `/29` in the user's `/24`. |
 | VNC peer addresses | The RangeBox and backend addresses are derived from the network's real subnet (`network + 2/+3`), so a block such as `10.200.212.8/29` uses `.10` and `.11` instead of an out-of-subnet `.2`/`.3`. |
-| Workbook origin | Production now sets `wiki_origin` to `https://ctfd.swocts.com:8443`. The workbook iframe is cross-origin, gets `allow-same-origin`, and MkDocs Material no longer throws `SecurityError` on `localStorage`. |
+| Workbook origin | Production now sets `wiki_origin` to `https://<platform-host>:8443`. The workbook iframe is cross-origin, gets `allow-same-origin`, and MkDocs Material no longer throws `SecurityError` on `localStorage`. |
 | Regression test | Five unit tests cover the allocator, peer-address derivation, reuse of an existing network, `get_rangebox_ip`, and exhaustion. |
 
 ## Verification
@@ -29,7 +29,7 @@ Status: **released and deployed** to development and production on 26 November
 | Backend tests | `642 passed`, `559 skipped` (DB-backed tests need `TEST_DATABASE_URL`) |
 | Allocator tests | `5 passed` |
 | Allocator live check | With `10.200.212.0/29` held, the next proxy network allocated `10.200.212.8/29`; cleanup left no networks |
-| Workbook as `kokofan` | iframe on `https://ctfd.swocts.com:8443`, titles and 5.5k character bodies for L1.1 and L1.2, **0 console errors** |
+| Workbook as `kokofan` | iframe on `https://<platform-host>:8443`, titles and 5.5k character bodies for L1.1 and L1.2, **0 console errors** |
 | RangeBox start | `rangebox_212_…` healthy, VNC status **Connected**, workbook visible alongside the desktop |
 | Race reproduction | Stop session 297, immediately spawn 298: cleanup ran in the background; the session rows settled to `stopped`/`running` without a failed spawn |
 | Frontend tests | `56 passed` (21 files) |

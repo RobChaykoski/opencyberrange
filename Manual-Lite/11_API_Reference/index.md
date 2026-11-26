@@ -608,6 +608,7 @@ owner-only unless an explicit share or break-glass grant exists.
 | `POST` | `/api/rangebox/ws-ticket` | Get Ws Ticket | OAuth2PasswordBearer |
 | `GET` | `/api/rangebox/{session_id}/lab` | Rangebox Lab | OAuth2PasswordBearer |
 | `GET` | `/api/rangebox/{session_id}/status` | Rangebox Status | OAuth2PasswordBearer |
+| `GET` | `/api/ransomware-activity` | Get Ransomware Activity | OAuth2PasswordBearer |
 | `POST` | `/api/recognition/evaluate` | Evaluate Recognition | OAuth2PasswordBearer |
 | `GET` | `/api/recognition/me` | My Recognition | OAuth2PasswordBearer |
 | `POST` | `/api/recognition/seen` | Mark Seen | OAuth2PasswordBearer |
@@ -632,6 +633,7 @@ owner-only unless an explicit share or break-glass grant exists.
 | `POST` | `/api/setup/complete` | Complete Setup | Public |
 | `GET` | `/api/setup/config` | Public Config | Public |
 | `GET` | `/api/setup/status` | Setup Status | Public |
+| `GET` | `/api/threat-awareness` | Get Threat Awareness | OAuth2PasswordBearer |
 | `GET` | `/api/usage/admin` | Admin Usage | OAuth2PasswordBearer |
 | `GET` | `/api/usage/admin.csv` | Admin Usage Csv | OAuth2PasswordBearer |
 | `GET` | `/api/usage/admin/qr` | Admin Qr Png | OAuth2PasswordBearer |
@@ -10604,6 +10606,32 @@ List enabled providers for the login screen.  The global switch is evaluated her
 - `200`: Successful Response
 - `422`: Validation Error — `HTTPValidationError`
 
+## Threat awareness
+
+### `GET /api/ransomware-activity`
+
+**Get Ransomware Activity**
+
+Return the current aggregated ransomware snapshot.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Responses**
+
+- `200`: Successful Response
+
+### `GET /api/threat-awareness`
+
+**Get Threat Awareness**
+
+Return the current aggregated snapshot with derived shares.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Responses**
+
+- `200`: Successful Response
+
 ## Usage
 
 ### `GET /api/usage/admin`
@@ -10779,7 +10807,7 @@ Upload a ZIP of markdown files for a workbook chapter.  - **file**: ZIP archive 
 - `200`: Successful Response
 - `422`: Validation Error — `HTTPValidationError`
 
-## Analyst answers
+## Workbook answers
 
 ### `GET /api/workbook-answers`
 

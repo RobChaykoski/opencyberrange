@@ -178,7 +178,7 @@
       "sha256": "fa98a77f258b88dcb508b1ad129e4724cabad65d8ed7db26e03c3c8e1c1538de"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "3b632a590b6a93f7153cb62f26d89e5e18497153e9729ebf10b5f66dbe845377"
+      "sha256": "5ddd70eb9355963cbfb99bdfd3544295688356e3908845fcb95a9acbfa016b72"
     },
     "platform/backend/app/data/threat-awareness.json": {
       "sha256": "5828778ace98209af63064d601b43cee84c782593fe8f9a8c85c3203ba8387ac"
@@ -232,10 +232,10 @@
       "sha256": "5e773728234f776d387017e7fe46368a308fc80167c64ffdd6d2a46e86cf4b9e"
     },
     "platform/frontend/nginx-ssl.conf": {
-      "sha256": "47bf3fa55dfcbe0c824bce69e65d7c519129435a584326aaf104276a1e48d4de"
+      "sha256": "b8d354205dd72129b7a5af708aaa88743a295db492c94d084467f4381f23e44e"
     },
     "platform/frontend/nginx.conf": {
-      "sha256": "f808eb1e3d730c8d87db3a9888de8cabf6a63bcf09e828d56228313f1b7f7942"
+      "sha256": "6c3dfe917751fbc587c5841d923e4050defe97756f6c2e93827d3251adf345d4"
     },
     "platform/frontend/package-lock.json": {
       "sha256": "b9e99dedf5c4ec60fd13c1ad8673f21c950ab64938472e038e15ccf4dfd88457"
@@ -1084,7 +1084,7 @@
       ]
     },
     "network-2-7-arkime-session-triage": {
-      "content_hash": "7e67db8637f4b68df625e7cd4a0689ed7fe0f970ba8172fc1f03f384e25e2db8",
+      "content_hash": "9df1fd428e6b0f5d4db68745f2b66b70dc19449bf90d2b14b366909611461cb0",
       "services": [
         "arkime"
       ]

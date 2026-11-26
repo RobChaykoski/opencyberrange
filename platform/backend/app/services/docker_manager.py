@@ -1360,8 +1360,7 @@ fi
             subnet = str(configs[0].get("Subnet") or "") if configs else ""
             ipv4 = None
             if subnet:
-                base = subnet.split("/")[0].rsplit(".", 1)[0]
-                ipv4 = f"{base}.3"
+                ipv4 = proxy_peer_ips(subnet)[1]
             try:
                 if ipv4:
                     net.connect(backend, ipv4_address=ipv4)
@@ -3492,7 +3491,8 @@ fi
             #
             # Docker reserves the first address in a subnet as the gateway, so
             # a /30 cannot hold both peers: .1 is the gateway, leaving only .2.
-            # Use a /29 with the RangeBox at .2 and the backend at .3.
+            # Use a /29 with the RangeBox at network+2 and the backend at
+            # network+3 (the first two usable hosts after Docker's gateway).
             #
             # The subnet is per user, not per lab, so a previous session's
             # network can still hold 10.200.<user>.0/29 when the next lab

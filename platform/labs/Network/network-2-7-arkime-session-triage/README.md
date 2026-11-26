@@ -61,12 +61,9 @@ OIDC/header auth.
 
    The result is the suspicious HTTP session. Open it and inspect the request
    path, host and user agent.
-3. The request path contains the token `arkime_s3ss10n_tr1ag3`. The flag is the
-   token wrapped in the lab format:
-
-   ```text
-   OCR{arkime_s3ss10n_tr1ag3}
-   ```
+3. The request path contains the flag token. Read it from the captured session
+   and record it in the lab format; the expected answer lives in `lab.yaml`, not
+   in this README or the workbook.
 
 4. Cross-check the DNS answer for `c2.ocrlab.example` and the second POST to
    `/upload`. Record the exact Arkime expression and the destination in the

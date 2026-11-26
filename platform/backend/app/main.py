@@ -64,6 +64,8 @@ from app.routers import security_admin as security_admin_router
 from app.routers import portfolio_shares as portfolio_shares_router
 from app.services.scheduler import start_scheduler, shutdown_scheduler
 from app.services.db_integrity import ensure_ledger
+from app.services.wiki_origin import app_origin as request_app_origin
+from app.services.wiki_origin import split_origin as request_split_origin
 from app.config import settings, validate_settings
 from app.version import APP_VERSION, RELEASE_NAME
 from app.ratelimit import create_limiter
@@ -1134,9 +1136,10 @@ def _wiki_frame_ancestor(db) -> str:
     """
     from app.services import settings_service
 
-    # Same-origin wikis are already covered by 'self'. Do not widen the policy
-    # with an environment-derived origin unless the admin has opted into a
-    # separate wiki origin.
+    # Same-origin wikis are already covered by 'self'. The TLS split is the
+    # one exception: nginx announces the :8443 workbook origin with a request
+    # header, and the middleware below derives the SPA origin from the request
+    # when the admin has not set the frame ancestor explicitly.
     wiki_origin = (
         settings_service.get_setting_fresh(db, "wiki_origin", "") or ""
     ).strip()
@@ -1161,21 +1164,30 @@ def _wiki_frame_ancestor(db) -> str:
 _FRAME_ANCESTOR_TTL = 30.0
 _frame_ancestor_cache: tuple[float, str] = (0.0, "")
 
+# Endpoints used as nginx auth_request subrequests for a wiki location. Every
+# one of them can carry the frame-ancestor header so enrolled/admin wikis are
+# framed on the same terms as the open range tracks.
+_WIKI_AUTH_PATHS = (
+    "/api/auth/me",
+    "/api/auth/wiki-access",
+    "/api/auth/wiki-admin-access",
+)
+
 
 @app.middleware("http")
 async def wiki_frame_ancestor_header(request: Request, call_next):
     """Expose the allowed frame ancestor to nginx's auth_request.
 
-    The wiki CSP cannot read PostgreSQL. The internal /api/auth/me subrequest
-    returns this header, nginx captures it with auth_request_set, and the wiki
-    location interpolates it into frame-ancestors. The value changes only when
-    the admin edits a setting, so it is cached briefly instead of opening a
-    session on every /api/auth/me request.
+    The wiki CSP cannot read PostgreSQL. The internal auth subrequest returns
+    this header, nginx captures it with auth_request_set, and the wiki location
+    interpolates it into frame-ancestors. The value changes only when the admin
+    edits a setting, so it is cached briefly instead of opening a session on
+    every auth subrequest.
     """
     global _frame_ancestor_cache
 
     response = await call_next(request)
-    if request.url.path == "/api/auth/me":
+    if request.url.path in _WIKI_AUTH_PATHS:
         now = time.monotonic()
         expires, value = _frame_ancestor_cache
         if now >= expires:
@@ -1187,6 +1199,11 @@ async def wiki_frame_ancestor_header(request: Request, call_next):
             finally:
                 db.close()
             _frame_ancestor_cache = (now + _FRAME_ANCESTOR_TTL, value)
+        # A TLS frontend that serves the :8443 split announces it, and the
+        # request host is the SPA origin that frames the wiki. This keeps a
+        # fresh deployment working before anyone sets wiki_origin.
+        if not value and request_split_origin(request):
+            value = request_app_origin(request)
         if value:
             response.headers["X-Wiki-Frame-Ancestor"] = value
     return response

@@ -517,8 +517,9 @@ baseline. Before deploying:
 2. Confirm TCP **8443** reaches the frontend. Workbooks are served from
    `https://<host>:8443`; the CSP allows the workbook origin and the exact
    `https://mitre-attack.github.io` Navigator origin.
-3. Set the `wiki_origin` platform setting to `https://<host>:8443` if it is not
-   already set.
+3. Leave `wiki_origin` empty to use the TLS frontend's derived
+   `https://<host>:8443` split, or set it explicitly to override the split with
+   another wiki hostname.
 4. Build with `PLATFORM_VERSION=5.17.2` and confirm `/api/version`.
 5. Let the backend apply migrations during startup and confirm `alembic current`
    reports `0040_settings_change_control` (head). Do not run

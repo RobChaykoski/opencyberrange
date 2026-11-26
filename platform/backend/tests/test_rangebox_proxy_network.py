@@ -18,12 +18,29 @@ class _FakeNetwork:
         }
         self.name = name
         self.removed = False
+        self.connected: list[str | None] = []
 
     def remove(self):
         self.removed = True
 
     def disconnect(self, container, force=False):
         return None
+
+    def connect(self, container, ipv4_address=None):
+        self.connected.append(ipv4_address)
+
+
+class _FakeBackend:
+    def __init__(self):
+        self.attrs = {"NetworkSettings": {"Networks": {}}}
+
+
+class _FakeContainers:
+    def __init__(self, backend):
+        self.backend = backend
+
+    def get(self, name):
+        return self.backend
 
 
 class _FakeNetworks:
@@ -36,6 +53,9 @@ class _FakeNetworks:
         if name in self.existing:
             return self.existing[name]
         raise docker.errors.NotFound(name)
+
+    def list(self):
+        return list(self.existing.values())
 
     def create(self, name, **kwargs):
         subnet = kwargs["ipam"]["Config"][0]["Subnet"]
@@ -96,3 +116,35 @@ def test_allocator_fails_when_every_block_is_taken():
         DockerManager._ensure_proxy_network(
             _manager(networks), "ocr-proxy-212-lab", 212, 212
         )
+
+
+def test_reattach_uses_the_addresses_of_the_allocated_block():
+    name = "ocr-proxy-212-lab-b"
+    proxy_net = _FakeNetwork(name, "10.200.212.8/29", containers={"abc": {}})
+    networks = _FakeNetworks(existing={name: proxy_net})
+    manager = SimpleNamespace(
+        client=SimpleNamespace(
+            networks=networks,
+            containers=_FakeContainers(_FakeBackend()),
+        )
+    )
+
+    assert DockerManager.ensure_proxy_attachments(manager) == [name]
+    assert proxy_net.connected == ["10.200.212.11"]
+
+
+def test_reattach_leaves_an_already_attached_network_alone():
+    name = "ocr-proxy-212-lab-b"
+    proxy_net = _FakeNetwork(name, "10.200.212.8/29", containers={"abc": {}})
+    networks = _FakeNetworks(existing={name: proxy_net})
+    backend = _FakeBackend()
+    backend.attrs["NetworkSettings"]["Networks"] = {name: {}}
+    manager = SimpleNamespace(
+        client=SimpleNamespace(
+            networks=networks,
+            containers=_FakeContainers(backend),
+        )
+    )
+
+    assert DockerManager.ensure_proxy_attachments(manager) == []
+    assert proxy_net.connected == []

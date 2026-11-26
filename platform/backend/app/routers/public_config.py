@@ -4,27 +4,31 @@ Only values that are safe for every visitor belong here. The wiki origin is a
 public URL the browser needs before login; it contains no secret.
 """
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.services.community_events import get_community_events
 from app.services.settings_service import get_setting_fresh
+from app.services.wiki_origin import split_origin
 
 router = APIRouter()
 
 
 @router.get("/config/public")
-def public_config(db: Session = Depends(get_db)):
+def public_config(request: Request, db: Session = Depends(get_db)):
     """Return runtime values needed by the SPA before authentication."""
-    wiki_origin = (get_setting_fresh(db, "wiki_origin", "") or "").strip()
+    configured_origin = (get_setting_fresh(db, "wiki_origin", "") or "").strip()
     require_approval = (
         get_setting_fresh(db, "require_approval", "true") or "true"
     ).strip().lower() != "false"
     return JSONResponse(
         {
-            "wiki_origin": wiki_origin,
+            # A TLS frontend that serves the :8443 split announces it, so a
+            # fresh deployment does not depend on the admin setting to escape
+            # the opaque same-origin sandbox.
+            "wiki_origin": configured_origin or split_origin(request),
             "require_approval": require_approval,
         },
         headers={"Cache-Control": "no-store"},
