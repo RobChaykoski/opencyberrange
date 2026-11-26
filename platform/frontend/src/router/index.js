@@ -219,6 +219,12 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/exercises/:trackSlug/briefing',
+    name: 'ExerciseBriefing',
+    component: () => import('../views/ExerciseBriefing.vue'),
+    meta: { requiresAuth: true, bare: true }
+  },
+  {
     path: '/labs',
     name: 'Labs',
     redirect: '/exercises'  // Redirect old labs route to exercises

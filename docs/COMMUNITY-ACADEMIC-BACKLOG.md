@@ -21,7 +21,7 @@ they are not Enterprise deployment features.
 
 | ID | Item | Problem | Classification | State |
 |---|---|---|---|---|
-| CA-L1 | Exercise brief tab inside the lab workspace, with pop-out | Learners must leave RangeBox and open the exercise in another window to reread the scenario, objectives, hints, or workbook link | Community / Academic lab improvement | Proposed |
+| CA-L1 | Exercise brief tab inside the lab workspace, with pop-out | Learners must leave RangeBox and open the exercise in another window to reread the scenario, objectives, hints, or workbook link | Community / Academic lab improvement | Implemented: Briefing tab and read-only pop-out |
 | CA-L2 | Keep the exercise like/dislike control visible at the top of the active exercise | The control existed but sat below the scenario and flag form, so learners did not find it | Bug fix / usability fix | Implemented on the 2.4.x line; merge to 1.1 |
 | CA-L3 | Certification pathway panel on each track | Learners can see entry, core, and advanced vendor certifications and the roles a track can lead toward | Community / Academic curriculum guidance | Implemented on the 2.4.x line; port to 1.1 |
 | CA-L4 | CISO MindMap-informed career breadth | The curriculum should show the wider leadership and governance system around technical work, not only first-job skills | Community / Academic curriculum guidance | Proposed |
@@ -35,8 +35,8 @@ tab inside the RangeBox workspace and optionally pop it out.
 
 **Shape:**
 
-- Add a **Briefing** tab to the RangeBox workspace alongside the existing
-  terminal and files views.
+- Add a **Briefing** tab to the exercise workspace alongside the existing
+  Desktop, Exercise, and Workbook tabs.
 - Reuse one `ExerciseBrief` component for the in-workspace tab and the pop-out
   route so the content cannot drift.
 - Render scenario, objectives, target hostnames, workbook link, and hints with
@@ -65,8 +65,12 @@ tab inside the RangeBox workspace and optionally pop it out.
 6. Keyboard and screen-reader navigation work.
 7. The build and lint pass.
 
-**Decision:** proposed for the Community / Academic profile lab improvement line.
-Do not implement it as part of a Professional analytics or reporting change.
+**Decision:** implemented for the Community / Academic profile lab improvement
+line. The in-workspace tab appears on layouts that use the tab strip; wide
+layouts expose the same pop-out from the Scenario panel. The pop-out route is
+`/exercises/:trackSlug/briefing?labId=...&courseId=...&wikiSlug=...` and is
+read-only, authenticated, and rendered without app chrome. Do not implement
+Professional analytics or reporting changes through this item.
 
 ## CA-L6 design note
 

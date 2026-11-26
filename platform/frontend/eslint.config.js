@@ -61,6 +61,7 @@ module.exports = [
   // list exact (no globs); a new file must be reviewed and added explicitly.
   {
     files: [
+      'src/components/ExerciseBrief.vue',
       'src/components/TicketPanel.vue',
       'src/views/TrackDetail.vue',
     ],

@@ -605,6 +605,17 @@
             </button>
             <button
               type="button"
+              id="workspace-tab-briefing"
+              role="tab"
+              aria-controls="workspace-panel-briefing"
+              :aria-selected="workspaceTab === 'briefing'"
+              :class="['workspace-tabs__tab', { 'workspace-tabs__tab--active': workspaceTab === 'briefing' }]"
+              @click="workspaceTab = 'briefing'"
+            >
+              Briefing
+            </button>
+            <button
+              type="button"
               id="workspace-tab-exercise"
               role="tab"
               aria-controls="workspace-panel-exercise"
@@ -720,6 +731,28 @@
               </div>
             </section>
 
+            <!-- Briefing tab: the same read-only component as the pop-out. -->
+            <section
+              v-if="!wideWorkspace"
+              v-show="workspaceTab === 'briefing'"
+              id="workspace-panel-briefing"
+              role="tabpanel"
+              aria-labelledby="workspace-tab-briefing"
+              class="panel-section panel-section--briefing"
+              aria-label="Exercise briefing"
+            >
+              <ExerciseBrief
+                :lab="activeLab.lab"
+                :track="activeLab.track"
+                :level="activeLab.level"
+                :hostnames="activeLab.hostnames || []"
+                :hints="receivedHints"
+                :workbook-url="activeWorkbookUrl || ''"
+                @open-workbook="openWorkbook"
+                @pop-out="openBriefingPopout"
+              />
+            </section>
+
             <div
               v-show="wideWorkspace || !workspaceMode || workspaceTab === 'exercise'"
               id="workspace-panel-exercise"
@@ -749,6 +782,14 @@
               </h3>
               <!-- security-delta: allow Vue v-html (DOMPurify.sanitize) -->
               <div class="scenario-content" :class="{ 'scenario-content--clamped': !scenarioExpanded }" v-html="renderScenario(activeLab.lab.scenario)"></div>
+              <button
+                v-if="wideWorkspace"
+                type="button"
+                class="panel-disclosure__toggle"
+                @click="openBriefingPopout"
+              >
+                Pop out briefing
+              </button>
               <button
                 type="button"
                 class="panel-disclosure__toggle"
@@ -1268,12 +1309,10 @@ import { hasRole } from '../utils/roles'
 import { useMobileView } from '../composables/useMobileView'
 import { useToolPanel } from '../composables/useToolPanel'
 import { setWikiAuthCookie } from '../utils/wikiAuth'
-import { wikiUrl } from '../utils/wikiUrl'
+import { renderLabMarkdown } from '../utils/markdown'
+import { resolveWorkbookUrl } from '../utils/workbook'
 import axios from '../api/axios'
-import { marked } from 'marked'
-import DOMPurify from 'dompurify'
-
-marked.setOptions({ breaks: true, gfm: true })
+import ExerciseBrief from '../components/ExerciseBrief.vue'
 
 // Icons
 import { getTrackIcon } from '../components/icons/trackIcons.js'
@@ -1603,7 +1642,7 @@ const wideWorkspace = ref(wideWorkspaceQuery ? wideWorkspaceQuery.matches : fals
 const updateWideWorkspace = (event) => {
   wideWorkspace.value = event.matches
 }
-const WORKSPACE_TABS = ['desktop', 'exercise', 'workbook']
+const WORKSPACE_TABS = ['desktop', 'briefing', 'exercise', 'workbook']
 const requestedTab = String(route.query.tab || '')
 const workspaceTab = ref(
   WORKSPACE_TABS.includes(requestedTab) ? requestedTab : 'desktop'
@@ -1909,17 +1948,11 @@ const toggleLevel = (levelId) => {
 //   active course wiki. There is no fallback: an unresolvable field is a
 //   misconfiguration and is surfaced, not silently routed to a stale wiki.
 const workbookUrl = (wb, quiet = false) => {
-  if (!wb) return null
-  if (wb.startsWith('wiki/range/') || wb.startsWith('wiki/course/')) {
-    return wikiUrl('/' + wb)
-  }
-  if (activeWikiSlug.value) {
-    return wikiUrl('/wiki/course/' + activeWikiSlug.value + '/' + wb)
-  }
-  if (!quiet) {
+  const url = resolveWorkbookUrl(wb, activeWikiSlug.value)
+  if (!url && wb && !quiet) {
     console.error('workbookUrl: cannot resolve workbook field (no namespace, no course context):', wb)
   }
-  return null
+  return url || null
 }
 
 // Can this workbook actually be opened from where the user is standing?
@@ -1967,6 +2000,28 @@ const openWorkbookForLab = (lab) => {
     setWikiAuthCookie()
     window.open(url, '_blank', 'noopener,noreferrer')
   }
+}
+
+// The briefing pop-out is a read-only route that fetches the same lab record.
+// Build it through the router so the URL shape stays in one place, and use
+// noopener,noreferrer so the new window cannot reach back into the workspace.
+const openBriefingPopout = () => {
+  if (!activeLab.value?.lab?.id || !route.params.trackSlug) return
+  const query = {
+    labId: String(activeLab.value.lab.id),
+    tab: 'briefing',
+  }
+  if (activeCourseId.value) query.courseId = String(activeCourseId.value)
+  if (activeWikiSlug.value) query.wikiSlug = activeWikiSlug.value
+  if (typeof route.query.launch === 'string' && route.query.launch) {
+    query.launch = route.query.launch
+  }
+  const target = router.resolve({
+    name: 'ExerciseBriefing',
+    params: { trackSlug: route.params.trackSlug },
+    query,
+  })
+  window.open(target.href, '_blank', 'noopener,noreferrer')
 }
 
 const openCertificate = (level) => {
@@ -2784,38 +2839,12 @@ const stopHintTimer = () => {
 // container reports ready. Both pause while the tab is hidden and clean
 // themselves up on unmount.
 
-// Hints/scenarios use angle-bracket placeholders -- flag formats like
-// OCR{...reg_<register>_val_<value>} and command templates like `nmap <target>`.
-// Two markdown hazards corrupt them: (1) <register>/<target> are parsed as HTML
-// tags and stripped, and (2) underscores flanking a placeholder are parsed as
-// emphasis (>_val_< -> italic "val"), dropping the underscores the exact-match
-// flag needs. Escape the placeholder brackets, then convert the flanking
-// underscores to a numeric entity so markdown leaves them literal. The URL-safe
-// char class skips autolinks (<http://...> has :// ), and the transform is
-// idempotent (entities are not re-matched).
-const escapePlaceholders = (text) =>
-  text
-    .replace(/<([A-Za-z0-9_ -]+)>/g, '&lt;$1&gt;')
-    .replace(/&gt;_/g, '&gt;&#95;')
-    .replace(/_&lt;/g, '&#95;&lt;')
+// Hints and scenarios share the platform markdown path. The shared helper
+// escapes angle-bracket placeholders before marked sees them; scenarios also
+// unwrap hard-wrapped lines so paragraphs flow naturally.
+const renderMarkdown = (text) => renderLabMarkdown(text)
 
-const renderMarkdown = (text) => {
-  if (!text) return ''
-  return DOMPurify.sanitize(marked.parse(escapePlaceholders(text)))
-}
-
-// Render scenario text: unwrap hard-wrapped lines so they flow naturally,
-// while preserving intentional paragraph breaks (double newlines)
-const renderScenario = (text) => {
-  if (!text) return ''
-  // Split into paragraphs (double newline), unwrap single newlines within each,
-  // then rejoin as paragraphs
-  const unwrapped = text
-    .split(/\n\s*\n/)
-    .map(para => para.replace(/\n/g, ' '))
-    .join('\n\n')
-  return DOMPurify.sanitize(marked.parse(escapePlaceholders(unwrapped)))
-}
+const renderScenario = (text) => renderLabMarkdown(text, { unwrap: true })
 
 // Lifecycle
 onMounted(async () => {
@@ -4186,9 +4215,13 @@ watch(timeRemaining, (val) => {
   margin-bottom: 0.75rem;
   padding-bottom: 0.35rem;
   border-bottom: 1px solid var(--border-color);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
 }
 
 .workspace-tabs__tab {
+  flex: 0 0 auto;
   padding: 0.35rem 0.85rem;
   border: 1px solid transparent;
   border-radius: 6px;
@@ -4196,6 +4229,7 @@ watch(timeRemaining, (val) => {
   color: var(--text-secondary);
   font-size: 0.78rem;
   font-weight: 600;
+  white-space: nowrap;
   cursor: pointer;
 }
 
@@ -4422,7 +4456,8 @@ watch(timeRemaining, (val) => {
 }
 
 .panel-section--rangebox,
-.panel-section--workbook {
+.panel-section--workbook,
+.panel-section--briefing {
   display: flex;
   flex-direction: column;
   min-height: 0;

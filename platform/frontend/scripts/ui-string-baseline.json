@@ -1,5 +1,5 @@
 {
-  "total": 5419,
+  "total": 5443,
   "files": {
     "src/App.vue": 13,
     "src/components/AchievementStudio.vue": 54,
@@ -22,6 +22,7 @@
     "src/components/CyberDiscoveryPanel.vue": 38,
     "src/components/CyberDnaBand.vue": 15,
     "src/components/CyberDnaV3Panel.vue": 46,
+    "src/components/ExerciseBrief.vue": 14,
     "src/components/ExerciseHeatmap.vue": 20,
     "src/components/FlagCelebration.vue": 4,
     "src/components/GradingReport.vue": 29,
@@ -82,6 +83,7 @@
     "src/views/DeepLinkPicker.vue": 8,
     "src/views/Discover.vue": 24,
     "src/views/EvidenceReview.vue": 95,
+    "src/views/ExerciseBriefing.vue": 7,
     "src/views/ExerciseQuiz.vue": 38,
     "src/views/ForgotPassword.vue": 7,
     "src/views/Governance.vue": 48,
@@ -106,7 +108,7 @@
     "src/views/Surveys.vue": 33,
     "src/views/ThreatAwareness.vue": 37,
     "src/views/Tools.vue": 21,
-    "src/views/TrackDetail.vue": 165,
+    "src/views/TrackDetail.vue": 168,
     "src/views/VerifyCertificate.vue": 63,
     "src/views/WorkbookAnswers.vue": 27,
     "src/views/WorkbooksLanding.vue": 6,
