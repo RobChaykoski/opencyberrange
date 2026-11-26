@@ -22,6 +22,14 @@ Steps 2 and 3 order matters: the manifest copies the lock's `release` field.
 Releases 5.46.0 and 5.46.1 skipped step 3, so the committed manifest still said
 `5.45.0` and the CI integrity gate failed.
 
+## Release 5.55.0
+
+| Tag | Release | Status |
+|---|---|---|
+| `v5.55.0` | SWOCTS Cyber Range Release 5.55.0 | Signed annotated tag: career-focused exercise catalogue with a Cybersecurity Foundations default, a switchable career target, and a dashboard track list that follows the same focus. |
+
+Deliverables: [Release 5.55.0 deliverables](RELEASE-5.55.0-DELIVERABLES.md).
+
 ## Release 5.54.2
 
 | Tag | Release | Status |

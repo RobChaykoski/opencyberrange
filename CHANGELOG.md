@@ -2,6 +2,26 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.55.0] - 2026-11-26
+
+### Added
+
+- **Career-focused exercise catalogue:** the Exercises hub now shows the tracks
+  aligned with the learner's career target, and new learners start on the
+  **Cybersecurity Foundations** pathway. A focus bar shows how many tracks are in
+  view, the career-target selector can be changed in place, and the full
+  catalogue remains one click away.
+- **Progressive first screen:** learners with fewer than three completed
+  exercises default to the focused view. The focus is a preference, not a lock;
+  when every track in the focus is complete, the page marks the pathway complete
+  and invites exploration of the full catalogue.
+- **Dashboard consistency:** the student dashboard's **Track progress** card
+  follows the same career target and links to the focused catalogue. The role
+  catalogue now exposes each pathway's track mapping so both views use one
+  source of truth.
+- **Learner guide:** the Exercises hub and dashboard pages describe the focus,
+  the career-target selector, and how to open all tracks.
+
 ## [5.54.2] - 2026-11-26
 
 ### Fixed
