@@ -2,6 +2,21 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.52.9] - 2026-11-26
+
+### Fixed
+
+- **Split-layout deploy:** the backend sync now preserves `run-state`, so a
+  deploy no longer wipes exercise-tester or impersonation state.
+
+### Added
+
+- **Threat-feed refresh helper:** `scripts/refresh-threat-snapshots.sh`
+  downloads the current DB-IP Lite database, regenerates both snapshots into a
+  review directory, validates them through the backend services, and prints a
+  diff. The operations guide documents a weekly cron, and a weekly OpenCode
+  check prompts a reviewed signed release.
+
 ## [5.52.8] - 2026-11-26
 
 ### Changed

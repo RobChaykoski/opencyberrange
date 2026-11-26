@@ -10,7 +10,7 @@ SWOCTS Cyber Range is powered by OpenCyberRange. This policy covers the branded 
 ## Supported versions
 
 Security fixes land on the current supported release. The current platform
-release is **5.52.8** (`v5.52.8`, signed annotated tag), with security fixes
+release is **5.52.9** (`v5.52.9`, signed annotated tag), with security fixes
 also maintained on the **1.1.3** Community / Academic maintenance line where
 the same defect applies.
 
