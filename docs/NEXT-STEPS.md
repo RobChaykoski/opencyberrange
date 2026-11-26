@@ -89,11 +89,14 @@ what is left; the deployment record is
 2. **Runtime dependency review.** Open Dependabot PRs remain for `axios`,
    `marked`, the nginx digest, and Ubuntu 25.10. They were intentionally left
    for runtime/OS review; the dev/tooling updates are merged.
-3. **Cyber DNA v3 rollout.** Development is enabled and backfilled. Production
-   is backfilled for consenting learners only; no consenting learner meets the
-   affinity gate yet. Next: ship the Phase 2 learner UI, then tune the behavior
-   weights after a term of evidence. See [`CYBER-DNA-V3.md`](CYBER-DNA-V3.md).
-   Affinity only; employer access is out of scope.
+3. **Cyber DNA v3 Phase 3.** The Phase 2 learner UI shipped in v5.31.0 and is
+   live: the Profile career-affinity panel and the dashboard DNA band. Production
+   has 47 evidence rows for 4 learners and 0 snapshots; development has 503 rows
+   for 2 learners and 0 snapshots. The affinity gate is unmet. Next: let the
+   consenting cohort accumulate evidence, re-run the consent-gated backfill
+   after consent changes, then tune the behavior weights and affinity formula
+   after a term. See [`CYBER-DNA-V3.md`](CYBER-DNA-V3.md). Affinity only;
+   employer access is out of scope.
 4. **Python 3.15** when it reaches GA. Three interpreter CVEs are fixed only on
    the 3.15/3.16 branches; do not chase alpha releases.
 5. **Docker CLI Go findings** move with Docker Inc.'s next trixie package.

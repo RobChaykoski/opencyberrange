@@ -1,13 +1,10 @@
 # Cyber DNA v3 — talent discovery graph
 
-Status: **Phase 1 implemented and enabled on development.** Development applied
-migration `0032`, backfilled 740 evidence rows for 53 learners, and enabled
-`cyber_dna_v3_enabled`; the affinity gate was verified in both directions.
-
-Production runs 5.30.1. Its flag is currently on, but the production backfill
-has not run: on 22 November 2026 the tables held 3 evidence rows and no
-snapshots. Phase 2 (the learner UI) is not shipped. See
-[Production state](#production-state---2026-11-22).
+Status: **Phase 1 implemented; the Phase 2 learner UI shipped in v5.31.0 and is
+live in 5.53.1.** Development has the v3 surface and evidence; production has
+the feature flag on with a small consenting cohort. No consenting learner meets
+the affinity gate yet. The next work is Phase 3 weight tuning after a term of
+evidence, not UI delivery. See the production state below.
 
 Owner: OpenCyberRange curriculum and platform
 Target: Release 5.17 line (phased)
@@ -340,8 +337,10 @@ Example affinity payload when the gate is met:
    completion; failures are logged and repaired by the backfill adapter.
 3. The read APIs are gated by `cyber_dna_v3_enabled` (default false).
 4. Backfill: dry-run on a copy, then dev, then production. Idempotent.
-5. Phase 2 adds the learner UI. Phase 3 tunes the behavior weights and the
-   affinity formula after a term of evidence.
+5. Phase 2 adds the learner UI; it shipped in v5.31.0 as the Profile career
+   affinity panel and the dashboard DNA band, with consent and gate states.
+   Phase 3 tunes the behavior weights and the affinity formula after a term of
+   evidence.
 6. Rollback: set the flag false. Tables remain inert. Dropping them is a later
    destructive migration.
 
@@ -386,6 +385,21 @@ Example affinity payload when the gate is met:
   learner-facing surface yet. Keep the flag on for API readiness; the consent
   middleware returns `403` for a revoked learner and the gate hides affinity
   below its thresholds.
+
+### Production state - 2026-11-26
+
+- Production runs `5.53.1` with the Phase 2 learner UI shipped in v5.31.0:
+  `/profile` shows the career-affinity panel and the dashboard shows the DNA
+  band.
+- `cyber_dna_v3_enabled=true` and `advanced_dna_insights_enabled=true`.
+- `dna_evidence_records` holds **47 rows for 4 learners**; `dna_snapshots` holds
+  **0**. The cohort is still below the affinity gate (30 labs, 3 domains, 100
+  observations), so the panel correctly shows the gate rather than a score.
+- Development holds 503 rows for 2 learners, also with 0 snapshots; it remains
+  the tuning environment.
+- Next: let the consenting cohort accumulate evidence, then run Phase 3 weight
+  tuning. Re-run the consent-gated backfill after consent changes; it is
+  idempotent and will not recreate revoked learners' evidence.
 
 ## 10.1 Consent and revocation
 
