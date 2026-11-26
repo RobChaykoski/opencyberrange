@@ -32,8 +32,11 @@ The central dashboard runs the separate stack in
 [`deploy/monitoring/`](../deploy/monitoring/README.md) on the independent OpenGRC
 production host. Grafana, Prometheus, Alertmanager, Pushgateway, Blackbox, and
 node-exporter are healthy, the dashboard and datasource are provisioned, and all
-Prometheus targets are up. It publishes Grafana through NPM with Authentik OIDC;
-the `health.swocts.com` DNS/proxy cutover to that host is the remaining step.
+Prometheus targets are up. Internal DNS and NPM forward `health.swocts.com` to
+that host with Authentik OIDC; the previous development-host stack is stopped
+with its volumes retained for rollback. The public Cloudflare A record still
+points at the edge firewall; remove it for internal-only access or forward it
+through NPM for public access.
 
 It is a convenience and correlation layer, not a replacement for this page:
 

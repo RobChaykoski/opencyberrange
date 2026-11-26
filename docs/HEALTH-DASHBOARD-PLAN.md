@@ -1,11 +1,15 @@
 # Host health dashboard plan (`health.swocts.com`)
 
-**Status:** the monitoring stack is now running on the independent OpenGRC
-production host, not the development host. Grafana, Prometheus, Alertmanager,
-Pushgateway, Blackbox, and the local node exporter are healthy, the provisioned
-dashboard and Prometheus datasource are present, and all Prometheus targets are
-up. The `health.swocts.com` DNS/NPM cutover to that host is the remaining step;
-OIDC must be re-verified through the public hostname after the cutover.
+**Status:** the monitoring stack is running on the independent OpenGRC production
+host. Grafana, Prometheus, Alertmanager, Pushgateway, Blackbox, and the local
+node exporter are healthy, the provisioned dashboard and Prometheus datasource
+are present, and all Prometheus targets are up. Internal DNS and NPM now forward
+`health.swocts.com` to that host; the previous development-host stack is stopped
+with its volumes retained for rollback.
+
+The public Cloudflare A record still points at the edge firewall rather than the
+NPM proxy. For an internal/VPN-only dashboard, remove that public record; for a
+public dashboard, forward it through NPM rather than exposing the firewall UI.
 **Hostname:** `health.swocts.com`.
 **Owner:** platform operations.
 **Release:** supports Release 6.2 (scale and availability). The dashboard is not a
