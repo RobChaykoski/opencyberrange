@@ -7,10 +7,11 @@ The signed tag and [`versions.yaml`](../versions.yaml) win over any page.
 
 | Document | Use it for |
 |---|---|
+| [Project overview pack](_project_overview/README.md) | Infrastructure, internal network map, software versions, data dictionary, and OpenAPI export |
 | [Production deployment statement](PRODUCTION-DEPLOYMENT-STATEMENT.md) | The deployed release, cutover state, and evidence |
 | [Deployment runbook](DEPLOYMENT-RUNBOOK.md) | Operating the development and production hosts |
 | [Validation report](VALIDATION-REPORT.md) | Reproducible test, build, lab, and smoke evidence |
-| [Lab and content counts](COUNTS.md) | The canonical 215-lab definitions and counts |
+| [Lab and content counts](COUNTS.md) | The canonical 218-lab definitions and counts |
 | [Deployment topology and sizing](DEPLOYMENT-TOPOLOGY-AND-SIZING.md) | Supported shape, ports, and database budget |
 
 ## Browse by area
