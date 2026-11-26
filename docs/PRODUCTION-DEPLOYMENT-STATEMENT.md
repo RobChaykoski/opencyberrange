@@ -9,6 +9,23 @@ another document disagrees, this page and the signed tag win.
 > replaced with placeholders. The private deployment inventory holds the live
 > values. See [`PUBLICATION-METADATA-POLICY.md`](PUBLICATION-METADATA-POLICY.md).
 
+## 5.54.2 deployment verification
+
+| Check | Result |
+|---|---|
+| `/api/version` | `5.54.2` on production and development |
+| Alembic | **`0067_course_content_rls` (head)** |
+| Health | Production and development backend/frontend containers `healthy`; nginx `-t` passes |
+| Production wiki | **14** sites rebuilt |
+| Development wiki | **14** sites rebuilt by the shared one-shot `wiki-builder`; `course`, `range`, `reference`, and `index.html` are present in the frontend `wiki_data` mount |
+| Split-layout builder | Development now uses `docker-compose.wiki-builder.yml` for the legacy root compose; the builder reads the checkout directly and does not need a root `mkdocs.yml` |
+| Pre-deploy backup (production) | `~/backups/ocr-backup-20261126-212227.dump` |
+| Pre-deploy backup (development) | `~/opencyberrange/.backups/20261126_212554` |
+| Rollback images | `opencyberrange-backend:pre-v5.54.2`, `ocr-frontend:pre-v5.54.2` on production; development rolls back by rebuilding `v5.54.1` |
+
+5.54.2 is a deployment-tooling patch. The lab definitions and Alembic schema
+are unchanged.
+
 ## 5.54.1 deployment verification
 
 | Check | Result |
