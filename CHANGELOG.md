@@ -2,6 +2,22 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.53.0] - 2026-11-26
+
+### Added
+
+- **Read-only HA status:** a new admin endpoint `GET /api/admin/system/ha` and a
+  Health card. The backend reads the host collector's fixed
+  `/var/lib/ocr-ha/status.json`, sanitises the known fields, caches for 15
+  seconds, applies the 90-second staleness rule, and derives
+  `ok` / `warning` / `error` / `unknown`. There is no query parameter, write
+  path, or peer probe, and single-node installs hide the card.
+- **HA attention entries:** `system_status()` reports replication and witness
+  problems only when a snapshot file exists.
+- **HA operations reference:** the read-only witness endpoint, the 30-second
+  host collector, systemd units, and the read-only API mount live in the HA
+  repository.
+
 ## [5.52.10] - 2026-11-26
 
 ### Fixed
