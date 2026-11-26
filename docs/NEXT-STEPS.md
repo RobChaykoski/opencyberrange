@@ -1,14 +1,36 @@
 # Next steps
 
-Status: **Release 5.30.2 is deployed to development and production
-(`deployment_mode=production`, `sso_enabled=false`). Cyber DNA v3 Phase 1 is
-enabled on development only.** The platform runs Python 3.13, the
-security hardening wave is live, the OT track has three exercises plus an
-offline scan assistant, and the user manual reflects the current UI.
-This page tracks what is left; the deployment record is
+Status: **Release 5.53.1 is deployed to development and production.** The
+read-only HA status panel (endpoint, Admin card, witness endpoint, host
+collector) is implemented; the witness/collector install and live drills
+remain. The threat-awareness snapshots are refreshed and a weekly operations
+automation is scheduled. Dependency maintenance cleared the dev/tooling
+Dependabot backlog; runtime and OS updates remain for review. This page tracks
+what is left; the deployment record is
 [`RELEASE-5-PRODUCTION-READINESS.md`](RELEASE-5-PRODUCTION-READINESS.md).
 
-## Recently completed
+## Current wave (5.52.6–5.53.1)
+
+- **HA status panel.** `GET /api/admin/system/ha`, the Admin card, replication
+  and witness attention entries, the read-only witness endpoint, the 30-second
+  host collector, and the `/var/lib/ocr-ha` mount are implemented. The full
+  witness → collector → backend chain passed on development. Install and live
+  drills remain.
+- **RangeBox lifecycle.** Proxy networks allocate a free `/29`, VNC peers are
+  derived from the real subnet, backend reattach follows the allocated block,
+  and `get_rangebox_ip()` fails closed instead of guessing a base `.2`.
+- **Workbook origin.** A TLS deployment derives `https://<host>:8443` when
+  `wiki_origin` is empty; enrolled and admin course wikis receive the dynamic
+  frame-ancestor policy.
+- **Threat awareness.** Hostile-infrastructure snapshots now combine FireHOL
+  with curated DShield, Blocklist.de, abuse.ch Feodo, OffSeq Mirage, and IPsum
+  feeds; RansomLook is refreshed. A weekly ops automation and helper script
+  keep the review moving.
+- **Maintenance.** Fixed the duplicate `psycopg` pin, documented `ws_tickets`,
+  and merged the green dev/tooling dependency PRs. Backend tests are 668;
+  frontend 63; HA 91.
+
+## Earlier completed
 
 - **Release 5.30.1 and pilot cleanup.** LTI launches no longer depend on the
   SSO switch, so production runs with `sso_enabled=false`. Moodle's cURL
@@ -59,17 +81,25 @@ This page tracks what is left; the deployment record is
 
 ## Open queue
 
-1. **Cyber DNA v3 rollout.** Development is enabled and backfilled. Production
-   is backfilled for consenting learners only (44 evidence rows, 3 learners, 11
-   activities); the initial backfill bypassed consent, so 230 rows were purged
-   for 12 learners and 5.30.2 added the consent gate. No consenting learner
-   meets the affinity gate yet. Next: ship the Phase 2 learner UI, then tune the
-   behavior weights after a term of evidence. See
-   [`CYBER-DNA-V3.md`](CYBER-DNA-V3.md). Affinity only; employer access is out
-   of scope.
-2. **Python 3.15** when it reaches GA. Three interpreter CVEs are fixed only on
+1. **HA status panel rollout.** Install the witness compose on the Unraid
+   witness, run `install-ha-status-collector.sh` on `.41` and `.44`, then run the
+   drills in the
+   [HA status-panel drill runbook](https://github.com/RobChaykoski/opencyberrange-ha/blob/main/docs/14-ha-status-drills.md)
+   (HA repository). The card is hidden until the snapshot exists.
+2. **Runtime dependency review.** Open Dependabot PRs remain for `axios`,
+   `marked`, the nginx digest, and Ubuntu 25.10. They were intentionally left
+   for runtime/OS review; the dev/tooling updates are merged.
+3. **Cyber DNA v3 rollout.** Development is enabled and backfilled. Production
+   is backfilled for consenting learners only; no consenting learner meets the
+   affinity gate yet. Next: ship the Phase 2 learner UI, then tune the behavior
+   weights after a term of evidence. See [`CYBER-DNA-V3.md`](CYBER-DNA-V3.md).
+   Affinity only; employer access is out of scope.
+4. **Python 3.15** when it reaches GA. Three interpreter CVEs are fixed only on
    the 3.15/3.16 branches; do not chase alpha releases.
-3. **Docker CLI Go findings** move with Docker Inc.'s next trixie package.
+5. **Docker CLI Go findings** move with Docker Inc.'s next trixie package.
+6. **Weekly threat-feed review.** The OpenCode automation runs Monday 09:00 ET;
+   review the aggregate diff, then ship a signed snapshot release when it
+   changes.
 
 ## Deliberately deferred
 
