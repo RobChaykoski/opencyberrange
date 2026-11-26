@@ -2,6 +2,29 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.52.2] - 2026-11-26
+
+### Fixed
+
+- **Exercise workspace layout:** RangeBox and exercise details share the left
+  column, with the workbook as a full-height right pane. The lower exercise
+  pane now matches the desktop width instead of stretching underneath it, and
+  the wide-screen split defaults to a taller desktop.
+- **Workbook iframe authentication:** the workspace waits for the wiki session
+  cookie before revealing the framed workbook. The first request used to race
+  the cookie and land on the login shell, which rendered as a white page with
+  only the skip link and logo.
+- **Exercise feedback prompt:** **Was this exercise useful?** is hidden until
+  the exercise is completed, rather than shown disabled while it is running.
+
+### Changed
+
+- **Workspace chrome:** knowledge check and the CyberChef, OT Scan, ATT&CK, and
+  ZAP launchers collapse into one **Tools** menu. Briefing, targets, and the
+  flag come first; supporting evidence, disclosures, and hints follow below.
+- **Accessibility:** administrator and instructor tables declare `scope="col"`
+  so screen readers associate header cells with their columns.
+
 ## [5.52.1] - 2026-11-26
 
 ### Fixed

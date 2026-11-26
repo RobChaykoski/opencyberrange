@@ -22,6 +22,14 @@ Steps 2 and 3 order matters: the manifest copies the lock's `release` field.
 Releases 5.46.0 and 5.46.1 skipped step 3, so the committed manifest still said
 `5.45.0` and the CI integrity gate failed.
 
+## Release 5.52.2
+
+| Tag | Release | Status |
+|---|---|---|
+| `v5.52.2` | SWOCTS Cyber Range Release 5.52.2 | Signed annotated tag: workbook beside the desktop with the lower pane matching the RangeBox width, workbook iframe auth ordering, feedback held until completion, a single Tools menu, and column scope on admin/instructor tables. |
+
+Deliverables: [Release 5.52.2 deliverables](RELEASE-5.52.2-DELIVERABLES.md).
+
 ## Release 5.52.1
 
 | Tag | Release | Status |
