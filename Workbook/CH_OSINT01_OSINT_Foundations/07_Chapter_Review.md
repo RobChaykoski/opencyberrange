@@ -7,6 +7,8 @@
 - Reading HTML and JavaScript source instead of only rendered pages
 - Inspecting image metadata and extracting an LSB payload
 - Reading EXIF, GPS, device, and author metadata from a published image
+- Running a self-audit across search results, a breach record, metadata, and stale profiles
+- Writing a finding with an action, an owner, and a verification step
 - Searching public code for leaked staging material
 - Reading a live public homepage's metadata and head section
 
@@ -30,6 +32,8 @@
    the secret into your report?
 6. An image passes a visual review but still leaks its location. Which metadata
    fields would you check, and where would you add the stripping step?
+7. In the researcher self-audit, which exposure would you remove first, and what
+   verification would prove it stayed removed?
 
 ## Responsible Disclosure
 
@@ -46,6 +50,9 @@ If this were a real assessment:
 - Search a public repository for `TODO` comments near authentication code.
 - Compare a PNG before and after a metadata strip with `exiftool -all=`.
 - Use `zsteg` on a harmless test image that you created yourself.
+- Read the [University of Toronto OSINT self-audit for researchers](https://security.utoronto.ca/best-practices-tips/open-source-intelligence-osint-self-audit-for-researchers/)
+  as a second checklist. It is reference material, not lab content; do not
+  apply it to another person.
 - Read the source of a small open-source web app and list every asset it
   loads. Ask which of those assets could leak information.
 

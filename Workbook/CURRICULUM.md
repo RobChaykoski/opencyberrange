@@ -57,7 +57,7 @@ Framework alignment is selective. See [Framework alignment](FRAMEWORKS.md).
 | `FOR01` | Memory Forensics | `CH_FOR01_Memory_Forensics` | intermediate | NET02 | 1 | 50m | `FOR02` | published |
 | `FOR02` | Network Forensics | `CH_FOR02_Network_Forensics` | intermediate | FOR01 | 1 | 45m | `FOR03` | published |
 | `FOR03` | Topology Forensics | `CH_FOR03_Topology_Forensics` | intermediate | FOR02 | 2 | 1h 00m | `OSINT01` | published |
-| `OSINT01` | OSINT Foundations | `CH_OSINT01_OSINT_Foundations` | beginner | NET00 | 5 | 2h 55m | `IAM01` | published |
+| `OSINT01` | OSINT Foundations | `CH_OSINT01_OSINT_Foundations` | beginner | NET00 | 6 | 3h 40m | `IAM01` | published |
 | `OSINT02` | Mobile OSINT | `CH_OSINT02_Mobile_OSINT` | beginner | OSINT01 | 3 | 1h 10m | `OSINT03` | published |
 | `OSINT03` | Canary Tokens and Deception | `CH_OSINT03_Canary_And_Deception` | intermediate | OSINT02 | 1 | 45m | `IAM01` | published |
 | `IAM01` | Identity and Access Foundations | `CH_IAM01_Identity_And_Access` | intermediate | NET00 | 4 | 3h 10m | `IAM02` | published |

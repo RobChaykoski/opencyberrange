@@ -510,8 +510,8 @@ tracks:
         display_name: "OSINT Foundations"
         difficulty: "beginner"
         prerequisites: [NET00]
-        exercises: 5
-        estimated_minutes: 175
+        exercises: 6
+        estimated_minutes: 220
         recommended_next: IAM01
         status: published
         intro: CH_OSINT01_OSINT_Foundations/00_Introduction.md

@@ -6356,6 +6356,65 @@ labs:
     usage_source: null
     review_status: baseline_derived
     reviewed_at: null
+  osint-1-4-researcher-self-audit:
+    lab_id: osint-1-4-researcher-self-audit
+    track: OSINT
+    difficulty: beginner
+    expected_duration_minutes: 45
+    prerequisites:
+    - osint-1-1-public-footprint
+    - osint-1-2-image-intelligence
+    - osint-1-3-exif-metadata
+    workbook: wiki/range/osint/CH_OSINT01_OSINT_Foundations/06_Researcher_Self_Audit/
+    competency_ids:
+    - id: OSINT-001
+      weight: 0.4
+    - id: OSINT-002
+      weight: 0.3
+    - id: OSINT-003
+      weight: 0.2
+    - id: OSINT-005
+      weight: 0.1
+    evidence:
+    - type: flag
+      weight: 0.35
+      source: lab.flag
+      validation: exact_match
+    - type: validation_step
+      weight: 0.35
+      source: platform/tester/manifests/osint-1-4-researcher-self-audit.yaml
+      validation: all_steps_pass
+    - type: analyst_answer
+      weight: 0.2
+      source: workbook.analysis_questions
+      validation: rubric
+    - type: artifact
+      weight: 0.1
+      source: submitted_artifact
+      validation: rubric
+    prohibited_collection:
+    - keystrokes
+    - mouse_movement
+    - exhaustive_terminal_history
+    assessment_reliability:
+      level: medium
+      score: 0.65
+      evidence_completeness: medium
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Baseline contract derived from the reviewed competency mapping. The evidence types and weights are explicit; live harness evidence and analyst-answer moderation are required before marking reviewed.
+    assessment_criteria:
+    - Submit the correct flag.
+    - Pass every automated test step in the lab manifest.
+    - Record one exposure, one remediation, and one verification step.
+    test_steps: 6
+    flag_required: true
+    content_version: 1.0.0
+    usage_rank: null
+    usage_completions: null
+    usage_source: null
+    review_status: baseline_derived
+    reviewed_at: null
   osint-2-1-source-code-intelligence:
     lab_id: osint-2-1-source-code-intelligence
     track: OSINT

@@ -1,0 +1,21 @@
+services:
+  portal:
+    mem_limit: 128m
+    cpus: 0.15
+    build:
+      context: .
+      dockerfile: Dockerfile
+    hostname: selfaudit
+    labels:
+      ip_offset: "90"
+    environment:
+      FLAG: "OCR{4ud1t_b3f0r3_y0u_publ1sh}"
+      PORT: "8080"
+    read_only: true
+    tmpfs:
+      - /tmp:size=8m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped

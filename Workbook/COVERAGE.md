@@ -14,12 +14,12 @@ links.
 | Malware | 10 |
 | Metasploit | 8 |
 | Network | 22 |
-| OSINT | 9 |
+| OSINT | 10 |
 | OT | 4 |
 | Software Security | 2 |
 | Web | 27 |
 | Windows | 62 |
-| **Total** | **206** |
+| **Total** | **207** |
 
 ## Labs
 
@@ -136,6 +136,7 @@ links.
 | OSINT | The Public Footprint (`osint-1-1-public-footprint`) | `wiki/range/osint/CH_OSINT01_OSINT_Foundations/01_The_Public_Footprint/` |
 | OSINT | The Public Homepage (`osint-2-2-public-homepage`) | `wiki/range/osint/CH_OSINT01_OSINT_Foundations/05_The_Public_Homepage/` |
 | OSINT | The Public Profile (`osint-2-4-public-profile`) | `wiki/range/osint/CH_OSINT02_Mobile_OSINT/02_The_Public_Profile/` |
+| OSINT | The Researcher's Mirror (`osint-1-4-researcher-self-audit`) | `wiki/range/osint/CH_OSINT01_OSINT_Foundations/06_Researcher_Self_Audit/` |
 | OT | Trailline Industrial - Modbus Gateway Bypass (`ot-1-3-modbus-gateway-bypass`) | `wiki/range/ot/CH_OT01_Modbus_Fundamentals/03_Modbus_Gateway_Bypass/` |
 | OT | Trailline Industrial - Modbus Register Triage (`ot-1-1-modbus-register-analysis`) | `wiki/range/ot/CH_OT01_Modbus_Fundamentals/01_Modbus_Register_Analysis/` |
 | OT | Trailline Industrial - S7comm Data Block Read (`ot-2-1-s7comm-register-access`) | `wiki/range/ot/CH_OT02_S7comm_Data_Blocks/01_S7comm_Data_Block_Read/` |

@@ -1,0 +1,144 @@
+title: The Researcher's Mirror
+category: osint
+difficulty: beginner
+estimated_time: 45
+prerequisites:
+  - osint-1-1-public-footprint
+  - osint-1-2-image-intelligence
+  - osint-1-3-exif-metadata
+# By completion students will be able to:
+learning_outcomes:
+  - Search a name, handle, and public email the way an outsider would
+  - Compare a public profile with breach and metadata records
+  - Separate necessary professional contact details from correlating identifiers
+  - Write a finding with an action, owner, and verification step
+  - Recover the flag from the self-audit review ticket
+mapped_skills:
+  - osint
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+  - Record one exposure, one remediation, and one verification step.
+mitre_attack:
+  - tactic: Reconnaissance
+    technique: T1593
+    technique_name: Search Open Websites/Domains
+    detection: Review public profiles and search results for unnecessary personal identifiers and stale pages.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "1.0.0"
+reviewed_at: "2026-11-26"
+review_status: "automated static proof; live walkthrough pending"
+description: "A fictional researcher is preparing for a conference. The mirror shows what a stranger can learn from a name, a handle, a public email, a breach record, and a published photo. Map the exposure, write the remediation plan, and recover the flag from the review ticket."
+visibility: public
+audience: general
+offline_only: true
+external_targets: []
+personal_data: synthetic
+free_text: false
+public_profiles: false
+phone_required: false
+analytics: aggregate_only
+minor_safe_defaults: false
+flag: "OCR{4ud1t_b3f0r3_y0u_publ1sh}"
+# Bonus lab: it sits in Level 1 but does not block the Level 1 certificate,
+# so adding it cannot invalidate certificates students already earned.
+counts_toward_certificate: false
+
+tools:
+  - browser
+  - curl
+
+scenario: |
+  Dr. Maya Chen is a fictional coastal-resilience researcher preparing for a
+  conference. She asked for a pre-trip privacy review because a colleague
+  found her public email and an old forum handle in the same search.
+
+  The mirror is a safe reconstruction of what a stranger can see: a public
+  profile, a synthetic breach record, a published photo's metadata, and a
+  reviewer's ticket. Nothing here is connected to the real internet or to a
+  real person.
+
+  Your job is to audit the footprint, separate the details a professional
+  contact needs from the details that only help someone correlate accounts or
+  track travel, write the remediation plan, and recover the flag from the
+  review ticket's source.
+
+troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a page is missing, return to the overview and follow the audit trail rather than guessing paths. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Publish the minimum contact detail a role requires, keep personal and professional identifiers separate, strip metadata before publishing images, retire stale profiles, and verify remediation instead of assuming it."
+difficulty_evidence: "Static student-tester walkthrough of the workbook and synthetic portal; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-26"
+workbook: "wiki/range/osint/CH_OSINT01_OSINT_Foundations/06_Researcher_Self_Audit/"
+
+hostnames:
+  - ip_offset: "90"
+    hostname: "selfaudit.lab"
+    description: "Researcher self-audit mirror (HTTP 8080)"
+
+topology:
+  nodes:
+    - id: "portal"
+      label: "Researcher Self-Audit Mirror"
+      type: "server"
+      ip_offset: "90"
+      ports: [8080]
+      services: ["http"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Start at http://selfaudit.lab:8080 and open the search mirror. Try the
+      name, the lab handle, and the public email. A search result is a lead;
+      confirm each identifier on the page it points to.
+    unlock_after_minutes: 5
+
+  - text: |
+      Compare the public profile with the breach record and the photo metadata.
+      Which fields let someone contact Maya professionally, and which fields
+      only help someone correlate accounts, find a building, or guess travel
+      dates?
+    unlock_after_minutes: 12
+
+  - text: |
+      The profile source contains a reviewer note with a path. Fetch it and
+      read the page source, not only the visible text:
+
+      curl -s http://selfaudit.lab:8080/profile/maya-chen | grep -o '/review/[A-Z0-9-]*'
+      curl -s http://selfaudit.lab:8080/review/OSINT-SELF-001 | grep -o 'OCR{[^}]*}'
+    unlock_after_minutes: 20
+
+test:
+  steps:
+    - name: "Self-audit overview responds"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/"
+      expect: "200"
+      timeout: 20
+
+    - name: "Search returns the synthetic profile"
+      command: "curl -s 'http://{target.portal}:8080/search?q=maya.chen' | grep -o 'profile/maya-chen'"
+      expect: "profile/maya-chen"
+      timeout: 20
+
+    - name: "Profile exposes the synthetic public email"
+      command: "curl -s http://{target.portal}:8080/profile/maya-chen | grep -o 'maya.chen.research@example.edu'"
+      expect: "maya.chen.research@example.edu"
+      timeout: 20
+
+    - name: "Breach record confirms the identifier"
+      command: "curl -s http://{target.portal}:8080/breach | grep -o 'maya.chen.research@example.edu'"
+      expect: "maya.chen.research@example.edu"
+      timeout: 20
+
+    - name: "Robots file points at the review area"
+      command: "curl -s http://{target.portal}:8080/robots.txt | grep -o '/review/'"
+      expect: "/review/"
+      timeout: 20
+
+    - name: "Flag is present in the review ticket source"
+      command: "curl -s http://{target.portal}:8080/review/OSINT-SELF-001 | grep -o 'OCR{[^}]*}'"
+      expect: "OCR{4ud1t_b3f0r3_y0u_publ1sh}"
+      timeout: 20

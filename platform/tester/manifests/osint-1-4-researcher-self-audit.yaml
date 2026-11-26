@@ -1,0 +1,42 @@
+# Generated from platform/labs/OSINT/osint-1-4-researcher-self-audit/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: osint-1-4-researcher-self-audit
+track: OSINT
+difficulty: beginner
+source: platform/labs/OSINT/osint-1-4-researcher-self-audit/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr-tester:latest
+  command: /tests/osint-1-4-researcher-self-audit.sh
+  steps:
+  - name: Self-audit overview responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/
+    expect: '200'
+  - name: Search returns the synthetic profile
+    command: curl -s 'http://{target.portal}:8080/search?q=maya.chen' | grep -o 'profile/maya-chen'
+    expect: profile/maya-chen
+  - name: Profile exposes the synthetic public email
+    command: curl -s http://{target.portal}:8080/profile/maya-chen | grep -o 'maya.chen.research@example.edu'
+    expect: maya.chen.research@example.edu
+  - name: Breach record confirms the identifier
+    command: curl -s http://{target.portal}:8080/breach | grep -o 'maya.chen.research@example.edu'
+    expect: maya.chen.research@example.edu
+  - name: Robots file points at the review area
+    command: curl -s http://{target.portal}:8080/robots.txt | grep -o '/review/'
+    expect: /review/
+  - name: Flag is present in the review ticket source
+    command: curl -s http://{target.portal}:8080/review/OSINT-SELF-001 | grep -o 'OCR{[^}]*}'
+    expect: '{flag}'
+expected_flag_count: 1
+expected_flag: '{flag}'
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 384
+max_cpu: 0.4

@@ -50,6 +50,7 @@ mirrored, and hash-checked. They are never required for a lab or a grade.
 | 1.1 The Public Footprint | Page discovery, `robots.txt`, source comments | Kestrel Connect intranet |
 | 1.2 Badge Photo Intelligence | Metadata and LSB steganography | Public badge image |
 | 1.3 EXIF Metadata Investigation | EXIF, GPS, device, and author metadata | FinanceCorp evidence image |
+| 1.4 The Researcher's Mirror | Self-audit, identifier correlation, remediation | Synthetic researcher footprint |
 | 2.1 The Developer's Trail | Static assets, JavaScript comments, public code | `app.js` and the public repository |
 | 2.2 The Public Homepage | Live page metadata and head section | SWOCTS Hub homepage |
 
