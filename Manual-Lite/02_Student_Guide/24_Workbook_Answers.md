@@ -9,18 +9,33 @@ next. Saving an answer sends it to an instructor for review.
 Choose **Analyst answers** under **Learn** in the left navigation. The page
 loads the exercises that have a workbook page and are available to your account.
 
+The page has two parts:
+
+- **Choose an exercise** is a searchable library grouped by track. Each row
+  shows whether an answer is saved and when it was last saved. The counter at
+  the top shows how many exercises already have a saved answer.
+- **Analyst answer** is the editor. If you have a saved answer, the most recent
+  one opens automatically. If you have not saved one yet, choose an exercise
+  from the library.
+
+On a phone the library and editor stack; on a wider screen they sit side by
+side.
+
 ## Save an answer
 
-1. Select an exercise.
-2. Write at least 10 characters in **Your answer**.
-3. Choose **Save and submit for review**.
+1. Find the exercise. Type part of the exercise name or track in the search box,
+   or scroll the grouped library.
+2. Select the exercise. The row is highlighted and the editor opens it.
+3. Write at least 10 characters in **Your answer**. The character count and the
+   minimum are shown under the box.
+4. Choose **Save and submit for review**.
 
 The first save creates a new evidence record. If you edit the answer and save
 again, a new version is added; the earlier version is not rewritten. That keeps
 the review history honest if an instructor has already read the first version.
 
-The page shows the last saved time. A successful save reports that the answer
-was sent for instructor review.
+The editor shows the last saved time and whether the current exercise is saved.
+A successful save reports that the answer was sent for instructor review.
 
 ## What the instructor sees
 

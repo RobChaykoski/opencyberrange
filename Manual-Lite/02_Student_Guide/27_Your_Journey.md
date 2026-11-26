@@ -9,6 +9,24 @@ begins to resemble. You are never asked to declare an archetype.
 
 A journey is a mission, not a label.
 
+## The page layout
+
+The page has three parts, in this order:
+
+1. **The Living Archive** summarises what verified work has shown so far. It
+   shows the observed contributions and kinds of evidence in a separate panel
+   beside the archive note, so the counts and the explanation read as one
+   observation rather than an empty banner.
+2. **Your current journey** shows the mission you have chosen, its summary,
+   competencies, and suggested first step. The single action is **Choose
+   another journey** (or **Keep this journey** while the picker is open).
+3. **The journey picker** groups the available missions as cards. Each card
+   shows the mission, its tradition, its competencies, and its first step. The
+   card for your current mission is marked and its button is disabled.
+
+If no journeys are available yet, the page says so instead of showing an empty
+grid.
+
 ## Choose a journey
 
 1. Open **Journey & mission** in the sidebar.

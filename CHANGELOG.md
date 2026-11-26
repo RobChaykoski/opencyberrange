@@ -2,9 +2,24 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
-## [Unreleased]
+## [5.51.2] - 2026-11-25
 
-No unreleased changes.
+### Changed
+
+- **Practice exams:** replaced the compact Previous / Next / Submit row with a
+  full-width question navigation bar and a separate submission panel. The
+  submit action is now labelled **Submit for final mark**, warns when questions
+  are unanswered, and asks for confirmation before ending the attempt.
+- **Analyst answers:** replaced the long exercise `<select>` with a searchable,
+  track-grouped exercise library, saved-state badges, and an editor that opens
+  the most recent saved answer. The page now uses the shared theme tokens and a
+  responsive two-pane layout.
+- **Journey & mission:** removed the hard-coded light archive panel that
+  appeared as a large white block in dark and high-contrast themes. The archive
+  now uses theme tokens, observation counts, and a two-column layout; the
+  current mission and picker headers have clearer hierarchy.
+- Updated the user manual, README, SECURITY supported versions, and LICENSING
+  release status to match the current UI and 5.51.2 release.
 
 ## [5.51.1] - 2026-11-25
 

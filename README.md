@@ -1,6 +1,6 @@
 ﻿# SWOCTS Cyber Range
 
-> **Release 5 is the current release line (latest signed `v5.50.1`; development and production are on 5.50.1).**
+> **Release 5 is the current release line (latest signed `v5.51.2`; development and production are on 5.51.2).**
 >
 > **Edition: Community / Academic** (single-host, `lite` entitlement). The
 > Professional and Enterprise profiles are separate licence tiers built from the
@@ -465,6 +465,24 @@ sponsor marks in the app and PDF, use deterministic `OCR-EVT-` IDs, and verify
 publicly without exposing scores or account details. Placement and trophy
 awards require the matching event achievement. See
 [Event certificates](docs/EVENT-CERTIFICATES.md).
+
+**Practice exams.** Learners can take timed certification-style mocks or
+single-domain drills from the reviewed question bank. During an attempt,
+**Previous question** and **Next question** move between questions, while the
+separate **Submit for final mark** panel ends the attempt, warns about
+unanswered questions, and asks for confirmation. A pass is a study signal, not
+a certificate or a course grade.
+
+**Analyst answers.** The written-answer workflow lists workbook exercises in a
+searchable, track-grouped library. Each row shows whether an answer is saved,
+and the editor opens the most recent saved answer automatically. Saving a new
+version sends it to instructor review without rewriting the version already
+reviewed.
+
+**Journey & mission.** Learners choose a mission, and the **Living Archive**
+shows the verified contributions it has observed. The page uses a current
+mission card, archive observation counts, and a mission grid instead of a
+single long list. Changing direction keeps existing evidence.
 
 ## Included tracks
 

@@ -1,5 +1,5 @@
 {
-  "total": 5382,
+  "total": 5415,
   "files": {
     "src/App.vue": 13,
     "src/components/AchievementStudio.vue": 54,
@@ -85,10 +85,10 @@
     "src/views/Impact.vue": 40,
     "src/views/InstructorDashboard.vue": 79,
     "src/views/InstructorPanel.vue": 307,
-    "src/views/Journey.vue": 16,
+    "src/views/Journey.vue": 22,
     "src/views/Login.vue": 92,
     "src/views/MyEvidence.vue": 11,
-    "src/views/Practice.vue": 37,
+    "src/views/Practice.vue": 49,
     "src/views/Privacy.vue": 126,
     "src/views/Profile.vue": 190,
     "src/views/PublicAbout.vue": 52,
@@ -105,7 +105,7 @@
     "src/views/Tools.vue": 21,
     "src/views/TrackDetail.vue": 163,
     "src/views/VerifyCertificate.vue": 63,
-    "src/views/WorkbookAnswers.vue": 12,
+    "src/views/WorkbookAnswers.vue": 27,
     "src/views/WorkbooksLanding.vue": 6,
     "src/views/YouthPrivacy.vue": 51
   }
