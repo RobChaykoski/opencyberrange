@@ -2,6 +2,25 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.54.0] - 2026-11-26
+
+### Added
+
+- **Exercise briefing tab and pop-out:** the exercise workspace now has a
+  read-only **Briefing** tab beside Desktop, Exercise, and Workbook. It shows
+  the scenario, objectives, target hostnames, workbook link, and the hints the
+  learner has already unlocked. The selected tab stays in the URL
+  (`?tab=briefing`).
+- **Read-only pop-out:** a **Pop out briefing** action opens
+  `/exercises/:trackSlug/briefing` without app chrome or an opener reference.
+  The tab and the pop-out render the same `ExerciseBrief` component, so the
+  content cannot drift. Wide layouts expose the same pop-out from the Scenario
+  panel. The pop-out supports print and a 375 px viewport, and neither view
+  contains the flag, VPN keys, or learner PII.
+- **Shared lab markdown path:** `utils/markdown.js` now owns the placeholder
+  escaping and hard-wrap unwrapping used by scenarios and hints, and
+  `utils/workbook.js` resolves the workbook link for both views.
+
 ## [5.53.1] - 2026-11-26
 
 ### Fixed

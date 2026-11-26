@@ -1,13 +1,24 @@
 # Next steps
 
-Status: **Release 5.53.1 is deployed to development and production.** The
+Status: **Release 5.54.0 is deployed to development and production.** The
 read-only HA status panel (endpoint, Admin card, witness endpoint, host
 collector) is implemented; the witness/collector install and live drills
-remain. The threat-awareness snapshots are refreshed and a weekly operations
+remain. The exercise workspace now has a read-only Briefing tab and pop-out.
+The threat-awareness snapshots are refreshed and a weekly operations
 automation is scheduled. Dependency maintenance cleared the dev/tooling
 Dependabot backlog; runtime and OS updates remain for review. This page tracks
 what is left; the deployment record is
 [`RELEASE-5-PRODUCTION-READINESS.md`](RELEASE-5-PRODUCTION-READINESS.md).
+
+## 5.54.0
+
+- **Exercise briefing.** A read-only Briefing tab sits beside Desktop, Exercise,
+  and Workbook; the selected tab stays in `?tab=briefing`. **Pop out briefing**
+  opens the same `ExerciseBrief` component on
+  `/exercises/:trackSlug/briefing` without app chrome or an opener reference.
+  The scenario, objectives, hostnames, workbook link, and unlocked hints use
+  the sanitized markdown path; the flag and learner PII are not included. The
+  pop-out supports print and a 375 px viewport.
 
 ## Current wave (5.52.6–5.53.1)
 
@@ -28,7 +39,7 @@ what is left; the deployment record is
   keep the review moving.
 - **Maintenance.** Fixed the duplicate `psycopg` pin, documented `ws_tickets`,
   and merged the green dev/tooling dependency PRs. Backend tests are 668;
-  frontend 63; HA 91.
+  frontend 70; HA 91.
 
 ## Earlier completed
 
