@@ -26,7 +26,7 @@ Releases 5.46.0 and 5.46.1 skipped step 3, so the committed manifest still said
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.52.1` | SWOCTS Cyber Range Release 5.52.1 | Signed annotated tag: WireGuard route-verifier fix and peer resync, a global visible focus ring, and the accent hero/contrast treatment for administrator and instructor dashboards. |
+| `v5.52.1` | SWOCTS Cyber Range Release 5.52.1 | Signed annotated tag: WireGuard route-verifier fix and peer resync, a global visible focus ring, and the accent hero/contrast treatment for administrator and instructor dashboards. Deployed to development and production on 26 November 2026; VPN verification passed for 11 clients across 217 labs. |
 
 Deliverables: [Release 5.52.1 deliverables](RELEASE-5.52.1-DELIVERABLES.md).
 

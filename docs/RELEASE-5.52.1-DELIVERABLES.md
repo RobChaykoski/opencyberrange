@@ -1,6 +1,7 @@
 # Release 5.52.1 deliverables
 
-Status: **release prepared; deployment verification pending.**
+Status: **released and deployed** to development and production on 26 November
+2026.
 
 | Item | Value |
 |---|---|
@@ -41,7 +42,13 @@ Status: **release prepared; deployment verification pending.**
 
 | Environment | Version | Status |
 |---|---|---|
-| Development | `5.52.1` | Pending |
-| Production | `5.52.1` | Pending |
+| Development | `5.52.1` | Deployed and verified |
+| Production | `5.52.1` | Deployed and verified |
 
-Post-deploy checks: `/api/version` on both hosts, nginx test, backend/frontend health, VPN route verification, and pre/post backups.
+Post-deploy checks: `/api/version` `5.52.1` on both hosts, production and
+development containers healthy, 14 production wiki sites rebuilt, and the VPN
+route verifier passed for 11 clients across 217 labs. Production pre/post
+backups: `ocr-backup-20261126-025032.dump` and
+`ocr-backup-20261126-025422.dump`. Development pre-deploy backup:
+`~/opencyberrange/.backups/20261126_025029`. Rollback images are tagged
+`pre-v5.52.1` on production.

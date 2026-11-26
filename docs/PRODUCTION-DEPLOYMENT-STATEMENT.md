@@ -9,6 +9,28 @@ another document disagrees, this page and the signed tag win.
 > replaced with placeholders. The private deployment inventory holds the live
 > values. See [`PUBLICATION-METADATA-POLICY.md`](PUBLICATION-METADATA-POLICY.md).
 
+## 5.52.1 deployment verification
+
+| Check | Result |
+|---|---|
+| `/api/version` | `5.52.1` on production and development |
+| Alembic | **`0067_course_content_rls` (head)** |
+| Health | Production and development backend/frontend containers `healthy` |
+| Production wiki | **14** sites rebuilt |
+| VPN route verifier | **PASS**: 11 clients, 217 active labs |
+| VPN peers | 11 configs, 11 Peer Manager peers |
+| Today's production logs | No 5xx responses and no backend exceptions |
+| Pre-deploy backup (development) | `~/opencyberrange/.backups/20261126_025029` |
+| Pre-deploy backup (production) | `~/backups/ocr-backup-20261126-025032.dump` |
+| Post-deploy backup (production) | `~/backups/ocr-backup-20261126-025422.dump` |
+| Rollback images | `opencyberrange-backend:pre-v5.52.1`, `ocr-frontend:pre-v5.52.1` on production |
+| Development note | The optional `ocr-platform.service` copy needs sudo; the existing unit stayed enabled and active. |
+
+This patch fixes the WireGuard route verifier for the current multi-network
+`AllowedIPs`, syncs the two missing peers, adds a global visible focus ring, and
+gives the administrator and instructor headers the same restrained accent
+treatment as the student and profile surfaces.
+
 ## 5.52.0 deployment verification
 
 | Check | Result |
