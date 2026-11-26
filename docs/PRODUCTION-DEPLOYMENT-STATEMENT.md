@@ -9,6 +9,25 @@ another document disagrees, this page and the signed tag win.
 > replaced with placeholders. The private deployment inventory holds the live
 > values. See [`PUBLICATION-METADATA-POLICY.md`](PUBLICATION-METADATA-POLICY.md).
 
+## 5.53.0 deployment verification
+
+| Check | Result |
+|---|---|
+| `/api/version` | `5.53.0` on production and development |
+| Alembic | **`0067_course_content_rls` (head)** |
+| Health | Production and development backend/frontend containers `healthy`; nginx `-t` passes |
+| Production wiki | **14** sites rebuilt |
+| HA card | Hidden as designed; `/var/lib/ocr-ha/status.json` is not installed yet |
+| Threat snapshots | Both hosts: `519,839` entries / `152` countries / `13` categories, generated `2026-11-26T17:02:49Z` |
+| Pre-deploy backup (production) | `~/backups/ocr-backup-20261126-182341.dump` |
+| Pre-deploy backup (development) | `~/opencyberrange/.backups/20261126_182033` |
+| Rollback images | `opencyberrange-backend:pre-v5.53.0`, `ocr-frontend:pre-v5.53.0` on production; development rolls back by rebuilding `v5.52.10` |
+| Development | Tag `v5.53.0` synced into the split layout; backend healthy, `/api/version` `5.53.0` |
+
+5.53.0 adds the read-only HA status endpoint and Admin card. The witness
+endpoint and host collector are implemented in the HA repository; the card
+remains hidden until they are installed and the collector writes the snapshot.
+
 ## 5.52.10 deployment verification
 
 | Check | Result |
