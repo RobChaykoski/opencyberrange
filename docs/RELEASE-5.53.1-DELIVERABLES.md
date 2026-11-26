@@ -1,8 +1,7 @@
 # Release 5.53.1 deliverables
 
-Status: **release prepared**. Deployment evidence is recorded in
-[`PRODUCTION-DEPLOYMENT-STATEMENT.md`](PRODUCTION-DEPLOYMENT-STATEMENT.md) after
-the signed tag is applied.
+Status: **released and deployed** to development and production on 26 November
+2026.
 
 | Item | Value |
 |---|---|
@@ -36,8 +35,8 @@ the signed tag is applied.
 
 | Environment | Version | Status |
 |---|---|---|
-| Development | `5.53.1` | Pending |
-| Production | `5.53.1` | Pending |
+| Development | `5.53.1` | Deployed and verified |
+| Production | `5.53.1` | Deployed and verified |
 
 The HA card remains hidden until the witness endpoint and host collector are
 installed and `/var/lib/ocr-ha/status.json` exists.

@@ -208,7 +208,7 @@
       "sha256": "b6722dd013e620bc829bbeba74ce77a8a3fdac42f75d6f9804d74dc91f75196f"
     },
     "platform/backend/requirements-dev.txt": {
-      "sha256": "deca8e8de24ddd6206831b4f52985e8153d6b4b4b888c479b43e6acc52a27b06"
+      "sha256": "c21f4fa6c23deb8d1b0372cb73ced13a57895af045c42f0387c11a6e2bd8f224"
     },
     "platform/backend/requirements.txt": {
       "sha256": "b5fe895712c24da914c0f6130dd853f30f94a61d95e5b2939b6a46fe81547c50"

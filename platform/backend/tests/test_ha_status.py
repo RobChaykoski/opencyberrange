@@ -4,9 +4,12 @@ from __future__ import annotations
 
 import json
 from datetime import UTC, datetime, timedelta
+from types import SimpleNamespace
 
 import pytest
+from fastapi import HTTPException
 
+from app.auth import get_current_admin_user
 from app.services import ha_status
 
 
@@ -201,3 +204,18 @@ def test_role_marker_is_validated(tmp_path, monkeypatch):
     ha_status.reset_cache()
     _write(tmp_path, monkeypatch, role="not-a-role")
     assert ha_status.snapshot()["role"] == "unknown"
+
+
+def test_non_admin_is_rejected_by_the_admin_dependency():
+    student = SimpleNamespace(role="student")
+
+    with pytest.raises(HTTPException) as error:
+        get_current_admin_user(student)
+
+    assert error.value.status_code == 403
+
+
+def test_admin_is_accepted_by_the_admin_dependency():
+    admin = SimpleNamespace(role="admin")
+
+    assert get_current_admin_user(admin) is admin
