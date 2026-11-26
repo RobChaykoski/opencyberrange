@@ -1950,18 +1950,21 @@ const workbookSandbox = computed(() => {
   }
 })
 
-const openWorkbook = async () => {
+// Opening the workbook must stay synchronous: an await before window.open is
+// treated as a popup by browsers and blocked. The wiki cookie is refreshed on
+// login and when a lab opens, so refresh it after the tab is created.
+const openWorkbook = () => {
   const url = activeLab.value?.lab?.workbook && workbookUrl(activeLab.value.lab.workbook)
   if (url) {
-    await setWikiAuthCookie()
+    setWikiAuthCookie()
     window.open(url, '_blank', 'noopener,noreferrer')
   }
 }
 
-const openWorkbookForLab = async (lab) => {
+const openWorkbookForLab = (lab) => {
   const url = lab.workbook && workbookUrl(lab.workbook)
   if (url) {
-    await setWikiAuthCookie()
+    setWikiAuthCookie()
     window.open(url, '_blank', 'noopener,noreferrer')
   }
 }

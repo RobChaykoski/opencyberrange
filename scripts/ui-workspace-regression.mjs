@@ -144,6 +144,10 @@ const IGNORED_CONSOLE = [
   /sandboxed and lacks the 'allow-same-origin'/i,
   /sitemap\.xml.*CORS policy/i,
   /Failed to load resource: net::ERR_FAILED/i,
+  // KasmVNC/WebRTC teardown noise: the desktop is intentionally torn down when
+  // the regression stops the lab, and the pipeline closes video frames late.
+  /Permissions policy violation: unload is not allowed/i,
+  /VideoFrame was garbage collected without being closed/i,
 ]
 function isRelevantConsoleError(text) {
   return !IGNORED_CONSOLE.some((pattern) => pattern.test(text))
@@ -212,7 +216,26 @@ async function assertWorkspace(page, role) {
   const iframeSrc = await page.locator('.workspace-workbook iframe').getAttribute('src')
   check(`${role}: workbook URL resolved`, Boolean(iframeSrc && iframeSrc.includes('/wiki/')), iframeSrc || 'missing')
 
-  check(`${role}: Expand control present`, await page.getByRole('button', { name: 'Expand', exact: true }).count() === 1)
+  // The framed workbook must render the page, not the wiki login shell. A
+  // login redirect used to appear as a white page with only the skip link.
+  const wikiFrame = page.frames().find((frame) => frame.url().includes('/wiki/'))
+  let frameTitle = ''
+  let frameText = ''
+  if (wikiFrame) {
+    await wikiFrame.waitForLoadState('domcontentloaded').catch(() => {})
+    frameTitle = await wikiFrame.title().catch(() => '')
+    frameText = await wikiFrame.locator('body').innerText().catch(() => '')
+  }
+  check(
+    `${role}: workbook rendered content`,
+    Boolean(wikiFrame) && !/login/i.test(frameTitle) && frameText.length > 400,
+    `${frameTitle || 'no frame'} (${frameText.length} chars)`,
+  )
+
+  check(
+    `${role}: workbook size control present`,
+    await page.getByRole('button', { name: /(Expand|Shrink) workbook/, exact: true }).count() === 1,
+  )
   check(`${role}: Open RangeBox in new tab present`, await page.getByRole('button', { name: 'Open in new tab' }).count() >= 1)
   check(`${role}: Stop Exercise present`, await page.getByRole('button', { name: 'Stop Exercise' }).count() === 1)
   check(`${role}: no horizontal overflow at desktop width`, !(await hasOverflow(page)))
@@ -228,23 +251,20 @@ async function assertWorkspace(page, role) {
 }
 
 async function exerciseControls(page, role) {
-  // Expand and restore the workbook pane.
-  await page.getByRole('button', { name: 'Expand', exact: true }).click()
-  await page.locator('.active-lab-grid--workbook-expanded').waitFor({ state: 'visible', timeout: 5000 })
-  check(`${role}: workbook Expand works`, await page.locator('.active-lab-grid--workbook-expanded').isVisible())
-  await page.getByRole('button', { name: 'Restore', exact: true }).click()
-  check(`${role}: workbook Restore works`, (await page.locator('.active-lab-grid--workbook-expanded').count()) === 0)
+  // Beginner exercises open with the workbook expanded, so the button reads
+  // "Shrink workbook" on arrival. Toggle from whatever state is current.
+  const expanded = page.locator('.active-lab-grid--workbook-expanded')
+  const toggle = page.getByRole('button', { name: /(Expand|Shrink) workbook/, exact: true })
+  const wasExpanded = (await expanded.count()) > 0
+  await toggle.click()
+  await page.waitForTimeout(250)
+  check(`${role}: workbook size toggle works`, ((await expanded.count()) > 0) !== wasExpanded)
+  await toggle.click()
+  await page.waitForTimeout(250)
+  check(`${role}: workbook size toggles back`, ((await expanded.count()) > 0) === wasExpanded)
 
-  // Open the RangeBox in a new tab and confirm the session query is present.
-  const [rangeboxTab] = await Promise.all([
-    page.context().waitForEvent('page'),
-    page.locator('.panel-section--rangebox').getByRole('button', { name: 'Open in new tab' }).click(),
-  ])
-  await rangeboxTab.waitForLoadState('domcontentloaded').catch(() => {})
-  check(`${role}: Open RangeBox new tab`, /\/rangebox\?.*session=/.test(rangeboxTab.url()), rangeboxTab.url())
-  await rangeboxTab.close()
-
-  // Open the workbook in a new tab.
+  // The workbook opens from the header. There is no desktop new-tab button in
+  // the workspace: the dedicated RangeBox page is reached from the sidebar.
   const [workbookTab] = await Promise.all([
     page.context().waitForEvent('page'),
     page.locator('.panel-section--workbook').getByRole('button', { name: 'Open in new tab' }).click(),
@@ -277,7 +297,11 @@ async function stopLab(page, role) {
   const stop = page.getByRole('button', { name: 'Stop Exercise' })
   if ((await stop.count()) === 0) return
   await stop.click()
-  await page.locator('.active-lab-panel').waitFor({ state: 'detached', timeout: 30000 }).catch(() => {})
+  // Stop is a two-step action: the in-app ConfirmDialog, not window.confirm.
+  const confirm = page.getByRole('button', { name: 'Stop exercise', exact: true })
+  if ((await confirm.count()) > 0) await confirm.click()
+  // Teardown includes the container stop; give it longer than the spinner.
+  await page.locator('.active-lab-panel').waitFor({ state: 'detached', timeout: 90000 }).catch(() => {})
   check(`${role}: Stop Exercise closes the panel`, (await page.locator('.active-lab-panel').count()) === 0)
 }
 
@@ -313,7 +337,8 @@ async function studentWalkthrough() {
     const continueButton = row.getByRole('button', { name: 'Continue' })
     if (await continueButton.count()) await continueButton.click()
     await mobile.page.locator('.active-lab-panel').waitFor({ state: 'visible', timeout: 60000 })
-    check('student mobile: workspace disabled', (await mobile.page.locator('.active-lab-panel--workspace').count()) === 0)
+    check('student mobile: tabs layout', (await mobile.page.locator('.active-lab-grid--tabs').count()) === 1)
+    await mobile.page.getByRole('tab', { name: 'Exercise' }).click()
     check('student mobile: section jump bar visible', await mobile.page.locator('.active-lab-jump').isVisible())
     check('student mobile: no horizontal overflow', !(await hasOverflow(mobile.page)))
     await screenshot(mobile.page, 'workspace-student-mobile.png')

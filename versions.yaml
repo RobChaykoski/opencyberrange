@@ -9,7 +9,7 @@
 # docs/decisions/0004-single-platform-release-version.md.
 platform:
   name: "SWOCTS Cyber Range"
-  version: "5.52.3"
+  version: "5.52.4"
   status: "release"
   date: "2026-11-26"
 
@@ -41,7 +41,7 @@ maintenance_lines:
     note: "Existing single-host teaching installs; new installs use the Release 5 tree with the Community / Academic profile."
 
 release:
-  version: "5.52.3"
+  version: "5.52.4"
   status: "release"
   date: "2026-11-26"
 

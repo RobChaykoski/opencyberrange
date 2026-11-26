@@ -2,6 +2,18 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.52.4] - 2026-11-26
+
+### Fixed
+
+- **Workbook "Open in new tab":** the handler refreshed the wiki cookie with an
+  `await` before calling `window.open`, which browsers treat as a blocked popup.
+  The tab now opens synchronously and the cookie refresh runs after it.
+- **Workspace regression:** the walkthrough accepts the in-app Stop
+  confirmation, follows the Shrink/Expand workbook labels, verifies the framed
+  workbook rendered a page instead of the login shell, and ignores KasmVNC
+  WebRTC teardown noise.
+
 ## [5.52.3] - 2026-11-26
 
 ### Fixed

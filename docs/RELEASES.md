@@ -22,6 +22,14 @@ Steps 2 and 3 order matters: the manifest copies the lock's `release` field.
 Releases 5.46.0 and 5.46.1 skipped step 3, so the committed manifest still said
 `5.45.0` and the CI integrity gate failed.
 
+## Release 5.52.4
+
+| Tag | Release | Status |
+|---|---|---|
+| `v5.52.4` | SWOCTS Cyber Range Release 5.52.4 | Signed annotated tag: workbook "Open in new tab" opens synchronously instead of being treated as a blocked popup, plus the workspace regression now confirms Stop and verifies framed workbook content. |
+
+Deliverables: [Release 5.52.4 deliverables](RELEASE-5.52.4-DELIVERABLES.md).
+
 ## Release 5.52.3
 
 | Tag | Release | Status |
