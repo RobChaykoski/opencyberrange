@@ -9,6 +9,25 @@ another document disagrees, this page and the signed tag win.
 > replaced with placeholders. The private deployment inventory holds the live
 > values. See [`PUBLICATION-METADATA-POLICY.md`](PUBLICATION-METADATA-POLICY.md).
 
+## 5.56.0 deployment verification
+
+| Check | Result |
+|---|---|
+| `/api/version` | `5.56.0` on production and development |
+| Alembic | **`0067_course_content_rls` (head)** |
+| Health | Production and development backend/frontend containers `healthy`; nginx `-t` passes |
+| New lab registration | `osint-1-4-researcher-self-audit` is `public`, active, at level 38, sort order 4 on both hosts |
+| Active lab table | **218** active labs on production and development after discovery |
+| Docker smoke test | The lab image builds on development; the container serves the overview with `200` and exposes the review-ticket flag |
+| Production wiki | **14** sites rebuilt; the new workbook page is included |
+| Pre-deploy backup (production) | `~/backups/ocr-backup-20261126-224208.dump` |
+| Pre-deploy backup (development) | `~/opencyberrange/.backups/20261126_224522` |
+| Rollback images | `opencyberrange-backend:pre-v5.56.0`, `ocr-frontend:pre-v5.56.0` on production; development rolls back by rebuilding `v5.55.2` |
+
+5.56.0 adds the researcher self-audit lab and its workbook page. Alembic stays
+at `0067_course_content_rls`; discovery registered the new exercise on both
+hosts.
+
 ## 5.55.2 deployment verification
 
 | Check | Result |
