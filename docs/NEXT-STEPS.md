@@ -1,6 +1,6 @@
 # Next steps
 
-Status: **Release 5.54.1 is deployed to development and production.** The
+Status: **Release 5.54.2 is deployed to development and production.** The
 read-only HA status panel (endpoint, Admin card, witness endpoint, host
 collector) is implemented; the witness/collector install and live drills
 remain. The exercise workspace now has a read-only Briefing tab and pop-out.
@@ -10,8 +10,13 @@ Dependabot backlog; runtime and OS updates remain for review. This page tracks
 what is left; the deployment record is
 [`RELEASE-5-PRODUCTION-READINESS.md`](RELEASE-5-PRODUCTION-READINESS.md).
 
-## 5.54.0-5.54.1
+## 5.54.0-5.54.2
 
+- **Split-layout wiki build.** The split updater imported a removed
+  `build_all_wikis` helper and required a root `mkdocs.yml` that this repository
+  does not track, so the development wiki volume was never rebuilt. It now uses
+  the same one-shot `wiki-builder` service as production, adds the service to
+  the dev compose, and writes a local override for legacy root compose files.
 - **Briefing workbook link.** The pop-out recomputes the workbook URL from the
   shared wiki-origin reference, so the link follows `/api/config/public` when
   that asynchronous config sets a separate wiki origin. Covered by a frontend

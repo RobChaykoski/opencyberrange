@@ -2,6 +2,21 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.54.2] - 2026-11-26
+
+### Fixed
+
+- **Split-layout wiki build:** `scripts/deploy-updates.sh` imported a removed
+  `build_all_wikis` helper and required a root `mkdocs.yml` that this repository
+  no longer tracks, so the development wiki volume was never rebuilt. The
+  updater now runs the same one-shot `wiki-builder` service as production,
+  adds the service to the development compose, and writes a local
+  `docker-compose.wiki-builder.yml` override for legacy root compose files. The
+  builder reads `Workbook/`, `Manual-Lite/`, `tools/wiki-gen/`, `mkdocs*.yml`,
+  and `wikis.yaml` directly, so no root `mkdocs.yml` is required.
+- **Deployment runbook:** the split-layout section now records the shared wiki
+  builder and the lack of a root `mkdocs.yml` dependency.
+
 ## [5.54.1] - 2026-11-26
 
 ### Fixed

@@ -1,7 +1,7 @@
 # Cyber DNA v3 — talent discovery graph
 
 Status: **Phase 1 implemented; the Phase 2 learner UI shipped in v5.31.0 and is
-live in 5.54.1.** Development has the v3 surface and evidence; production has
+live in 5.54.2.** Development has the v3 surface and evidence; production has
 the feature flag on with a small consenting cohort. No consenting learner meets
 the affinity gate yet. The next work is Phase 3 weight tuning after a term of
 evidence, not UI delivery. See the production state below.
@@ -388,7 +388,7 @@ Example affinity payload when the gate is met:
 
 ### Production state - 2026-11-26
 
-- Production runs `5.54.1` with the Phase 2 learner UI shipped in v5.31.0:
+- Production runs `5.54.2` with the Phase 2 learner UI shipped in v5.31.0:
   `/profile` shows the career-affinity panel and the dashboard shows the DNA
   band.
 - `cyber_dna_v3_enabled=true` and `advanced_dna_insights_enabled=true`.

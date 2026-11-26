@@ -13,7 +13,7 @@ Operational commands for the two deployed environments.
 > [`MICROSOFT-LEGAL-NOTICE.md`](MICROSOFT-LEGAL-NOTICE.md) and
 > [`WINDOWS-ARTIFACT-POLICY.md`](WINDOWS-ARTIFACT-POLICY.md).
 
-**Current release:** `5.54.1` (signed tag `v5.54.1`, Alembic
+**Current release:** `5.54.2` (signed tag `v5.54.2`, Alembic
 `0067_course_content_rls`). The admin **System → Health → Release status**
 panel compares the installed version with the latest GitHub release or tag.
 The authoritative deployment state, including whether cutover has run, is in
@@ -124,7 +124,10 @@ sudo bash scripts/deploy-updates.sh
 
 The script fetches tags, checks the release public key against the pinned
 fingerprint, verifies the signed tag, checks it out, and only then runs the
-supply-chain check and applies the update.
+supply-chain check and applies the update. It builds the namespaced wiki with
+the same one-shot `wiki-builder` service as production; a legacy root compose
+receives a local `docker-compose.wiki-builder.yml` override. No root
+`mkdocs.yml` is required.
 
 For both layouts, do not `git pull` production directly; that bypasses the tag
 gate. Tag rollback images and take a backup before rebuilding.
