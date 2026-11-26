@@ -185,11 +185,48 @@ Expected: `snapshot` mode, a recent `generated_at`, and no `sample` banner.
 Do not schedule a refresh inside the platform. Run it on an operations host,
 review the diff, and ship it as a release.
 
+### Operations-host helper
+
+`scripts/refresh-threat-snapshots.sh` downloads the current DB-IP Lite country
+database, regenerates both snapshots into a review directory, validates them
+through the backend services, and prints a unified diff. It never commits,
+refreshes the lock, signs, or deploys.
+
+```bash
+# Generate into a temporary review directory
+scripts/refresh-threat-snapshots.sh
+
+# Keep the generated files in a known place
+scripts/refresh-threat-snapshots.sh --output /var/tmp/ocr-threat-review
+
+# Copy the reviewed files into the tree, then refresh the lock and release
+scripts/refresh-threat-snapshots.sh --apply
+```
+
+A weekly cron entry on the operations host is enough to keep the review fresh.
+The generated files stay out of the deploy checkout until an operator applies
+them and ships a signed tag:
+
+```cron
+17 3 * * 1 cd /opt/opencyberrange && \
+  scripts/refresh-threat-snapshots.sh --output /var/tmp/ocr-threat-review \
+  >> /var/log/ocr-threat-refresh.log 2>&1
+```
+
+`--month YYYY-MM` overrides the DB-IP month if the current month's file is not
+published yet. `--geoip-db PATH` reuses a local MaxMind-format database.
+
 ## Attribution
 
 - FireHOL iplists: <https://iplists.firehol.org/>
+- DShield / SANS ISC: <https://www.dshield.org/>
+- Blocklist.de: <https://www.blocklist.de/>
+- abuse.ch Feodo Tracker: <https://feodotracker.abuse.ch/>
+- OffSeq Mirage: <https://feeds.offseq.com/>, CC BY 4.0
+- IPsum: <https://github.com/stamparm/ipsum>, The Unlicense
 - DB-IP Lite: <https://db-ip.com>, CC BY 4.0
 - RansomLook: <https://www.ransomlook.io/>, CC BY 4.0
+- Candidate feed catalog: <https://github.com/kraloveckey/threat-intelligence-feeds>
 
 See [ADR 0008](decisions/0008-threat-awareness.md) and
 [ADR 0009](decisions/0009-intelligence-sources.md).
