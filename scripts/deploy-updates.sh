@@ -346,6 +346,7 @@ apply_platform_update() {
             rsync -rlpt --delete \
                 --exclude='__pycache__' \
                 --exclude='backups' \
+                --exclude='run-state' \
                 --exclude='app/data/external-datasets/cache' \
                 "$REPO_DIR/platform/backend/" "$PLATFORM_DIR/backend/"
         else
