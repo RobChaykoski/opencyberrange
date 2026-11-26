@@ -1,8 +1,11 @@
 # Host health dashboard plan (`health.swocts.com`)
 
-**Status:** running for testing at `https://health.swocts.com` on the development
-host; OIDC verified with a temporary platform-admin account. Production should
-still move it to an independent monitoring host.
+**Status:** the monitoring stack is now running on the independent OpenGRC
+production host, not the development host. Grafana, Prometheus, Alertmanager,
+Pushgateway, Blackbox, and the local node exporter are healthy, the provisioned
+dashboard and Prometheus datasource are present, and all Prometheus targets are
+up. The `health.swocts.com` DNS/NPM cutover to that host is the remaining step;
+OIDC must be re-verified through the public hostname after the cutover.
 **Hostname:** `health.swocts.com`.
 **Owner:** platform operations.
 **Release:** supports Release 6.2 (scale and availability). The dashboard is not a
@@ -61,10 +64,10 @@ is found by a person. The dashboard should answer:
 
 It was brought up locally and verified: Prometheus ready, Grafana 12.1 healthy,
 Alertmanager ready, dashboard provisioned, and the blackbox probe path returning
-success against local test targets. It is now running on the development host at
-`https://health.swocts.com` with Authentik OIDC, public probes, and production/
-development API, wiki, and host targets. It has not moved to an independent
-monitoring host yet.
+success against local test targets. The stack now runs on the independent OpenGRC
+production host with Authentik OIDC, public probes, and production/development
+API, wiki, and host targets. DNS and the reverse proxy still point
+`health.swocts.com` at the previous host until the cutover is completed.
 
 ## Architecture
 

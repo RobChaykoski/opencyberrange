@@ -28,11 +28,12 @@ external dead-man switch <---  scripts/monitor-deployment.sh (every 5 min)
 
 ## Central dashboard (`health.swocts.com`)
 
-The central dashboard is running for testing at
-`https://health.swocts.com` on the development host. It uses the separate stack
-in [`deploy/monitoring/`](../deploy/monitoring/README.md), publishes Grafana
-through NPM with Authentik OIDC, and collects Prometheus/Blackbox checks and
-host metrics.
+The central dashboard runs the separate stack in
+[`deploy/monitoring/`](../deploy/monitoring/README.md) on the independent OpenGRC
+production host. Grafana, Prometheus, Alertmanager, Pushgateway, Blackbox, and
+node-exporter are healthy, the dashboard and datasource are provisioned, and all
+Prometheus targets are up. It publishes Grafana through NPM with Authentik OIDC;
+the `health.swocts.com` DNS/proxy cutover to that host is the remaining step.
 
 It is a convenience and correlation layer, not a replacement for this page:
 
