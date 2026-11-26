@@ -34,7 +34,7 @@ Status: **released and deployed** to development and production on 26 November
 | UI string budget | Passed (`5,412` budgeted strings) |
 | Bundle budget | Passed (largest chunk `540 KB`) |
 | Link check | `1,222` Markdown files, no broken links |
-| Backend tests | Pending |
+| Backend tests | `637 passed`, `559 skipped` (DB-backed tests need `TEST_DATABASE_URL`) |
 | Wiki cookie flow | `204` with `wiki_session`; authenticated wiki `200`, unauthenticated `302` to login |
 | Supply-chain lock | Updated and signed |
 | Migration manifest | Regenerated from LF content; `opengrc:doctor` migration integrity now passes |
@@ -43,9 +43,14 @@ Status: **released and deployed** to development and production on 26 November
 
 | Environment | Version | Status |
 |---|---|---|
-| Development | `5.52.2` | Pending |
-| Production | `5.52.2` | Pending |
+| Development | `5.52.2` | Deployed and verified |
+| Production | `5.52.2` | Deployed and verified |
 
-Post-deploy checks: `/api/version` `5.52.2` on both hosts, production and
-development containers healthy, and the workspace verified at 1440 px and
-1100 px widths. Rollback images are tagged `pre-v5.52.2` on both hosts.
+Post-deploy checks: `/api/version` reports `5.52.2` on both hosts, backend and
+frontend containers are healthy, `nginx -t` passes, lab discovery is
+idempotent, and the production wiki rebuilt 14 sites. Production pre-deploy
+backup: `ocr-backup-20261126-035257.dump`. Development pre-deploy backup:
+`ocr-backup-20261126-035105.dump`. Rollback images are tagged `pre-v5.52.2` on
+both hosts. The manual three-role browser pass still needs dedicated test
+accounts; the layout is covered by the frontend build, component tests, and the
+wide/tab breakpoint logic at 1200 px.
