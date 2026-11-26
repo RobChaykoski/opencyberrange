@@ -9,6 +9,23 @@ another document disagrees, this page and the signed tag win.
 > replaced with placeholders. The private deployment inventory holds the live
 > values. See [`PUBLICATION-METADATA-POLICY.md`](PUBLICATION-METADATA-POLICY.md).
 
+## 5.53.1 deployment verification
+
+| Check | Result |
+|---|---|
+| `/api/version` | `5.53.1` on production and development |
+| Alembic | **`0067_course_content_rls` (head)** |
+| Health | Production and development backend/frontend containers `healthy`; nginx `-t` passes |
+| HA mount | `/var/lib/ocr-ha` is present read-only in the backend on both hosts; the card stays hidden until the collector writes the snapshot |
+| Production wiki | **14** sites rebuilt |
+| Threat snapshots | Both hosts: `519,839` entries / `152` countries / `13` categories, generated `2026-11-26T17:02:49Z` |
+| Pre-deploy backup (production) | `~/backups/ocr-backup-20261126-184145.dump` |
+| Pre-deploy backup (development) | `~/opencyberrange/.backups/20261126_184510` |
+| Rollback images | `opencyberrange-backend:pre-v5.53.1`, `ocr-frontend:pre-v5.53.1` on production; development rolls back by rebuilding `v5.53.0` |
+| Development | Tag `v5.53.1` synced into the split layout; the root compose was updated with the same mount |
+
+5.53.1 mounts the host-collected HA snapshot read-only in the platform compose.
+
 ## 5.53.0 deployment verification
 
 | Check | Result |
