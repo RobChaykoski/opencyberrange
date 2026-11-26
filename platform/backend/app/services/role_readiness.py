@@ -22,6 +22,7 @@ from sqlalchemy.orm import Session, joinedload
 from app.models import Lab, Level, User
 from app.services.competency_assessment import build_competency_assessment_profile
 from app.services.competency_taxonomy import DOMAIN_CAREER_FAMILIES, competencies_for_lab
+from app.services.track_aliases import canonical_track_slug, canonical_track_slugs
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 ROLES_FILE = DATA_DIR / "curriculum-roles.yaml"
@@ -55,7 +56,7 @@ def roles_catalogue() -> dict:
                 "flagship": bool(role.get("flagship")),
                 "aliases": role.get("aliases", []),
                 "summary": role.get("summary"),
-                "tracks": role.get("tracks", []),
+                "tracks": canonical_track_slugs(role.get("tracks", [])),
                 "level_requirements": role.get("level_requirements", {}),
                 "capstone": {
                     "title": (role.get("capstone") or {}).get("title"),
@@ -84,7 +85,7 @@ def role_track_slugs(role_id: str | None) -> list[str]:
     if not role_id:
         return []
     role = _role(role_id)
-    return [str(slug) for slug in (role or {}).get("tracks") or []]
+    return canonical_track_slugs((role or {}).get("tracks") or [])
 
 
 def _flatten_competencies(profile: dict) -> dict[str, dict]:
@@ -198,7 +199,9 @@ def _next_labs(
         .filter(Lab.is_active == True, Lab.visibility == "public")
         .all()
     )
-    tracks = {str(track).lower() for track in role.get("tracks", [])}
+    tracks = {
+        canonical_track_slug(track) for track in role.get("tracks", [])
+    }
     categories = {str(category).lower() for category in role.get("categories", [])}
     rows = []
     for lab in labs:
@@ -532,8 +535,11 @@ def build_role_readiness(
                 [
                     item
                     for item in ((summary or {}).get("completions") or [])
-                    if str(item.get("track_slug") or "").lower()
-                    in {str(track).lower() for track in role.get("tracks", [])}
+                    if canonical_track_slug(item.get("track_slug"))
+                    in {
+                        canonical_track_slug(track)
+                        for track in role.get("tracks", [])
+                    }
                 ]
             ),
             "clean_solves": sum(row.get("clean_solves", 0) for row in critical),

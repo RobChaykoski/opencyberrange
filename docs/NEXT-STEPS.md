@@ -1,6 +1,6 @@
 # Next steps
 
-Status: **Release 5.55.1 is deployed to development and production.** The
+Status: **Release 5.55.2 is deployed to development and production.** The
 read-only HA status panel (endpoint, Admin card, witness endpoint, host
 collector) is implemented; the witness/collector install and live drills
 remain. The exercise workspace now has a read-only Briefing tab and pop-out.
@@ -9,6 +9,16 @@ automation is scheduled. Dependency maintenance cleared the dev/tooling
 Dependabot backlog; runtime and OS updates remain for review. This page tracks
 what is left; the deployment record is
 [`RELEASE-5-PRODUCTION-READINESS.md`](RELEASE-5-PRODUCTION-READINESS.md).
+
+## 5.55.2
+
+- **Pathway mapping fix.** Manifest ids such as `webpt`, `linpt`, `winpt`, and
+  `netfor` now translate to the database track slugs before filtering. The
+  Penetration Tester focus shows Web, Linux, Windows, and Network; SOC Analyst
+  again includes its core tracks. Role readiness uses the same mapping for next
+  workbooks and completed-role evidence.
+- **Regression coverage:** the catalogue and alias translation tests include the
+  full Penetration Tester track set.
 
 ## 5.55.1
 
@@ -73,7 +83,7 @@ what is left; the deployment record is
   feeds; RansomLook is refreshed. A weekly ops automation and helper script
   keep the review moving.
 - **Maintenance.** Fixed the duplicate `psycopg` pin, documented `ws_tickets`,
-  and merged the green dev/tooling dependency PRs. Backend tests are 670;
+  and merged the green dev/tooling dependency PRs. Backend tests are 671;
   frontend 77; HA 91.
 
 ## Earlier completed

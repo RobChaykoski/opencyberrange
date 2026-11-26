@@ -16,6 +16,7 @@ from app.services.role_readiness import (
     role_track_slugs,
     roles_catalogue,
 )
+from app.services.track_aliases import canonical_track_slug
 
 
 def _competency_ids() -> set[str]:
@@ -46,13 +47,30 @@ def test_roles_catalogue_exposes_track_focus():
         item for item in catalogue["roles"] if item["id"] == "cybersecurity-foundations"
     )
     assert role["tracks"]
-    assert "netfor" in role["tracks"]
+    assert "network" in role["tracks"]
+    assert "netfor" not in role["tracks"]
+
+    pen_tester = next(
+        item for item in catalogue["roles"] if item["id"] == "penetration-tester"
+    )
+    assert {"web", "linux", "windows", "network"} <= set(pen_tester["tracks"])
 
 
 def test_role_track_slugs_narrows_without_expanding():
-    assert "netfor" in role_track_slugs("cybersecurity-foundations")
+    assert "network" in role_track_slugs("cybersecurity-foundations")
+    assert {"web", "linux", "windows", "network"} <= set(
+        role_track_slugs("penetration-tester")
+    )
     assert role_track_slugs("not-a-real-pathway") == []
     assert role_track_slugs(None) == []
+
+
+def test_track_alias_translation_is_explicit():
+    assert canonical_track_slug("netfor") == "network"
+    assert canonical_track_slug("winpt") == "windows"
+    assert canonical_track_slug("linpt") == "linux"
+    assert canonical_track_slug("webpt") == "web"
+    assert canonical_track_slug("network") == "network"
 
 
 def test_every_critical_competency_exists_in_taxonomy():

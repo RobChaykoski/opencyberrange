@@ -2,6 +2,24 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.55.2] - 2026-11-26
+
+### Fixed
+
+- **Career pathway to catalogue mapping:** the pathway data uses manifest ids
+  (`webpt`, `linpt`, `winpt`, `netfor`) while the catalogue uses database track
+  slugs (`web`, `linux`, `windows`, `network`). The mismatch hid every track in
+  some pathways; Penetration Tester returned no tracks at all and SOC Analyst
+  lost its core Windows, Linux, and Network tracks. A shared canonical mapping
+  now translates manifest ids before the visibility filter and the role
+  readiness calculations.
+- **Role readiness evidence:** the next-workbook selection and completed-role
+  evidence count now use the same canonical mapping, so readiness no longer
+  ignores work in the mapped tracks.
+- **Regression tests:** the pathway catalogue, the `role` query filter, and the
+  alias translation now assert the canonical slugs, including the complete
+  Penetration Tester set.
+
 ## [5.55.1] - 2026-11-26
 
 ### Changed
