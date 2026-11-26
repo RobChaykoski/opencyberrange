@@ -9,6 +9,24 @@ another document disagrees, this page and the signed tag win.
 > replaced with placeholders. The private deployment inventory holds the live
 > values. See [`PUBLICATION-METADATA-POLICY.md`](PUBLICATION-METADATA-POLICY.md).
 
+## 5.55.2 deployment verification
+
+| Check | Result |
+|---|---|
+| `/api/version` | `5.55.2` on production and development |
+| Alembic | **`0067_course_content_rls` (head)** |
+| Health | Production and development backend/frontend containers `healthy`; nginx `-t` passes |
+| Penetration Tester paths | `web`, `linux`, `windows`, `network` |
+| Active labs on those paths (development) | Web 27, Linux 37, Windows 64, Network 23 |
+| Role API | `/api/profile/roles` returns the canonical track slugs, so the focused catalogue and dashboard match the database |
+| Production wiki | **14** sites rebuilt |
+| Pre-deploy backup (production) | `~/backups/ocr-backup-20261126-221857.dump` |
+| Pre-deploy backup (development) | `~/opencyberrange/.backups/20261126_222218` |
+| Rollback images | `opencyberrange-backend:pre-v5.55.2`, `ocr-frontend:pre-v5.55.2` on production; development rolls back by rebuilding `v5.55.1` |
+
+5.55.2 is a pathway-mapping fix. The lab definitions and Alembic schema are
+unchanged.
+
 ## 5.55.1 deployment verification
 
 | Check | Result |
