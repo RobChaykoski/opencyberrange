@@ -671,6 +671,21 @@ body {
 .btn--sm { padding: 0.375rem 0.75rem; font-size: 0.75rem; }
 .btn--xs { padding: 0.25rem 0.5rem; font-size: 0.6875rem; }
 
+/* Keyboard focus is visible on every interactive surface, including native
+   controls and link-based navigation. Component styles may add a tighter ring,
+   but no component should remove focus entirely. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible,
+.btn:focus-visible,
+.nav-item:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 2px;
+}
+
 /* Shared form primitives. Components may override them locally. */
 .form-group { display: grid; gap: 0.35rem; }
 .form-label { color: var(--text-secondary); font-size: 0.78rem; font-weight: 600; }

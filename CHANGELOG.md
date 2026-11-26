@@ -2,6 +2,27 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.52.1] - 2026-11-26
+
+### Fixed
+
+- **WireGuard route verifier:** the operator script assumed a single
+  `AllowedIPs` network. It now accepts the current lab `/24` plus server `/32`
+  route set and reports unexpected routes.
+- **WireGuard peers:** synced two active student configs that had no Peer
+  Manager peer, then verified all 11 clients across 217 labs.
+
+### Changed
+
+- **Accessibility:** added a global visible `:focus-visible` ring for links,
+  buttons, native form controls, navigation items, and tabbable elements.
+- **Administrator and instructor dashboards:** added the restrained accent hero
+  treatment already used on the student dashboard and profile, and moved
+  essential subtitle copy from muted to secondary contrast.
+- Updated the README, SECURITY supported versions, LICENSING release status,
+  supported-versions page, deployment runbook, release index, and release notes
+  for 5.52.1.
+
 ## [5.52.0] - 2026-11-25
 
 ### Changed

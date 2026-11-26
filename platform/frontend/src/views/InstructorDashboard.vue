@@ -1026,6 +1026,13 @@ onMounted(() => {
   align-items: center;
   gap: 1.25rem;
   margin-bottom: 2rem;
+  padding: 1.25rem 1.4rem;
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--accent);
+  border-radius: 14px;
+  background:
+    linear-gradient(135deg, var(--accent-bg), transparent 62%),
+    var(--bg-secondary);
 }
 
 .teaching-snapshot {
@@ -1050,7 +1057,7 @@ onMounted(() => {
 }
 
 .page-subtitle {
-  color: var(--text-muted);
+  color: var(--text-secondary);
   font-size: 0.9375rem;
   margin: 0;
 }
@@ -1820,6 +1827,16 @@ onMounted(() => {
 @media (max-width: 768px) {
   .instructor-dashboard {
     padding: 1rem;
+  }
+
+  .dashboard-header {
+    align-items: flex-start;
+    padding: 1rem;
+  }
+
+  .dashboard-logo {
+    width: 56px;
+    height: 56px;
   }
 }
 </style>

@@ -4,7 +4,7 @@
 Checks:
   * each stored client address is outside the old 10.0.0.0/16 pool;
   * the generated client config uses a /32 interface address;
-  * the client AllowedIPs is exactly the student's own lab /24;
+  * the client AllowedIPs covers the student's own lab /24 plus the server /32;
   * every active lab maps to that same /24 (the session subnet is per user);
   * the Peer Manager peer exists with allowed_ips = client_ip/32.
 
@@ -63,15 +63,24 @@ def main() -> int:
         for config in configs:
             client_ip = ipaddress.ip_address(config.client_ip)
             allowed = vpn_allowed_ips(config.user_id)
-            allowed_net = ipaddress.ip_network(allowed)
-            expected = f"10.{get_subnet_id(config.user_id)[0]}.{get_subnet_id(config.user_id)[1]}.0/24"
+            allowed_parts = [part.strip() for part in allowed.split(",") if part.strip()]
+            allowed_nets = [ipaddress.ip_network(part) for part in allowed_parts]
+            expected = ipaddress.ip_network(
+                f"10.{get_subnet_id(config.user_id)[0]}.{get_subnet_id(config.user_id)[1]}.0/24"
+            )
+            server_net = ipaddress.ip_network(f"{settings.WG_SERVER_ADDRESS}/32")
 
             if client_ip in OLD_CLIENT_POOL:
                 failures.append(f"user {config.user_id}: client {client_ip} is in the old 10.0.0.0/16 pool")
-            if allowed != expected:
-                failures.append(f"user {config.user_id}: route {allowed} != expected {expected}")
-            if not any(allowed_net.subnet_of(pool) for pool in LAB_POOLS):
-                failures.append(f"user {config.user_id}: route {allowed} is outside the lab firewall pools")
+            if expected not in allowed_nets:
+                failures.append(f"user {config.user_id}: route {allowed} does not include {expected}")
+            if server_net not in allowed_nets:
+                failures.append(f"user {config.user_id}: route {allowed} is missing the server {server_net}")
+            unexpected = [net for net in allowed_nets if net not in (expected, server_net)]
+            if unexpected:
+                failures.append(f"user {config.user_id}: route {allowed} includes unexpected {unexpected}")
+            if not any(expected.subnet_of(pool) for pool in LAB_POOLS):
+                failures.append(f"user {config.user_id}: route {expected} is outside the lab firewall pools")
 
             config_text = manager.generate_client_config(
                 private_key="PRIVATE_KEY_PLACEHOLDER",
@@ -90,7 +99,7 @@ def main() -> int:
             for lab in labs:
                 second, third = get_subnet_id(config.user_id, lab.slug)
                 lab_subnet = f"10.{second}.{third}.0/24"
-                if lab_subnet != allowed:
+                if lab_subnet not in allowed_parts:
                     failures.append(
                         f"user {config.user_id}: lab {lab.slug} maps to {lab_subnet}, route is {allowed}"
                     )

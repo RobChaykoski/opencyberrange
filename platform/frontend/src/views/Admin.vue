@@ -10343,6 +10343,13 @@ watch(activeTab, (tab) => {
   flex-wrap: wrap;
   gap: 1rem;
   margin-bottom: 2rem;
+  padding: 1.25rem 1.4rem;
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--accent);
+  border-radius: 14px;
+  background:
+    linear-gradient(135deg, var(--accent-bg), transparent 62%),
+    var(--bg-secondary);
 }
 
 .admin-header__links {
@@ -10360,7 +10367,7 @@ watch(activeTab, (tab) => {
 
 .page-subtitle {
   font-size: 1rem;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   margin: 0;
 }
 
@@ -17328,6 +17335,12 @@ watch(activeTab, (tab) => {
 
   .user-modal__foot--sticky {
     margin: 0 -1rem -1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-header {
+    padding: 1rem;
   }
 }
 
