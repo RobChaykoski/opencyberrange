@@ -47,7 +47,7 @@
             <component :is="getTrackIcon(track.icon)" />
           </div>
           <div class="track-card__body">
-            <h3 class="track-card__title">{{ track.name }}</h3>
+            <h2 class="track-card__title">{{ track.name }}</h2>
             <p class="track-card__description">{{ track.description }}</p>
             <div class="track-card__stats-row">
               <span class="track-card__stat">
@@ -512,7 +512,7 @@ onMounted(async () => {
 
 .track-card__tag--intermediate {
   border-color: color-mix(in srgb, var(--warning) 45%, transparent);
-  color: var(--warning);
+  color: var(--warning-text);
   background: var(--warning-bg);
 }
 

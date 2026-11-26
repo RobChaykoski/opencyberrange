@@ -532,6 +532,7 @@ if (typeof window !== 'undefined') {
   --badge-pink: #f472b6;
   --success: #22c55e;
   --warning: #f59e0b;
+  --warning-text: #fbbf24;
   --danger: #ef4444;
   --nav-label: #94a3b8;
   --hover-bg: rgba(51, 65, 85, 0.5);
@@ -567,6 +568,7 @@ if (typeof window !== 'undefined') {
   --badge-pink: #9d174d;
   --success: #15803d;
   --warning: #d97706;
+  --warning-text: #b45309;
   --danger: #dc2626;
   --nav-label: #475569;
   --hover-bg: rgba(0, 0, 0, 0.05);
@@ -603,6 +605,7 @@ if (typeof window !== 'undefined') {
   --badge-pink: #f9a8d4;
   --success: #4ade80;
   --warning: #fbbf24;
+  --warning-text: #fbbf24;
   --danger: #f87171;
   --nav-label: #e5e5e5;
   --hover-bg: #1f1f1f;

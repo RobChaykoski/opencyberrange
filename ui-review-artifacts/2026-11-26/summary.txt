@@ -1,0 +1,129 @@
+PASS admin login — api login
+PASS admin /admin desktop no horizontal overflow
+PASS admin /admin desktop contrast
+PASS admin /admin desktop accessible names
+FAIL admin /admin desktop image alt :: ["/swocts-cyber-range-mark.png","/ocr-logo-dark.png","/swocts-cyber-range-mark.png","/ocr-logo-dark.png"]
+PASS admin /admin desktop table header scope
+PASS admin /admin desktop heading order
+PASS admin /admin desktop visible focus ring
+PASS admin /dashboard desktop no horizontal overflow
+PASS admin /dashboard desktop contrast
+PASS admin /dashboard desktop accessible names
+FAIL admin /dashboard desktop image alt :: ["/swocts-cyber-range-mark.png","/ocr-logo-dark.png","/swocts-cyber-range-mark.png","/ocr-logo-dark.png"]
+PASS admin /dashboard desktop table header scope
+PASS admin /dashboard desktop heading order
+PASS admin /dashboard desktop visible focus ring
+PASS admin /profile desktop no horizontal overflow
+FAIL admin /profile desktop contrast :: [{"text":"PR","cls":"user-avatar__initials","ratio":1.1,"min":3}]
+PASS admin /profile desktop accessible names
+FAIL admin /profile desktop image alt :: ["/swocts-cyber-range-mark.png","/ocr-logo-dark.png","/swocts-cyber-range-mark.png","/ocr-logo-dark.png"]
+PASS admin /profile desktop table header scope
+PASS admin /profile desktop heading order
+PASS admin /profile desktop visible focus ring
+PASS admin /admin mobile no horizontal overflow
+PASS admin /admin mobile contrast
+PASS admin /admin mobile accessible names
+FAIL admin /admin mobile image alt :: ["/swocts-cyber-range-mark.png","/ocr-logo-dark.png","/swocts-cyber-range-mark.png","/swocts-cyber-range-mark.png","/ocr-logo-dark.png"]
+PASS admin /admin mobile table header scope
+PASS admin /admin mobile heading order
+PASS admin /admin mobile visible focus ring
+PASS admin /dashboard mobile no horizontal overflow
+PASS admin /dashboard mobile contrast
+PASS admin /dashboard mobile accessible names
+FAIL admin /dashboard mobile image alt :: ["/swocts-cyber-range-mark.png","/ocr-logo-dark.png","/swocts-cyber-range-mark.png","/swocts-cyber-range-mark.png","/ocr-logo-dark.png"]
+PASS admin /dashboard mobile table header scope
+PASS admin /dashboard mobile heading order
+PASS admin /dashboard mobile visible focus ring
+PASS admin /profile mobile no horizontal overflow
+FAIL admin /profile mobile contrast :: [{"text":"PR","cls":"user-avatar__initials","ratio":1.1,"min":3}]
+PASS admin /profile mobile accessible names
+FAIL admin /profile mobile image alt :: ["/swocts-cyber-range-mark.png","/ocr-logo-dark.png","/swocts-cyber-range-mark.png","/swocts-cyber-range-mark.png","/ocr-logo-dark.png"]
+PASS admin /profile mobile table header scope
+PASS admin /profile mobile heading order
+PASS admin /profile mobile visible focus ring
+PASS instructor login — api login
+PASS instructor /instructor desktop no horizontal overflow
+PASS instructor /instructor desktop contrast
+PASS instructor /instructor desktop accessible names
+FAIL instructor /instructor desktop image alt :: ["/swocts-cyber-range-mark.png","/ocr-logo-dark.png","/swocts-cyber-range-mark.png","/ocr-logo-dark.png"]
+PASS instructor /instructor desktop table header scope
+PASS instructor /instructor desktop heading order
+PASS instructor /instructor desktop visible focus ring
+PASS instructor /dashboard desktop no horizontal overflow
+PASS instructor /dashboard desktop contrast
+PASS instructor /dashboard desktop accessible names
+FAIL instructor /dashboard desktop image alt :: ["/swocts-cyber-range-mark.png","/ocr-logo-dark.png","/swocts-cyber-range-mark.png","/ocr-logo-dark.png"]
+PASS instructor /dashboard desktop table header scope
+PASS instructor /dashboard desktop heading order
+PASS instructor /dashboard desktop visible focus ring
+PASS instructor /courses desktop no horizontal overflow
+PASS instructor /courses desktop contrast
+PASS instructor /courses desktop accessible names
+FAIL instructor /courses desktop image alt :: ["/swocts-cyber-range-mark.png","/ocr-logo-dark.png","/swocts-cyber-range-mark.png","/ocr-logo-dark.png"]
+PASS instructor /courses desktop table header scope
+PASS instructor /courses desktop heading order
+PASS instructor /courses desktop visible focus ring
+PASS instructor /instructor mobile no horizontal overflow
+PASS instructor /instructor mobile contrast
+PASS instructor /instructor mobile accessible names
+FAIL instructor /instructor mobile image alt :: ["/swocts-cyber-range-mark.png","/ocr-logo-dark.png","/swocts-cyber-range-mark.png","/swocts-cyber-range-mark.png","/ocr-logo-dark.png"]
+PASS instructor /instructor mobile table header scope
+PASS instructor /instructor mobile heading order
+PASS instructor /instructor mobile visible focus ring
+PASS instructor /dashboard mobile no horizontal overflow
+PASS instructor /dashboard mobile contrast
+PASS instructor /dashboard mobile accessible names
+FAIL instructor /dashboard mobile image alt :: ["/swocts-cyber-range-mark.png","/ocr-logo-dark.png","/swocts-cyber-range-mark.png","/swocts-cyber-range-mark.png","/ocr-logo-dark.png"]
+PASS instructor /dashboard mobile table header scope
+PASS instructor /dashboard mobile heading order
+PASS instructor /dashboard mobile visible focus ring
+PASS instructor /courses mobile no horizontal overflow
+PASS instructor /courses mobile contrast
+PASS instructor /courses mobile accessible names
+FAIL instructor /courses mobile image alt :: ["/swocts-cyber-range-mark.png","/ocr-logo-dark.png","/swocts-cyber-range-mark.png","/swocts-cyber-range-mark.png","/ocr-logo-dark.png"]
+PASS instructor /courses mobile table header scope
+PASS instructor /courses mobile heading order
+PASS instructor /courses mobile visible focus ring
+PASS student login — api login
+PASS student /dashboard desktop no horizontal overflow
+FAIL student /dashboard desktop contrast :: [{"text":"The 7-day bar is an early signal, not a trend. Use 30 or 90 ","cls":"trend-note trend-note--caution","ratio":2.91,"min":4.5}]
+PASS student /dashboard desktop accessible names
+FAIL student /dashboard desktop image alt :: ["/swocts-cyber-range-mark.png","/ocr-logo-dark.png","/swocts-cyber-range-mark.png","/swocts-cyber-range-mark.png","/ocr-logo-dark.png"]
+PASS student /dashboard desktop table header scope
+PASS student /dashboard desktop heading order
+PASS student /dashboard desktop visible focus ring
+PASS student /exercises desktop no horizontal overflow
+FAIL student /exercises desktop contrast :: [{"text":"intermediate","cls":"track-card__tag track-card__tag--intermediate","ratio":2.91,"min":4.5},{"text":"intermediate","cls":"track-card__tag track-card__tag--intermediate","ratio":2.91,"min":4.5},{"text":"intermediate","cls":"track-card__tag track-card__tag--intermediate","ratio":2.91,"min":4.5},{"text":"intermediate","cls":"track-card__tag track-card__tag--intermediate","ratio":2.91,"min":4.5}]
+PASS student /exercises desktop accessible names
+FAIL student /exercises desktop image alt :: ["/swocts-cyber-range-mark.png","/ocr-logo-dark.png","/swocts-cyber-range-mark.png","/ocr-logo-dark.png"]
+PASS student /exercises desktop table header scope
+FAIL student /exercises desktop heading order :: ["h1 -> h3: Linux Fundamentals"]
+PASS student /exercises desktop visible focus ring
+PASS student /profile desktop no horizontal overflow
+FAIL student /profile desktop contrast :: [{"text":"AC","cls":"user-avatar__initials","ratio":1.1,"min":3}]
+PASS student /profile desktop accessible names
+FAIL student /profile desktop image alt :: ["/swocts-cyber-range-mark.png","/ocr-logo-dark.png","/swocts-cyber-range-mark.png","/ocr-logo-dark.png"]
+PASS student /profile desktop table header scope
+PASS student /profile desktop heading order
+PASS student /profile desktop visible focus ring
+PASS student /dashboard mobile no horizontal overflow
+FAIL student /dashboard mobile contrast :: [{"text":"The 7-day bar is an early signal, not a trend. Use 30 or 90 ","cls":"trend-note trend-note--caution","ratio":2.91,"min":4.5}]
+PASS student /dashboard mobile accessible names
+FAIL student /dashboard mobile image alt :: ["/swocts-cyber-range-mark.png","/ocr-logo-dark.png","/swocts-cyber-range-mark.png","/swocts-cyber-range-mark.png","/swocts-cyber-range-mark.png"]
+PASS student /dashboard mobile table header scope
+PASS student /dashboard mobile heading order
+PASS student /dashboard mobile visible focus ring
+PASS student /exercises mobile no horizontal overflow
+FAIL student /exercises mobile contrast :: [{"text":"intermediate","cls":"track-card__tag track-card__tag--intermediate","ratio":2.91,"min":4.5},{"text":"intermediate","cls":"track-card__tag track-card__tag--intermediate","ratio":2.91,"min":4.5},{"text":"intermediate","cls":"track-card__tag track-card__tag--intermediate","ratio":2.91,"min":4.5},{"text":"intermediate","cls":"track-card__tag track-card__tag--intermediate","ratio":2.91,"min":4.5}]
+PASS student /exercises mobile accessible names
+FAIL student /exercises mobile image alt :: ["/swocts-cyber-range-mark.png","/ocr-logo-dark.png","/swocts-cyber-range-mark.png","/swocts-cyber-range-mark.png","/ocr-logo-dark.png"]
+PASS student /exercises mobile table header scope
+FAIL student /exercises mobile heading order :: ["h1 -> h3: Linux Fundamentals"]
+PASS student /exercises mobile visible focus ring
+PASS student /profile mobile no horizontal overflow
+FAIL student /profile mobile contrast :: [{"text":"AC","cls":"user-avatar__initials","ratio":1.1,"min":3}]
+PASS student /profile mobile accessible names
+FAIL student /profile mobile image alt :: ["/swocts-cyber-range-mark.png","/ocr-logo-dark.png","/swocts-cyber-range-mark.png","/swocts-cyber-range-mark.png","/ocr-logo-dark.png"]
+PASS student /profile mobile table header scope
+PASS student /profile mobile heading order
+PASS student /profile mobile visible focus ring

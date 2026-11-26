@@ -2,6 +2,24 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.52.3] - 2026-11-26
+
+### Fixed
+
+- **Warning text contrast:** the learning-analytics early-signal note and the
+  intermediate track tag used the status colour as body text (2.91:1 on the
+  light theme). They now use a `--warning-text` token with a 4.5:1 ratio in the
+  dark, light, and high-contrast themes.
+- **Exercises heading order:** track cards use `h2` under the page `h1`, so the
+  list no longer skips a heading level for screen-reader navigation.
+
+### Verified
+
+- Three-role automated pass (administrator, instructor, student at 1440 px and
+  390 px): no horizontal overflow, visible focus ring on every page, scoped
+  table headers, accessible names on every control, and decorative logos
+  correctly exposed as `alt=""`.
+
 ## [5.52.2] - 2026-11-26
 
 ### Fixed

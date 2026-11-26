@@ -1,0 +1,1034 @@
+[
+  {
+    "role": "admin",
+    "page": "login",
+    "viewport": "—",
+    "name": "api login",
+    "ok": true,
+    "detail": "admin"
+  },
+  {
+    "role": "admin",
+    "page": "/admin",
+    "viewport": "desktop",
+    "name": "no horizontal overflow",
+    "ok": true,
+    "detail": "overflow=0px"
+  },
+  {
+    "role": "admin",
+    "page": "/admin",
+    "viewport": "desktop",
+    "name": "contrast",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "admin",
+    "page": "/admin",
+    "viewport": "desktop",
+    "name": "accessible names",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "admin",
+    "page": "/admin",
+    "viewport": "desktop",
+    "name": "image alt",
+    "ok": false,
+    "detail": "[\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\",\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\"]"
+  },
+  {
+    "role": "admin",
+    "page": "/admin",
+    "viewport": "desktop",
+    "name": "table header scope",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "admin",
+    "page": "/admin",
+    "viewport": "desktop",
+    "name": "heading order",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "admin",
+    "page": "/admin",
+    "viewport": "desktop",
+    "name": "visible focus ring",
+    "ok": true,
+    "detail": "{\"tag\":\"A\",\"text\":\"Reports & analytics\",\"outline\":\"solid 3px rgb(15, 23, 42)\",\"shadow\":\"none\"}"
+  },
+  {
+    "role": "admin",
+    "page": "/dashboard",
+    "viewport": "desktop",
+    "name": "no horizontal overflow",
+    "ok": true,
+    "detail": "overflow=0px"
+  },
+  {
+    "role": "admin",
+    "page": "/dashboard",
+    "viewport": "desktop",
+    "name": "contrast",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "admin",
+    "page": "/dashboard",
+    "viewport": "desktop",
+    "name": "accessible names",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "admin",
+    "page": "/dashboard",
+    "viewport": "desktop",
+    "name": "image alt",
+    "ok": false,
+    "detail": "[\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\",\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\"]"
+  },
+  {
+    "role": "admin",
+    "page": "/dashboard",
+    "viewport": "desktop",
+    "name": "table header scope",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "admin",
+    "page": "/dashboard",
+    "viewport": "desktop",
+    "name": "heading order",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "admin",
+    "page": "/dashboard",
+    "viewport": "desktop",
+    "name": "visible focus ring",
+    "ok": true,
+    "detail": "{\"tag\":\"A\",\"text\":\"Skip to main content\",\"outline\":\"solid 3px rgb(15, 23, 42)\",\"shadow\":\"none\"}"
+  },
+  {
+    "role": "admin",
+    "page": "/profile",
+    "viewport": "desktop",
+    "name": "no horizontal overflow",
+    "ok": true,
+    "detail": "overflow=0px"
+  },
+  {
+    "role": "admin",
+    "page": "/profile",
+    "viewport": "desktop",
+    "name": "contrast",
+    "ok": false,
+    "detail": "[{\"text\":\"PR\",\"cls\":\"user-avatar__initials\",\"ratio\":1.1,\"min\":3}]"
+  },
+  {
+    "role": "admin",
+    "page": "/profile",
+    "viewport": "desktop",
+    "name": "accessible names",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "admin",
+    "page": "/profile",
+    "viewport": "desktop",
+    "name": "image alt",
+    "ok": false,
+    "detail": "[\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\",\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\"]"
+  },
+  {
+    "role": "admin",
+    "page": "/profile",
+    "viewport": "desktop",
+    "name": "table header scope",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "admin",
+    "page": "/profile",
+    "viewport": "desktop",
+    "name": "heading order",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "admin",
+    "page": "/profile",
+    "viewport": "desktop",
+    "name": "visible focus ring",
+    "ok": true,
+    "detail": "{\"tag\":\"A\",\"text\":\"Skip to main content\",\"outline\":\"solid 3px rgb(15, 23, 42)\",\"shadow\":\"none\"}"
+  },
+  {
+    "role": "admin",
+    "page": "/admin",
+    "viewport": "mobile",
+    "name": "no horizontal overflow",
+    "ok": true,
+    "detail": "overflow=0px"
+  },
+  {
+    "role": "admin",
+    "page": "/admin",
+    "viewport": "mobile",
+    "name": "contrast",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "admin",
+    "page": "/admin",
+    "viewport": "mobile",
+    "name": "accessible names",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "admin",
+    "page": "/admin",
+    "viewport": "mobile",
+    "name": "image alt",
+    "ok": false,
+    "detail": "[\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\",\"/swocts-cyber-range-mark.png\",\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\"]"
+  },
+  {
+    "role": "admin",
+    "page": "/admin",
+    "viewport": "mobile",
+    "name": "table header scope",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "admin",
+    "page": "/admin",
+    "viewport": "mobile",
+    "name": "heading order",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "admin",
+    "page": "/admin",
+    "viewport": "mobile",
+    "name": "visible focus ring",
+    "ok": true,
+    "detail": "{\"tag\":\"A\",\"text\":\"SWOCTS Cyber Range home\",\"outline\":\"solid 3px rgb(15, 23, 42)\",\"shadow\":\"none\"}"
+  },
+  {
+    "role": "admin",
+    "page": "/dashboard",
+    "viewport": "mobile",
+    "name": "no horizontal overflow",
+    "ok": true,
+    "detail": "overflow=0px"
+  },
+  {
+    "role": "admin",
+    "page": "/dashboard",
+    "viewport": "mobile",
+    "name": "contrast",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "admin",
+    "page": "/dashboard",
+    "viewport": "mobile",
+    "name": "accessible names",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "admin",
+    "page": "/dashboard",
+    "viewport": "mobile",
+    "name": "image alt",
+    "ok": false,
+    "detail": "[\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\",\"/swocts-cyber-range-mark.png\",\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\"]"
+  },
+  {
+    "role": "admin",
+    "page": "/dashboard",
+    "viewport": "mobile",
+    "name": "table header scope",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "admin",
+    "page": "/dashboard",
+    "viewport": "mobile",
+    "name": "heading order",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "admin",
+    "page": "/dashboard",
+    "viewport": "mobile",
+    "name": "visible focus ring",
+    "ok": true,
+    "detail": "{\"tag\":\"A\",\"text\":\"Skip to main content\",\"outline\":\"solid 3px rgb(15, 23, 42)\",\"shadow\":\"none\"}"
+  },
+  {
+    "role": "admin",
+    "page": "/profile",
+    "viewport": "mobile",
+    "name": "no horizontal overflow",
+    "ok": true,
+    "detail": "overflow=0px"
+  },
+  {
+    "role": "admin",
+    "page": "/profile",
+    "viewport": "mobile",
+    "name": "contrast",
+    "ok": false,
+    "detail": "[{\"text\":\"PR\",\"cls\":\"user-avatar__initials\",\"ratio\":1.1,\"min\":3}]"
+  },
+  {
+    "role": "admin",
+    "page": "/profile",
+    "viewport": "mobile",
+    "name": "accessible names",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "admin",
+    "page": "/profile",
+    "viewport": "mobile",
+    "name": "image alt",
+    "ok": false,
+    "detail": "[\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\",\"/swocts-cyber-range-mark.png\",\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\"]"
+  },
+  {
+    "role": "admin",
+    "page": "/profile",
+    "viewport": "mobile",
+    "name": "table header scope",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "admin",
+    "page": "/profile",
+    "viewport": "mobile",
+    "name": "heading order",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "admin",
+    "page": "/profile",
+    "viewport": "mobile",
+    "name": "visible focus ring",
+    "ok": true,
+    "detail": "{\"tag\":\"A\",\"text\":\"Skip to main content\",\"outline\":\"solid 3px rgb(15, 23, 42)\",\"shadow\":\"none\"}"
+  },
+  {
+    "role": "instructor",
+    "page": "login",
+    "viewport": "—",
+    "name": "api login",
+    "ok": true,
+    "detail": "instructor"
+  },
+  {
+    "role": "instructor",
+    "page": "/instructor",
+    "viewport": "desktop",
+    "name": "no horizontal overflow",
+    "ok": true,
+    "detail": "overflow=0px"
+  },
+  {
+    "role": "instructor",
+    "page": "/instructor",
+    "viewport": "desktop",
+    "name": "contrast",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "instructor",
+    "page": "/instructor",
+    "viewport": "desktop",
+    "name": "accessible names",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "instructor",
+    "page": "/instructor",
+    "viewport": "desktop",
+    "name": "image alt",
+    "ok": false,
+    "detail": "[\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\",\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\"]"
+  },
+  {
+    "role": "instructor",
+    "page": "/instructor",
+    "viewport": "desktop",
+    "name": "table header scope",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "instructor",
+    "page": "/instructor",
+    "viewport": "desktop",
+    "name": "heading order",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "instructor",
+    "page": "/instructor",
+    "viewport": "desktop",
+    "name": "visible focus ring",
+    "ok": true,
+    "detail": "{\"tag\":\"A\",\"text\":\"Skip to main content\",\"outline\":\"solid 3px rgb(15, 23, 42)\",\"shadow\":\"none\"}"
+  },
+  {
+    "role": "instructor",
+    "page": "/dashboard",
+    "viewport": "desktop",
+    "name": "no horizontal overflow",
+    "ok": true,
+    "detail": "overflow=0px"
+  },
+  {
+    "role": "instructor",
+    "page": "/dashboard",
+    "viewport": "desktop",
+    "name": "contrast",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "instructor",
+    "page": "/dashboard",
+    "viewport": "desktop",
+    "name": "accessible names",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "instructor",
+    "page": "/dashboard",
+    "viewport": "desktop",
+    "name": "image alt",
+    "ok": false,
+    "detail": "[\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\",\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\"]"
+  },
+  {
+    "role": "instructor",
+    "page": "/dashboard",
+    "viewport": "desktop",
+    "name": "table header scope",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "instructor",
+    "page": "/dashboard",
+    "viewport": "desktop",
+    "name": "heading order",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "instructor",
+    "page": "/dashboard",
+    "viewport": "desktop",
+    "name": "visible focus ring",
+    "ok": true,
+    "detail": "{\"tag\":\"A\",\"text\":\"Skip to main content\",\"outline\":\"solid 3px rgb(15, 23, 42)\",\"shadow\":\"none\"}"
+  },
+  {
+    "role": "instructor",
+    "page": "/courses",
+    "viewport": "desktop",
+    "name": "no horizontal overflow",
+    "ok": true,
+    "detail": "overflow=0px"
+  },
+  {
+    "role": "instructor",
+    "page": "/courses",
+    "viewport": "desktop",
+    "name": "contrast",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "instructor",
+    "page": "/courses",
+    "viewport": "desktop",
+    "name": "accessible names",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "instructor",
+    "page": "/courses",
+    "viewport": "desktop",
+    "name": "image alt",
+    "ok": false,
+    "detail": "[\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\",\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\"]"
+  },
+  {
+    "role": "instructor",
+    "page": "/courses",
+    "viewport": "desktop",
+    "name": "table header scope",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "instructor",
+    "page": "/courses",
+    "viewport": "desktop",
+    "name": "heading order",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "instructor",
+    "page": "/courses",
+    "viewport": "desktop",
+    "name": "visible focus ring",
+    "ok": true,
+    "detail": "{\"tag\":\"A\",\"text\":\"Skip to main content\",\"outline\":\"solid 3px rgb(15, 23, 42)\",\"shadow\":\"none\"}"
+  },
+  {
+    "role": "instructor",
+    "page": "/instructor",
+    "viewport": "mobile",
+    "name": "no horizontal overflow",
+    "ok": true,
+    "detail": "overflow=0px"
+  },
+  {
+    "role": "instructor",
+    "page": "/instructor",
+    "viewport": "mobile",
+    "name": "contrast",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "instructor",
+    "page": "/instructor",
+    "viewport": "mobile",
+    "name": "accessible names",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "instructor",
+    "page": "/instructor",
+    "viewport": "mobile",
+    "name": "image alt",
+    "ok": false,
+    "detail": "[\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\",\"/swocts-cyber-range-mark.png\",\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\"]"
+  },
+  {
+    "role": "instructor",
+    "page": "/instructor",
+    "viewport": "mobile",
+    "name": "table header scope",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "instructor",
+    "page": "/instructor",
+    "viewport": "mobile",
+    "name": "heading order",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "instructor",
+    "page": "/instructor",
+    "viewport": "mobile",
+    "name": "visible focus ring",
+    "ok": true,
+    "detail": "{\"tag\":\"A\",\"text\":\"SWOCTS Cyber Range home\",\"outline\":\"solid 3px rgb(15, 23, 42)\",\"shadow\":\"none\"}"
+  },
+  {
+    "role": "instructor",
+    "page": "/dashboard",
+    "viewport": "mobile",
+    "name": "no horizontal overflow",
+    "ok": true,
+    "detail": "overflow=0px"
+  },
+  {
+    "role": "instructor",
+    "page": "/dashboard",
+    "viewport": "mobile",
+    "name": "contrast",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "instructor",
+    "page": "/dashboard",
+    "viewport": "mobile",
+    "name": "accessible names",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "instructor",
+    "page": "/dashboard",
+    "viewport": "mobile",
+    "name": "image alt",
+    "ok": false,
+    "detail": "[\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\",\"/swocts-cyber-range-mark.png\",\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\"]"
+  },
+  {
+    "role": "instructor",
+    "page": "/dashboard",
+    "viewport": "mobile",
+    "name": "table header scope",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "instructor",
+    "page": "/dashboard",
+    "viewport": "mobile",
+    "name": "heading order",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "instructor",
+    "page": "/dashboard",
+    "viewport": "mobile",
+    "name": "visible focus ring",
+    "ok": true,
+    "detail": "{\"tag\":\"A\",\"text\":\"Skip to main content\",\"outline\":\"solid 3px rgb(15, 23, 42)\",\"shadow\":\"none\"}"
+  },
+  {
+    "role": "instructor",
+    "page": "/courses",
+    "viewport": "mobile",
+    "name": "no horizontal overflow",
+    "ok": true,
+    "detail": "overflow=0px"
+  },
+  {
+    "role": "instructor",
+    "page": "/courses",
+    "viewport": "mobile",
+    "name": "contrast",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "instructor",
+    "page": "/courses",
+    "viewport": "mobile",
+    "name": "accessible names",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "instructor",
+    "page": "/courses",
+    "viewport": "mobile",
+    "name": "image alt",
+    "ok": false,
+    "detail": "[\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\",\"/swocts-cyber-range-mark.png\",\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\"]"
+  },
+  {
+    "role": "instructor",
+    "page": "/courses",
+    "viewport": "mobile",
+    "name": "table header scope",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "instructor",
+    "page": "/courses",
+    "viewport": "mobile",
+    "name": "heading order",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "instructor",
+    "page": "/courses",
+    "viewport": "mobile",
+    "name": "visible focus ring",
+    "ok": true,
+    "detail": "{\"tag\":\"A\",\"text\":\"SWOCTS Cyber Range home\",\"outline\":\"solid 3px rgb(15, 23, 42)\",\"shadow\":\"none\"}"
+  },
+  {
+    "role": "student",
+    "page": "login",
+    "viewport": "—",
+    "name": "api login",
+    "ok": true,
+    "detail": "student"
+  },
+  {
+    "role": "student",
+    "page": "/dashboard",
+    "viewport": "desktop",
+    "name": "no horizontal overflow",
+    "ok": true,
+    "detail": "overflow=0px"
+  },
+  {
+    "role": "student",
+    "page": "/dashboard",
+    "viewport": "desktop",
+    "name": "contrast",
+    "ok": false,
+    "detail": "[{\"text\":\"The 7-day bar is an early signal, not a trend. Use 30 or 90 \",\"cls\":\"trend-note trend-note--caution\",\"ratio\":2.91,\"min\":4.5}]"
+  },
+  {
+    "role": "student",
+    "page": "/dashboard",
+    "viewport": "desktop",
+    "name": "accessible names",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "student",
+    "page": "/dashboard",
+    "viewport": "desktop",
+    "name": "image alt",
+    "ok": false,
+    "detail": "[\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\",\"/swocts-cyber-range-mark.png\",\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\"]"
+  },
+  {
+    "role": "student",
+    "page": "/dashboard",
+    "viewport": "desktop",
+    "name": "table header scope",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "student",
+    "page": "/dashboard",
+    "viewport": "desktop",
+    "name": "heading order",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "student",
+    "page": "/dashboard",
+    "viewport": "desktop",
+    "name": "visible focus ring",
+    "ok": true,
+    "detail": "{\"tag\":\"A\",\"text\":\"Skip to main content\",\"outline\":\"solid 3px rgb(15, 23, 42)\",\"shadow\":\"none\"}"
+  },
+  {
+    "role": "student",
+    "page": "/exercises",
+    "viewport": "desktop",
+    "name": "no horizontal overflow",
+    "ok": true,
+    "detail": "overflow=0px"
+  },
+  {
+    "role": "student",
+    "page": "/exercises",
+    "viewport": "desktop",
+    "name": "contrast",
+    "ok": false,
+    "detail": "[{\"text\":\"intermediate\",\"cls\":\"track-card__tag track-card__tag--intermediate\",\"ratio\":2.91,\"min\":4.5},{\"text\":\"intermediate\",\"cls\":\"track-card__tag track-card__tag--intermediate\",\"ratio\":2.91,\"min\":4.5},{\"text\":\"intermediate\",\"cls\":\"track-card__tag track-card__tag--intermediate\",\"ratio\":2.91,\"min\":4.5},{\"text\":\"intermediate\",\"cls\":\"track-card__tag track-card__tag--intermediate\",\"ratio\":2.91,\"min\":4.5}]"
+  },
+  {
+    "role": "student",
+    "page": "/exercises",
+    "viewport": "desktop",
+    "name": "accessible names",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "student",
+    "page": "/exercises",
+    "viewport": "desktop",
+    "name": "image alt",
+    "ok": false,
+    "detail": "[\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\",\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\"]"
+  },
+  {
+    "role": "student",
+    "page": "/exercises",
+    "viewport": "desktop",
+    "name": "table header scope",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "student",
+    "page": "/exercises",
+    "viewport": "desktop",
+    "name": "heading order",
+    "ok": false,
+    "detail": "[\"h1 -> h3: Linux Fundamentals\"]"
+  },
+  {
+    "role": "student",
+    "page": "/exercises",
+    "viewport": "desktop",
+    "name": "visible focus ring",
+    "ok": true,
+    "detail": "{\"tag\":\"A\",\"text\":\"Skip to main content\",\"outline\":\"solid 3px rgb(15, 23, 42)\",\"shadow\":\"none\"}"
+  },
+  {
+    "role": "student",
+    "page": "/profile",
+    "viewport": "desktop",
+    "name": "no horizontal overflow",
+    "ok": true,
+    "detail": "overflow=0px"
+  },
+  {
+    "role": "student",
+    "page": "/profile",
+    "viewport": "desktop",
+    "name": "contrast",
+    "ok": false,
+    "detail": "[{\"text\":\"AC\",\"cls\":\"user-avatar__initials\",\"ratio\":1.1,\"min\":3}]"
+  },
+  {
+    "role": "student",
+    "page": "/profile",
+    "viewport": "desktop",
+    "name": "accessible names",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "student",
+    "page": "/profile",
+    "viewport": "desktop",
+    "name": "image alt",
+    "ok": false,
+    "detail": "[\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\",\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\"]"
+  },
+  {
+    "role": "student",
+    "page": "/profile",
+    "viewport": "desktop",
+    "name": "table header scope",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "student",
+    "page": "/profile",
+    "viewport": "desktop",
+    "name": "heading order",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "student",
+    "page": "/profile",
+    "viewport": "desktop",
+    "name": "visible focus ring",
+    "ok": true,
+    "detail": "{\"tag\":\"BUTTON\",\"text\":\"Avatar borderSolid · #3B82F6\",\"outline\":\"solid 2px rgb(29, 78, 216)\",\"shadow\":\"none\"}"
+  },
+  {
+    "role": "student",
+    "page": "/dashboard",
+    "viewport": "mobile",
+    "name": "no horizontal overflow",
+    "ok": true,
+    "detail": "overflow=0px"
+  },
+  {
+    "role": "student",
+    "page": "/dashboard",
+    "viewport": "mobile",
+    "name": "contrast",
+    "ok": false,
+    "detail": "[{\"text\":\"The 7-day bar is an early signal, not a trend. Use 30 or 90 \",\"cls\":\"trend-note trend-note--caution\",\"ratio\":2.91,\"min\":4.5}]"
+  },
+  {
+    "role": "student",
+    "page": "/dashboard",
+    "viewport": "mobile",
+    "name": "accessible names",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "student",
+    "page": "/dashboard",
+    "viewport": "mobile",
+    "name": "image alt",
+    "ok": false,
+    "detail": "[\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\",\"/swocts-cyber-range-mark.png\",\"/swocts-cyber-range-mark.png\",\"/swocts-cyber-range-mark.png\"]"
+  },
+  {
+    "role": "student",
+    "page": "/dashboard",
+    "viewport": "mobile",
+    "name": "table header scope",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "student",
+    "page": "/dashboard",
+    "viewport": "mobile",
+    "name": "heading order",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "student",
+    "page": "/dashboard",
+    "viewport": "mobile",
+    "name": "visible focus ring",
+    "ok": true,
+    "detail": "{\"tag\":\"A\",\"text\":\"Skip to main content\",\"outline\":\"solid 3px rgb(15, 23, 42)\",\"shadow\":\"none\"}"
+  },
+  {
+    "role": "student",
+    "page": "/exercises",
+    "viewport": "mobile",
+    "name": "no horizontal overflow",
+    "ok": true,
+    "detail": "overflow=0px"
+  },
+  {
+    "role": "student",
+    "page": "/exercises",
+    "viewport": "mobile",
+    "name": "contrast",
+    "ok": false,
+    "detail": "[{\"text\":\"intermediate\",\"cls\":\"track-card__tag track-card__tag--intermediate\",\"ratio\":2.91,\"min\":4.5},{\"text\":\"intermediate\",\"cls\":\"track-card__tag track-card__tag--intermediate\",\"ratio\":2.91,\"min\":4.5},{\"text\":\"intermediate\",\"cls\":\"track-card__tag track-card__tag--intermediate\",\"ratio\":2.91,\"min\":4.5},{\"text\":\"intermediate\",\"cls\":\"track-card__tag track-card__tag--intermediate\",\"ratio\":2.91,\"min\":4.5}]"
+  },
+  {
+    "role": "student",
+    "page": "/exercises",
+    "viewport": "mobile",
+    "name": "accessible names",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "student",
+    "page": "/exercises",
+    "viewport": "mobile",
+    "name": "image alt",
+    "ok": false,
+    "detail": "[\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\",\"/swocts-cyber-range-mark.png\",\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\"]"
+  },
+  {
+    "role": "student",
+    "page": "/exercises",
+    "viewport": "mobile",
+    "name": "table header scope",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "student",
+    "page": "/exercises",
+    "viewport": "mobile",
+    "name": "heading order",
+    "ok": false,
+    "detail": "[\"h1 -> h3: Linux Fundamentals\"]"
+  },
+  {
+    "role": "student",
+    "page": "/exercises",
+    "viewport": "mobile",
+    "name": "visible focus ring",
+    "ok": true,
+    "detail": "{\"tag\":\"A\",\"text\":\"SWOCTS Cyber Range home\",\"outline\":\"solid 3px rgb(15, 23, 42)\",\"shadow\":\"none\"}"
+  },
+  {
+    "role": "student",
+    "page": "/profile",
+    "viewport": "mobile",
+    "name": "no horizontal overflow",
+    "ok": true,
+    "detail": "overflow=0px"
+  },
+  {
+    "role": "student",
+    "page": "/profile",
+    "viewport": "mobile",
+    "name": "contrast",
+    "ok": false,
+    "detail": "[{\"text\":\"AC\",\"cls\":\"user-avatar__initials\",\"ratio\":1.1,\"min\":3}]"
+  },
+  {
+    "role": "student",
+    "page": "/profile",
+    "viewport": "mobile",
+    "name": "accessible names",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "student",
+    "page": "/profile",
+    "viewport": "mobile",
+    "name": "image alt",
+    "ok": false,
+    "detail": "[\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\",\"/swocts-cyber-range-mark.png\",\"/swocts-cyber-range-mark.png\",\"/ocr-logo-dark.png\"]"
+  },
+  {
+    "role": "student",
+    "page": "/profile",
+    "viewport": "mobile",
+    "name": "table header scope",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "student",
+    "page": "/profile",
+    "viewport": "mobile",
+    "name": "heading order",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "role": "student",
+    "page": "/profile",
+    "viewport": "mobile",
+    "name": "visible focus ring",
+    "ok": true,
+    "detail": "{\"tag\":\"A\",\"text\":\"Skip to main content\",\"outline\":\"solid 3px rgb(15, 23, 42)\",\"shadow\":\"none\"}"
+  }
+]

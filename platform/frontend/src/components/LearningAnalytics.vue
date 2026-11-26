@@ -669,7 +669,7 @@ onMounted(load)
 }
 
 .trend-note--caution {
-  color: var(--warning);
+  color: var(--warning-text);
 }
 
 .trend-chart__item--current .trend-chart__label {
