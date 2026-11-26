@@ -9,6 +9,38 @@ another document disagrees, this page and the signed tag win.
 > replaced with placeholders. The private deployment inventory holds the live
 > values. See [`PUBLICATION-METADATA-POLICY.md`](PUBLICATION-METADATA-POLICY.md).
 
+## 5.55.1 deployment verification
+
+| Check | Result |
+|---|---|
+| `/api/version` | `5.55.1` on production and development |
+| Alembic | **`0067_course_content_rls` (head)** |
+| Health | Production and development backend/frontend containers `healthy`; nginx `-t` passes |
+| Focused route | `GET /exercises?view=focused&target=…` returns the SPA shell with `200` on production; `?view=all` returns `200` on development |
+| Backend filter | `GET /api/exercises/tracks?role=…` applies the role filter after the existing visibility and course-assignment checks |
+| Production wiki | **14** sites rebuilt |
+| Pre-deploy backup (production) | `~/backups/ocr-backup-20261126-220040.dump` |
+| Pre-deploy backup (development) | `~/opencyberrange/.backups/20261126_220358` |
+| Rollback images | `opencyberrange-backend:pre-v5.55.1`, `ocr-frontend:pre-v5.55.1` on production; development rolls back by rebuilding `v5.55.0` |
+
+5.55.1 is a frontend routing and query-filter patch. The lab definitions and
+Alembic schema are unchanged.
+
+## 5.55.0 deployment verification
+
+| Check | Result |
+|---|---|
+| `/api/version` | `5.55.0` on production and development |
+| Alembic | **`0067_course_content_rls` (head)** |
+| Health | Production and development backend/frontend containers `healthy`; nginx `-t` passes |
+| Role catalogue | Each pathway response includes its `tracks` mapping |
+| Production wiki | **14** sites rebuilt |
+| Pre-deploy backup (production) | `~/backups/ocr-backup-20261126-214404.dump` |
+| Pre-deploy backup (development) | `~/opencyberrange/.backups/20261126_214845` |
+| Rollback images | `opencyberrange-backend:pre-v5.55.0`, `ocr-frontend:pre-v5.55.0` on production; development rolls back by rebuilding `v5.54.2` |
+
+5.55.0 adds the career-focused exercise catalogue and dashboard track focus.
+
 ## 5.54.2 deployment verification
 
 | Check | Result |
