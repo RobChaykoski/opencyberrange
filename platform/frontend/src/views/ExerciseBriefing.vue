@@ -64,9 +64,19 @@ const track = ref(null)
 const level = ref(null)
 const hostnames = ref([])
 const hints = ref([])
-const workbookUrl = ref('')
 
 const labId = computed(() => Number(route.query.labId || 0))
+
+// Keep the workbook URL reactive: App.vue loads the wiki origin from
+// /api/config/public after the route mounts, so computing this once in
+// onMounted would freeze a relative or build-time URL. wikiUrl reads the
+// shared wikiBaseUrl ref, which makes this recompute when the config arrives.
+const workbookUrl = computed(() =>
+  resolveWorkbookUrl(
+    lab.value?.workbook,
+    route.query.wikiSlug ? String(route.query.wikiSlug) : ''
+  )
+)
 
 const backLink = computed(() => {
   const query = {}
@@ -115,10 +125,6 @@ onMounted(async () => {
     hints.value = Array.isArray(data.lab?.requested_hints)
       ? data.lab.requested_hints
       : []
-    workbookUrl.value = resolveWorkbookUrl(
-      data.lab?.workbook,
-      route.query.wikiSlug ? String(route.query.wikiSlug) : ''
-    )
     state.value = 'ready'
     if (data.lab?.workbook) await setWikiAuthCookie()
   } catch {

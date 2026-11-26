@@ -1,5 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { nextTick } from 'vue'
 
 const { get, route } = vi.hoisted(() => ({
   get: vi.fn(),
@@ -18,6 +19,7 @@ vi.mock('vue-router', () => ({
 }))
 
 import ExerciseBriefing from '../ExerciseBriefing.vue'
+import { setWikiBaseUrl } from '../../utils/wikiUrl'
 
 function labResponse(overrides = {}) {
   return {
@@ -44,6 +46,10 @@ const RouterLinkStub = {
 }
 
 describe('ExerciseBriefing pop-out', () => {
+  beforeEach(() => {
+    setWikiBaseUrl('')
+  })
+
   it('fetches the active lab and renders the same read-only brief', async () => {
     get.mockResolvedValueOnce({ data: labResponse() })
 
@@ -62,6 +68,14 @@ describe('ExerciseBriefing pop-out', () => {
     expect(wrapper.text()).not.toContain('Pop out briefing')
     expect(wrapper.get('.exercise-brief__workbook-link').attributes('href')).toContain(
       '/wiki/course/net-101/guide.md'
+    )
+
+    // App.vue loads the wiki origin asynchronously. The workbook link must
+    // follow that change instead of freezing the first relative URL.
+    setWikiBaseUrl('https://wiki.example.test')
+    await nextTick()
+    expect(wrapper.get('.exercise-brief__workbook-link').attributes('href')).toBe(
+      'https://wiki.example.test/wiki/course/net-101/guide.md'
     )
   })
 
