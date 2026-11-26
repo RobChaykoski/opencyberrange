@@ -35,8 +35,15 @@ loaded the role dashboard, the role-specific work page, and the profile at
 | Table header scope | Every `<th>` in the admin and instructor tables is scoped |
 | Accessible names | No unnamed buttons, links, inputs, selects, or textareas |
 | Decorative images | Logos use `alt=""`; no image without an `alt` attribute |
-| Warning text contrast | Fixed in this release |
-| Heading order | Fixed in this release |
+| Warning text contrast | No text below 4.5:1 (or 3:1 for large text) |
+| Heading order | No skipped heading levels |
+| Total | **129 checks, 0 failures** |
+
+The run used three scoped accounts created for the review (`review-admin`,
+`review-instructor`, `review-student`). Screenshots and `checks.json` were
+written to the git-ignored `ui-review-artifacts/2026-11-26/` directory on the
+review workstation; they are not published. The accounts remain on production
+for the manual pass and should be deleted afterwards.
 
 ## Verification
 
@@ -55,7 +62,13 @@ loaded the role dashboard, the role-specific work page, and the profile at
 
 | Environment | Version | Status |
 |---|---|---|
-| Development | `5.52.3` | Pending |
-| Production | `5.52.3` | Pending |
+| Development | `5.52.3` | Deployed and verified |
+| Production | `5.52.3` | Deployed and verified |
 
-Rollback images are tagged `pre-v5.52.3` on both hosts.
+Post-deploy checks: `/api/version` reports `5.52.3` on both hosts, backend and
+frontend containers are healthy, `nginx -t` passes, and the production wiki
+rebuilt 14 sites. Production pre-deploy backup:
+`ocr-backup-20261126-040918.dump`; rollback images are tagged `pre-v5.52.3`.
+The development host was updated by syncing the tag into the split layout;
+rollback there is a rebuild of `v5.52.2`, because that path does not create
+`pre-` tags.
