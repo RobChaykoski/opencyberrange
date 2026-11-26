@@ -1,8 +1,7 @@
 # Release 5.52.6 deliverables
 
-Status: **release prepared**. Deployment evidence is recorded in
-[`PRODUCTION-DEPLOYMENT-STATEMENT.md`](PRODUCTION-DEPLOYMENT-STATEMENT.md) after
-the signed tag is applied.
+Status: **released and deployed** to development and production on 26 November
+2026.
 
 | Item | Value |
 |---|---|
@@ -45,8 +44,8 @@ the signed tag is applied.
 
 | Environment | Version | Status |
 |---|---|---|
-| Development | `5.52.6` | Pending |
-| Production | `5.52.6` | Pending |
+| Development | `5.52.6` | Deployed and verified |
+| Production | `5.52.6` | Deployed and verified |
 
 After deployment, record the `/api/version` result, container health, wiki
 rebuild, backup path, and rollback image tags for both environments.

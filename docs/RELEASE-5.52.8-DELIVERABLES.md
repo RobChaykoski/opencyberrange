@@ -1,8 +1,7 @@
 # Release 5.52.8 deliverables
 
-Status: **release prepared**. Deployment evidence is recorded in
-[`PRODUCTION-DEPLOYMENT-STATEMENT.md`](PRODUCTION-DEPLOYMENT-STATEMENT.md) after
-the signed tag is applied.
+Status: **released and deployed** to development and production on 26 November
+2026.
 
 | Item | Value |
 |---|---|
@@ -43,5 +42,5 @@ operations host; there is no runtime egress.
 
 | Environment | Version | Status |
 |---|---|---|
-| Development | `5.52.8` | Pending |
-| Production | `5.52.8` | Pending |
+| Development | `5.52.8` | Deployed and verified |
+| Production | `5.52.8` | Deployed and verified |

@@ -1,8 +1,7 @@
 # Release 5.52.7 deliverables
 
-Status: **release prepared**. Deployment evidence is recorded in
-[`PRODUCTION-DEPLOYMENT-STATEMENT.md`](PRODUCTION-DEPLOYMENT-STATEMENT.md) after
-the signed tag is applied.
+Status: **released and deployed** to development and production on 26 November
+2026.
 
 | Item | Value |
 |---|---|
@@ -40,5 +39,5 @@ signed release artifacts rather than fetched at runtime.
 
 | Environment | Version | Status |
 |---|---|---|
-| Development | `5.52.7` | Pending |
-| Production | `5.52.7` | Pending |
+| Development | `5.52.7` | Deployed and verified |
+| Production | `5.52.7` | Deployed and verified |

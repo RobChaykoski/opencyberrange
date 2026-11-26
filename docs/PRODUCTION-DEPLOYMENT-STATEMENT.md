@@ -9,6 +9,27 @@ another document disagrees, this page and the signed tag win.
 > replaced with placeholders. The private deployment inventory holds the live
 > values. See [`PUBLICATION-METADATA-POLICY.md`](PUBLICATION-METADATA-POLICY.md).
 
+## 5.52.8 deployment verification
+
+| Check | Result |
+|---|---|
+| `/api/version` | `5.52.8` on production and development |
+| Alembic | **`0067_course_content_rls` (head)** |
+| Health | Production and development backend/frontend containers `healthy` |
+| Production wiki | **14** sites rebuilt |
+| Threat snapshots | Both hosts: FireHOL + curated feeds `519,839` entries / `152` countries / `13` categories, generated `2026-11-26T17:02:49Z`; RansomLook `325` posts / `15` groups, generated `2026-11-26T17:02:51Z` |
+| Split-layout deploy | Development synced release data under `backend/app/data`; backups and `run-state` preserved |
+| Pre-deploy backup (production) | `~/backups/ocr-backup-20261126-170948.dump` |
+| Pre-deploy backup (development) | `~/opencyberrange/.backups/20261126_170643` |
+| Rollback images | `opencyberrange-backend:pre-v5.52.8`, `ocr-frontend:pre-v5.52.8` on production; development rolls back by rebuilding `v5.52.7` |
+| Development | Tag `v5.52.8` synced into the split layout; backend healthy, `/api/version` `5.52.8` |
+
+5.52.8 supersedes 5.52.5 and includes the intervening patches: 5.52.6
+(proxy reattach on the allocated `/29` and the derived TLS `:8443` workbook
+origin), 5.52.7 (first threat-snapshot refresh and cadence update), and 5.52.8
+(curated DShield, Blocklist.de, abuse.ch Feodo, OffSeq Mirage, and IPsum feeds,
+plus the split-layout release-data sync).
+
 ## 5.52.5 deployment verification
 
 | Check | Result |
