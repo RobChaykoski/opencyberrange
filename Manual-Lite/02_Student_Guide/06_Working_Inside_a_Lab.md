@@ -11,7 +11,7 @@ The Active Lab panel is the single screen that hosts everything you do during an
 
 The Active Lab panel opens on the track page. It has a control bar and two working columns:
 
-- **Control bar:** the exercise name, an **Active** badge, **Knowledge check**, **CyberChef**, **Stop Exercise**, **Exit**, a live countdown timer, **Pause**, and **+1 Hour**. See [Extending a Lab Session](09_Extending_a_Lab_Session.md) and [Stopping a Lab](10_Stopping_a_Lab.md).
+- **Control bar:** the exercise name, an **Active** badge, **Knowledge check**, **CyberChef**, **Stop Exercise**, **Exit**, a live countdown timer, **Pause**, and **+1 Hour**. The knowledge check is the optional benchmark, not the level quiz. See [Knowledge Checks and Level Quizzes](33_Knowledge_Checks_and_Level_Quizzes.md), [Extending a Lab Session](09_Extending_a_Lab_Session.md), and [Stopping a Lab](10_Stopping_a_Lab.md).
 - **Reaction bar:** "Was this exercise useful?" with Like and Dislike. Your instructor sees totals, not your name.
 - **Connect to this lab over the VPN:** the lab subnet and an **Open VPN Setup** button. Labs with RangeBox show a desktop entry point instead.
 - **New to this exercise?:** a short prompt and **Open workbook** when the lab has a workbook.

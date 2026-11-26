@@ -2,6 +2,22 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.52.0] - 2026-11-25
+
+### Changed
+
+- **Quiz consistency:** exercise knowledge checks and level quizzes now share
+  the same numbered question navigation, **Previous question** / **Next
+  question** controls, answered count, separate submission panel, unanswered
+  warning, and confirmation step introduced for practice exams.
+- **Semantics preserved:** the exercise knowledge check submits as a benchmark,
+  while the level quiz submits for the certificate and records the score.
+- **Shared components:** added `QuizQuestionDots`, `QuizNavigation`, and
+  `QuizSubmitPanel`, with component tests for navigation, jump state, warning,
+  confirmation, and cancel behaviour.
+- Updated the student manual, README, SECURITY supported versions, LICENSING
+  release status, release index, and deployment runbook for 5.52.0.
+
 ## [5.51.2] - 2026-11-25
 
 ### Changed

@@ -29,32 +29,18 @@
           </div>
         </div>
 
-        <div class="practice__dots" role="group" aria-label="Jump to a question">
-          <button
-            v-for="question in session.questions"
-            :key="question.position"
-            type="button"
-            class="practice__dot"
-            :class="{
-              'practice__dot--current': question.position === position,
-              'practice__dot--answered': answers[question.position] !== undefined,
-            }"
-            :aria-label="`Question ${question.position}${answers[question.position] !== undefined ? ', answered' : ', not answered'}`"
-            :aria-current="question.position === position ? 'true' : undefined"
-            @click="goTo(question.position)"
-          >
-            {{ question.position }}
-          </button>
-        </div>
+        <QuizQuestionDots
+          :total="session.questions.length"
+          :position="position"
+          :answered-positions="answeredPositions"
+          @jump="goTo"
+        />
 
         <article v-if="current" class="practice__question">
           <div class="practice__question-head">
             <p class="practice__muted">
               Question {{ current.position }} of {{ session.questions.length }}
               <template v-if="current.domain_name"> · {{ current.domain_name }}</template>
-            </p>
-            <p class="practice__muted practice__answered-count">
-              {{ answeredCount }} of {{ session.questions.length }} answered
             </p>
           </div>
           <h3>{{ current.prompt }}</h3>
@@ -74,78 +60,31 @@
           </ul>
         </article>
 
-        <nav class="practice__nav" aria-label="Question navigation">
-          <button
-            type="button"
-            class="btn btn--outline practice__nav-btn"
-            :disabled="position <= 1"
-            @click="goTo(position - 1)"
-          >
-            <span aria-hidden="true">←</span> Previous question
-          </button>
-          <p class="practice__nav-status" aria-live="polite">
-            Question {{ position }} of {{ session.questions.length }}
-          </p>
-          <button
-            type="button"
-            class="btn btn--secondary practice__nav-btn practice__nav-btn--next"
-            :disabled="position >= session.questions.length"
-            @click="goTo(position + 1)"
-          >
-            Next question <span aria-hidden="true">→</span>
-          </button>
-        </nav>
+        <QuizNavigation
+          :position="position"
+          :total="session.questions.length"
+          :answered-count="answeredCount"
+          :disabled="submitting"
+          @change="goTo"
+        />
 
         <p v-if="position >= session.questions.length" class="practice__last-hint">
           You are on the last question. Review your answers, then submit for final mark below.
         </p>
 
-        <section class="practice__submit" aria-labelledby="practice-submit-title">
-          <div class="practice__submit-copy">
-            <h3 id="practice-submit-title">Finished answering?</h3>
-            <p class="practice__muted">
-              Submitting marks this attempt and shows your score and explanations. You cannot
-              change your answers after it is submitted.
-            </p>
-            <p v-if="unansweredCount" class="practice__submit-warning">
-              {{ unansweredCount }} question{{ unansweredCount === 1 ? '' : 's' }} still
-              unanswered. Unanswered questions are marked incorrect.
-            </p>
-          </div>
-          <div class="practice__submit-actions">
-            <template v-if="!confirmingSubmit">
-              <button
-                type="button"
-                class="btn btn--primary practice__submit-btn"
-                :disabled="submitting"
-                @click="confirmingSubmit = true"
-              >
-                Submit for final mark
-              </button>
-            </template>
-            <template v-else>
-              <p class="practice__submit-confirm" role="alert">
-                Submit now and end this attempt?
-              </p>
-              <button
-                type="button"
-                class="btn btn--primary practice__submit-btn"
-                :disabled="submitting"
-                @click="submitSession"
-              >
-                {{ submitting ? 'Submitting...' : 'Yes, submit for final mark' }}
-              </button>
-              <button
-                type="button"
-                class="btn btn--outline practice__submit-btn"
-                :disabled="submitting"
-                @click="confirmingSubmit = false"
-              >
-                Keep working
-              </button>
-            </template>
-          </div>
-        </section>
+        <QuizSubmitPanel
+          title="Finished answering?"
+          description="Submitting marks this attempt and shows your score and explanations. You cannot change your answers after it is submitted."
+          :warning="unansweredWarning"
+          submit-label="Submit for final mark"
+          confirm-text="Submit now and end this attempt?"
+          confirm-label="Yes, submit for final mark"
+          cancel-label="Keep working"
+          :confirming="confirmingSubmit"
+          :submitting="submitting"
+          @update:confirming="confirmingSubmit = $event"
+          @submit="submitSession"
+        />
       </section>
     </template>
 
@@ -313,6 +252,9 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import axios from '../api/axios'
+import QuizNavigation from '../components/QuizNavigation.vue'
+import QuizQuestionDots from '../components/QuizQuestionDots.vue'
+import QuizSubmitPanel from '../components/QuizSubmitPanel.vue'
 
 const pathways = ref([])
 const progress = ref(null)
@@ -335,8 +277,20 @@ const current = computed(() =>
 )
 
 const answeredCount = computed(() => Object.keys(answers).length)
+const answeredPositions = computed(() =>
+  session.value
+    ? session.value.questions
+        .filter((question) => answers[question.position] !== undefined)
+        .map((question) => question.position)
+    : []
+)
 const unansweredCount = computed(() =>
   session.value ? Math.max(session.value.questions.length - answeredCount.value, 0) : 0
+)
+const unansweredWarning = computed(() =>
+  unansweredCount.value
+    ? `${unansweredCount.value} question${unansweredCount.value === 1 ? '' : 's'} still unanswered. Unanswered questions are marked incorrect.`
+    : ''
 )
 
 function goTo(nextPosition) {
@@ -554,47 +508,6 @@ onBeforeUnmount(stopTimer)
   color: var(--danger);
 }
 
-.practice__dots {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  margin: 0.8rem 0;
-}
-
-.practice__dot {
-  min-width: 2.25rem;
-  height: 2.25rem;
-  padding: 0 0.35rem;
-  border-radius: 0.4rem;
-  border: 1px solid var(--border-color);
-  background: var(--bg-secondary);
-  color: var(--text-secondary);
-  font: inherit;
-  font-size: 0.78rem;
-  cursor: pointer;
-}
-
-.practice__dot:hover {
-  border-color: var(--accent);
-}
-
-.practice__dot:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
-.practice__dot--answered {
-  background: var(--accent-bg);
-  color: var(--text-primary);
-}
-
-.practice__dot--current {
-  border-color: var(--accent);
-  box-shadow: inset 0 0 0 1px var(--accent);
-  color: var(--text-primary);
-  font-weight: 700;
-}
-
 .practice__options,
 .practice__review,
 .practice__review-options,
@@ -639,49 +552,6 @@ onBeforeUnmount(stopTimer)
   flex-wrap: wrap;
 }
 
-.practice__answered-count {
-  margin: 0;
-  white-space: nowrap;
-}
-
-.practice__nav {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-  align-items: center;
-  gap: 0.75rem;
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--border-color);
-}
-
-.practice__nav-btn {
-  justify-self: start;
-  min-height: 44px;
-  padding: 0.6rem 1rem;
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-.practice__nav-btn:focus-visible,
-.practice__submit-btn:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
-.practice__nav-btn--next {
-  justify-self: end;
-  color: var(--text-primary);
-}
-
-.practice__nav-status {
-  margin: 0;
-  color: var(--text-secondary);
-  font-size: 0.8rem;
-  font-weight: 600;
-  text-align: center;
-  white-space: nowrap;
-}
-
 .practice__last-hint {
   margin: 0.65rem 0 0;
   padding: 0.55rem 0.75rem;
@@ -690,58 +560,6 @@ onBeforeUnmount(stopTimer)
   background: var(--accent-bg);
   color: var(--text-secondary);
   font-size: 0.84rem;
-}
-
-.practice__submit {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 1rem;
-  padding: 0.9rem;
-  border: 1px solid var(--border-color);
-  border-left: 3px solid var(--accent);
-  border-radius: 0.75rem;
-  background: var(--bg-primary);
-}
-
-.practice__submit h3 {
-  margin: 0 0 0.2rem;
-  font-size: 0.95rem;
-}
-
-.practice__submit-copy p {
-  margin: 0;
-}
-
-.practice__submit-warning {
-  margin-top: 0.35rem !important;
-  color: var(--warning);
-  font-size: 0.84rem;
-}
-
-.practice__submit-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 0.5rem;
-}
-
-.practice__submit-confirm {
-  flex-basis: 100%;
-  margin: 0 0 0.15rem;
-  color: var(--text-primary);
-  font-size: 0.84rem;
-  font-weight: 600;
-  text-align: right;
-}
-
-.practice__submit-btn {
-  min-height: 44px;
-  padding: 0.6rem 1rem;
-  font-size: 0.85rem;
-  font-weight: 600;
 }
 
 .practice__score {
@@ -828,41 +646,9 @@ onBeforeUnmount(stopTimer)
 
 @media (max-width: 720px) {
   .practice__pathway,
-  .practice__run-head,
-  .practice__submit {
+  .practice__run-head {
     flex-direction: column;
     align-items: stretch;
-  }
-
-  .practice__submit-actions {
-    justify-content: stretch;
-  }
-
-  .practice__submit-confirm {
-    text-align: left;
-  }
-}
-
-@media (max-width: 640px) {
-  .practice__nav {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .practice__nav-status {
-    grid-column: 1 / -1;
-    grid-row: 1;
-  }
-
-  .practice__nav-btn {
-    width: 100%;
-  }
-
-  .practice__nav-btn--next {
-    justify-self: stretch;
-  }
-
-  .practice__submit-btn {
-    width: 100%;
   }
 }
 </style>

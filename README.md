@@ -1,6 +1,6 @@
 ﻿# SWOCTS Cyber Range
 
-> **Release 5 is the current release line (latest signed `v5.51.2`; development and production are on 5.51.2).**
+> **Release 5 is the current release line (latest signed `v5.52.0`; development and production are on 5.52.0).**
 >
 > **Edition: Community / Academic** (single-host, `lite` entitlement). The
 > Professional and Enterprise profiles are separate licence tiers built from the
@@ -472,6 +472,12 @@ single-domain drills from the reviewed question bank. During an attempt,
 separate **Submit for final mark** panel ends the attempt, warns about
 unanswered questions, and asks for confirmation. A pass is a study signal, not
 a certificate or a course grade.
+
+**Consistent quiz navigation.** Exercise knowledge checks and level quizzes now
+use the same numbered jump list, **Previous question** and **Next question**
+controls, answered count, separate final-submit panel, unanswered warning, and
+confirmation step. The knowledge check remains a benchmark; the level quiz is
+the one whose score can be recorded for the certificate.
 
 **Analyst answers.** The written-answer workflow lists workbook exercises in a
 searchable, track-grouped library. Each row shows whether an answer is saved,

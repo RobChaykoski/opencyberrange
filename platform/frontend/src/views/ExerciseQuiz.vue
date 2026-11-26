@@ -96,46 +96,75 @@
             <div class="quiz-attempt__head">
               <div>
                 <p class="quiz-eyebrow">Attempt {{ summary.attempts + 1 }}</p>
-                <h2>{{ attempt.question_count }} questions</h2>
+                <h2>{{ questionTotal }} questions</h2>
               </div>
-              <span class="quiz-progress">{{ answeredCount }} / {{ attempt.question_count }} answered</span>
+              <button
+                type="button"
+                class="quiz-cancel"
+                :disabled="submitting"
+                @click="cancelAttempt"
+              >
+                Cancel attempt
+              </button>
             </div>
 
-            <form @submit.prevent="submitAttempt">
-              <fieldset
-                v-for="(question, index) in attempt.questions"
-                :key="question.id"
-                class="quiz-question"
-              >
+            <QuizQuestionDots
+              :total="questionTotal"
+              :position="position"
+              :answered-positions="answeredPositions"
+              :disabled="submitting"
+              @jump="goTo"
+            />
+
+            <form @submit.prevent>
+              <fieldset v-if="currentQuestion" :key="currentQuestion.id" class="quiz-question">
                 <legend>
-                  <span class="quiz-question__number">Question {{ index + 1 }}</span>
-                  {{ question.prompt }}
+                  <span class="quiz-question__number">Question {{ position }}</span>
+                  {{ currentQuestion.prompt }}
                 </legend>
                 <label
-                  v-for="(option, optionIndex) in question.options"
+                  v-for="(option, optionIndex) in currentQuestion.options"
                   :key="optionIndex"
                   class="quiz-option"
-                  :class="{ 'quiz-option--selected': answers[question.id] === optionIndex }"
+                  :class="{ 'quiz-option--selected': answers[currentQuestion.id] === optionIndex }"
                 >
                   <input
-                    v-model.number="answers[question.id]"
+                    v-model.number="answers[currentQuestion.id]"
                     type="radio"
-                    :name="question.id"
+                    :name="currentQuestion.id"
                     :value="optionIndex"
                   />
                   <span>{{ option }}</span>
                 </label>
               </fieldset>
 
-              <div class="quiz-attempt__actions">
-                <button class="btn btn--primary" type="submit" :disabled="submitting || !allAnswered">
-                  {{ submitting ? 'Checking...' : 'Submit answers' }}
-                </button>
-                <button class="btn btn--ghost" type="button" :disabled="submitting" @click="cancelAttempt">
-                  Cancel
-                </button>
-                <span v-if="submitError" class="quiz-error" role="alert">{{ submitError }}</span>
-              </div>
+              <QuizNavigation
+                :position="position"
+                :total="questionTotal"
+                :answered-count="answeredCount"
+                :disabled="submitting"
+                @change="goTo"
+              />
+
+              <p v-if="position >= questionTotal && questionTotal" class="quiz-last-hint">
+                You are on the last question. Review your answers, then submit the knowledge check below.
+              </p>
+
+              <QuizSubmitPanel
+                title="Finished answering?"
+                description="Submitting scores this attempt and shows the explanations. You can try another set afterwards."
+                :warning="unansweredWarning"
+                submit-label="Submit knowledge check"
+                confirm-text="Submit now and score this attempt?"
+                confirm-label="Yes, submit knowledge check"
+                cancel-label="Keep working"
+                :confirming="confirmingSubmit"
+                :submitting="submitting"
+                @update:confirming="confirmingSubmit = $event"
+                @submit="submitAttempt"
+              />
+
+              <span v-if="submitError" class="quiz-error" role="alert">{{ submitError }}</span>
             </form>
           </section>
 
@@ -225,6 +254,9 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from '../api/axios'
+import QuizNavigation from '../components/QuizNavigation.vue'
+import QuizQuestionDots from '../components/QuizQuestionDots.vue'
+import QuizSubmitPanel from '../components/QuizSubmitPanel.vue'
 import { safeHttpUrl } from '../utils/url'
 
 const route = useRoute()
@@ -238,6 +270,8 @@ const results = ref(null)
 const loading = ref(true)
 const starting = ref(false)
 const submitting = ref(false)
+const confirmingSubmit = ref(false)
+const position = ref(1)
 const error = ref('')
 const submitError = ref('')
 const answers = reactive({})
@@ -258,12 +292,40 @@ const feedbackFields = [
   { key: 'ease_of_use', label: 'Ease of use' },
 ]
 
+const questionTotal = computed(
+  () => attempt.value?.questions?.length || attempt.value?.question_count || 0
+)
+const currentQuestion = computed(
+  () => attempt.value?.questions?.[position.value - 1] || null
+)
 const answeredCount = computed(
   () => Object.values(answers).filter((value) => value !== null && value !== undefined).length
 )
-const allAnswered = computed(
-  () => attempt.value && answeredCount.value === attempt.value.question_count
+const answeredPositions = computed(() =>
+  attempt.value
+    ? attempt.value.questions
+        .map((question, index) =>
+          answers[question.id] !== null && answers[question.id] !== undefined
+            ? index + 1
+            : null
+        )
+        .filter((value) => value !== null)
+    : []
 )
+const unansweredCount = computed(() =>
+  Math.max(questionTotal.value - answeredCount.value, 0)
+)
+const unansweredWarning = computed(() =>
+  unansweredCount.value
+    ? `${unansweredCount.value} question${unansweredCount.value === 1 ? '' : 's'} still unanswered. Unanswered questions are marked incorrect.`
+    : ''
+)
+
+function goTo(nextPosition) {
+  if (nextPosition < 1 || nextPosition > questionTotal.value) return
+  position.value = nextPosition
+  confirmingSubmit.value = false
+}
 
 const load = async () => {
   loading.value = true
@@ -296,6 +358,8 @@ const startAttempt = async () => {
   try {
     const { data } = await axios.post(`/exercises/labs/${labSlug.value}/quiz/attempts`)
     clearAnswers()
+    position.value = 1
+    confirmingSubmit.value = false
     attempt.value = data
   } catch (e) {
     submitError.value = e.response?.data?.detail || 'Could not start an attempt.'
@@ -306,12 +370,15 @@ const startAttempt = async () => {
 
 const cancelAttempt = () => {
   attempt.value = null
+  position.value = 1
+  confirmingSubmit.value = false
   clearAnswers()
 }
 
 const submitAttempt = async () => {
-  if (!attempt.value || !allAnswered.value) return
+  if (!attempt.value) return
   submitting.value = true
+  confirmingSubmit.value = false
   submitError.value = ''
   try {
     const { data } = await axios.post(
@@ -478,10 +545,29 @@ onMounted(load)
   flex-wrap: wrap;
 }
 
-.quiz-progress { color: var(--text-muted); font-size: 0.75rem; }
+.quiz-cancel {
+  border: 0;
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 0.78rem;
+  padding: 0.25rem;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.quiz-cancel:hover:not(:disabled) {
+  color: var(--danger);
+}
+
+.quiz-cancel:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
 
 .quiz-question {
-  margin: 1rem 0 0;
+  margin: 0.4rem 0 0;
   padding: 0.85rem;
   border: 1px solid var(--border-color);
   border-radius: 10px;
@@ -521,7 +607,16 @@ onMounted(load)
 .quiz-option input { margin-top: 0.15rem; accent-color: var(--accent); }
 .quiz-option--selected { border-color: var(--accent); background: var(--accent-bg); color: var(--text-primary); }
 
-.quiz-attempt__actions { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; margin-top: 1rem; }
+.quiz-last-hint {
+  margin: 0.65rem 0 0;
+  padding: 0.55rem 0.75rem;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  background: var(--accent-bg);
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+}
+
 .quiz-error { color: var(--danger); font-size: 0.78rem; }
 
 .quiz-score {

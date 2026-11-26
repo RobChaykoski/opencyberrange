@@ -1145,22 +1145,70 @@
           <p v-if="quizResult.passed" class="quiz-result__note">Your score will appear on your certificate.</p>
         </div>
 
-        <div v-else class="quiz-modal__body">
-          <div v-for="(q, qi) in (quizData?.questions || [])" :key="q.id" class="quiz-question">
-            <p class="quiz-question__text">{{ qi + 1 }}. {{ q.question }}</p>
-            <label v-for="(opt, oi) in q.options" :key="oi" class="quiz-option">
-              <input type="radio" :name="'q' + q.id" :value="oi" v-model="quizAnswers[qi]" />
+        <div v-else-if="quizLoading" class="quiz-modal__loading" role="status">
+          Loading quiz...
+        </div>
+
+        <div v-else-if="quizData" class="quiz-modal__body">
+          <QuizQuestionDots
+            :total="quizTotal"
+            :position="quizPosition"
+            :answered-positions="quizAnsweredPositions"
+            :disabled="quizSubmitting"
+            @jump="goToQuizQuestion"
+          />
+
+          <fieldset v-if="currentQuizQuestion" :key="currentQuizQuestion.id" class="quiz-question">
+            <legend class="quiz-question__text">
+              <span class="quiz-question__number">Question {{ quizPosition }}</span>
+              {{ currentQuizQuestion.question }}
+            </legend>
+            <label
+              v-for="(opt, oi) in currentQuizQuestion.options"
+              :key="oi"
+              class="quiz-option"
+              :class="{ 'quiz-option--selected': quizAnswers[quizPosition - 1] === oi }"
+            >
+              <input
+                type="radio"
+                :name="'q' + currentQuizQuestion.id"
+                :value="oi"
+                v-model="quizAnswers[quizPosition - 1]"
+              />
               <span>{{ opt }}</span>
             </label>
-          </div>
+          </fieldset>
+
+          <QuizNavigation
+            :position="quizPosition"
+            :total="quizTotal"
+            :answered-count="quizAnsweredCount"
+            :disabled="quizSubmitting"
+            @change="goToQuizQuestion"
+          />
+
+          <p v-if="quizPosition >= quizTotal && quizTotal" class="quiz-last-hint">
+            You are on the last question. Review your answers, then submit the quiz for your certificate below.
+          </p>
+
+          <QuizSubmitPanel
+            title="Finished answering?"
+            description="Submitting scores this quiz. A passing score is recorded for the level certificate and cannot be changed after submission."
+            :warning="quizUnansweredWarning"
+            submit-label="Submit quiz for certificate"
+            confirm-text="Submit now and record this score?"
+            confirm-label="Yes, submit for certificate"
+            cancel-label="Keep working"
+            :confirming="quizConfirming"
+            :submitting="quizSubmitting"
+            @update:confirming="quizConfirming = $event"
+            @submit="submitQuiz"
+          />
         </div>
 
         <div class="quiz-modal__footer">
-          <button v-if="!quizResult" class="btn btn--primary" :disabled="quizSubmitting || !allQuizAnswered" @click="submitQuiz">
-            {{ quizSubmitting ? 'Submitting...' : 'Submit Quiz' }}
-          </button>
-          <button v-else class="btn btn--secondary" @click="closeQuizModal">Close</button>
-          <button class="btn btn--secondary" @click="closeQuizModal">Cancel</button>
+          <button v-if="quizResult" class="btn btn--secondary" @click="closeQuizModal">Close</button>
+          <button v-else class="btn btn--secondary" @click="closeQuizModal">Cancel attempt</button>
         </div>
       </div>
     </div>
@@ -1241,6 +1289,9 @@ import PlayCircleIcon from '../components/icons/PlayCircleIcon.vue'
 import CircleIcon from '../components/icons/CircleIcon.vue'
 import XIcon from '../components/icons/XIcon.vue'
 import ConfirmDialog from '../components/ConfirmDialog.vue'
+import QuizNavigation from '../components/QuizNavigation.vue'
+import QuizQuestionDots from '../components/QuizQuestionDots.vue'
+import QuizSubmitPanel from '../components/QuizSubmitPanel.vue'
 import ServerIcon from '../components/icons/ServerIcon.vue'
 import FlagIcon from '../components/icons/FlagIcon.vue'
 import LightbulbIcon from '../components/icons/LightbulbIcon.vue'
@@ -1284,6 +1335,8 @@ const quizSubmitting = ref(false)
 const quizData = ref(null)
 const quizAnswers = ref([])
 const quizResult = ref(null)
+const quizPosition = ref(1)
+const quizConfirming = ref(false)
 
 const loading = ref(false)
 const launchingImage = ref(null)  // which image button was clicked: null, 'kali', 'ubuntu', or 'remnux'
@@ -1915,13 +1968,15 @@ const openQuiz = async (level) => {
   quizResult.value = null
   quizAnswers.value = []
   quizData.value = null
+  quizPosition.value = 1
+  quizConfirming.value = false
   try {
     const token = localStorage.getItem('token')
     const { data } = await axios.get(`/exercises/tracks/${track.value.slug}/levels/${level.id}/quiz`, {
       headers: token ? { 'Authorization': `Bearer ${token}` } : {}
     })
     quizData.value = data
-    quizAnswers.value = new Array(data.question_count).fill(null)
+    quizAnswers.value = new Array(data.questions?.length || data.question_count).fill(null)
   } catch (e) {
     quizData.value = null
     alert(e.response?.data?.detail || 'No quiz available for this level.')
@@ -1936,16 +1991,48 @@ const closeQuizModal = () => {
   quizData.value = null
   quizAnswers.value = []
   quizResult.value = null
+  quizPosition.value = 1
+  quizConfirming.value = false
 }
 
-const allQuizAnswered = computed(() => {
-  if (!quizAnswers.value.length) return false
-  return quizAnswers.value.every(a => a !== null && a !== undefined)
-})
+const quizTotal = computed(
+  () => quizData.value?.questions?.length || quizData.value?.question_count || 0
+)
+
+const currentQuizQuestion = computed(
+  () => quizData.value?.questions?.[quizPosition.value - 1] || null
+)
+
+const quizAnsweredCount = computed(
+  () => quizAnswers.value.filter((value) => value !== null && value !== undefined).length
+)
+
+const quizAnsweredPositions = computed(() =>
+  quizAnswers.value
+    .map((value, index) => (value !== null && value !== undefined ? index + 1 : null))
+    .filter((value) => value !== null)
+)
+
+const quizUnansweredCount = computed(
+  () => Math.max(quizTotal.value - quizAnsweredCount.value, 0)
+)
+
+const quizUnansweredWarning = computed(() =>
+  quizUnansweredCount.value
+    ? `${quizUnansweredCount.value} question${quizUnansweredCount.value === 1 ? '' : 's'} still unanswered. Unanswered questions are marked incorrect.`
+    : ''
+)
+
+const goToQuizQuestion = (nextPosition) => {
+  if (nextPosition < 1 || nextPosition > quizTotal.value) return
+  quizPosition.value = nextPosition
+  quizConfirming.value = false
+}
 
 const submitQuiz = async () => {
   if (!track.value?.slug || !quizData.value) return
   quizSubmitting.value = true
+  quizConfirming.value = false
   try {
     const token = localStorage.getItem('token')
     const { data } = await axios.post(
@@ -5654,26 +5741,65 @@ watch(timeRemaining, (val) => {
   color: var(--text-muted);
   margin-bottom: 1rem;
 }
+.quiz-modal__loading {
+  padding: 2rem 1rem;
+  color: var(--text-secondary);
+  text-align: center;
+}
 .quiz-question {
-  margin-bottom: 1.25rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--border-color);
+  margin: 0 0 0.75rem;
+  padding: 0.85rem;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-primary);
 }
 .quiz-question__text {
+  padding: 0 0.25rem;
   font-weight: 600;
-  margin-bottom: 0.5rem;
   color: var(--text-primary);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+.quiz-question__number {
+  display: block;
+  margin-bottom: 0.15rem;
+  color: var(--accent-text);
+  font-size: 0.64rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 .quiz-option {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.35rem 0;
+  align-items: flex-start;
+  gap: 0.55rem;
+  margin-top: 0.4rem;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
   cursor: pointer;
   color: var(--text-secondary);
+  font-size: 0.84rem;
+}
+.quiz-option:hover {
+  border-color: var(--accent);
+}
+.quiz-option--selected {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  color: var(--text-primary);
 }
 .quiz-option input {
+  margin-top: 0.15rem;
   accent-color: var(--accent);
+}
+.quiz-last-hint {
+  margin: 0.65rem 0 0;
+  padding: 0.55rem 0.75rem;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  background: var(--accent-bg);
+  color: var(--text-secondary);
+  font-size: 0.84rem;
 }
 .quiz-result {
   padding: 1rem;
