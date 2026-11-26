@@ -9,6 +9,24 @@ another document disagrees, this page and the signed tag win.
 > replaced with placeholders. The private deployment inventory holds the live
 > values. See [`PUBLICATION-METADATA-POLICY.md`](PUBLICATION-METADATA-POLICY.md).
 
+## 5.52.9 deployment verification
+
+| Check | Result |
+|---|---|
+| `/api/version` | `5.52.9` on production and development |
+| Alembic | **`0067_course_content_rls` (head)** |
+| Health | Production and development backend/frontend containers `healthy`; nginx `-t` passes |
+| Production wiki | **14** sites rebuilt |
+| Threat snapshots | Both hosts: FireHOL + curated feeds `519,839` entries / `152` countries / `13` categories, generated `2026-11-26T17:02:49Z`; RansomLook `325` posts / `15` groups, generated `2026-11-26T17:02:51Z` |
+| Split-layout deploy | Development synced `backend/app/data`; `run-state` preserved |
+| Pre-deploy backup (production) | `~/backups/ocr-backup-20261126-174818.dump` |
+| Pre-deploy backup (development) | `~/opencyberrange/.backups/20261126_174504` |
+| Rollback images | `opencyberrange-backend:pre-v5.52.9`, `ocr-frontend:pre-v5.52.9` on production; development rolls back by rebuilding `v5.52.8` |
+| Development | Tag `v5.52.9` synced into the split layout; backend healthy, `/api/version` `5.52.9` |
+
+5.52.9 keeps `run-state` across split-layout deploys and adds the weekly
+threat-feed refresh helper and reviewed cadence.
+
 ## 5.52.8 deployment verification
 
 | Check | Result |
