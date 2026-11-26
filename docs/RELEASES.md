@@ -30,6 +30,8 @@ Releases 5.46.0 and 5.46.1 skipped step 3, so the committed manifest still said
 
 Deliverables: [Release 5.52.10 deliverables](RELEASE-5.52.10-DELIVERABLES.md).
 
+Deployed to development and production on 26 November 2026.
+
 ## Release 5.52.9
 
 | Tag | Release | Status |

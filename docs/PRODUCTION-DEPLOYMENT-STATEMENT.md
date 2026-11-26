@@ -9,6 +9,24 @@ another document disagrees, this page and the signed tag win.
 > replaced with placeholders. The private deployment inventory holds the live
 > values. See [`PUBLICATION-METADATA-POLICY.md`](PUBLICATION-METADATA-POLICY.md).
 
+## 5.52.10 deployment verification
+
+| Check | Result |
+|---|---|
+| `/api/version` | `5.52.10` on production and development |
+| Alembic | **`0067_course_content_rls` (head)** |
+| Health | Production and development backend/frontend containers `healthy`; nginx `-t` passes |
+| Production wiki | **14** sites rebuilt |
+| Threat snapshots | Both hosts: `519,839` entries / `152` countries / `13` categories, generated `2026-11-26T17:02:49Z`; RansomLook `325` posts / `15` groups, generated `2026-11-26T17:02:51Z` |
+| Pre-deploy backup (production) | `~/backups/ocr-backup-20261126-180512.dump` |
+| Pre-deploy backup (development) | `~/opencyberrange/.backups/20261126_180159` |
+| Rollback images | `opencyberrange-backend:pre-v5.52.10`, `ocr-frontend:pre-v5.52.10` on production; development rolls back by rebuilding `v5.52.9` |
+| Development | Tag `v5.52.10` synced into the split layout; backend healthy, `/api/version` `5.52.10` |
+
+5.52.10 makes the RangeBox proxy lookup fail closed when its network or subnet
+is missing, instead of falling back to a base `.2` address that can belong to
+another lab.
+
 ## 5.52.9 deployment verification
 
 | Check | Result |
