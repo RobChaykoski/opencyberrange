@@ -840,13 +840,13 @@
                   <table class="data-table">
                     <thead>
                       <tr>
-                        <th>Exercise</th>
-                        <th>Track / Level</th>
-                        <th>Difficulty</th>
-                        <th>Duration</th>
-                        <th>Visibility</th>
-                        <th>Review</th>
-                        <th>Actions</th>
+                        <th scope="col">Exercise</th>
+                        <th scope="col">Track / Level</th>
+                        <th scope="col">Difficulty</th>
+                        <th scope="col">Duration</th>
+                        <th scope="col">Visibility</th>
+                        <th scope="col">Review</th>
+                        <th scope="col">Actions</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -1399,10 +1399,10 @@
                   <table class="data-table data-table--compact">
                     <thead>
                       <tr>
-                        <th>User</th>
-                        <th>Exercise</th>
-                        <th>Status</th>
-                        <th>Started</th>
+                        <th scope="col">User</th>
+                        <th scope="col">Exercise</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Started</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -1502,12 +1502,12 @@
                 <table class="data-table">
                   <thead>
                     <tr>
-                      <th>User</th>
-                      <th>IP</th>
-                      <th>Status</th>
-                      <th>Last Handshake</th>
-                      <th>Transfer</th>
-                      <th>Actions</th>
+                      <th scope="col">User</th>
+                      <th scope="col">IP</th>
+                      <th scope="col">Status</th>
+                      <th scope="col">Last Handshake</th>
+                      <th scope="col">Transfer</th>
+                      <th scope="col">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1632,12 +1632,12 @@
                 <table class="data-table">
                   <thead>
                     <tr>
-                      <th>Actor</th>
-                      <th>Target</th>
-                      <th>Mode</th>
-                      <th>Started</th>
-                      <th>Expires</th>
-                      <th>IP</th>
+                      <th scope="col">Actor</th>
+                      <th scope="col">Target</th>
+                      <th scope="col">Mode</th>
+                      <th scope="col">Started</th>
+                      <th scope="col">Expires</th>
+                      <th scope="col">IP</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1720,11 +1720,11 @@
                 <table class="data-table data-table--compact">
                   <thead>
                     <tr>
-                      <th>Time</th>
-                      <th>Event</th>
-                      <th>User</th>
-                      <th>Target</th>
-                      <th>Details</th>
+                      <th scope="col">Time</th>
+                      <th scope="col">Event</th>
+                      <th scope="col">User</th>
+                      <th scope="col">Target</th>
+                      <th scope="col">Details</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1838,15 +1838,15 @@
             <table class="data-table">
               <thead>
                 <tr>
-                  <th>Name</th>
-                  <th>Code</th>
-                  <th>Semester</th>
-                  <th>Instructor</th>
-                  <th>Students</th>
-                  <th>Exercises</th>
-                  <th>Invite Code</th>
-                  <th>Status</th>
-                  <th>Actions</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Code</th>
+                  <th scope="col">Semester</th>
+                  <th scope="col">Instructor</th>
+                  <th scope="col">Students</th>
+                  <th scope="col">Exercises</th>
+                  <th scope="col">Invite Code</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -3107,9 +3107,9 @@
               <table class="data-table data-table--compact">
                 <thead>
                   <tr>
-                    <th>Filename</th>
-                    <th>Size</th>
-                    <th>Created</th>
+                    <th scope="col">Filename</th>
+                    <th scope="col">Size</th>
+                    <th scope="col">Created</th>
                     <th style="text-align:right;">Actions</th>
                   </tr>
                 </thead>
@@ -3205,7 +3205,7 @@
 
               <table v-if="integrityIssues.length" class="integrity-table">
                 <thead>
-                  <tr><th>Lab</th><th>Problem</th></tr>
+                  <tr><th scope="col">Lab</th><th scope="col">Problem</th></tr>
                 </thead>
                 <tbody>
                   <tr v-for="row in integrityIssues" :key="`${row.slug}-${row.reason}`">
@@ -3437,7 +3437,7 @@
                 <table class="data-table">
                   <thead>
                     <tr>
-                      <th>Endpoint</th>
+                      <th scope="col">Endpoint</th>
                       <th style="text-align: right;">Calls</th>
                       <th style="text-align: right;">Typical</th>
                       <th style="text-align: right;">Slow</th>
@@ -4763,12 +4763,12 @@ test:
                   <table class="data-table user-completions-table">
                     <thead>
                       <tr>
-                        <th>Exercise</th>
-                        <th>Track / level</th>
-                        <th>Completed</th>
-                        <th>Attempts</th>
-                        <th>Hints</th>
-                        <th>Time</th>
+                        <th scope="col">Exercise</th>
+                        <th scope="col">Track / level</th>
+                        <th scope="col">Completed</th>
+                        <th scope="col">Attempts</th>
+                        <th scope="col">Hints</th>
+                        <th scope="col">Time</th>
                         <th class="cell-actions">Action</th>
                       </tr>
                     </thead>

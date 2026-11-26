@@ -387,10 +387,10 @@
         <table class="data-table">
           <thead>
             <tr>
-              <th>User</th>
-              <th>Event</th>
-              <th>Target</th>
-              <th>Time</th>
+              <th scope="col">User</th>
+              <th scope="col">Event</th>
+              <th scope="col">Target</th>
+              <th scope="col">Time</th>
             </tr>
           </thead>
           <tbody>
@@ -436,10 +436,10 @@
         <table class="data-table">
           <thead>
             <tr>
-              <th>User</th>
-              <th>Event</th>
-              <th>Target</th>
-              <th>Time</th>
+              <th scope="col">User</th>
+              <th scope="col">Event</th>
+              <th scope="col">Target</th>
+              <th scope="col">Time</th>
             </tr>
           </thead>
           <tbody>
