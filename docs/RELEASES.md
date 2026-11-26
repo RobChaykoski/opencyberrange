@@ -26,7 +26,7 @@ Releases 5.46.0 and 5.46.1 skipped step 3, so the committed manifest still said
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.51.2` | SWOCTS Cyber Range Release 5.51.2 | Signed annotated tag: learner UI clarity for practice-exam navigation and final submission, a searchable track-grouped analyst-answer library, theme-safe Journey & mission panels with a fuller current-mission card, and matching manual/README/SECURITY/LICENSING updates. |
+| `v5.51.2` | SWOCTS Cyber Range Release 5.51.2 | Signed annotated tag: learner UI clarity for practice-exam navigation and final submission, a searchable track-grouped analyst-answer library, theme-safe Journey & mission panels with a fuller current-mission card, and matching manual/README/SECURITY/LICENSING updates. Deployed to development and production on 25 November 2026; 217 registered labs, production wiki rebuilt, and pre/post backups recorded. |
 
 Deliverables: [Release 5.51.2 deliverables](RELEASE-5.51.2-DELIVERABLES.md).
 

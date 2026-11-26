@@ -1,6 +1,7 @@
 # Release 5.51.2 deliverables
 
-Status: **release prepared; deployment verification pending.**
+Status: **released and deployed** to development and production on 25 November
+2026.
 
 | Item | Value |
 |---|---|
@@ -38,7 +39,17 @@ Status: **release prepared; deployment verification pending.**
 
 | Environment | Version | Status |
 |---|---|---|
-| Development | `5.51.2` | Pending |
-| Production | `5.51.2` | Pending |
+| Development | `5.51.2` | Deployed and verified |
+| Production | `5.51.2` | Deployed and verified |
 
-Post-deploy checks: `/api/version` on both hosts, nginx test, backend/frontend health, and the standard pre/post backups.
+Post-deploy checks: `/api/version` `200` on both hosts, backend/frontend
+containers healthy, production `nginx -t` passed, **217** registered labs and
+**206** workbook-mapped labs, and **14** production wiki sites rebuilt.
+Production pre/post backups: `ocr-backup-20261126-014950.dump` and
+`ocr-backup-20261126-015407.dump`. Development pre-deploy backup:
+`ocr-backup-20261126-014516.dump`. Rollback images are tagged
+`pre-v5.51.2` on both hosts.
+
+The development run ended with a non-blocking warning when the updater tried to
+copy `ocr-platform.service` without sudo. The existing unit remained enabled and
+active, and the deployed containers restarted healthy.

@@ -9,6 +9,26 @@ another document disagrees, this page and the signed tag win.
 > replaced with placeholders. The private deployment inventory holds the live
 > values. See [`PUBLICATION-METADATA-POLICY.md`](PUBLICATION-METADATA-POLICY.md).
 
+## 5.51.2 deployment verification
+
+| Check | Result |
+|---|---|
+| `/api/version` | `5.51.2` on production and development |
+| Alembic | **`0067_course_content_rls` (head)** |
+| Health | Production and development backend/frontend containers `healthy`; `/api/version` `200` |
+| nginx | `nginx -t` passed on production |
+| Lab definitions | **217** registered; **206** workbook-mapped |
+| Production wiki | **14** sites rebuilt |
+| Pre-deploy backup (development) | `~/backups/ocr-backup-20261126-014516.dump` |
+| Pre-deploy backup (production) | `~/backups/ocr-backup-20261126-014950.dump` |
+| Post-deploy backup (production) | `~/backups/ocr-backup-20261126-015407.dump` |
+| Rollback images | `opencyberrange-backend:pre-v5.51.2`, `ocr-frontend:pre-v5.51.2` on both hosts |
+| Development note | The optional `ocr-platform.service` copy needs sudo; the existing unit stayed enabled and active. |
+
+The release changes learner UI only: practice-exam navigation and final submission,
+the searchable analyst-answer library, theme-safe Journey & mission panels, and
+matching manual, README, SECURITY, and licensing updates.
+
 ## 5.51.1 deployment verification
 
 | Check | Result |
