@@ -9,6 +9,23 @@ another document disagrees, this page and the signed tag win.
 > replaced with placeholders. The private deployment inventory holds the live
 > values. See [`PUBLICATION-METADATA-POLICY.md`](PUBLICATION-METADATA-POLICY.md).
 
+## 5.54.0 deployment verification
+
+| Check | Result |
+|---|---|
+| `/api/version` | `5.54.0` on production and development |
+| Alembic | **`0067_course_content_rls` (head)** |
+| Health | Production and development backend/frontend containers `healthy`; nginx `-t` passes |
+| Briefing route | `GET /exercises/<track>/briefing?labId=…` returns the SPA shell with `200` on both hosts; the `ExerciseBriefing` JS/CSS chunks are present in both frontend images |
+| Production wiki | **14** sites rebuilt |
+| Pre-deploy backup (production) | `~/backups/ocr-backup-20261126-204122.dump` |
+| Pre-deploy backup (development) | `~/opencyberrange/.backups/20261126_204525` |
+| Rollback images | `opencyberrange-backend:pre-v5.54.0`, `ocr-frontend:pre-v5.54.0` on production; development rolls back by rebuilding `v5.53.1` |
+| Development | Signed tag `v5.54.0` synced into the split layout; backend/frontend rebuilt and verified. The split script's workbook seed step still looks for a root `mkdocs.yml`, which this repository does not track, so the dev wiki volume was not rebuilt. |
+
+5.54.0 is a frontend feature release. The lab definitions and Alembic schema are
+unchanged.
+
 ## 5.53.1 deployment verification
 
 | Check | Result |
