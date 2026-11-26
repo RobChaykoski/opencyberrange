@@ -142,6 +142,8 @@ services:
       - ./backend:/app
       - ${LABS_HOST_PATH}:/labs:ro
       - workbook_data:/workbook
+      # Host-collected HA status snapshot. Optional on a single-host install.
+      - /var/lib/ocr-ha:/var/lib/ocr-ha:ro
       # Exercise Studio template catalog lives outside the backend build
       # context, so it is mounted in read-only. (The Studio publish-gate
       # linters are baked into the backend image, not mounted.)

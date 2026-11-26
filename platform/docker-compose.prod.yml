@@ -183,6 +183,9 @@ services:
       # Database snapshots survive container recreation. Without this mount,
       # every deploy wiped /app/backups and the admin list silently emptied.
       - backups_data:/app/backups
+      # Host-collected HA status snapshot. The directory may not exist on a
+      # single-host install; the card stays hidden when the file is absent.
+      - /var/lib/ocr-ha:/var/lib/ocr-ha:ro
       # Exercise Studio template catalog lives outside the backend build context,
       # so it is mounted in read-only. The publish-gate linters are baked into
       # the backend image (app/services/workbook_linters), not mounted, so no

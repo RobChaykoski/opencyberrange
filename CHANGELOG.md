@@ -2,6 +2,15 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.53.1] - 2026-11-26
+
+### Fixed
+
+- **HA status data path:** the production and development compose files now
+  mount `/var/lib/ocr-ha` read-only on the backend, so the host collector's
+  snapshot is visible to the HA card. The mount is harmless on single-host
+  installs; the card stays hidden until the file exists.
+
 ## [5.53.0] - 2026-11-26
 
 ### Added
