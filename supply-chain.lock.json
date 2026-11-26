@@ -175,13 +175,13 @@
       "sha256": "a67628fe072235c02aeecb19b468f5c71fd4e5d66163f6a3a2c4c3c19caa3fc4"
     },
     "platform/backend/app/data/ransomware-activity.json": {
-      "sha256": "81e43d19677e45db538fd5046c225da37f5e35722605cb2bb7052f25f24ba8db"
+      "sha256": "877500e2e2d33af4263cae4b4b208166f4c500c8e4648d6b5b8d24ac122829c1"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "7a7f1cb4ddccadc475746e2c1e0084fea93d341daa0b85f2612e2e36396eb08d"
+      "sha256": "69ec6e27b7d80d13da2f1eeeba41058bcbbfdf712dae514de0126f9069979ed8"
     },
     "platform/backend/app/data/threat-awareness.json": {
-      "sha256": "5e038849d1e853eec814bf174ed5b0b5c945d5afad7608f2b8c9c1d21d668aea"
+      "sha256": "78703d33386e1b62becfa5cfb1b27a22f770fff20a3e38411b0787e76f7c48ea"
     },
     "platform/backend/app/security/permissions.yaml": {
       "sha256": "8df4a537d137d826dbad3e333c09a02ac87a8ec281cf40c1dc3767b418ca0404"
@@ -199,7 +199,7 @@
       "sha256": "18f211d07b779cb88dbb4e5c71c6ae4d62f4f6e38c71104b901ede93df31f6bd"
     },
     "platform/backend/app/version.py": {
-      "sha256": "2ec5650c71aeb7d025c5c5f908da0428d11ad84184580aa8dd1bb9e630c3ee05"
+      "sha256": "0ce3277b14e2c09611a38d1119f3f2f641ba268dc25424a1935a41ce99882e75"
     },
     "platform/backend/lab_metadata.schema.json": {
       "sha256": "7590d5bf2a3a9ea2ecf275ba18c82394dfec252b0a39fe0846d18e57d746c36c"
@@ -238,10 +238,10 @@
       "sha256": "6c3dfe917751fbc587c5841d923e4050defe97756f6c2e93827d3251adf345d4"
     },
     "platform/frontend/package-lock.json": {
-      "sha256": "8d89fba5355e03e354ae14060f88ba2931f7beebea796cf664711cb9a25161f6"
+      "sha256": "6cb66f385fc377939eb9b630c9290488f878ea2e13076a90f855fd7cd6a4f094"
     },
     "platform/frontend/package.json": {
-      "sha256": "adab8849e3897bcb93e2ddf8aa845ffa7c5197972619d0a77d45a3ed7c9ad079"
+      "sha256": "66bcf7dc46631fadde0a9d5b6448c7fe86054b7361faa92fe66b5b74df7a1e3c"
     },
     "platform/frontend/security-headers.conf": {
       "sha256": "dedacc7cf8e9ae24225045f3cb3c47a5f5fa3141cab22ce59fc9b51eff25053f"
@@ -355,7 +355,7 @@
       "sha256": "107c6c242335d422fa18289528403446f46107397eaf810f9127a38357a49afe"
     },
     "scripts/deploy-updates.sh": {
-      "sha256": "d265fb4bbaad00eb675c481258c84ab46af355e8de0f61ca6bf99db6a659b999"
+      "sha256": "73af2b1f083cff26b13a8d4f2d9313eab571f5d351621051a59288f4e621c4c2"
     },
     "scripts/export-contract-reviews.py": {
       "sha256": "65945aa34ece82cda4eb8aed0d47e10f7fc7bab91dce51b0c94f2ac50ce50b1a"
@@ -367,7 +367,7 @@
       "sha256": "301c9c720e0a4567e16f4cf24e921229dde37bce2a7452826c8da506db15e1ca"
     },
     "scripts/fetch-threat-feed.py": {
-      "sha256": "cdbff20c7882ad41355f4ae24be9899005994242a38d7a5c6991f75bd45bc568"
+      "sha256": "f2bc4a4f9e2040c6e317a3c051b3f3d41e0a0d7ad7178609f3e2644d35b7e7eb"
     },
     "scripts/generate-about.py": {
       "sha256": "c6d9a3bf22371e6cf824a7fb2115d7a8b1aca617182760dddbee88439fbbd0b1"
@@ -424,7 +424,7 @@
       "sha256": "f08f563a56860357a3c246993e4fd3da16cf1df35cce49f9890c0b09eb1ab769"
     },
     "versions.yaml": {
-      "sha256": "97472f87b9779b90774ff63e67914125f8fe540ab3b0de3c12225a42dbfbef72"
+      "sha256": "caf0cb744cf0753bf1b73ef1a7b128bc1dac3e5a292b475f1af021819c6defa3"
     }
   },
   "generator": "scripts/supply_chain.py",
@@ -1751,6 +1751,6 @@
       ]
     }
   },
-  "release": "5.52.7",
+  "release": "5.52.8",
   "schema": 1
 }

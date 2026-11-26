@@ -4,13 +4,18 @@ Two snapshots feed the panel:
 
 | Section | Source | Snapshot file |
 |---|---|---|
-| Hostile infrastructure | FireHOL iplists + a local GeoIP database | `platform/backend/app/data/threat-awareness.json` |
+| Hostile infrastructure | FireHOL iplists plus a reviewed set of DShield, Blocklist.de, abuse.ch Feodo Tracker, OffSeq Mirage, and IPsum feeds, with a local GeoIP database | `platform/backend/app/data/threat-awareness.json` |
 | Ransomware activity | RansomLook aggregate endpoints | `platform/backend/app/data/ransomware-activity.json` |
 
 Both are offline files baked into the backend image. A refresh is a normal
 release: regenerate the file, verify it, commit it, refresh the supply-chain
 lock, sign, and deploy. The panel shows the snapshot timestamp; there is no
 runtime egress.
+
+The candidate feeds come from the
+[threat-intelligence-feeds catalog](https://github.com/kraloveckey/threat-intelligence-feeds)
+(MIT metadata; every upstream keeps its own terms). Only the reviewed allowlist
+below is fetched.
 
 ## FireHOL and GeoIP
 
@@ -73,6 +78,30 @@ investigating a country bucket.
 Without `--geoip-db`, every entry is counted as `ZZ` (unknown) and the panel
 says so. `--require-geoip` turns that into an error instead of writing a
 low-value snapshot.
+
+## Curated additional feeds
+
+The builder also reads these reviewed daily or periodic lists. Keep the
+allowlist small: the map is awareness material, and every extra feed adds
+overlap and licensing review.
+
+| Feed | List | Cadence | Terms |
+|---|---|---|---|
+| DShield / SANS ISC | FireWALL-E `dshield_30d.netset` | 10 minutes upstream | Public blocklist; attribute DShield/SANS ISC and confirm current terms |
+| Blocklist.de | `lists.blocklist.de/lists/all.txt` | 15 minutes upstream | Public fail2ban reports; attribute Blocklist.de and confirm current terms |
+| abuse.ch Feodo Tracker | `ipblocklist_aggressive.txt` | 30 minutes upstream | Public C2 blocklist; attribute abuse.ch and confirm current terms |
+| OffSeq Mirage | `feeds.offseq.com/mirage-feed/latest/ipv4-7d.txt` | Daily | **CC BY 4.0**; credit "OffSeq Mirage" with a link |
+| IPsum | `stamparm/ipsum` level 3 | Daily | **The Unlicense** (public domain) |
+
+The FireWALL-E copy of DShield is normalised to a netset. The other lists are
+one entry per line; IPsum appends an occurrence count, so the ingest reads the
+first token. A feed returning fewer than `--minimum-bucket-size` entries can
+still contribute to country totals but is suppressed from the category list,
+which is why DShield uses the 30-day list (54 subnets) rather than the 19-subnet
+three-day list.
+
+See [`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md) for attribution and
+the licence note for every source.
 
 ## RansomLook
 
@@ -150,6 +179,7 @@ Expected: `snapshot` mode, a recent `generated_at`, and no `sample` banner.
 | Snapshot | Suggested cadence | Notes |
 |---|---|---|
 | FireHOL | Weekly or monthly | Re-download the monthly DB-IP file with the feed |
+| Curated daily feeds | Weekly snapshot | DShield, Blocklist.de, Feodo, OffSeq, and IPsum move daily or faster |
 | RansomLook | Every 1–3 days | The public totals move daily; weekly at minimum |
 
 Do not schedule a refresh inside the platform. Run it on an operations host,

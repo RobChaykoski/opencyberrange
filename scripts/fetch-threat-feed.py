@@ -32,26 +32,53 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_OUTPUT = ROOT / "platform" / "backend" / "app" / "data" / "threat-awareness.json"
-BASE_URL = "https://iplists.firehol.org/files"
-
+FIREHOL_BASE = "https://iplists.firehol.org/files"
 FEEDS = (
-    ("firehol_level1", "Level 1 - high risk", "firehol_level1.netset"),
-    ("firehol_level2", "Level 2 - moderate risk", "firehol_level2.netset"),
-    ("firehol_level3", "Level 3 - low risk", "firehol_level3.netset"),
-    ("abusers_30d", "30-day abusers", "firehol_abusers_30d.netset"),
-    ("abusers_24h", "24-hour abusers", "firehol_abusers_1d.netset"),
-    ("malicious_web", "Malicious web clients", "firehol_webclient.netset"),
-    ("web_server", "Web server threats", "firehol_webserver.netset"),
-    ("anonymous", "Anonymous proxies", "firehol_proxies.netset"),
+    ("firehol_level1", "Level 1 - high risk", f"{FIREHOL_BASE}/firehol_level1.netset"),
+    ("firehol_level2", "Level 2 - moderate risk", f"{FIREHOL_BASE}/firehol_level2.netset"),
+    ("firehol_level3", "Level 3 - low risk", f"{FIREHOL_BASE}/firehol_level3.netset"),
+    ("abusers_30d", "30-day abusers", f"{FIREHOL_BASE}/firehol_abusers_30d.netset"),
+    ("abusers_24h", "24-hour abusers", f"{FIREHOL_BASE}/firehol_abusers_1d.netset"),
+    ("malicious_web", "Malicious web clients", f"{FIREHOL_BASE}/firehol_webclient.netset"),
+    ("web_server", "Web server threats", f"{FIREHOL_BASE}/firehol_webserver.netset"),
+    ("anonymous", "Anonymous proxies", f"{FIREHOL_BASE}/firehol_proxies.netset"),
+    # Curated daily/periodic additions. The FireWALL-E copy of DShield is
+    # normalised to netset; the others are plain one-entry-per-line feeds.
+    (
+        "dshield",
+        "DShield top attacking subnets (30 days)",
+        "https://raw.githubusercontent.com/kraloveckey/ipsets-blocklist/main/dshield_30d.netset",
+    ),
+    (
+        "blocklist_de",
+        "Blocklist.de fail2ban reports (48h)",
+        "https://lists.blocklist.de/lists/all.txt",
+    ),
+    (
+        "feodo_aggressive",
+        "abuse.ch Feodo Tracker (aggressive)",
+        "https://feodotracker.abuse.ch/downloads/ipblocklist_aggressive.txt",
+    ),
+    (
+        "offseq_mirage",
+        "OffSeq Mirage honeypot (7 days)",
+        "https://feeds.offseq.com/mirage-feed/latest/ipv4-7d.txt",
+    ),
+    (
+        "ipsum_level3",
+        "IPsum level 3 (seen by 3+ lists)",
+        "https://raw.githubusercontent.com/stamparm/ipsum/master/levels/3.txt",
+    ),
 )
 
 ATTRIBUTION = (
-    "Aggregated counts derived from the FireHOL iplists project. "
-    "Individual addresses are not retained."
+    "Aggregated counts derived from the FireHOL iplists project, DShield, "
+    "Blocklist.de, abuse.ch Feodo Tracker, OffSeq Mirage (CC BY 4.0), and "
+    "IPsum (Unlicense). Individual addresses are not retained."
 )
 TERMS = (
-    "FireHOL aggregates third-party feeds and each feed keeps its own terms. "
-    "Confirm them before enabling a refresh job."
+    "Each upstream feed keeps its own terms; the platform uses these feeds for "
+    "non-commercial awareness only. See THIRD_PARTY_NOTICES.md."
 )
 UNKNOWN_COUNTRY = ("ZZ", "Unknown or unresolved")
 GEOIP_ATTRIBUTION = (
@@ -80,11 +107,15 @@ def _fetch(url: str, timeout: float) -> list[str]:
 def _networks(lines: list[str], limit: int) -> list[ipaddress.IPv4Network | ipaddress.IPv6Network]:
     networks = []
     for line in lines:
-        text = line.strip()
-        if not text or text.startswith("#"):
+        text = line.strip().lstrip("\ufeff")
+        if not text or text.startswith(("#", ";", "//")):
             continue
+        # Feeds are one value per line; IPsum appends an occurrence count, and
+        # a few feeds separate fields with commas. The first token is the
+        # address or CIDR in every feed on the allowlist.
+        token = text.split()[0].strip().strip(",")
         try:
-            networks.append(ipaddress.ip_network(text, strict=False))
+            networks.append(ipaddress.ip_network(token, strict=False))
         except ValueError:
             continue
         if len(networks) >= limit:
@@ -179,7 +210,7 @@ def _snapshot(
         "generated_at": _now(),
         "window_hours": window_hours,
         "source": {
-            "name": "FireHOL threat intelligence feeds",
+            "name": "Aggregated public IP blocklists",
             "url": "https://iplists.firehol.org/",
             "attribution": (
                 f"{ATTRIBUTION} {GEOIP_ATTRIBUTION}" if geo.active else ATTRIBUTION
@@ -208,6 +239,10 @@ def _snapshot(
                 "hostname, or attack path is included."
             ),
             "An entry can appear in more than one feed, so counts overlap.",
+            "Feeds: FireHOL, DShield, Blocklist.de, abuse.ch Feodo Tracker, "
+            "OffSeq Mirage (CC BY 4.0), and IPsum (Unlicense).",
+            "Candidate sources reviewed via "
+            "https://github.com/kraloveckey/threat-intelligence-feeds.",
             "Not live attack telemetry. This is a periodic feed snapshot.",
         ],
     }
@@ -241,8 +276,7 @@ def main() -> int:
         )
     feeds = []
     try:
-        for identifier, label, filename in FEEDS:
-            url = f"{BASE_URL}/{filename}"
+        for identifier, label, url in FEEDS:
             networks = _networks(
                 _fetch(url, args.timeout), args.max_entries_per_feed
             )

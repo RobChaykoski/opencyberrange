@@ -2,6 +2,22 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.52.8] - 2026-11-26
+
+### Changed
+
+- **Threat-map feeds:** the hostile-infrastructure snapshot now includes curated
+  DShield (30-day subnets via FireWALL-E), Blocklist.de, abuse.ch Feodo Tracker,
+  OffSeq Mirage (CC BY 4.0), and IPsum level 3 (Unlicense) feeds alongside the
+  FireHOL iplists. The refreshed snapshot reports `519,839` entries across `152`
+  countries and `13` categories.
+- **Split-layout deploys:** `scripts/deploy-updates.sh` no longer excludes all of
+  `backend/app/data`. Release data such as pathways, question banks, the runtime
+  integrity manifest, and the threat snapshots now follows the checked-out tag;
+  backups and the external-dataset cache remain in place.
+- **Snapshot cadence:** the operations guide now recommends a weekly snapshot
+  with the daily upstream feeds and RansomLook every one to three days.
+
 ## [5.52.7] - 2026-11-26
 
 ### Changed

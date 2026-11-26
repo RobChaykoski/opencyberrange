@@ -339,12 +339,18 @@ apply_platform_update() {
     if [ -d "$REPO_DIR/platform/backend" ]; then
         log "Copying backend files..."
         if command -v rsync &> /dev/null; then
-            # backups/ and data/ are runtime state owned by the container user.
-            # Never delete them during a code sync.
-            rsync -rlpt --delete --exclude='__pycache__' --exclude='backups' --exclude='data' "$REPO_DIR/platform/backend/" "$PLATFORM_DIR/backend/"
+            # backups/ and the external-dataset cache are runtime state owned by
+            # the container user. Everything else under app/data (pathways,
+            # question banks, integrity manifest, threat snapshots) is release
+            # content and must track the checked-out tag.
+            rsync -rlpt --delete \
+                --exclude='__pycache__' \
+                --exclude='backups' \
+                --exclude='app/data/external-datasets/cache' \
+                "$REPO_DIR/platform/backend/" "$PLATFORM_DIR/backend/"
         else
             find "$REPO_DIR/platform/backend" -mindepth 1 -maxdepth 1 \
-                \( -name backups -o -name data \) -prune -o \
+                -name backups -prune -o \
                 -exec cp -r {} "$PLATFORM_DIR/backend/" \;
         fi
         if [ "$EUID" -eq 0 ] && [ -n "$SUDO_USER" ]; then

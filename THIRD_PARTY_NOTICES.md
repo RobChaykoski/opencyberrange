@@ -212,6 +212,28 @@ no individual address, hostname, or attack path is stored or shown.
   platform does not redistribute the feeds or individual entries. Confirm the
   current terms for every feed you enable and record the result in the
   deployment change log before scheduling a refresh.
+- **DShield / SANS ISC** (<https://www.dshield.org/>). The top-attacking subnet
+  list is used as an aggregate input through the FireWALL-E normalised netset.
+  Attribute DShield/SANS ISC and confirm their current terms.
+- **Blocklist.de** (<https://www.blocklist.de/>). Fail2ban attack reports are
+  used as an aggregate input. Attribute Blocklist.de and confirm their current
+  terms.
+- **abuse.ch Feodo Tracker** (<https://feodotracker.abuse.ch/>). The aggressive
+  botnet C2 blocklist is used as an aggregate input. Attribute abuse.ch and
+  confirm their current terms.
+- **OffSeq Mirage** (<https://feeds.offseq.com/>). The daily `ipv4-7d.txt`
+  honeypot list is **CC BY 4.0** and TLP:CLEAR. Attribution: "OffSeq Mirage"
+  with a link to <https://feeds.offseq.com/>. The platform aggregates country
+  counts and does not retain individual addresses.
+- **IPsum** (<https://github.com/stamparm/ipsum>). The level-3 list is
+  **The Unlicense** (public domain). The platform aggregates country counts and
+  does not retain individual addresses.
+- **FireWALL-E / threat-intelligence-feeds**
+  (<https://github.com/kraloveckey/ipsets-blocklist> and
+  <https://github.com/kraloveckey/threat-intelligence-feeds>). The catalog
+  metadata and the normalised DShield netset are **MIT**; every upstream feed
+  keeps its own terms. The catalog is used to review candidate sources, not as
+  a data feed.
 - **`Cybersight-Security/Global-Threat-Map`** (GPL-3.0) is **not** used. See
   [ADR 0008](docs/decisions/0008-threat-awareness.md): its licence cannot be
   combined with the PolyForm Noncommercial platform licence, and it renders
