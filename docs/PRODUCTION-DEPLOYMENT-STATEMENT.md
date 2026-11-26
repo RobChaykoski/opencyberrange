@@ -1,6 +1,6 @@
 # Production deployment statement
 
-**Statement date:** 25 November 2026
+**Statement date:** 26 November 2026
 
 This is the authoritative statement for the current production deployment. If
 another document disagrees, this page and the signed tag win.
@@ -8,6 +8,29 @@ another document disagrees, this page and the signed tag win.
 > **Public copy.** Real addresses, hostnames, and deployment accounts are
 > replaced with placeholders. The private deployment inventory holds the live
 > values. See [`PUBLICATION-METADATA-POLICY.md`](PUBLICATION-METADATA-POLICY.md).
+
+## 5.52.5 deployment verification
+
+| Check | Result |
+|---|---|
+| `/api/version` | `5.52.5` on production and development |
+| Alembic | **`0067_course_content_rls` (head)** |
+| Health | Production and development backend/frontend containers `healthy` |
+| Production wiki | **14** sites rebuilt |
+| Workbook origin | `https://<host>:8443`; framed L1.1 and L1.2 rendered full bodies with **0 console errors** |
+| RangeBox allocator | Live check: with `10.200.212.0/29` held, the next network allocated `10.200.212.8/29`; both removed cleanly |
+| RangeBox start | `rangebox_<user>_<lab>` healthy, VNC **Connected**, workbook beside the desktop |
+| VPN route verifier | **PASS**: 11 clients, 217 active labs |
+| Pre-deploy backup (production) | `~/backups/ocr-backup-20261126-052940.dump` |
+| Rollback images | `opencyberrange-backend:pre-v5.52.5`, `ocr-frontend:pre-v5.52.5` on production |
+| Development | Tag `v5.52.5` synced into the split layout; backend healthy, `/api/version` `5.52.5` |
+
+5.52.5 supersedes 5.52.1 and includes the intervening patches: the workbook
+beside the desktop with the lower pane at the RangeBox width, feedback held
+until completion, awaited wiki-cookie ordering, warning-text contrast and
+heading fixes, the synchronous workbook new-tab, and the RangeBox proxy-network
+allocator. Production now serves the workbook from the separate 8443 origin so
+MkDocs Material can use `localStorage`.
 
 ## 5.52.1 deployment verification
 

@@ -28,6 +28,7 @@ Status: **released and deployed** to development and production on 26 November
 |---|---|
 | Backend tests | `642 passed`, `559 skipped` (DB-backed tests need `TEST_DATABASE_URL`) |
 | Allocator tests | `5 passed` |
+| Allocator live check | With `10.200.212.0/29` held, the next proxy network allocated `10.200.212.8/29`; cleanup left no networks |
 | Workbook as `kokofan` | iframe on `https://ctfd.swocts.com:8443`, titles and 5.5k character bodies for L1.1 and L1.2, **0 console errors** |
 | RangeBox start | `rangebox_212_…` healthy, VNC status **Connected**, workbook visible alongside the desktop |
 | Race reproduction | Stop session 297, immediately spawn 298: cleanup ran in the background; the session rows settled to `stopped`/`running` without a failed spawn |
