@@ -238,10 +238,10 @@
       "sha256": "6c3dfe917751fbc587c5841d923e4050defe97756f6c2e93827d3251adf345d4"
     },
     "platform/frontend/package-lock.json": {
-      "sha256": "636acd4cc9d31b301ab184834a310763888c6925d29a73c40058c5884301a59e"
+      "sha256": "063611a28cebb6c398f7dea31ba20b7bf97442cbd359f61cf5ab1da7f2f412d2"
     },
     "platform/frontend/package.json": {
-      "sha256": "5f1f03b6e448cdcbe0215746e164498d09c4e1d831e30aad58f3dcb1daa37af7"
+      "sha256": "0356607fb989ee8c87859df5eea9ac33e1c7a3df796b35c7085101dfa8562d94"
     },
     "platform/frontend/security-headers.conf": {
       "sha256": "dedacc7cf8e9ae24225045f3cb3c47a5f5fa3141cab22ce59fc9b51eff25053f"
