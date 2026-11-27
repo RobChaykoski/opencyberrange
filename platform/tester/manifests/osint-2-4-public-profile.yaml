@@ -20,6 +20,15 @@ solver:
   - name: Training mirror names the fictional organisation
     command: curl -s http://{target.profile}:8080/ | grep -o 'Northstar Community Cloud'
     expect: Northstar Community Cloud
+  - name: Profile exposes the public email and handle
+    command: curl -s http://{target.profile}:8080/ | grep -c 'riley.chen@northstar-community.example'
+    expect: '1'
+  - name: Conference page repeats the handle and travel dates
+    command: curl -s http://{target.profile}:8080/talk | grep -c '@rileybuilds'
+    expect: '1'
+  - name: Profile API returns the same identifier
+    command: curl -s http://{target.profile}:8080/api/profile | grep -o '@rileybuilds'
+    expect: '@rileybuilds'
   - name: Training mirror contains the marker
     command: curl -s http://{target.profile}:8080/ | grep -o 'OCR{[^}]*}'
     expect: '{flag}'

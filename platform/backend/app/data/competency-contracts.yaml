@@ -738,7 +738,7 @@ labs:
     assessment_criteria:
     - Submit the correct flag.
     - Pass every automated test step in the lab manifest.
-    - State one header that supports the verdict.
+    - Name one header that influenced the verdict, and explain why it did.
     test_steps: 7
     flag_required: true
     content_version: 2.6.0
@@ -795,7 +795,7 @@ labs:
     assessment_criteria:
     - Submit the correct flag.
     - Pass every automated test step in the lab manifest.
-    - Name the recovery weakness and one safer alternative.
+    - Name the recovery weakness and rank at least two stronger recovery options.
     test_steps: 4
     flag_required: true
     content_version: 2.6.0
@@ -852,6 +852,7 @@ labs:
     assessment_criteria:
     - Submit the correct flag.
     - Pass every automated test step in the lab manifest.
+    - Document the collect, analyze, interpret, and document workflow with one observation, one interpretation, and one alternative explanation.
     test_steps: 2
     flag_required: true
     content_version: 2.6.0
@@ -966,6 +967,7 @@ labs:
     assessment_criteria:
     - Submit the correct flag.
     - Pass every automated test step in the lab manifest.
+    - Record the observation, interpretation, confidence, and one alternative explanation.
     test_steps: 2
     flag_required: true
     content_version: 2.5.3
@@ -977,7 +979,7 @@ labs:
   high-school-11-2-media-provenance:
     lab_id: high-school-11-2-media-provenance
     track: High School
-    difficulty: beginner
+    difficulty: intermediate
     expected_duration_minutes: 35
     prerequisites:
     - high-school-10-4-mfa-lost-phone
@@ -1022,7 +1024,7 @@ labs:
     assessment_criteria:
     - Submit the correct flag.
     - Pass every automated test step in the lab manifest.
-    - State one thing the evidence does not prove.
+    - State one supported statement and one statement the evidence does not support.
     test_steps: 5
     flag_required: true
     content_version: 2.6.0
@@ -1077,6 +1079,7 @@ labs:
     assessment_criteria:
     - Submit the correct flag.
     - Pass every automated test step in the lab manifest.
+    - Name the metadata field that leaked context and one step to remove it before publishing.
     test_steps: 4
     flag_required: true
     content_version: 2.5.3
@@ -1088,7 +1091,7 @@ labs:
   high-school-12-2-crypto-rug-pull:
     lab_id: high-school-12-2-crypto-rug-pull
     track: High School
-    difficulty: beginner
+    difficulty: intermediate
     expected_duration_minutes: 35
     prerequisites:
     - high-school-11-2-media-provenance
@@ -1134,6 +1137,7 @@ labs:
     - Submit the correct flag.
     - Pass every automated test step in the lab manifest.
     - Name two red flags and the drained wallet.
+    - State which evidence most strongly supported your conclusion, and why.
     test_steps: 5
     flag_required: true
     content_version: 2.6.0
@@ -1187,6 +1191,7 @@ labs:
     assessment_criteria:
     - Submit the correct flag.
     - Pass every automated test step in the lab manifest.
+    - Record the commands you ran, what each returned, and one thing you learned about the desktop.
     test_steps: 3
     flag_required: true
     content_version: 2.5.3
@@ -1241,6 +1246,7 @@ labs:
     assessment_criteria:
     - Submit the correct flag.
     - Pass every automated test step in the lab manifest.
+    - Record the file inventory, the search command, and the path to the real token.
     test_steps: 3
     flag_required: true
     content_version: 2.5.3
@@ -1297,6 +1303,7 @@ labs:
     assessment_criteria:
     - Submit the correct flag.
     - Pass every automated test step in the lab manifest.
+    - Answer the concept check that separates encoding from encryption.
     test_steps: 3
     flag_required: true
     content_version: 2.6.0
@@ -1353,6 +1360,7 @@ labs:
     assessment_criteria:
     - Submit the correct flag.
     - Pass every automated test step in the lab manifest.
+    - Answer the concept check that explains why ROT13 is not secure.
     test_steps: 3
     flag_required: true
     content_version: 2.6.0
@@ -1463,6 +1471,7 @@ labs:
     assessment_criteria:
     - Submit the correct flag.
     - Pass every automated test step in the lab manifest.
+    - Explain why the safe action is to navigate to the known site instead of clicking or replying.
     test_steps: 5
     flag_required: true
     content_version: 2.6.0
@@ -1517,6 +1526,7 @@ labs:
     assessment_criteria:
     - Submit the correct flag.
     - Pass every automated test step in the lab manifest.
+    - Explain why the extension alone is not evidence of a file's type.
     test_steps: 5
     flag_required: true
     content_version: 2.6.0
@@ -1571,7 +1581,7 @@ labs:
     assessment_criteria:
     - Submit the correct flag.
     - Pass every automated test step in the lab manifest.
-    - State which evidence made the message suspicious.
+    - 'Record two independent pieces of evidence: the lookalike URL that uses the userinfo trick, and the file extension that did not match the real file type.'
     test_steps: 7
     flag_required: true
     content_version: 2.6.0
@@ -1628,6 +1638,7 @@ labs:
     - Submit the correct flag.
     - Pass every automated test step in the lab manifest.
     - Explain why MFA at login did not protect the admin console.
+    - 'Identify all four session-design problems: client-side role, no server lookup, predictable structure, and no integrity validation.'
     test_steps: 5
     flag_required: true
     content_version: 2.6.0
@@ -1685,6 +1696,7 @@ labs:
     - Submit the correct flag.
     - Pass every automated test step in the lab manifest.
     - Name the redirect URI and state controls that were missing.
+    - List the ID token claims that must be validated and what each one binds.
     test_steps: 5
     flag_required: true
     content_version: 2.6.0
@@ -1742,6 +1754,7 @@ labs:
     - Submit the correct flag.
     - Pass every automated test step in the lab manifest.
     - Name the logging and scoping controls that were missing.
+    - 'List the post-discovery steps: revoke, replace, rotate automatically, review logs, and reduce scopes.'
     test_steps: 4
     flag_required: true
     content_version: 1.0.0
@@ -1799,7 +1812,8 @@ labs:
     - Submit the correct flag.
     - Pass every automated test step in the lab manifest.
     - Name the account that should have been disabled and the token to revoke.
-    test_steps: 5
+    - Name the mover account and the stale scope that should have been removed.
+    test_steps: 6
     flag_required: true
     content_version: 2.6.0
     usage_rank: null
@@ -6247,7 +6261,7 @@ labs:
   osint-1-2-image-intelligence:
     lab_id: osint-1-2-image-intelligence
     track: OSINT
-    difficulty: beginner
+    difficulty: intermediate
     expected_duration_minutes: 45
     prerequisites:
     - osint-1-1-public-footprint
@@ -6292,6 +6306,7 @@ labs:
     assessment_criteria:
     - Submit the correct flag.
     - Pass every automated test step in the lab manifest.
+    - Explain why the metadata was not enough and how the payload was hidden.
     test_steps: 3
     flag_required: true
     content_version: 2.5.3
@@ -6348,6 +6363,7 @@ labs:
     assessment_criteria:
     - Submit the correct flag.
     - Pass every automated test step in the lab manifest.
+    - Document the metadata fields that exposed location or internal context.
     test_steps: 4
     flag_required: true
     content_version: 2.5.3
@@ -6406,7 +6422,8 @@ labs:
     assessment_criteria:
     - Submit the correct flag.
     - Pass every automated test step in the lab manifest.
-    - Record one exposure, one remediation, and one verification step.
+    - Rate each finding Low, Medium, or High and calculate the exposure score.
+    - Record one exposure, one remediation, the owner, the due date, and the verification date.
     test_steps: 6
     flag_required: true
     content_version: 1.0.0
@@ -6465,6 +6482,7 @@ labs:
     assessment_criteria:
     - Submit the correct flag.
     - Pass every automated test step in the lab manifest.
+    - Explain why client-side code is public and name one remediation.
     test_steps: 3
     flag_required: true
     content_version: 2.5.3
@@ -6521,7 +6539,8 @@ labs:
     assessment_criteria:
     - Submit the correct flag.
     - Pass every automated test step in the lab manifest.
-    test_steps: 2
+    - Name the metadata field that revealed the most useful information, and explain why.
+    test_steps: 5
     flag_required: true
     content_version: 2.5.3
     usage_rank: null
@@ -6633,7 +6652,8 @@ labs:
     assessment_criteria:
     - Submit the correct flag.
     - Pass every automated test step in the lab manifest.
-    test_steps: 3
+    - Build an exposure map and name one cross-source correlation.
+    test_steps: 6
     flag_required: true
     content_version: 2.5.3
     usage_rank: null
@@ -6689,7 +6709,8 @@ labs:
     assessment_criteria:
     - Submit the correct flag.
     - Pass every automated test step in the lab manifest.
-    test_steps: 4
+    - Identify the product and version, and explain why the version is useful to an attacker.
+    test_steps: 5
     flag_required: true
     content_version: 2.5.3
     usage_rank: null
@@ -6801,6 +6822,7 @@ labs:
     assessment_criteria:
     - Submit the correct flag.
     - Pass every automated test step in the lab manifest.
+    - Recommend segmentation, TCP 502 restriction, jump hosts, monitoring, and an asset inventory.
     test_steps: 2
     flag_required: true
     content_version: 2.5.3
@@ -7080,6 +7102,7 @@ labs:
     assessment_criteria:
     - Submit the correct flag.
     - Pass every automated test step in the lab manifest.
+    - Record the exposed route, the client-side token, and the server-side check that should replace it.
     test_steps: 3
     flag_required: true
     content_version: 2.5.3
@@ -7136,6 +7159,7 @@ labs:
     assessment_criteria:
     - Submit the correct flag.
     - Pass every automated test step in the lab manifest.
+    - Explain the vulnerable call and show the argument-array replacement.
     test_steps: 3
     flag_required: true
     content_version: 2.5.3

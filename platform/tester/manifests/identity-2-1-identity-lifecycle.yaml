@@ -20,6 +20,9 @@ solver:
   - name: Directory is available
     command: curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/directory
     expect: '200'
+  - name: Directory shows the mover's stale finance scope
+    command: curl -s http://{target.portal}:8080/directory | grep -c 'programs:read, finance:read'
+    expect: '1'
   - name: Reports endpoint rejects an anonymous request
     command: curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/api/reports
     expect: '401'

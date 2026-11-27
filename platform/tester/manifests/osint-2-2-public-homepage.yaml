@@ -17,6 +17,15 @@ solver:
   - name: Mirror homepage responds
     command: curl -s -o /dev/null -w '%{http_code}' http://{target.publicsite}:8080/
     expect: '200'
+  - name: Metadata inventory includes a generator
+    command: curl -s http://{target.publicsite}:8080/ | grep -c 'name="generator"'
+    expect: '1'
+  - name: Open Graph preview metadata is present
+    command: curl -s http://{target.publicsite}:8080/ | grep -c 'property="og:title"'
+    expect: '1'
+  - name: Twitter card metadata is present
+    command: curl -s http://{target.publicsite}:8080/ | grep -c 'name="twitter:card"'
+    expect: '1'
   - name: Flag is present in the page metadata
     command: curl -s http://{target.publicsite}:8080/ | grep -o 'OCR{[^}]*}'
     expect: '{flag}'

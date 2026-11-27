@@ -2,7 +2,7 @@
 # Do not edit by hand; change the lab definition or the generator.
 lab_id: high-school-11-2-media-provenance
 track: High School
-difficulty: beginner
+difficulty: intermediate
 source: platform/labs/High School/high-school-11-2-media-provenance/lab.yaml
 expected_services:
 - port: 80

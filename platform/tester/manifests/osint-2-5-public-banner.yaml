@@ -23,6 +23,9 @@ solver:
   - name: Product query returns the flag banner
     command: curl -s 'http://{target.shodan}:8080/?q=product:Jenkins' | grep -o 'OCR{[^}]*}'
     expect: '{flag}'
+  - name: Banner exposes the product version
+    command: 'curl -s ''http://{target.shodan}:8080/?q=product:Jenkins'' | grep -o ''X-Jenkins: 2.426'''
+    expect: 'X-Jenkins: 2.426'
   - name: JSON API returns the flag
     command: curl -s 'http://{target.shodan}:8080/api/hosts?q=product:Jenkins' | grep -o 'OCR{[^}]*}'
     expect: '{flag}'

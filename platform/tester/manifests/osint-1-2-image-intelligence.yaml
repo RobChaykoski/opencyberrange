@@ -2,7 +2,7 @@
 # Do not edit by hand; change the lab definition or the generator.
 lab_id: osint-1-2-image-intelligence
 track: OSINT
-difficulty: beginner
+difficulty: intermediate
 source: platform/labs/OSINT/osint-1-2-image-intelligence/lab.yaml
 expected_services:
 - port: 80

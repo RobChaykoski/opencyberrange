@@ -165,6 +165,19 @@ DSAR, erasure, and administrative-access reports.
 | Security and AUP pack | SBOM, supply-chain lock, image scans, firewall checks, MFA/SSO, AUP acceptance | Bundle the evidence and add an AUP/acceptable-use acceptance ledger |
 | Accessibility and accommodation log | Accessibility test kit, accommodation overrides, extended time | Add a VPAT/ACR link and an accommodation audit export |
 
+## Emerging technology watch
+
+These are evaluated, not adopted. Each has a clear trigger.
+
+| Technology | Use | Trigger |
+|---|---|---|
+| gVisor / Firecracker / Kata | Per-lab kernel isolation for high-risk exploit labs | A lab needs kernel or network behaviour that runc cannot safely share |
+| eBPF (Cilium Tetragon) | Behavioural auto-grading and ATT&CK timelines from process/file/network events | Flag-only grading is insufficient for defensive labs |
+| WebTransport (HTTP/3/QUIC) | Lower-latency RangeBox terminal and desktop streams on lossy campus Wi-Fi | WebSocket head-of-line blocking becomes a support issue |
+| Open Badges 3.0 / W3C VC | Exportable, offline-verifiable credentials | Institutions ask for wallet or CLR-compatible badges |
+| Local SLM + MCP | Self-hosted Socratic tutor with read-only workbook/hint tools | Data residency rules block external model APIs |
+| Passkeys / WebAuthn / CAEP | Phishing-resistant login and continuous session evaluation | Privileged MFA and shared-credential risk become the priority |
+
 ## Non-goals and anti-patterns
 
 These are deliberate product constraints, not missing features.
