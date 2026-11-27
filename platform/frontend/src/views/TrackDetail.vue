@@ -774,6 +774,24 @@
                 Open workbook
               </button>
             </div>
+            <!-- Sticky workspace context: subnet, targets, hints -->
+            <div
+              v-if="workspaceMode && activeLab.session"
+              class="workspace-context"
+              aria-label="Workspace context"
+            >
+              <span class="workspace-context__label">Subnet</span>
+              <CopyCode :value="activeLab.session.network_subnet || ''" label="subnet" />
+              <CopyCode
+                v-for="t in activeLab.target_ips || []"
+                :key="t.id"
+                :value="t.ip"
+                :label="t.label || t.id || 'target IP'"
+              />
+              <span class="workspace-context__hints">
+                {{ receivedHints.length }} / {{ activeLab.lab.hints?.length || 0 }} hints
+              </span>
+            </div>
             <!-- Scenario (spans full width of grid) -->
             <div v-if="activeLab.lab.scenario" id="lab-briefing" class="panel-section panel-section--full panel-section--scenario">
               <h3 class="section-title">
@@ -868,7 +886,7 @@
               </h3>
               <div class="network-info network-info--prominent">
                 <span class="network-label">Subnet:</span>
-                <span class="network-value">{{ activeLab.session.network_subnet }}</span>
+                <CopyCode :value="activeLab.session.network_subnet || ''" label="subnet" />
               </div>
               <LabAccessDiagram
                 :session="activeLab.session"
@@ -880,7 +898,7 @@
                 <ul class="target-ip-list">
                   <li v-for="t in activeLab.target_ips" :key="t.id" class="target-ip-row">
                     <span class="target-ip-label">{{ t.label || t.id }}</span>
-                    <span class="target-ip-value">{{ t.ip }}</span>
+                    <CopyCode :value="t.ip" :label="t.label || t.id || 'target IP'" />
                   </li>
                 </ul>
               </div>
@@ -909,7 +927,8 @@
                     Connecting over VPN? After scanning, add discovered IPs to <code>/etc/hosts</code>:
                   </template>
                 </p>
-                <pre class="hosts-file-content">{{ activeLab.hostnames.map(h => (h.ip || '<target_ip>') + '    ' + h.hostname).join('\n') }}</pre>
+                <pre class="hosts-file-content">{{ hostsFileContent }}</pre>
+                <CopyCode :value="hostsFileContent" label="hosts file lines" />
               </div>
             </details>
 
@@ -1335,6 +1354,7 @@ import FlagCelebration from '../components/FlagCelebration.vue'
 import PulseSurveyModal from '../components/PulseSurveyModal.vue'
 import RangeBox from '../components/RangeBox.vue'
 import LabAccessDiagram from '../components/LabAccessDiagram.vue'
+import CopyCode from '../components/CopyCode.vue'
 import { useCelebration } from '../composables/useCelebration'
 import { CERTIFICATION_ROADMAP_URL, CISO_MINDMAP_URL, SWOCTS_RESOURCES_URL, getCertificationPath } from '../data/certificationPaths'
 // RangeBox opens in a dedicated /rangebox tab (not embedded)
@@ -1355,6 +1375,11 @@ const track = ref(null)
 const trackError = ref('')
 const expandedLevels = ref([])
 const activeLab = ref(null)
+const hostsFileContent = computed(() =>
+  (activeLab.value?.hostnames || [])
+    .map((host) => `${host.ip || '<target_ip>'}    ${host.hostname}`)
+    .join('\n')
+)
 const scenarioExpanded = ref(false)
 watch(activeLab, () => {
   scenarioExpanded.value = false
@@ -4403,6 +4428,42 @@ watch(timeRemaining, (val) => {
   min-height: 0;
   overflow-y: auto;
   padding-right: 0.25rem;
+}
+
+.workspace-context {
+  position: sticky;
+  top: 0;
+  z-index: 9;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.25rem;
+  margin-bottom: 0.25rem;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.workspace-context__label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.workspace-context__hints {
+  margin-left: auto;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.lab-details--workspace #lab-briefing,
+.lab-details--workspace #lab-targets,
+.lab-details--workspace #lab-flag,
+.lab-details--workspace #lab-hints {
+  scroll-margin-top: 3rem;
 }
 
 /* The workspace details pane puts the working essentials first: briefing,
