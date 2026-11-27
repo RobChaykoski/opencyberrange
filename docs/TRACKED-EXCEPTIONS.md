@@ -29,7 +29,7 @@ replace the detailed pages it references.
 | OP-02 | Automated rollback (`--rollback [path]`) | Open | Restore files, DB dump, and erasure ledger, then restart; keep-last-N already exists. |
 | OP-03 | Canary post-deploy smoke test (`--canary`) | Open | Spawn and solve one cheap lab end-to-end with `lab_harness.py`. |
 | OP-04 | Egress `--audit` convergence mode | Partial | `--dry-run` prints the rule set; add drift detection and a systemd timer. |
-| OP-05 | Weak-default secret detector (`--check-secrets`) | Open | Grep `.env`/compose for `labpass`, demo passwords, empty keys, and used setup tokens. |
+| OP-05 | Weak-default secret detector (`--check-secrets`) | **Closed** | `setup-range-server.sh --check-secrets` fails on placeholder values, empty required keys, a non-Fernet `WG_ENCRYPTION_KEY`, and loose modes; `SETUP_TOKEN` is a warning. Tested on dev with weak and clean `.env` files. |
 | OP-06 | Shared `ocr-doctor` health check | Open | Extract the overlapping `--status` and `verify_deployment` checks. |
 | OP-07 | Log rotation for `deploy.log` / `install.log` | Open | Add a logrotate drop-in. |
 

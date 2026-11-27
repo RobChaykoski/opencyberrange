@@ -16,6 +16,7 @@
 #   sudo bash setup-range-server.sh --install    # Full install (skip menu)
 #   sudo bash setup-range-server.sh --fix        # Repair components
 #   sudo bash setup-range-server.sh --status     # Check system health
+#   sudo bash setup-range-server.sh --check-secrets  # Fail on weak secrets/modes
 #
 # Or configure via environment variables before running:
 #   export VPN_LISTEN_PORT=51820
@@ -186,9 +187,10 @@ while [[ $# -gt 0 ]]; do
         --platform|-p)  ACTION="platform"; shift ;;
         --fix|-f)       ACTION="fix"; shift ;;
         --status|-s)    ACTION="status"; shift ;;
+        --check-secrets) ACTION="check-secrets"; shift ;;
         --yes|-y|--non-interactive) NON_INTERACTIVE=true; shift ;;
         --help|-h)
-            echo "Usage: sudo bash $0 [--install|--update|--platform|--fix|--status|--help] [--non-interactive]"
+            echo "Usage: sudo bash $0 [--install|--update|--platform|--fix|--status|--check-secrets|--help] [--non-interactive]"
             echo ""
             echo "  --install, -i    Full server setup (all phases)"
             echo "  --update, -u     Update platform (pull changes, rebuild containers)"
@@ -196,6 +198,7 @@ while [[ $# -gt 0 ]]; do
             echo "  --fix, -f        Repair/restart specific components"
             echo "  --non-interactive  Use defaults; require PUBLIC_IP for internet mode"
             echo "  --status, -s     Check system health"
+            echo "  --check-secrets  Fail on placeholder secrets or loose key modes"
             echo "  --help, -h       Show this help"
             echo "  (no args)        Interactive menu"
             exit 0
@@ -1453,6 +1456,76 @@ phase_7d_self_signed_cert() {
     fi
 }
 
+# Inspect secrets and key material for placeholders and loose modes. Safe to
+# run at any time; exits non-zero when a value must be rotated or a mode fixed.
+check_secrets() {
+    header "Secret hygiene check"
+
+    local failures=0
+    local env_file="${PLATFORM_DIR}/.env"
+    local peer_env="${PEER_MANAGER_DIR}/peer_manager.env"
+    local key_file="/etc/wireguard/server_private.key"
+    local conf_file="/etc/wireguard/${VPN_INTERFACE}.conf"
+
+    if [ ! -f "$env_file" ]; then
+        err "No .env at $env_file; run --install first or set OCR_PLATFORM_DIR"
+        return 1
+    fi
+
+    local bad_values='labpass|changeme|change-me|admin123|password123|SsoDemoAdmin'
+    if grep -qE "^[A-Za-z0-9_]+=.*(${bad_values})" "$env_file" 2>/dev/null; then
+        err "Placeholder secret value(s) in $env_file:"
+        grep -nE "^[A-Za-z0-9_]+=.*(${bad_values})" "$env_file" \
+            | sed -E 's/=(.*)$/=<redacted>/' \
+            | while IFS= read -r line; do printf '      %s\n' "$line"; done
+        failures=$((failures + 1))
+    else
+        log "No placeholder values in .env"
+    fi
+
+    local required=(JWT_SECRET DATABASE_URL POSTGRES_PASSWORD WG_ENCRYPTION_KEY WG_API_KEY)
+    local name
+    for name in "${required[@]}"; do
+        if ! grep -qE "^${name}=.+" "$env_file"; then
+            err "$name is missing or empty in $env_file"
+            failures=$((failures + 1))
+        fi
+    done
+
+    if grep -qE "^SETUP_TOKEN=.+" "$env_file"; then
+        warn "SETUP_TOKEN is still set; delete it once the first administrator exists"
+    fi
+
+    # A Fernet key is 44 urlsafe-base64 characters. A hex string here is the
+    # old broken fallback and cannot decrypt WireGuard keys.
+    local fernet
+    fernet=$(grep -E "^WG_ENCRYPTION_KEY=" "$env_file" | head -n1 | cut -d= -f2-)
+    if [ -n "$fernet" ] && [ "${#fernet}" -ne 44 ]; then
+        err "WG_ENCRYPTION_KEY is not a 44-character Fernet key (got ${#fernet} chars)"
+        failures=$((failures + 1))
+    fi
+
+    local path mode
+    for path in "$env_file" "$peer_env" "$key_file" "$conf_file"; do
+        if [ ! -e "$path" ]; then
+            warn "Missing (skipped): $path"
+            continue
+        fi
+        mode=$(stat -c '%a' "$path" 2>/dev/null || echo "")
+        if [ "$mode" != "600" ] && [ "$mode" != "400" ]; then
+            err "$path is mode ${mode:-unknown}; expected 600"
+            failures=$((failures + 1))
+        fi
+    done
+
+    if [ "$failures" -gt 0 ]; then
+        err "$failures secret hygiene failure(s)"
+        return 1
+    fi
+    log "Secret hygiene checks passed"
+    return 0
+}
+
 phase_8_verification() {
     header "Phase 8 — Verification"
 
@@ -1809,6 +1882,9 @@ run_action() {
             ;;
         status)
             phase_8_verification
+            ;;
+        check-secrets)
+            check_secrets
             ;;
         *)
             die "Unknown action: $ACTION"
