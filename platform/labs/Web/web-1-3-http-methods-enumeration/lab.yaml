@@ -80,6 +80,13 @@ hostnames:
 
 
 flag: "OCR{http_m3th0ds_3num3r4t10n}"
+flag_path: /var/www/html/methods.php
+flag_service: webserver
+flag_command:
+  - apache2ctl
+  - -D
+  - FOREGROUND
+flag_mode: replace
 
 hints:
   - text: |

@@ -69,6 +69,13 @@ scenario: |
   for subsequent credential testing phases of your assessment.
 
 flag: "OCR{smb_us3r_3num}"
+flag_path: /etc/samba/smb.conf
+flag_service: target
+flag_command:
+  - smbd
+  - -F
+  - --no-process-group
+flag_mode: replace
 
 hints:
   - text: |
