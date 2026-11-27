@@ -929,7 +929,7 @@ labs:
     reviewed_at: null
   high-school-11-2-media-provenance:
     track: High School
-    difficulty: beginner
+    difficulty: intermediate
     expected_duration_minutes: 35
     workbook: wiki/range/high-school/CH_HS11_Grade_11_Defensive_Security/02_Media_Provenance/
     skills_earned:
@@ -1032,7 +1032,7 @@ labs:
     reviewed_at: null
   high-school-12-2-crypto-rug-pull:
     track: High School
-    difficulty: beginner
+    difficulty: intermediate
     expected_duration_minutes: 35
     workbook: wiki/range/high-school/CH_HS12_Grade_12_Applied_Cybersecurity/02_Crypto_Rug_Pull/
     skills_earned:
@@ -5935,7 +5935,7 @@ labs:
     reviewed_at: null
   osint-1-2-image-intelligence:
     track: OSINT
-    difficulty: beginner
+    difficulty: intermediate
     expected_duration_minutes: 45
     workbook: wiki/range/osint/CH_OSINT01_OSINT_Foundations/02_Badge_Photo_Intelligence/
     skills_earned:

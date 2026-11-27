@@ -163,7 +163,7 @@
       "sha256": "97a2e8374f7ea624e397a972afa75747c253d6add702debf5dd8568557828040"
     },
     "platform/backend/app/data/lab-outcomes.yaml": {
-      "sha256": "f6bf5947682b911c0e0664067952e2202ff2883f898cf7fcd121982a6fbec17e"
+      "sha256": "d629f6b7d3f9e3e4a81b208c71c8edc768d7f71463ccd5e5f142fb2fcada23f4"
     },
     "platform/backend/app/data/malware-samples.yaml": {
       "sha256": "4e6a00ce7febc54336c44fe167b45180fbc8ae8cbb4343f772b2ad0554cc77be"
