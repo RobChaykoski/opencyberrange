@@ -2,6 +2,30 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.58.1] - 2026-11-27
+
+### Changed
+
+- **Documentation-only patch.** The root README is now a 215-line landing page:
+  pitch, hero screenshot, audience, workflow, quick start, editions, generated
+  track summary, and attribution at the bottom.
+- Current claims agree with the 5.58 line across counts, supported versions,
+  security policy, the Release 6 scope, the competency framework, next steps,
+  and the docs index.
+- The Release 5 readiness and scope pages and the 26 November handoff are marked
+  historical; the Release 4 notes are marked historical, and the platform badge
+  points at the release history.
+- Repaired double-encoded punctuation and added a browse-by-intent map to the
+  documentation index.
+
+### Verification
+
+- CI and Quality checks: pass at `117cfb36`.
+- Backend pytest: 677 passed, 576 skipped locally.
+- Links, doc assets, API manual, lab outcomes, manifests, metadata, curriculum
+  docs, documentation map, publication audit, and MkDocs strict build: pass.
+- Runtime behaviour is unchanged.
+
 ## [5.58.0] - 2026-11-27
 
 ### Added
