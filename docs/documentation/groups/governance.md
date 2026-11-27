@@ -8,7 +8,7 @@ Policy, control mapping, risk, privacy, retention, procurement, audit, and revie
 - **NIST SP 800-53 Rev. 5:** PM-1, PM-4, PM-9, CA-2, CA-5, CA-7, RA-3, SI-12
 - **Owner:** Platform lead with the privacy officer
 
-58 document(s) in this group.
+59 document(s) in this group.
 
 | Document | Type | Classification | Review | Score | Next review |
 |---|---|---|---|---:|---|
@@ -30,6 +30,7 @@ Policy, control mapping, risk, privacy, retention, procurement, audit, and revie
 | [PIA / TRA findings and status](../../PIA-TRA-FINDINGS.md) | `assessment` | internal | unreviewed |  | unset |
 | [Pilot readiness review — 2026-11-20](../../PILOT-READINESS-REVIEW.md) | `assessment` | internal | unreviewed |  | unset |
 | [SWOCTS Cyber Range: Privacy, Erasure, and Backups](../../PRIVACY-AND-DATA-DELETION.md) | `procedure` | internal | unreviewed |  | unset |
+| [Privacy exclusion audit](../../PRIVACY-AUDIT.md) | `reference` | internal | unreviewed |  | unset |
 | [SWOCTS Cyber Range privacy notice](../../PRIVACY-NOTICE.md) | `policy` | public | unreviewed |  | unset |
 | [Procurement requirements: traceability](../../PROCUREMENT-REQUIREMENTS.md) | `reference` | internal | unreviewed |  | unset |
 | [Professional and Enterprise priorities](../../PROFESSIONAL-PRIORITIES.md) | `reference` | internal | unreviewed |  | unset |

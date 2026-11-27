@@ -509,7 +509,12 @@ def _session_rows(db: Session, user_ids: set, lab_ids: set):
     ).all()
 
 
-def _reaction_rows(db: Session, lab_ids: set, course_id: Optional[int] = None):
+def _reaction_rows(
+    db: Session,
+    lab_ids: set,
+    course_id: Optional[int] = None,
+    user_ids: Optional[set] = None,
+):
     if not lab_ids:
         return []
     query = db.query(ExerciseReaction).filter(
@@ -517,6 +522,9 @@ def _reaction_rows(db: Session, lab_ids: set, course_id: Optional[int] = None):
     )
     if course_id is not None:
         query = query.filter(ExerciseReaction.course_id == course_id)
+    if user_ids is not None:
+        # Instructor-facing aggregates exclude under-18 accounts.
+        query = query.filter(ExerciseReaction.user_id.in_(user_ids))
     return query.all()
 
 
@@ -606,6 +614,7 @@ def _pulse_rows(
     *,
     course_id: Optional[int] = None,
     user_id: Optional[int] = None,
+    user_ids: Optional[set] = None,
 ):
     if not lab_ids:
         return []
@@ -616,6 +625,9 @@ def _pulse_rows(
         query = query.filter(ExercisePulseSurvey.course_id == course_id)
     if user_id is not None:
         query = query.filter(ExercisePulseSurvey.user_id == user_id)
+    if user_ids is not None:
+        # Instructor-facing aggregates exclude under-18 accounts.
+        query = query.filter(ExercisePulseSurvey.user_id.in_(user_ids))
     return query.all()
 
 
@@ -1185,7 +1197,7 @@ async def course_overview(
     active_learning_minutes = [
         value for value in learning_by_user.values() if value > 0
     ]
-    reaction_rows = _reaction_rows(db, {lab.id for lab in labs}, course.id)
+    reaction_rows = _reaction_rows(db, {lab.id for lab in labs}, course.id, user_ids=user_ids)
     reaction_summary = _reaction_fields(reaction_rows)
     total_possible = len(user_ids) * len(labs)
     time_over = sum(
@@ -1201,7 +1213,7 @@ async def course_overview(
         max(0, len(started_pairs) - len(completions)), len(started_pairs)
     )
     pulse_rows = _pulse_rows(
-        db, {lab.id for lab in labs}, course_id=course.id
+        db, {lab.id for lab in labs}, course_id=course.id, user_ids=user_ids
     )
     learning_reported = _average([row.learning for row in pulse_rows])
     difficulty_reported = _average([row.difficulty for row in pulse_rows])
@@ -2069,7 +2081,7 @@ async def course_exercises(
         for user_id, lab_id, attempted_at in attempt_rows
     }
     by_lab_pulse = {}
-    for row in _pulse_rows(db, {lab.id for lab in labs}, course_id=course.id):
+    for row in _pulse_rows(db, {lab.id for lab in labs}, course_id=course.id, user_ids=user_ids):
         by_lab_pulse.setdefault(row.lab_id, []).append(row)
     learning_pairs = learning_minutes_by_pair(completions, sessions)
     learning_by_lab = {}
@@ -2081,7 +2093,7 @@ async def course_exercises(
     for (user_id, lab_id), attempted_at in first_attempt_map.items():
         first_attempts_by_lab.setdefault(lab_id, []).append((user_id, attempted_at))
     by_lab_reactions = {}
-    for row in _reaction_rows(db, {lab.id for lab in labs}, course.id):
+    for row in _reaction_rows(db, {lab.id for lab in labs}, course.id, user_ids=user_ids):
         by_lab_reactions.setdefault(row.lab_id, []).append(row)
 
     rows = []

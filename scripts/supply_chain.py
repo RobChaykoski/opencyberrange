@@ -158,6 +158,7 @@ COVERED_FILES = [
     "scripts/generate-lab-manifests.py",
     "scripts/lab_harness.py",
     "scripts/audit-publication.py",
+    "scripts/audit-privacy-exclusions.py",
     "platform/tester/Dockerfile",
     "platform/tester/manifest.schema.json",
     "platform/frontend/package.json",

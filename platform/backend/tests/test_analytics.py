@@ -344,6 +344,16 @@ def test_course_overview_and_exercises(client, analytics_data):
 def test_course_analytics_excludes_under_18_learners(client, analytics_data, db_session):
     minor = analytics_data["student_one"]
     minor.is_minor = True
+    # Give the minor feedback of each kind, so the exclusion is proven by
+    # values and not only by a row count.
+    db_session.add(
+        ExerciseReaction(
+            user_id=minor.id,
+            lab_id=analytics_data["labs"][0].id,
+            course_id=analytics_data["course"].id,
+            reaction="like",
+        )
+    )
     db_session.commit()
 
     headers = _login(client, analytics_data["instructor"])
@@ -356,6 +366,12 @@ def test_course_analytics_excludes_under_18_learners(client, analytics_data, db_
     summary = overview.json()["summary"]
     assert summary["enrolled_learners"] == 1
     assert summary["completed_learners"] == 1
+    # The only pulse rows belong to the minor, so the aggregate is empty and
+    # the minor's reaction is not counted.
+    assert summary["learning_reported"] is None
+    assert summary["pulse_responses"] == 0
+    assert summary["likes"] == 0
+    assert summary["dislikes"] == 0
 
     exercises = client.get(
         f"/api/analytics/courses/{course_id}/exercises", headers=headers
@@ -364,6 +380,12 @@ def test_course_analytics_excludes_under_18_learners(client, analytics_data, db_
     rows = exercises.json()["exercises"]
     assert rows
     assert all(row["sample_size"] <= 1 for row in rows)
+    first = next(
+        row for row in rows if row["lab_id"] == analytics_data["labs"][0].id
+    )
+    assert first["learning_reported"] is None
+    assert first["pulse_response_rate"] == 0.0
+    assert first["likes"] == 0
 
 
 def test_exercise_reaction_is_reported_and_can_be_cleared(client, analytics_data):
