@@ -458,10 +458,20 @@ class DockerManager:
         """Build the entrypoint override that writes the session flag at start."""
         path_value = str(render["path"])
         path = shlex.quote(path_value)
-        write = f"printf '%s\\n' \"$LAB_FLAG\" > {path}"
-        parent = os.path.dirname(path_value)
-        if parent and parent != "/":
-            write = f"mkdir -p {shlex.quote(parent)} && {write}"
+        mode = str(render.get("mode") or "write")
+        static_flag = str(render.get("static_flag") or "").strip()
+        safe_replace = bool(
+            mode == "replace"
+            and static_flag
+            and all(ch.isalnum() or ch in "{}_-" for ch in static_flag)
+        )
+        if safe_replace:
+            write = f'sed -i "s#{static_flag}#$LAB_FLAG#g" {path}'
+        else:
+            write = f"printf '%s\\n' \"$LAB_FLAG\" > {path}"
+            parent = os.path.dirname(path_value)
+            if parent and parent != "/":
+                write = f"mkdir -p {shlex.quote(parent)} && {write}"
         owner = str(render.get("owner") or "").strip()
         if owner:
             write += f" && chown {shlex.quote(owner)} {path}"

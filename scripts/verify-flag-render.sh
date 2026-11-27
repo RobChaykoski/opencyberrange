@@ -55,6 +55,11 @@ verify_lab() {
   [ -n "$path" ] || die "$slug: missing flag_path"
   [ -n "$service" ] || die "$slug: missing flag_service"
 
+  local mode static_flag
+  mode="$(field "$yaml" flag_mode)"
+  static_flag="$(field "$yaml" flag)"
+  [ -n "$mode" ] || mode="write"
+
   local -a cmd=()
   while IFS= read -r part; do
     [ -n "$part" ] && cmd+=("$part")
@@ -107,6 +112,12 @@ print(build.get("dockerfile") or "Dockerfile")
 
   local parent
   parent="$(dirname "$path")"
+  local render_cmd
+  if [ "$mode" = "replace" ] && [ -n "$static_flag" ]; then
+    render_cmd="sed -i \"s#${static_flag}#\$LAB_FLAG#g\" $(printf '%q' "$path")"
+  else
+    render_cmd="mkdir -p $(printf '%q' "$parent") && printf '%s\\n' \"\$LAB_FLAG\" > $(printf '%q' "$path")"
+  fi
 
   echo "==> $slug"
   $DOCKER build -q -t "$tag" -f "$dockerfile" "$context" >/dev/null
@@ -114,12 +125,12 @@ print(build.get("dockerfile") or "Dockerfile")
   $DOCKER run -d --rm --name "$name" --network none \
     -e LAB_FLAG="$testflag" \
     --entrypoint /bin/sh "$tag" \
-    -c "mkdir -p $(printf '%q' "$parent") && printf '%s\\n' \"\$LAB_FLAG\" > $(printf '%q' "$path"); exec$exec_cmd" \
+    -c "$render_cmd; exec$exec_cmd" \
     >/dev/null
   sleep 2
 
   local got=""
-  got="$($DOCKER exec "$name" cat "$path" 2>/dev/null || true)"
+  got="$($DOCKER exec "$name" grep -oF "$testflag" "$path" 2>/dev/null | head -n1 || true)"
   $DOCKER rm -f "$name" >/dev/null 2>&1 || true
   $DOCKER rmi "$tag" >/dev/null 2>&1 || true
 

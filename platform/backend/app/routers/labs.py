@@ -97,6 +97,8 @@ def _flag_render_plan(lab_slug: str) -> dict | None:
             "path": path,
             "command": command,
             "owner": str(data.get("flag_owner") or "").strip(),
+            "mode": str(data.get("flag_mode") or "write").strip(),
+            "static_flag": str(data.get("flag") or "").strip(),
         }
     return None
 

@@ -99,6 +99,12 @@ scenario: |
   - Password: `DevAccess2024#`
 
 flag: "OCR{h1st0ry_l34k}"
+flag_path: /home/developer/.bash_history
+flag_service: target
+flag_command:
+  - /entrypoint.sh
+flag_owner: developer
+flag_mode: replace
 
 hints:
   - text: |
