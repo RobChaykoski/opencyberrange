@@ -146,3 +146,56 @@ describe('CapstoneBuilder', () => {
     expect(approve).toBeUndefined()
   })
 })
+
+describe('CapstoneBuilder exports', () => {
+  beforeEach(() => {
+    get.mockReset()
+    post.mockReset()
+    put.mockReset()
+    URL.createObjectURL = vi.fn(() => 'blob:test')
+    URL.revokeObjectURL = vi.fn()
+    HTMLAnchorElement.prototype.click = vi.fn()
+
+    const saved = {
+      id: 7,
+      title: 'Blue Team capstone',
+      status: 'draft',
+      version: 1,
+      request: proposal.request,
+      plan: proposal,
+      validation: proposal.validation,
+      notes: null,
+      approved_at: null,
+    }
+    get.mockImplementation((url) => {
+      if (url === '/capstones/profiles') return Promise.resolve({ data: { profiles } })
+      if (url === '/capstones/plans') {
+        return Promise.resolve({ data: { plans: [{ ...saved, plan: undefined, validation: undefined }] } })
+      }
+      if (url === '/capstones/plans/7') return Promise.resolve({ data: saved })
+      if (url.startsWith('/capstones/plans/7/export.')) {
+        return Promise.resolve({
+          data: new Blob(['# plan'], { type: 'text/markdown' }),
+          headers: { 'content-disposition': 'attachment; filename="blue-team-capstone.md"' },
+        })
+      }
+      return Promise.resolve({ data: {} })
+    })
+  })
+
+  it('downloads a saved plan as Markdown', async () => {
+    const wrapper = mount(CapstoneBuilder)
+    await flushPromises()
+
+    await wrapper.findAll('button').find((button) => button.text().includes('Blue Team capstone')).trigger('click')
+    await flushPromises()
+
+    const exportButton = wrapper.findAll('button').find((button) => button.text() === 'Export Markdown')
+    expect(exportButton).toBeTruthy()
+    await exportButton.trigger('click')
+    await flushPromises()
+
+    expect(get).toHaveBeenCalledWith('/capstones/plans/7/export.md', { responseType: 'blob' })
+    expect(wrapper.text()).toContain('Exported blue-team-capstone.md')
+  })
+})

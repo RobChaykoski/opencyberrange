@@ -69,7 +69,8 @@ assistant. A learner receives `403 capstone_forbidden`.
 - review objectives, the lab sequence, assessments, deliverables, and the
   evidence map;
 - save a draft, save a new version, approve a publishable plan, or archive it,
-  and reopen any saved plan from the sidebar.
+  and reopen any saved plan from the sidebar;
+- download the saved plan as Markdown or PDF from the actions panel.
 
 Approval still does not publish a course.
 

@@ -256,6 +256,12 @@
               <button v-if="savedPlan && savedPlan.status !== 'archived'" type="button" class="btn btn--secondary btn--sm" :disabled="archiving" @click="archive">
                 Archive
               </button>
+              <button v-if="savedPlan" type="button" class="btn btn--secondary btn--sm" :disabled="!!exporting" @click="downloadExport('md')">
+                {{ exporting === 'md' ? 'Exporting...' : 'Export Markdown' }}
+              </button>
+              <button v-if="savedPlan" type="button" class="btn btn--secondary btn--sm" :disabled="!!exporting" @click="downloadExport('pdf')">
+                {{ exporting === 'pdf' ? 'Exporting...' : 'Export PDF' }}
+              </button>
             </div>
             <p v-if="savedPlan" class="capstone__muted">
               Saved as {{ savedPlan.title }} · v{{ savedPlan.version }} · {{ savedPlan.status }}
@@ -280,6 +286,7 @@ const generating = ref(false)
 const saving = ref(false)
 const approving = ref(false)
 const archiving = ref(false)
+const exporting = ref('')
 const error = ref('')
 const message = ref('')
 
@@ -467,6 +474,41 @@ async function archive() {
     error.value = apiError(err)
   } finally {
     archiving.value = false
+  }
+}
+
+async function downloadExport(suffix) {
+  if (!savedPlan.value) return
+  error.value = ''
+  message.value = ''
+  exporting.value = suffix
+  try {
+    const response = await axios.get(
+      `/capstones/plans/${savedPlan.value.id}/export.${suffix}`,
+      { responseType: 'blob' },
+    )
+    const type = suffix === 'pdf' ? 'application/pdf' : 'text/markdown'
+    const blob = new Blob([response.data], { type })
+    const url = URL.createObjectURL(blob)
+    const disposition = response.headers?.['content-disposition'] || ''
+    const match = /filename="?([^";]+)"?/i.exec(disposition)
+    const fallback = `${(savedPlan.value.title || 'capstone-plan')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '')}.${suffix}`
+    const filename = match ? match[1] : fallback
+    const link = document.createElement('a')
+    link.href = url
+    link.download = filename
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(url)
+    message.value = `Exported ${filename}.`
+  } catch (err) {
+    error.value = apiError(err)
+  } finally {
+    exporting.value = ''
   }
 }
 
