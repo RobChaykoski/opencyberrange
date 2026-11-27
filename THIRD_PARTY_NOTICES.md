@@ -195,6 +195,24 @@ to this repository.
   challenge and sample-image index by Aman Hardikar. It is a reading reference,
   not a dataset licence for its linked
   resources. See `THIRD_PARTY_LICENSES/Aman-Hardikar-NOTICE.txt`.
+- **ArchiveBox** (MIT, <https://archivebox.io/>). A self-hosted web-archive and
+  evidence-capture tool by Nick Sweeting and contributors. It is a reference
+  tool for OSINT and web-evidence labs and is not vendored. If an institution
+  runs it, keep the MIT notice with the copy.
+- **OSINT Case** (GPL-3.0, <https://osintcase.com/>). A local investigation
+  workspace for subjects, links, timelines, evidence, and reports, published by
+  emrekybs. It is reference-only by default and the learner installs it
+  locally. If it is baked into a shared lab image, keep it unmodified, include
+  `THIRD_PARTY_LICENSES/GPL-3.0.txt`, and offer the corresponding source.
+- **Gephi** (GPL-3.0, <https://gephi.org/>). A network-visualisation and
+  graph-analysis application from Gephi contributors and the Gephi Consortium.
+  It is reference-only by default. The same GPL-3.0 source-offer rule applies
+  if it is baked into a shared image.
+- **Cytoscape** (LGPL-2.1 desktop, MIT for Cytoscape.js, <https://cytoscape.org/>).
+  A network analysis and visualization platform from the Cytoscape Consortium.
+  It is reference-only by default. The desktop app is LGPL-2.1, so keep it
+  unmodified with its notice and source access if bundled; Cytoscape.js is
+  MIT-licensed and is the preferred option for an in-app graph.
 
 The handling rules are in `docs/SECURITY-DATASETS.md`. Malware-source rules are
 in `docs/MALWARE-SAMPLE-SOURCES.md`. Run

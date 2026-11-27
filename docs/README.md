@@ -22,7 +22,7 @@ The signed tag and [`versions.yaml`](../versions.yaml) win over any page.
 | Operate or upgrade a host | [Deployment runbook](DEPLOYMENT-RUNBOOK.md), [upgrade guide](../Manual-Lite/00_Server_Deployment/07_Upgrade_And_Verify.md), [backup and restore](BACKUP-RESTORE-TEST.md) |
 | Understand the design | [Architecture](ARCHITECTURE.md), [architecture hub](architecture/index.md) |
 | Review security and privacy | [Security policy](../SECURITY.md), [privacy notice](PRIVACY-NOTICE.md), [security hub](security/index.md) |
-| Build or review curriculum | [Learning framework](LEARNING-FRAMEWORK.md), [curriculum map](../Workbook/CURRICULUM.md), [NICE mapping](NICE-MAPPING.md) |
+| Build or review curriculum | [Learning framework](LEARNING-FRAMEWORK.md), [curriculum map](../Workbook/CURRICULUM.md), [NICE mapping](NICE-MAPPING.md), [OSINT resources](OSINT-RESOURCES.md) |
 | Look up a fact or limit | [Counts](COUNTS.md), [supported versions](SUPPORTED-VERSIONS.md), [API error codes](API-ERROR-CODES.md), [data dictionary](DATA-DICTIONARY.md) |
 | Trace history or a past release | [Release tags](RELEASES.md), [changelog](../CHANGELOG.md), [archive](archive/README.md) |
 

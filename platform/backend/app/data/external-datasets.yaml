@@ -375,6 +375,103 @@ sources:
       reading list; do not vendor a capture, bundle it in a container, or serve
       it from the platform.
 
+  # OSINT investigation and evidence tools (tooling references; never vendored)
+  - id: archivebox
+    name: ArchiveBox
+    homepage: https://archivebox.io/
+    repository: https://github.com/ArchiveBox/ArchiveBox
+    licence: MIT
+    licence_url: https://github.com/ArchiveBox/ArchiveBox/blob/dev/LICENSE
+    copyright: >-
+      Copyright (c) 2026 Nick Sweeting and ArchiveBox contributors.
+    attribution: >-
+      ArchiveBox is a self-hosted web-archive and evidence-capture tool by Nick
+      Sweeting and contributors. Keep the MIT notice with any copy or image.
+    redistribution: allowed_with_notice
+    access: public
+    pin: null
+    pin_kind: release
+    fetch: never
+    fetch_base: null
+    notes: >-
+      Reference for OSINT and web-evidence labs: capture a public page, hash the
+      output, and keep a dated snapshot. The platform does not vendor an
+      ArchiveBox image; an institution may run it separately and attach the
+      capture hash to learner evidence.
+
+  - id: osintcase
+    name: OSINT Case
+    homepage: https://osintcase.com/
+    repository: https://github.com/emrekybs/OsintCase
+    licence: GPL-3.0
+    licence_url: https://github.com/emrekybs/OsintCase/blob/main/LICENSE
+    copyright: >-
+      Copyright (c) the OSINT Case project (emrekybs) and contributors.
+    attribution: >-
+      OSINT Case is a local investigation workspace for subjects, links,
+      timelines, evidence, and reports, published by emrekybs under GPL-3.0.
+    redistribution: allowed_with_notice
+    access: reference_only
+    pin: null
+    pin_kind: release
+    fetch: never
+    fetch_base: null
+    notes: >-
+      Reference tool for case-mapping and report-writing labs. GPL-3.0 is
+      copyleft: if an institution bakes it into a shared lab image, it must keep
+      the tool unmodified, include the licence, and offer the corresponding
+      source. The default is reference-only, installed by the learner on their
+      own machine.
+
+  - id: gephi
+    name: Gephi
+    homepage: https://gephi.org/
+    repository: https://github.com/gephi/gephi
+    licence: GPL-3.0
+    licence_url: https://github.com/gephi/gephi/blob/master/LICENSE.md
+    copyright: >-
+      Copyright (c) Gephi contributors and the Gephi Consortium.
+    attribution: >-
+      Gephi is an open-source network-visualisation and graph-analysis
+      application, licensed under GPL-3.0. Keep the notice and source offer with
+      any copy.
+    redistribution: allowed_with_notice
+    access: reference_only
+    pin: null
+    pin_kind: release
+    fetch: never
+    fetch_base: null
+    notes: >-
+      Reference for link-analysis labs: turn a confirmed, probable, or doubtful
+      entity graph into a centrality and shortest-path finding. Same GPL-3.0
+      obligation as OSINT Case if baked into a shared image; the default is
+      reference-only.
+
+  - id: cytoscape
+    name: Cytoscape
+    homepage: https://cytoscape.org/
+    repository: https://github.com/cytoscape/cytoscape-impl
+    licence: LGPL-2.1
+    licence_url: https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
+    copyright: >-
+      Copyright (c) the Cytoscape Consortium and contributors.
+    attribution: >-
+      Cytoscape is an open-source network analysis and visualization platform
+      from the Cytoscape Consortium. The desktop application is LGPL-2.1;
+      Cytoscape.js, the embeddable browser library, is MIT.
+    redistribution: allowed_with_notice
+    access: reference_only
+    pin: null
+    pin_kind: release
+    fetch: never
+    fetch_base: null
+    notes: >-
+      Reference for lab and network topology diagrams, OpenGRC data and metadata
+      connection maps, and AI server-to-server traffic graphs. LGPL-2.1 permits
+      use and linking with a notice and source access; keep the desktop app
+      unmodified if it is bundled. For an in-app graph, prefer the MIT-licensed
+      Cytoscape.js.
+
 datasets:
   # Security Datasets (MIT)
   - source: security-datasets
