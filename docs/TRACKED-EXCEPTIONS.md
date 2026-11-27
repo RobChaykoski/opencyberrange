@@ -56,7 +56,7 @@ replace the detailed pages it references.
 | RB-03 | `exercise_tester.py` cross-tenant flag disclosure | Critical | Open | Scope every lookup to the caller's tenant; add a denial test. |
 | RB-04 | `exercise_tester.py` `timeout` command injection | Critical | Open | Pass arguments as a list; never interpolate into a shell. Add a regression test. |
 | RB-05 | Analytics minor exclusion misses `course_pulse_comments` and `survey_responses` | High | Open | Apply the same under-18 exclusion used elsewhere; add a test. |
-| RB-06 | Wiki served same-origin with `unsafe-inline` CSP on internet-facing installs | High | Open | Serve the wiki on its own origin or tighten the CSP; test both. |
+| RB-06 | Wiki served same-origin with `unsafe-inline` CSP on internet-facing installs | High | Partial | HSTS, Referrer-Policy, and Permissions-Policy are now present in every generated wiki location, and `server_tokens off` is set. The wiki CSP still needs `unsafe-inline` for MkDocs Material; the durable fix is a split origin or a nonce pipeline. |
 | RB-07 | Manual TLS renewal | Medium | Open | Automate renewal or document a checked runbook. |
 | RB-08 | Backups unencrypted at rest | High | Open | Confirm GPG/age encryption on every target; test a restore. |
 | RB-09 | No external monitoring or dead-man switch | Medium | Open | Add an external ping and a host agent; blocked on host access. |
