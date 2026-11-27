@@ -1,0 +1,130 @@
+title: "Authenticate Once, Reuse Everywhere"
+category: authentication
+difficulty: intermediate
+estimated_time: 40
+prerequisites:
+  - software-security-3-2-assertions-and-examples
+# By completion students will be able to:
+learning_outcomes:
+  - Send a JSON login request from a Karate feature
+  - Extract a token from the response and send it as a Bearer header
+  - Reuse one login across scenarios with callSingle or a reusable call feature
+  - Prove that the protected endpoint rejects a missing or invalid token
+mapped_skills:
+  - identity_access
+  - web_api
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+  - Submit the feature file with one login feature and one reusable token call.
+  - Explain why logging in for every scenario is slower and harder to audit.
+mitre_attack:
+  - tactic: Defense Evasion
+    technique: T1550.001
+    technique_name: "Use Alternate Authentication Material: Application Access Token"
+    detection: Correlate token issuance with token use; alert when one token is reused from an unexpected test identity or beyond its expected scenario.
+owner: "OpenCyberRange Curriculum"
+content_version: "1.0.0"
+reviewed_at: "2026-11-26"
+review_status: "automated static proof; live walkthrough pending"
+description: "A token-handling lab. The flag sits behind /api/v1/me, so the learner must log in, extract the token, set the Authorization header, and prove the endpoint also rejects a missing token."
+visibility: public
+flag: "OCR{k4r4t3_c4ll_s1ngl3_t0k3n}"
+
+tools:
+  - terminal
+  - curl
+  - java
+
+scenario: |
+  Northwind's analyst portal now requires a bearer token. The demo account is
+  `analyst` with the password `karate-demo-2026`. The login endpoint returns a
+  token; the profile endpoint returns the flag only when that token is sent in
+  the `Authorization` header.
+
+  A good API suite logs in once, stores the token, and reuses it. A fragile
+  suite logs in for every scenario and hides failures in repeated setup. Write
+  one small login feature, call it from the test feature, and keep the token
+  in one place.
+
+  The account and token are fictional and local to the lab.
+
+troubleshooting: "If login returns 401, confirm the JSON keys are username and password and that the request sets Content-Type: application/json. If /me returns 401, print the token and check that the header is exactly Authorization: Bearer <token>, with one space. Do not put the token in a screenshot or a shared document."
+defensive_takeaways: "Treat tokens as credentials: keep them out of logs, scope them to the task, and expire them. Test both the positive path and the missing-token path. A login helper is shared infrastructure; make it obvious where the credential comes from and never hard-code a production token in a test file."
+difficulty_evidence: "Static student-tester walkthrough of the login and profile endpoints, workbook, and solver steps; live lab run not recorded; declared difficulty 'intermediate' retained as provisional because the learner must carry state between requests."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-26"
+workbook: "wiki/range/software-security/CH_SWSEC_Karate_API_Testing/03_Authentication_And_Reuse/"
+
+hostnames:
+  - ip_offset: "94"
+    hostname: "api.lab"
+    description: "Northwind Training analyst API (HTTP 8080)"
+
+topology:
+  nodes:
+    - id: "api"
+      label: "Northwind Training analyst API"
+      type: "server"
+      ip_offset: "94"
+      ports: [8080]
+      services: ["http", "json"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Log in with curl first so you can see the shape:
+
+      curl -s -X POST http://api.lab:8080/api/v1/login \
+        -H 'Content-Type: application/json' \
+        -d '{"username":"analyst","password":"karate-demo-2026"}'
+
+      The response has a `token` field.
+    unlock_after_minutes: 0
+
+  - text: |
+      In Karate, put the login in its own feature and call it once:
+
+      # login.feature
+      Feature: login
+        Scenario: get a token
+          * url 'http://api.lab:8080'
+          * path 'api/v1/login'
+          * request { username: 'analyst', password: 'karate-demo-2026' } # security-delta: allow credential-like assignment
+          * method post
+          * status 200
+          * def token = response.token
+
+      Then from the test feature:
+      * def auth = call read('login.feature')
+      * header Authorization = 'Bearer ' + auth.token
+    unlock_after_minutes: 8
+
+  - text: |
+      For a suite that runs many scenarios, use callSingle so the login happens
+      once per run:
+
+      * def auth = karate.callSingle('classpath:login.feature')
+
+      Then call /api/v1/me with the header and capture the `flag` field.
+    unlock_after_minutes: 15
+
+test:
+  steps:
+    - name: "Login returns a token"
+      command: "curl -s -X POST http://{target.api}:8080/api/v1/login -H 'Content-Type: application/json' -d '{\"username\":\"analyst\",\"password\":\"karate-demo-2026\"}' | jq -r .token"
+      expect: "northwind-karate-demo-token"
+      timeout: 20
+
+    - name: "Profile rejects a missing token"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.api}:8080/api/v1/me"
+      expect: "401"
+      timeout: 20
+
+    - name: "Profile returns the flag with a valid token"
+      command: "T=$(curl -s -X POST http://{target.api}:8080/api/v1/login -H 'Content-Type: application/json' -d '{\"username\":\"analyst\",\"password\":\"karate-demo-2026\"}' | jq -r .token); curl -s -H \"Authorization: Bearer $T\" http://{target.api}:8080/api/v1/me | jq -r .flag"
+      expect: "OCR{k4r4t3_c4ll_s1ngl3_t0k3n}"
+      timeout: 20

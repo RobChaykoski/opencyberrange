@@ -1,0 +1,8193 @@
+schema_version: 1
+review_anchor: '2026-11-26'
+groups:
+- id: governance
+  title: Governance, risk and assurance
+  purpose: Policy, control mapping, risk, privacy, retention, procurement, audit, and review records.
+  csf:
+  - GV.OC
+  - GV.RM
+  - GV.RR
+  - GV.PO
+  - GV.OV
+  nist:
+  - PM-1
+  - PM-4
+  - PM-9
+  - CA-2
+  - CA-5
+  - CA-7
+  - RA-3
+  - SI-12
+  owner: Platform lead with the privacy officer
+- id: architecture
+  title: Architecture, design and decisions
+  purpose: System and data architecture, interfaces, schemas, and architecture decision records.
+  csf:
+  - ID.AM
+  - PR.PS
+  - PR.DS
+  nist:
+  - CM-2
+  - CM-3
+  - CM-4
+  - SA-5
+  - SA-8
+  - SA-11
+  - SI-12
+  owner: Architecture lead
+- id: operations
+  title: Operations and service management
+  purpose: Deployment, runbooks, backup and restore, availability, monitoring, database integrity, migrations,
+    and upgrade paths.
+  csf:
+  - PR.PS
+  - PR.IR
+  - RC.RP
+  nist:
+  - CM-6
+  - CP-10
+  - IR-4
+  - SI-2
+  - SI-4
+  - AU-2
+  - AU-6
+  owner: Platform operator
+- id: security
+  title: Security engineering and assurance
+  purpose: Authentication, authorization, tenancy, consent enforcement, threat and vulnerability work,
+    scanning, and security evidence.
+  csf:
+  - PR.AA
+  - PR.DS
+  - DE.CM
+  - RS.AN
+  nist:
+  - AC-3
+  - AC-6
+  - AU-2
+  - CA-7
+  - RA-5
+  - SC-7
+  - SI-4
+  - IR-4
+  owner: Security lead
+- id: curriculum
+  title: Curriculum, learning and assessment
+  purpose: Learning design, tracks and pathways, labs, competencies, assessment, analytics, transcripts,
+    achievements, and instructor practice.
+  csf:
+  - PR.AT
+  - ID.AM
+  nist:
+  - AT-2
+  - PM-5
+  - SA-11
+  owner: Curriculum lead
+- id: integrations
+  title: Integrations and ecosystem
+  purpose: SSO and identity providers, LMS/LTI, OpenGRC and the wider ecosystem, reporting boundaries,
+    and evidence exchange.
+  csf:
+  - GV.SC
+  - ID.IM
+  nist:
+  - SA-9
+  - SR-3
+  - PM-5
+  owner: Integration lead
+- id: product
+  title: Product, releases and change
+  purpose: Scope, releases, deliverables, editions, roadmaps, counts, handoffs, and the published project
+    overview.
+  csf:
+  - GV.RR
+  - GV.OV
+  nist:
+  - CM-3
+  - SA-10
+  - SI-12
+  owner: Product lead
+- id: research
+  title: Research, pilots and community
+  purpose: Pilots, research notes, community events, UI and experience studies, and proposals that are
+    not yet product commitments.
+  csf:
+  - GV.OV
+  - ID.IM
+  nist:
+  - PM-4
+  - PM-9
+  owner: Research lead
+- id: archive
+  title: Archive
+  purpose: Superseded plans, completed migrations, and historical records kept for provenance. Not current
+    operating guidance.
+  csf:
+  - GV.OV
+  nist:
+  - SI-12
+  - MP-6
+  owner: Records custodian
+- id: documentation
+  title: Documentation system
+  purpose: The documentation standard, review form, grouping register, and generated group indexes.
+  csf:
+  - GV.PO
+  - GV.OV
+  nist:
+  - PM-1
+  - CM-2
+  - SI-12
+  owner: Documentation steward
+documents:
+- path: docs/ABOUT-AREA.md
+  title: About area
+  group: product
+  doc_type: reference
+  audience:
+  - developer
+  classification: public
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/ACADEMY-INSTRUCTOR-REPORTING-IA.md
+  title: Academy, instructor, and reporting IA
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/ACCESSIBILITY.md
+  title: Accessibility statement
+  group: governance
+  doc_type: standard
+  audience:
+  - developer
+  classification: public
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R2
+- path: docs/ACHIEVEMENTS.md
+  title: Achievements and recognition
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/ACTIVE-DIRECTORY-PATHWAY.md
+  title: Active Directory attack and remediation pathway
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/AI-GOVERNANCE-AND-SECURITY-PATHWAY.md
+  title: AI governance and security pathway
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/AI-MENTOR.md
+  title: AI Mentor
+  group: product
+  doc_type: design
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/AI-SECURITY-AGENTIC-LABS.md
+  title: AI security and agentic skill labs
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/ALEMBIC-BASELINE.md
+  title: Alembic baseline and drift
+  group: operations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/ALEMBIC-DRIFT-INVENTORY.md
+  title: Alembic drift inventory
+  group: operations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/ANALYTICS-EVENT-SCHEMA.md
+  title: Analytics event schema and Exercise Health
+  group: architecture
+  doc_type: architecture
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/ANALYTICS-GOVERNANCE.md
+  title: Analytics governance
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/ANTI-SCRAPING.md
+  title: Anti-scraping and crawler controls
+  group: security
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/API-ERROR-CODES.md
+  title: API error codes
+  group: architecture
+  doc_type: architecture
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/API-SECURITY-LABS.md
+  title: API security labs
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/ARCHITECTURE.md
+  title: 'SWOCTS Cyber Range: system architecture'
+  group: architecture
+  doc_type: architecture
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/ATTACK-NAVIGATOR.md
+  title: MITRE ATT&CK Navigator tool
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/ATTACK-SIMULATION-DASHBOARD.md
+  title: Attack simulation dashboard
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/AUTH-LIFECYCLE.md
+  title: Authentication lifecycle
+  group: security
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/AUTHORIZATION-SERVICE.md
+  title: Authorization Service
+  group: security
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/AUTOMATED-SCORING.md
+  title: 'Automated scoring and AI: transparency statement'
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/AUTOMOTIVE-AND-AEROSPACE-PATHWAY.md
+  title: Automotive and aerospace security pathways
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/BACKUP-RESTORE-TEST.md
+  title: Backup and restore testing
+  group: operations
+  doc_type: procedure
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: semiannual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/BACKUP-SECURITY.md
+  title: Backup security
+  group: security
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/BASIC-LEARNING-ANALYTICS.md
+  title: Basic learning analytics
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/BROWSER-MATRIX.md
+  title: Browser and device matrix
+  group: operations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/CAPSTONE-BUILDER.md
+  title: Capstone Builder
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/CAREER-AND-CERTIFICATION-RESOURCES.md
+  title: Career and certification resources
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/CAREER-ATLAS-AND-MOMENTUM.md
+  title: Career Atlas and Momentum
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/CAREER-READINESS-AND-GPS.md
+  title: Career readiness and the Cybersecurity GPS
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/CAREER-STORIES.md
+  title: Career Stories
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/CELEBRATION-WALL.md
+  title: Celebration Wall
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/CERTIFICATION-QUESTION-BANKS.md
+  title: Certification question banks
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/CHARTING.md
+  title: Charting standard
+  group: architecture
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/CODE-AND-DATABASE-REVIEW-2026-11-24.md
+  title: 'Code and database review: 24 November 2026'
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/COMMUNITY-ACADEMIC-BACKLOG.md
+  title: Community / Academic backlog
+  group: research
+  doc_type: report
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/COMMUNITY-EVENTS-CALENDAR.md
+  title: Community events calendar
+  group: research
+  doc_type: report
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/COMPETENCY-CONTRACTS.md
+  title: Competency contracts
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/COMPETENCY-FRAMEWORK.md
+  title: Competency Framework
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/COMPETENCY-MATRIX-AND-LAB-HEALTH.md
+  title: Competency matrix and lab health dashboard
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/COMPETENCY-REVIEW-CYCLE.md
+  title: Competency review cycle
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/COMPETENCY-REVIEW-GUIDE.md
+  title: Competency contract review guide
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/COMPETENCY-REVIEW-QUEUE.md
+  title: Competency-contract review queue
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/COMPLIANCE.md
+  title: 'Compliance posture: privacy, accessibility, automated scoring, and integration'
+  group: governance
+  doc_type: standard
+  audience:
+  - developer
+  classification: public
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R2
+- path: docs/CONSENT-REVOCATION.md
+  title: Consent revocation and data destruction
+  group: security
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/CONTENT-GAP-ANALYSIS.md
+  title: Content gap analysis — November 2026
+  group: research
+  doc_type: report
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/CONTRIBUTORS-AND-BRANCHES.md
+  title: Contributors, branches, and licensing
+  group: governance
+  doc_type: reference
+  audience:
+  - developer
+  classification: public
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/COUNTS.md
+  title: Lab and content counts
+  group: product
+  doc_type: generated
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: false
+    evidence: false
+    retention: R3
+- path: docs/CURRICULUM-DRIFT-REPORT.md
+  title: Curriculum drift report
+  group: research
+  doc_type: report
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/CURRICULUM-TRACKS-2027.md
+  title: '2027 curriculum tracks: IAM, vulnerability management, SOC, platform engineering'
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/CYBER-DNA-V3.md
+  title: Cyber DNA v3 — talent discovery graph
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/CYBER-GPS-SCHEMA.md
+  title: Cyber GPS data model
+  group: architecture
+  doc_type: architecture
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/CYBER-PHYSICAL-CTF-PACK.md
+  title: Cyber-physical CTF pack
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/CYBER-WORKFORCE-READINESS-FRAMEWORK.md
+  title: Cyber Workforce Readiness Framework
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/CYBER-WORKFORCE-RISK-SCORE.md
+  title: Cyber Workforce Risk Score (CWRS)
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/DATA-CLASSIFICATION.md
+  title: Data classification
+  group: governance
+  doc_type: standard
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R2
+- path: docs/DATA-DICTIONARY.md
+  title: Data dictionary
+  group: architecture
+  doc_type: generated
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: false
+    evidence: false
+    retention: R3
+- path: docs/DATA-LABELS.md
+  title: Export data labels
+  group: security
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/DATABASE-INTEGRITY.md
+  title: Database integrity and change attribution
+  group: operations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/DATABASE-MIGRATIONS.md
+  title: Database schema and Alembic migrations
+  group: operations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/DEPENDENCY-WORKFLOW.md
+  title: Dependency and image workflow
+  group: operations
+  doc_type: procedure
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: semiannual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/DEPLOYMENT-RUNBOOK.md
+  title: Deployment runbook
+  group: operations
+  doc_type: runbook
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: semiannual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/DEPLOYMENT-TOPOLOGY-AND-SIZING.md
+  title: Deployment topology and database sizing
+  group: operations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/DETECTION-ENGINEERING-PATHWAY.md
+  title: Defensive detection-engineering pathway
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/DEVFEST-2027-CYBER-DISCOVERY.md
+  title: DevFest 2027 Cyber Discovery Experience
+  group: research
+  doc_type: report
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/DEVICE-TOPOLOGY.md
+  title: Network device topology engine
+  group: operations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/DFIR-PATHWAY.md
+  title: Digital forensics and incident response pathway
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/DIGITAL-CYBER-TRANSCRIPT.md
+  title: Digital Cyber Transcript
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/DPA-TEMPLATE.md
+  title: Data Processing Addendum (DPA) — template
+  group: governance
+  doc_type: form
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/DRONE-MAVLINK-HIJACK-WORKSHEET.md
+  title: Drone MAVLink hijack worksheet
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/ECOSYSTEM-TOOLING-MAP.md
+  title: Ecosystem tooling map
+  group: integrations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/EDITIONS.md
+  title: SWOCTS Cyber Range editions
+  group: product
+  doc_type: standard
+  audience:
+  - developer
+  classification: public
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R2
+- path: docs/EDUCATIONAL-PROVENANCE.md
+  title: Educational material provenance
+  group: governance
+  doc_type: standard
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R2
+- path: docs/EMPLOYER-CAPABILITY-GAPS.md
+  title: Employer capability gaps
+  group: research
+  doc_type: report
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/EVENT-CERTIFICATES.md
+  title: Event certificates
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/EVIDENCE-ENGINE.md
+  title: Evidence Engine
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/EXERCISE-AND-RANGEBOX-REVIEW.md
+  title: Exercise and RangeBox design review
+  group: research
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/EXERCISE-EXPORT-IMPORT.md
+  title: Exercise export and import
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/EXERCISE-QUIZZES.md
+  title: Exercise Knowledge Checks
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/FEDERATION.md
+  title: Federation
+  group: product
+  doc_type: design
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/FOUNDATIONS.md
+  title: The Age of Foundations
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/GCP-GDG-DEPLOY.md
+  title: 'GDG-Deploy: Google Cloud deployment'
+  group: operations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/HA-AND-KUBERNETES.md
+  title: HA and Kubernetes
+  group: operations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/HANDOFF-2026-11-26.md
+  title: Session handoff — 26 November 2026
+  group: product
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/HEALTH-DASHBOARD-PLAN.md
+  title: Host health dashboard plan (health.swocts.com)
+  group: operations
+  doc_type: design
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/HECVAT.md
+  title: HECVAT answer pack (draft)
+  group: governance
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/HOST-SCRIPT-SECURITY.md
+  title: Host-script security
+  group: security
+  doc_type: standard
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R2
+- path: docs/IDENTITY-QUESTS.md
+  title: Identity and Quests
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/IMPACT-AND-LEGACY.md
+  title: Impact and Legacy
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/INDEPENDENT-SECURITY-TESTING.md
+  title: Independent security testing
+  group: security
+  doc_type: report
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/INFORMATION-DESIGN-PROGRESSIVE-DISCLOSURE.md
+  title: 'Information design: progressive disclosure'
+  group: architecture
+  doc_type: design
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/INSTRUCTOR-ANALYTICS.md
+  title: Instructor Analytics
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/JUICE-SHOP-LABS.md
+  title: OWASP Juice Shop software-security labs
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/KASMVNC.md
+  title: KasmVNC transport for RangeBox
+  group: operations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/LAB-CREATION-ENGINE.md
+  title: Lab creation engine
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/LAB-DEFINITIONS-REPOSITORY.md
+  title: Lab Definitions Repository (OpenCyberRange-Labs)
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/LAB-FRESHNESS.md
+  title: Lab freshness
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/LAB-METADATA-SCHEMA.md
+  title: Lab metadata schema
+  group: architecture
+  doc_type: architecture
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/LAB-OUTCOMES.md
+  title: Lab outcomes contract
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/LANGUAGE-AND-LOCALIZATION.md
+  title: Language and localization
+  group: product
+  doc_type: standard
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R2
+- path: docs/LEARNER-ARCHETYPES.md
+  title: Learner archetypes
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/LEARNER-DEVELOPMENT-VECTOR.md
+  title: Learner Development Vector (LDV)
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/LEARNER-VISIBLE-SCORES.md
+  title: Learner-visible scores
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/LEARNING-FRAMEWORK.md
+  title: Learning framework
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/LEARNING-SIGNAL-INDICES.md
+  title: Learning signal indices
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/LIVE-MEMORY-FORENSICS.md
+  title: Live memory forensics
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/LIVING-ARCHIVE.md
+  title: The Living Archive
+  group: governance
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/LTI.md
+  title: 'LTI 1.3 Advantage: design contract'
+  group: product
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/MALWARE-LAB-GOVERNANCE.md
+  title: Malware lab governance
+  group: security
+  doc_type: standard
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R2
+- path: docs/MALWARE-SAMPLE-SOURCES.md
+  title: Malware sample sources and reference handling
+  group: security
+  doc_type: standard
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R2
+- path: docs/MANUAL-PUBLISHING.md
+  title: Manual publishing
+  group: operations
+  doc_type: procedure
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: semiannual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/MANUAL-SCREENSHOTS.md
+  title: Refreshing the manual screenshots
+  group: operations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/METADATA-POLICY-CONTEXT.md
+  title: Metadata-driven policy context
+  group: governance
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/METASPLOIT-TRACK.md
+  title: Metasploit Operations track
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/MICROSOFT-LEGAL-NOTICE.md
+  title: Microsoft products and licensing notice
+  group: governance
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/MINIO-OBJECT-STORAGE.md
+  title: 'MinIO object storage: design note'
+  group: operations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/MINOR-SAFE-DEFAULTS.md
+  title: Minor-safe defaults (Grades 9-12)
+  group: governance
+  doc_type: standard
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R2
+- path: docs/MKDOCS-GOVERNANCE.md
+  title: MkDocs governance
+  group: governance
+  doc_type: standard
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R2
+- path: docs/MODERN-APP-SECURITY-PATHWAY.md
+  title: Modern application security pathway
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/MOODLE-AUTHENTIK-AND-SECRETS-PLAN.md
+  title: 'Moodle pilot: Authentik and secrets plan'
+  group: integrations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/MOODLE-LTI-SHOWCASE.md
+  title: Moodle LTI 1.3 showcase
+  group: integrations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/MULTI-STUDENT-SCENARIOS.md
+  title: Multi-student incident scenarios
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/NETWORK-SANDBOX.md
+  title: Advanced network sandbox (Mininet) — design note
+  group: operations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/NEXT-STEPS.md
+  title: Next steps
+  group: product
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/NICE-FRAMEWORK-INGESTION.md
+  title: NICE Framework ingestion and lab mapping
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/NICE-MAPPING.md
+  title: NICE mapping matrix
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/OPEN-BADGES-3.0-SCOPE.md
+  title: Open Badges 3.0 — scope and build plan
+  group: curriculum
+  doc_type: standard
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R2
+- path: docs/OPEN-SOURCE-READINESS.md
+  title: Open-source readiness
+  group: governance
+  doc_type: reference
+  audience:
+  - developer
+  classification: public
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/OPENIAM-TEST-STACK.md
+  title: OpenIAM test stack (dedicated dev lab host)
+  group: integrations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/OPERATIONS-MONITORING.md
+  title: Operations monitoring and the external watchdog
+  group: operations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/OS-SUPPORT.md
+  title: Host OS Support and Ubuntu 24.04 Decision
+  group: operations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/OT-SCANNING-SAFETY.md
+  title: OT/ICS scanning safety
+  group: security
+  doc_type: standard
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R2
+- path: docs/OT01-LAB-PROMPTS.md
+  title: OT/IoT Lab Prompts - SWOCTS Cyber Range
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/OWASP-SECURITY-BASELINE.md
+  title: OWASP security validation baseline
+  group: security
+  doc_type: standard
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R2
+- path: docs/OWASP-TOP10-LABS.md
+  title: OWASP Top 10 2025 labs
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/PHONE-OSINT-EXERCISES.md
+  title: Phone OSINT exercises
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/PIA-TRA-FINDINGS.md
+  title: PIA / TRA findings and status
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/PILOT-EVENT-RUNBOOK.md
+  title: Moodle LTI pilot — event runbook
+  group: operations
+  doc_type: runbook
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: semiannual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/PILOT-READINESS-REVIEW.md
+  title: Pilot readiness review — 2026-11-20
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/PRACTICE-EXAMS.md
+  title: Certification practice
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/PRIVACY-AND-DATA-DELETION.md
+  title: 'SWOCTS Cyber Range: Privacy, Erasure, and Backups'
+  group: governance
+  doc_type: procedure
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: semiannual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/PRIVACY-NOTICE.md
+  title: SWOCTS Cyber Range privacy notice
+  group: governance
+  doc_type: policy
+  audience:
+  - developer
+  classification: public
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R1
+- path: docs/PROCUREMENT-REQUIREMENTS.md
+  title: 'Procurement requirements: traceability'
+  group: governance
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/PRODUCTION-DEPLOYMENT-STATEMENT.md
+  title: Production deployment statement
+  group: operations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/PROFESSIONAL-PRIORITIES.md
+  title: Professional and Enterprise priorities
+  group: governance
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/PROFILE-EXPERIENCE-REVIEW.md
+  title: Profile and catalogue experience review
+  group: research
+  doc_type: report
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/PROGRAM-LAYER.md
+  title: 'Program layer: organizations, scenarios, transcript, and analytics'
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/PROGRAMME-REPORTS.md
+  title: Programme reports
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/PUBLICATION-METADATA-POLICY.md
+  title: Publication metadata policy
+  group: governance
+  doc_type: policy
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R1
+- path: docs/QUESTION-BANK-SOURCES.md
+  title: Certification question-bank sources and career mapping
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/RANGEBOX-CAPACITY.md
+  title: RangeBox capacity and stress results
+  group: operations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/RBAC-PBAC-MATRIX.md
+  title: RBAC and PBAC matrix
+  group: security
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/RBAC-PBAC.md
+  title: RBAC + policy-based authorization
+  group: security
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/README.md
+  title: Documentation index
+  group: documentation
+  doc_type: index
+  audience:
+  - public
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R3
+- path: docs/RELEASE-5-PRODUCTION-READINESS.md
+  title: Release 5 production readiness
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5-SCOPE.md
+  title: 'Release 5 scope: enterprise procurement and compliance'
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.39.0-DELIVERABLES.md
+  title: Release 5.39.0 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.40.0-DELIVERABLES.md
+  title: Release 5.40.0 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.41.0-DELIVERABLES.md
+  title: Release 5.41.0 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.42.0-DELIVERABLES.md
+  title: Release 5.42.0 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.43.0-DELIVERABLES.md
+  title: Release 5.43.0 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.43.1-DELIVERABLES.md
+  title: Release 5.43.1 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.44.0-DELIVERABLES.md
+  title: Release 5.44.0 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.45.0-DELIVERABLES.md
+  title: Release 5.45.0 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.46.0-DELIVERABLES.md
+  title: Release 5.46.0 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.46.1-DELIVERABLES.md
+  title: Release 5.46.1 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.46.2-DELIVERABLES.md
+  title: Release 5.46.2 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.47.0-DELIVERABLES.md
+  title: Release 5.47.0 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.48.0-DELIVERABLES.md
+  title: Release 5.48.0 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.49.0-DELIVERABLES.md
+  title: Release 5.49.0 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.50.0-DELIVERABLES.md
+  title: Release 5.50.0 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.50.1-DELIVERABLES.md
+  title: Release 5.50.1 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.51.0-DELIVERABLES.md
+  title: Release 5.51.0 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.51.1-DELIVERABLES.md
+  title: Release 5.51.1 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.51.2-DELIVERABLES.md
+  title: Release 5.51.2 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.52.0-DELIVERABLES.md
+  title: Release 5.52.0 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.52.1-DELIVERABLES.md
+  title: Release 5.52.1 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.52.10-DELIVERABLES.md
+  title: Release 5.52.10 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.52.2-DELIVERABLES.md
+  title: Release 5.52.2 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.52.3-DELIVERABLES.md
+  title: Release 5.52.3 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.52.4-DELIVERABLES.md
+  title: Release 5.52.4 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.52.5-DELIVERABLES.md
+  title: Release 5.52.5 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.52.6-DELIVERABLES.md
+  title: Release 5.52.6 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.52.7-DELIVERABLES.md
+  title: Release 5.52.7 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.52.8-DELIVERABLES.md
+  title: Release 5.52.8 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.52.9-DELIVERABLES.md
+  title: Release 5.52.9 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.53.0-DELIVERABLES.md
+  title: Release 5.53.0 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.53.1-DELIVERABLES.md
+  title: Release 5.53.1 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.54.0-DELIVERABLES.md
+  title: Release 5.54.0 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.54.1-DELIVERABLES.md
+  title: Release 5.54.1 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.54.2-DELIVERABLES.md
+  title: Release 5.54.2 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.55.0-DELIVERABLES.md
+  title: Release 5.55.0 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.55.1-DELIVERABLES.md
+  title: Release 5.55.1 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.55.2-DELIVERABLES.md
+  title: Release 5.55.2 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.56.0-DELIVERABLES.md
+  title: Release 5.56.0 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-5.56.1-DELIVERABLES.md
+  title: Release 5.56.1 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASE-6-SCOPE.md
+  title: 'Release 6 scope: competency, evidence, scale, and federation'
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/RELEASES.md
+  title: Releases
+  group: product
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/REPORTING-ROADMAP.md
+  title: Reporting roadmap by tier and role
+  group: integrations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/REPOSITORY-HYGIENE.md
+  title: Repository hygiene
+  group: governance
+  doc_type: standard
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R2
+- path: docs/RETENTION-POLICIES.md
+  title: Retention policies
+  group: governance
+  doc_type: standard
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R2
+- path: docs/REVERSE-PROXY.md
+  title: Reverse proxy and Nginx Proxy Manager
+  group: operations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/ROLE-CAPABILITY-MODEL.md
+  title: Role capability and reporting model
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/ROLE-READINESS-SCORING.md
+  title: Role readiness scoring
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/SECURITY-DATASETS.md
+  title: External open datasets for lab building
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/SECURITY-EVENTS.md
+  title: Security event store
+  group: security
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/SECURITY-REVIEW-2026-11-24.md
+  title: 'Security review log: 24 November 2026'
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/SECURITY-REVIEW-2026-11.md
+  title: Security review — November 2026
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/SECURITY-SCANNING.md
+  title: 'Security scanning: Syft, Grype, and Lynis'
+  group: security
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/SFIA-9-INGESTION.md
+  title: SFIA 9 ingestion plan
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/SIMULATED-CLOUD.md
+  title: Simulated cloud range
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/SKILL-DNA.md
+  title: Skill DNA
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/SOFTWARE-SECURITY-WORKSTREAM.md
+  title: Software Security Workstream
+  group: security
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/SSO-OIDC.md
+  title: OIDC single sign-on
+  group: integrations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/SSO-SAML-LDAP.md
+  title: SAML and LDAP single sign-on
+  group: integrations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/STUDENT-RISK-ENGINE.md
+  title: Student risk engine
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/SUPPLY-CHAIN-SECURITY-PATHWAY.md
+  title: Supply chain security pathway
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/SUPPLY-CHAIN.md
+  title: Supply-chain verification
+  group: security
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/SUPPORTED-VERSIONS.md
+  title: Supported Versions
+  group: operations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/SURVEY-PRIVACY.md
+  title: 'SWOCTS Cyber Range: survey privacy and consent'
+  group: governance
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/TENANT-ISOLATION-STATUS.md
+  title: Tenant isolation status
+  group: security
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/THREAT-AWARENESS-OPERATIONS.md
+  title: Threat-awareness operations
+  group: security
+  doc_type: procedure
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: semiannual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/TRAINING-CAPSTONES.md
+  title: Capstone runbook (training lab)
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/TRAINING-ECOSYSTEM.md
+  title: Training ecosystem (dev only)
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/TRAINING-INSTRUCTOR-GUIDE.md
+  title: Training instructor guide
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/TRAINING-VALIDATION.md
+  title: Training lab validation evidence
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/TWO-TENANT-PILOT.md
+  title: Two-tenant pilot
+  group: research
+  doc_type: report
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/UBUNTU-26.04-VALKEY-REDIS-TEST-PLAN.md
+  title: Ubuntu 26.04 LTS and Valkey 9.1.3 vs Redis 7.2 test plan
+  group: operations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/UBUNTU-NEXT-UPGRADE-CANDIDATE.md
+  title: Ubuntu next upgrade candidate
+  group: operations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/UI-AFFORDANCE-REVIEW.md
+  title: UI affordance and signifier review
+  group: research
+  doc_type: report
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/UPGRADE-WAVES.md
+  title: Upgrade Waves
+  group: operations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/V2-24.04-BUILD-OUT.md
+  title: Professional 2.1.4 Ubuntu 24.04 Build-Out Plan
+  group: operations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/V2-LEARNING-ANALYTICS.md
+  title: V2 Learning Analytics and Research Dashboard
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/V2-PROGRAM-CHARTER.md
+  title: V2 Program Charter
+  group: product
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/V2-SECURITY-EVIDENCE.md
+  title: 'SWOCTS Cyber Range: V2 security evidence record'
+  group: security
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/V2-SECURITY-OWASP-TOP-10.md
+  title: 'SWOCTS Cyber Range: V2 security baseline (OWASP Top 10)'
+  group: security
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/V2-UBUNTU-24.04-MIGRATION.md
+  title: V2 Ubuntu 24.04 Migration Plan
+  group: operations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/V3-HA-LAB-POOL.md
+  title: Enterprise preview multi-host lab pool and HA deployment plan
+  group: operations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/V3-PARKING-LOT.md
+  title: SWOCTS Cyber Range Enterprise preview parking lot
+  group: product
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/VALIDATION-REPORT.md
+  title: Validation report
+  group: product
+  doc_type: report
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/VULNHUB-SOURCING.md
+  title: VulnHub VM sourcing and licence alignment
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/WIKI-ORIGIN-SPLIT.md
+  title: Wiki origin split
+  group: operations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/WINDOWS-ARTIFACT-POLICY.md
+  title: Windows artifact policy
+  group: security
+  doc_type: standard
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R2
+- path: docs/WORKFORCE-READINESS-JOB-MATCHING.md
+  title: Workforce readiness and job matching
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/ZAP-SCAN-PLANNER.md
+  title: OWASP ZAP scan planner
+  group: security
+  doc_type: report
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/_project_overview/API-CAPABILITIES.md
+  title: API capabilities
+  group: product
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/_project_overview/DATA-DICTIONARY.md
+  title: Data dictionary
+  group: product
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/_project_overview/INFRASTRUCTURE.md
+  title: Infrastructure and component communications
+  group: product
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/_project_overview/NETWORK-MAP.md
+  title: Internal network map
+  group: product
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/_project_overview/README.md
+  title: Project overview pack
+  group: product
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/_project_overview/SOFTWARE-METADATA.md
+  title: Software metadata and versions
+  group: product
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/architecture/SIZING-AND-SETTINGS.md
+  title: OCR Sizing & Settings — Single Source of Truth
+  group: architecture
+  doc_type: architecture
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/architecture/index.md
+  title: Architecture
+  group: architecture
+  doc_type: architecture
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/archive/2.7.0-PLAN.md
+  title: 2.7.0 release plan
+  group: archive
+  doc_type: archive
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: false
+    evidence: false
+    retention: R5
+- path: docs/archive/CUTOVER-TO-CANONICAL-REPO.md
+  title: Cutover to the canonical repository
+  group: archive
+  doc_type: archive
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: false
+    evidence: false
+    retention: R5
+- path: docs/archive/HARDENING-2026-11.md
+  title: Hardening and refactor — November 2026
+  group: archive
+  doc_type: archive
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: false
+    evidence: false
+    retention: R5
+- path: docs/archive/PROD-DEPLOYMENT-VALIDATION-MATRIX.md
+  title: Production deployment validation matrix - 2.7.x upgrade
+  group: archive
+  doc_type: archive
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: false
+    evidence: false
+    retention: R5
+- path: docs/archive/README.md
+  title: Archive
+  group: archive
+  doc_type: archive
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: false
+    evidence: false
+    retention: R5
+- path: docs/archive/RELEASE-4-CLOSE-OUT.md
+  title: Release 4 close-out
+  group: archive
+  doc_type: archive
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: false
+    evidence: false
+    retention: R5
+- path: docs/archive/RELEASE-4-HOTFIX-4.0.2.md
+  title: 'Release 4 hotfix 4.0.2: RangeBox workspace tabs'
+  group: archive
+  doc_type: archive
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: false
+    evidence: false
+    retention: R5
+- path: docs/archive/RELEASE-5-LOCAL.md
+  title: Release 5 local development stack
+  group: archive
+  doc_type: archive
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: false
+    evidence: false
+    retention: R5
+- path: docs/archive/SECURITY-REVIEW-5.0.1.md
+  title: Security and compliance review — Release 5.0.1
+  group: archive
+  doc_type: archive
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: false
+    evidence: false
+    retention: R5
+- path: docs/archive/UI-VERIFICATION.md
+  title: UI verification
+  group: archive
+  doc_type: archive
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: false
+    evidence: false
+    retention: R5
+- path: docs/archive/UPGRADE-TO-LATEST-GA-PLAN.md
+  title: 'Plan: Build a New Repo on Latest Supported GA Components'
+  group: archive
+  doc_type: archive
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: false
+    evidence: false
+    retention: R5
+- path: docs/archive/V1-RELEASE.md
+  title: SWOCTS Cyber Range 1.0 release record (powered by OpenCyberRange)
+  group: archive
+  doc_type: archive
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: false
+    evidence: false
+    retention: R5
+- path: docs/archive/WAVE-0-BASELINE.md
+  title: Wave 0 Baseline
+  group: archive
+  doc_type: archive
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: false
+    evidence: false
+    retention: R5
+- path: docs/archive/WAVE-A-DEPENDENCIES.md
+  title: Wave A — dependency security patches
+  group: archive
+  doc_type: archive
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: false
+    evidence: false
+    retention: R5
+- path: docs/archive/WAVE-B-AUTH.md
+  title: Wave B — auth and crypto consolidation
+  group: archive
+  doc_type: archive
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: false
+    evidence: false
+    retention: R5
+- path: docs/archive/WAVE-C-FRAMEWORKS.md
+  title: Wave C — framework and runtime majors
+  group: archive
+  doc_type: archive
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: false
+    evidence: false
+    retention: R5
+- path: docs/compliance/index.md
+  title: Compliance and procurement
+  group: governance
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/curriculum/index.md
+  title: Curriculum and assessment
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/decisions/0002-edition-model.md
+  title: 'ADR 0002: Base, Pro, and Enterprise editions'
+  group: architecture
+  doc_type: adr
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R5
+- path: docs/decisions/0003-edition-scope-refinement.md
+  title: 'ADR 0003: Edition naming and Professional/Enterprise scope'
+  group: architecture
+  doc_type: adr
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R5
+- path: docs/decisions/0004-single-platform-release-version.md
+  title: 'ADR 0004: One platform release number, edition names as profiles'
+  group: architecture
+  doc_type: adr
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R5
+- path: docs/decisions/0004-sso-ha-contract.md
+  title: 'ADR 0004: SSO on the HA control plane'
+  group: architecture
+  doc_type: adr
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R5
+- path: docs/decisions/0005-lab-network-egress.md
+  title: 'ADR 0005: Lab network egress for v2.5.3'
+  group: architecture
+  doc_type: adr
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R5
+- path: docs/decisions/0005-release-6-evidence-first.md
+  title: 'ADR 0005: Release 6 is evidence-first'
+  group: architecture
+  doc_type: adr
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R5
+- path: docs/decisions/0006-identity-platform-roles.md
+  title: 'ADR 0006: Identity platform roles'
+  group: architecture
+  doc_type: adr
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R5
+- path: docs/decisions/0007-docker-host-isolation.md
+  title: '0007: Isolate the Docker lab control plane from the web tier'
+  group: architecture
+  doc_type: adr
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R5
+- path: docs/decisions/0008-threat-awareness.md
+  title: 'ADR 0008: Threat awareness data and the Global Threat Map'
+  group: architecture
+  doc_type: adr
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R5
+- path: docs/decisions/0009-intelligence-sources.md
+  title: 'ADR 0009: External threat-intelligence sources'
+  group: architecture
+  doc_type: adr
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R5
+- path: docs/decisions/0010-consent-rls.md
+  title: 'ADR 0010: Consent-subsystem tenant RLS'
+  group: architecture
+  doc_type: adr
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R5
+- path: docs/documentation/DOCUMENT-REVIEW-FORM.md
+  title: Document review form
+  group: documentation
+  doc_type: form
+  audience:
+  - public
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/documentation/DOCUMENTATION-STANDARDS.md
+  title: Documentation standard
+  group: documentation
+  doc_type: form
+  audience:
+  - public
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/documentation/README.md
+  title: Documentation governance
+  group: documentation
+  doc_type: form
+  audience:
+  - public
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/integrations/index.md
+  title: Integrations
+  group: integrations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/lite/QUICKSTART.md
+  title: OCR Lite Quickstart
+  group: product
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/lite/SOLO_OPERATOR_GUIDE.md
+  title: OCR-Lite Solo Operator Guide
+  group: product
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/operations/index.md
+  title: Operations
+  group: operations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/research/REB-SURVEY-PACKAGE.md
+  title: REB-ready survey package
+  group: research
+  doc_type: report
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/reviews/ADMIN-SETTINGS-REVIEW-2026-11.md
+  title: System administrator review - server settings
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/reviews/COMPETENCY-REVIEW-CAMPAIGN.md
+  title: Competency review campaign
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/reviews/CYBERCHEF-LABS-REVIEW.md
+  title: 'CyberChef labs: student-tester and curriculum review'
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/reviews/DATA-ANALYST-SIGNOFF-2026-11.md
+  title: Data analyst review and sign-off - 2.7.x upgrade
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/reviews/DEMO-FEATURE-TEST-DATA.md
+  title: Demo feature-test data
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/reviews/DIGITAL-SAFETY-LABS-REVIEW.md
+  title: 'Digital-safety and email labs: design, student-tester, and curriculum review'
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/reviews/IAM-LABS-REVIEW.md
+  title: 'Identity & Access labs: design, student-tester, and curriculum review'
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/reviews/K12-GRADE-10-12-LABS-REVIEW.md
+  title: 'Grade 10–12 Digital Frontier labs: design and student-tester review'
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/reviews/LAB-ISOLATION-AUDIT.md
+  title: Lab container isolation audit
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/reviews/LAB-RELEASE-PROOF.md
+  title: Lab release proof
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/reviews/TECHNICAL-DEBT-REVIEW-2026-11.md
+  title: Technical debt review and recommendations
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/reviews/V2.5.2-RELEASE-EVIDENCE.md
+  title: v2.5.2 release evidence pack
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/reviews/V2.5.2-TAG-REVIEW.md
+  title: OpenCyberRange v2.5.2 Tag-Level Review Record
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/reviews/V2.5.3-MAINTENANCE-PLAN.md
+  title: v2.5.3 maintenance plan
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/reviews/V2.5.3-RELEASE-EVIDENCE.md
+  title: v2.5.3 release evidence pack
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/reviews/V2.5.4-RELEASE-EVIDENCE.md
+  title: v2.5.4 release evidence pack
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/reviews/competency/README.md
+  title: Competency review packets
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/reviews/competency/ai.md
+  title: AI competency review packet
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/reviews/competency/forensics.md
+  title: Forensics competency review packet
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/reviews/competency/high-school.md
+  title: High School competency review packet
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/reviews/competency/identity.md
+  title: Identity competency review packet
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/reviews/competency/linux.md
+  title: Linux competency review packet
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/reviews/competency/malware.md
+  title: Malware competency review packet
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/reviews/competency/metasploit.md
+  title: Metasploit competency review packet
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/reviews/competency/network.md
+  title: Network competency review packet
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/reviews/competency/osint.md
+  title: OSINT competency review packet
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/reviews/competency/ot.md
+  title: OT competency review packet
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/reviews/competency/software-security.md
+  title: Software Security competency review packet
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/reviews/competency/web.md
+  title: Web competency review packet
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/reviews/competency/windows.md
+  title: Windows competency review packet
+  group: governance
+  doc_type: assessment
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
+- path: docs/security/index.md
+  title: Security
+  group: security
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/status-dashboard.md
+  title: Deployment status
+  group: operations
+  doc_type: generated
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: false
+    evidence: false
+    retention: R3

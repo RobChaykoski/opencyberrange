@@ -1,0 +1,131 @@
+title: "Assertions and Data Tables"
+category: web
+difficulty: beginner
+estimated_time: 35
+prerequisites:
+  - software-security-3-1-first-karate-feature
+# By completion students will be able to:
+learning_outcomes:
+  - Use match for equality, contains, type, and array length assertions
+  - Use a Scenario Outline with an Examples table to run the same test repeatedly
+  - Read a failed assertion and explain which expectation was wrong
+  - Explain how an Examples table proves an input boundary without duplicating scenarios
+mapped_skills:
+  - web_api
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+  - Submit the feature file with at least one Scenario Outline and one negative assertion.
+  - Explain the difference between a status assertion and a body assertion.
+mitre_attack:
+  - tactic: Reconnaissance
+    technique: T1595
+    technique_name: Active Scanning
+    detection: Alert on repeated parameterised requests from one test identity against catalogue or search endpoints.
+owner: "OpenCyberRange Curriculum"
+content_version: "1.0.0"
+reviewed_at: "2026-11-26"
+review_status: "automated static proof; live walkthrough pending"
+description: "A short assertion lab using an echo endpoint, a catalogue, and a data table. The flag is returned only for the exact value the Examples table proves, so a passing run and a captured flag are the same evidence."
+visibility: public
+flag: "OCR{k4r4t3_m4tch_4nd_t4bl3s}"
+
+tools:
+  - terminal
+  - curl
+  - java
+
+scenario: |
+  The Northwind catalogue team keeps breaking the same two things: the echo
+  endpoint changes its response shape, and the product list loses a row during
+  a merge. They want one small Karate feature that proves the contract for a
+  table of inputs and then checks one product by name.
+
+  The echo endpoint is intentionally simple. For the exact value `karate` it
+  returns the training flag. Other values return a normal echo response. Your
+  Examples table should include both the passing value and at least one
+  negative case, so the test proves the boundary rather than only the happy
+  path.
+
+  Everything here is fictional and local.
+
+troubleshooting: "If a Scenario Outline runs zero times, check that the Examples table is indented under the Scenario Outline and that the header names match the placeholders exactly. If match reports a type mismatch, print response and compare the JSON type before changing the assertion. If the flag is missing, confirm the value is exactly karate in lower case."
+defensive_takeaways: "Assertions are executable requirements. A table of examples turns one happy-path check into a small contract suite, and a negative example proves the boundary. Keep the table small enough to review and make each row explain a real input class."
+difficulty_evidence: "Static student-tester walkthrough of the target, workbook, and solver steps; live lab run not recorded; declared difficulty 'beginner' retained as provisional because the learner must move from one scenario to a data-driven suite."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-26"
+workbook: "wiki/range/software-security/CH_SWSEC_Karate_API_Testing/02_Assertions_And_Data_Tables/"
+
+hostnames:
+  - ip_offset: "93"
+    hostname: "api.lab"
+    description: "Northwind Training catalogue API (HTTP 8080)"
+
+topology:
+  nodes:
+    - id: "api"
+      label: "Northwind Training catalogue API"
+      type: "server"
+      ip_offset: "93"
+      ports: [8080]
+      services: ["http", "json"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Start with the echo endpoint:
+      http://api.lab:8080/api/v1/echo?value=karate
+      It returns JSON. The `flag` field appears only for the exact value.
+    unlock_after_minutes: 0
+
+  - text: |
+      Use a Scenario Outline:
+
+      Scenario Outline: echo values
+        * url 'http://api.lab:8080'
+        * path 'api/v1/echo'
+        * param value = '<value>'
+        * method get
+        * status 200
+        * match response.value == '<value>'
+
+        Examples:
+          | value  |
+          | karate |
+          | kettle |
+
+      Every row runs the same scenario.
+    unlock_after_minutes: 6
+
+  - text: |
+      Add a type and array assertion for the catalogue:
+
+      * path 'api/v1/products'
+      * method get
+      * match response.products == '#[3]'
+      * match response.products[1].name == 'Karate Gi'
+      * match each response.products contains { id: '#string', price: '#number' }
+
+      The flag is in the echo response for the `karate` row.
+    unlock_after_minutes: 12
+
+test:
+  steps:
+    - name: "Echo reports the value length"
+      command: "curl -s 'http://{target.api}:8080/api/v1/echo?value=karate' | jq -r .length"
+      expect: "6"
+      timeout: 20
+
+    - name: "Catalogue contains the expected product"
+      command: "curl -s http://{target.api}:8080/api/v1/products | jq -r '.products[] | select(.name == \"Karate Gi\") | .price'"
+      expect: "65"
+      timeout: 20
+
+    - name: "Echo returns the flag for the exact value"
+      command: "curl -s 'http://{target.api}:8080/api/v1/echo?value=karate' | jq -r .flag"
+      expect: "OCR{k4r4t3_m4tch_4nd_t4bl3s}"
+      timeout: 20

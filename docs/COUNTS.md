@@ -5,39 +5,40 @@ when updating the README, release notes, or a deployment record.
 
 | Count | Value | Source |
 |---|---:|---|
-| Lab definitions | **218** | every `platform/labs/**/lab.yaml` |
-| Unique lab slugs | **218** | directory name of each `lab.yaml` |
-| Tester manifests | **218** | `platform/tester/manifests/*.yaml` |
-| Competency contracts | **218** | `platform/backend/app/data/competency-contracts.yaml` |
-| Labs with a workbook link | **207** | non-empty `workbook:` in `lab.yaml` |
+| Lab definitions | **222** | every `platform/labs/**/lab.yaml` |
+| Unique lab slugs | **222** | directory name of each `lab.yaml` |
+| Tester manifests | **222** | `platform/tester/manifests/*.yaml` |
+| Competency contracts | **222** | `platform/backend/app/data/competency-contracts.yaml` |
+| Labs with a workbook link | **211** | non-empty `workbook:` in `lab.yaml` |
 | Labs without a workbook link | **11** | remaining `lab.yaml` files |
-| Registered labs in dev/prod | **218** | `labs` table after discovery |
-| Public catalogue labs | **171** | `visibility = 'public'`; what a student sees before course enrolment |
+| Registered labs in dev/prod | **218** | `labs` table after discovery; the four Karate labs register on the next discovery run |
+| Public catalogue labs | **175** | `visibility = 'public'`; what a student sees before course enrolment |
 | Course-scoped labs | **47** | `visibility = 'course'`; visible only inside an assigned course |
 | Tracks | **13** | track folders under `platform/labs` |
 
-The badge and headline should use **218 lab definitions** and, when referring
-to workbook coverage, **207 workbook-mapped labs**. A deployment record should
-say **218 registered labs** only after lab discovery has run.
+The badge and headline should use **222 lab definitions** and, when referring
+to workbook coverage, **211 workbook-mapped labs**. A deployment record should
+say **222 registered labs** only after lab discovery has run.
 
-The student dashboard and exercise catalogue show **171 public exercises**,
-because 47 of the 218 are course-scoped. Do not treat the 171 total as a
+The student dashboard and exercise catalogue show **175 public exercises**,
+because 47 of the 222 are course-scoped. Do not treat the 175 total as a
 missing-content bug; confirm the public/course split before changing the count.
 
 The 5.17.2 wave added 19 pathway labs: 9 Active Directory exercises
 (`windows-11-*`) and 10 modern application-security exercises (`web-11-*`).
-The November 2026 wave added the course-visible Arkime and ZAP labs. The Cloud
-IAM lab is deferred to 5.37.0 and is not counted here.
+The November 2026 wave added the course-visible Arkime and ZAP labs. The
+Software Security track now includes the four `software-security-3-*` Karate
+API-testing labs. The Cloud IAM lab is deferred to 5.37.0 and is not counted
+here.
 
-## Curriculum-manifest caveat
+## Curriculum-manifest state
 
 `curriculum-manifest.yaml` is the source for the generated README inventory and
-`Workbook/CURRICULUM.md`. It is behind the tree: it still names planned
-chapters, it does not declare the Metasploit track, and some chapter
-directories (for example `CH_FOR03_Live_Memory`) do not match the manifest.
-`python scripts/generate-curriculum-docs.py --check` therefore fails. Do not
-hand-edit the generated README inventory to paper over this; fix the manifest
-and regenerate. The lab counts above come from `lab.yaml`, not the manifest.
+`Workbook/CURRICULUM.md`. The four Karate labs are declared under `SWSEC02`,
+which follows `SWSEC01` and recommends `MAL01` next. The manifest still names
+planned chapters; those are intentional and are not counted as lab definitions.
+`python scripts/generate-curriculum-docs.py --check` must pass before a release.
+The lab counts above come from `lab.yaml`, not the manifest.
 
 ## Historical snapshots
 

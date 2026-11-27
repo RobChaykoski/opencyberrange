@@ -4,7 +4,7 @@
 !!! note "Curriculum position"
     **Chapter:** `SWSEC01` — Software Security Foundations
     **Prerequisites:** `WEB02` — SQL Injection and Web Exploitation
-    **Recommended next:** `MAL01` — Malware Fundamentals
+    **Recommended next:** `SWSEC02` — API Testing with Karate
 <!-- END GENERATED CHAPTER POSITION -->
 
 ## What this course is

@@ -14,10 +14,10 @@ See [Competency contract review guide](COMPETENCY-REVIEW-GUIDE.md).
 
 | Measure | Value |
 |---|---:|
-| Contracts | **218** |
+| Contracts | **222** |
 | Reviewed | **25** |
-| Awaiting review | **193** |
-| Review coverage | **11.5%** |
+| Awaiting review | **197** |
+| Review coverage | **11.3%** |
 
 | Track | Awaiting review |
 |---|---:|
@@ -31,13 +31,13 @@ See [Competency contract review guide](COMPETENCY-REVIEW-GUIDE.md).
 | Network | 21 |
 | OSINT | 10 |
 | OT | 5 |
-| Software Security | 2 |
+| Software Security | 6 |
 | Web | 26 |
 | Windows | 48 |
 
 | Contract status | Count |
 |---|---:|
-| `baseline_derived` | 193 |
+| `baseline_derived` | 197 |
 
 ## Review campaign
 
@@ -194,6 +194,10 @@ Per-track worksheets: [`docs/reviews/competency/`](reviews/competency/README.md)
 | `ot-3-1-ics-pcap-forensics` ICS/OT PCAP Forensics - TRITON, Industroyer2, and GOOSE | OT | advanced | public | 120 | OT-001, OT-002, OT-006, OT-010 | flag, validation_step, analyst_answer, artifact | baseline_derived |
 | `software-security-1-1-hidden-export-route` Hidden Export Route | Software Security | beginner | public | 15 | WEB-001, WEB-005, WEB-009, WEB-019 | flag, validation_step, analyst_answer, artifact | baseline_derived |
 | `software-security-2-1-diagnostics-command-injection` Diagnostics Command Injection | Software Security | beginner | public | 15 | WEB-013, WEB-014, WEB-017, WEB-018 | flag, validation_step, analyst_answer, artifact | baseline_derived |
+| `software-security-3-1-first-karate-feature` Karate 101: Your First API Test | Software Security | beginner | public | 25 | WEB-001, WEB-005, WEB-009, WEB-019 | flag, validation_step, analyst_answer, artifact | baseline_derived |
+| `software-security-3-2-assertions-and-examples` Assertions and Data Tables | Software Security | beginner | public | 35 | WEB-001, WEB-005, WEB-009, WEB-019 | flag, validation_step, analyst_answer, artifact | baseline_derived |
+| `software-security-3-3-authentication-and-reuse` Authenticate Once, Reuse Everywhere | Software Security | intermediate | public | 40 | WIN-012, WEB-007, WEB-010, CLD-002 | flag, validation_step, analyst_answer, artifact | baseline_derived |
+| `software-security-3-4-negative-tests-and-evidence` Negative Tests and Evidence Reports | Software Security | intermediate | public | 45 | WEB-001, WEB-005, WEB-009, WEB-019 | flag, validation_step, analyst_answer, artifact | baseline_derived |
 | `web-1-2-technology-identification` Technology Identification | Web | beginner | public | 120 | WEB-001, WEB-003, WEB-004, WEB-005 | flag, validation_step, analyst_answer, artifact | baseline_derived |
 | `web-1-3-http-methods-enumeration` HTTP Methods Enumeration | Web | beginner | public | 120 | WEB-001, WEB-003, WEB-004, WEB-005 | flag, validation_step, analyst_answer, artifact | baseline_derived |
 | `web-1-4-header-analysis` Header Analysis | Web | beginner | public | 120 | WEB-001, WEB-003, WEB-004, WEB-005 | flag, validation_step, analyst_answer, artifact | baseline_derived |

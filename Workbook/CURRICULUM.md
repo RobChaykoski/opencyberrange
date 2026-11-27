@@ -15,15 +15,15 @@ Framework alignment is selective. See [Framework alignment](FRAMEWORKS.md).
 |---|---|---|---|---|---:|---|---|---|---|---|
 | `high-school` | Beginner Cybersecurity | Grades 9-12 learners with everyday computer experience and no assumed cybersecurity background. | beginner | None | 18 | 7h 00m | RangeBox with browser, terminal, and beginner lab targets | `netfor` | Entry-level Cyber Defense Analyst; IT Support; SOC Analyst (entry) | published |
 | `netfor` | Network Security | Beginner-to-intermediate learners who need network foundations, log analysis, and packet evidence. | beginner | BEG04 | 22 | 19h 45m | RangeBox with terminal, browser, and network lab targets | `webpt` | Network Defender; SOC Analyst; Network Engineer | published |
-| `webpt` | Web Application Security | Intermediate learners who can use a terminal and understand HTTP basics. | intermediate | NET00, NET01 | 16 | 21h 35m | RangeBox with browser, terminal, and web lab targets | `software-security` | Application Security Tester; Penetration Tester; Secure Developer | published |
-| `software-security` | Software Security | Intermediate learners who can read code and understand web requests. | intermediate | WEB02 | 2 | 30m | RangeBox with browser and software-security lab targets | `malware` | Secure Developer; Application Security Engineer; Penetration Tester | published |
+| `webpt` | Web Application Security | Intermediate learners who can use a terminal and understand HTTP basics. | intermediate | NET00, NET01 | 27 | 38h 35m | RangeBox with browser, terminal, and web lab targets | `software-security` | Application Security Tester; Penetration Tester; Secure Developer | published |
+| `software-security` | Software Security | Intermediate learners who can read code and understand web requests. | intermediate | WEB02 | 6 | 2h 55m | RangeBox with browser and software-security lab targets | `malware` | Secure Developer; Application Security Engineer; Penetration Tester | published |
 | `malware` | Malware Analysis | Intermediate learners with networking and forensic evidence experience. | intermediate | NET02, FOR01 | 10 | 7h 25m | RangeBox with terminal and isolated malware-analysis targets | `forensics` | Malware Analyst; Incident Responder; Threat Intelligence Analyst | published |
-| `forensics` | Digital Forensics | Intermediate learners who want to investigate memory, disk, endpoint, email, browser, and network evidence. | intermediate | NET02 | 4 | 2h 35m | RangeBox with forensic evidence images, PCAPs, and the synthetic DFIR evidence pack | `osint` | Digital Forensics Examiner; Incident Responder; Threat Intelligence Analyst | published |
-| `osint` | OSINT | Adult learners who want public-source investigation skills; Grades 9-12 are not assigned the live extensions. | beginner | NET00 | 9 | 4h 50m | Browser and RangeBox; offline mirrors, with optional read-only adult extensions | `identity` | OSINT Analyst; Threat Intelligence Analyst; Investigator | published |
+| `forensics` | Digital Forensics | Intermediate learners who want to investigate memory, disk, endpoint, email, browser, and network evidence. | intermediate | NET02 | 5 | 4h 35m | RangeBox with forensic evidence images, PCAPs, and the synthetic DFIR evidence pack | `osint` | Digital Forensics Examiner; Incident Responder; Threat Intelligence Analyst | published |
+| `osint` | OSINT | Adult learners who want public-source investigation skills; Grades 9-12 are not assigned the live extensions. | beginner | NET00 | 10 | 5h 35m | Browser and RangeBox; offline mirrors, with optional read-only adult extensions | `identity` | OSINT Analyst; Threat Intelligence Analyst; Investigator | published |
 | `identity` | Identity & Access | Intermediate learners interested in authentication, federation, and account lifecycle. | intermediate | NET00 | 39 | 75h 10m | RangeBox with browser and identity lab targets; Keycloak, Authentik, and OpenIAM containers or VMs | `forensics` | IAM Analyst; SOC Analyst; Identity Engineer | published |
 | `ot` | OT/ICS Security | Intermediate learners interested in industrial control systems and Modbus. | intermediate | NET00 | 4 | 3h 00m | RangeBox with terminal and Modbus lab target | `ai` | OT Security Analyst; ICS Engineer; SOC Analyst | published |
 | `ai` | AI Hacking | Intermediate learners exploring prompt injection, policy bypass, and AI-assisted security. | intermediate | WEB02 | 5 | 4h 15m | RangeBox with browser and mock AI lab target | `winpt` | AI Security Analyst; Red Team Operator; Secure AI Developer | published |
-| `winpt` | Windows Penetration Testing | Intermediate learners who have completed the beginner pathway or have equivalent terminal and networking experience. | intermediate | BEG04, NET00 | 53 | 103h 15m | RangeBox with terminal, browser, and Windows lab targets | `linpt` | Penetration Tester; Red Team Operator; SOC Analyst | published |
+| `winpt` | Windows Penetration Testing | Intermediate learners who have completed the beginner pathway or have equivalent terminal and networking experience. | intermediate | BEG04, NET00 | 62 | 118h 55m | RangeBox with terminal, browser, and Windows lab targets | `linpt` | Penetration Tester; Red Team Operator; SOC Analyst | published |
 | `linpt` | Linux Fundamentals | Intermediate learners building Linux enumeration, SSH access, privilege escalation, and detection skills. | intermediate | WIN09 | 30 | 38h 45m | RangeBox with terminal and Linux lab targets | `webpt` | Penetration Tester; Linux Administrator; Incident Responder | published |
 | `msfpt` | Metasploit Operations | Learners who have completed the beginner pathway or have equivalent Linux and network service experience. | intermediate | LIN01, NET00 | 8 | 13h 15m | RangeBox with terminal, Kali tools, and a KVM-capable isolated Metasploitable 2 target | `soc` | Penetration Tester; Red Team Operator; SOC Analyst | published |
 | `vm` | Vulnerability Management | Learners moving from exploitation into defensive exposure management, asset ownership, and remediation. | intermediate | BEG04, NET00 | 33 | 68h 00m | RangeBox with Linux and Windows targets, OpenVAS/Greenbone, and a synthetic asset inventory | `soc` | Vulnerability Management Analyst; Security Analyst; Risk Analyst; Patch Manager | planned |
@@ -49,14 +49,17 @@ Framework alignment is selective. See [Framework alignment](FRAMEWORKS.md).
 | `WEB01B` | Advanced Recon and Traversal | `CH_WEB01B_Advanced_Recon` | intermediate | WEB01 | 2 | 1h 15m | `WEB02` | published |
 | `WEB02` | SQL Injection and Web Exploitation | `CH_WEB02_Web_Exploitation` | intermediate | WEB01B | 1 | 2h 00m | `WEB02B` | published |
 | `WEB02B` | API and Injection | `CH_WEB02B_API_And_Injection` | intermediate | WEB02 | 4 | 2h 50m | `WEB03` | published |
-| `WEB03` | Advanced Web Exploitation | `CH_WEB03_Advanced_Exploitation` | intermediate | WEB02B | 3 | 3h 30m | `SWSEC01` | published |
-| `SWSEC01` | Software Security Foundations | `CH_SWSEC_Software_Security` | intermediate | WEB02 | 2 | 30m | `MAL01` | published |
+| `WEB03` | Advanced Web Exploitation | `CH_WEB03_Advanced_Exploitation` | intermediate | WEB02B | 3 | 3h 30m | `WEB11` | published |
+| `WEB11` | Modern Application Security | `CH_WEB11_AppSec_Pathway` | intermediate | WEB02 | 11 | 17h 00m | `SWSEC01` | published |
+| `SWSEC01` | Software Security Foundations | `CH_SWSEC_Software_Security` | intermediate | WEB02 | 2 | 30m | `SWSEC02` | published |
+| `SWSEC02` | API Testing with Karate | `CH_SWSEC_Karate_API_Testing` | intermediate | SWSEC01 | 4 | 2h 25m | `MAL01` | published |
 | `MAL01` | Malware Fundamentals | `CH_MAL01_Malware_Fundamentals` | intermediate | NET02 | 7 | 5h 25m | `MAL02` | published |
 | `MAL02` | Executable Analysis | `CH_MAL02_Executable_Analysis` | intermediate | MAL01 | 1 | 50m | `MAL03` | published |
 | `MAL03` | Detection and Triage | `CH_MAL03_Detection_And_Triage` | beginner | MAL02 | 2 | 1h 10m | `FOR01` | published |
 | `FOR01` | Memory Forensics | `CH_FOR01_Memory_Forensics` | intermediate | NET02 | 1 | 50m | `FOR02` | published |
 | `FOR02` | Network Forensics | `CH_FOR02_Network_Forensics` | intermediate | FOR01 | 1 | 45m | `FOR03` | published |
-| `FOR03` | Topology Forensics | `CH_FOR03_Topology_Forensics` | intermediate | FOR02 | 2 | 1h 00m | `OSINT01` | published |
+| `FOR03` | Topology Forensics | `CH_FOR03_Topology_Forensics` | intermediate | FOR02 | 2 | 1h 00m | `FOR03B` | published |
+| `FOR03B` | Live Memory Acquisition | `CH_FOR03_Live_Memory` | intermediate | FOR01 | 1 | 2h 00m | `OSINT01` | published |
 | `OSINT01` | OSINT Foundations | `CH_OSINT01_OSINT_Foundations` | beginner | NET00 | 6 | 3h 40m | `IAM01` | published |
 | `OSINT02` | Mobile OSINT | `CH_OSINT02_Mobile_OSINT` | beginner | OSINT01 | 3 | 1h 10m | `OSINT03` | published |
 | `OSINT03` | Canary Tokens and Deception | `CH_OSINT03_Canary_And_Deception` | intermediate | OSINT02 | 1 | 45m | `IAM01` | published |
@@ -82,7 +85,8 @@ Framework alignment is selective. See [Framework alignment](FRAMEWORKS.md).
 | `WIN07` | LDAP Enumeration | `CH07_LDAP_Enumeration` | intermediate | WIN06 | 6 | 12h 00m | `WIN08` | published |
 | `WIN08` | Credential Reuse and Lateral Movement | `CH08_Credential_Reuse` | intermediate | WIN07 | 5 | 10h 00m | `WIN09` | published |
 | `WIN09` | Complete Network Assessment | `CH09_Assessment` | intermediate | WIN08 | 3 | 6h 00m | `WIN10` | published |
-| `WIN10` | Active Directory and Authentication | `CH_WIN10_AD_Authentication` | beginner | WIN02 | 2 | 1h 15m | `LIN01` | published |
+| `WIN10` | Active Directory and Authentication | `CH_WIN10_AD_Authentication` | beginner | WIN02 | 2 | 1h 15m | `WIN11` | published |
+| `WIN11` | Active Directory Attack Pathway | `CH_WIN11_AD_Pathway` | intermediate | WIN10 | 9 | 15h 40m | `LIN01` | published |
 | `LIN01` | Linux Service Enumeration | `CH_LIN01_Linux_Service_Enumeration` | beginner | WIN01 | 6 | 12h 00m | `LIN01B` | published |
 | `LIN01B` | Network Discovery | `CH_LIN01B_Network_Discovery` | beginner | LIN01 | 2 | 1h 10m | `LIN02` | published |
 | `LIN02` | SSH Authentication and Discovery | `CH_LIN02_SSH_Authentication` | intermediate | LIN01B | 3 | 6h 00m | `LIN02B` | published |
@@ -176,8 +180,8 @@ Framework alignment is selective. See [Framework alignment](FRAMEWORKS.md).
 - **Audience:** Intermediate learners who can use a terminal and understand HTTP basics.
 - **Difficulty:** intermediate
 - **Track prerequisites:** NET00, NET01
-- **Exercises:** 16
-- **Estimated duration:** 21h 35m
+- **Exercises:** 27
+- **Estimated duration:** 38h 35m
 - **Required environment:** RangeBox with browser, terminal, and web lab targets
 - **Recommended next track:** `software-security`
 - **Role alignment:** Application Security Tester, Penetration Tester, Secure Developer
@@ -189,15 +193,16 @@ Framework alignment is selective. See [Framework alignment](FRAMEWORKS.md).
 | `WEB01B` — Advanced Recon and Traversal | `CH_WEB01B_Advanced_Recon` | WEB01 | `WEB02` |
 | `WEB02` — SQL Injection and Web Exploitation | `CH_WEB02_Web_Exploitation` | WEB01B | `WEB02B` |
 | `WEB02B` — API and Injection | `CH_WEB02B_API_And_Injection` | WEB02 | `WEB03` |
-| `WEB03` — Advanced Web Exploitation | `CH_WEB03_Advanced_Exploitation` | WEB02B | `SWSEC01` |
+| `WEB03` — Advanced Web Exploitation | `CH_WEB03_Advanced_Exploitation` | WEB02B | `WEB11` |
+| `WEB11` — Modern Application Security | `CH_WEB11_AppSec_Pathway` | WEB02 | `SWSEC01` |
 
 ### Software Security (`software-security`)
 
 - **Audience:** Intermediate learners who can read code and understand web requests.
 - **Difficulty:** intermediate
 - **Track prerequisites:** WEB02
-- **Exercises:** 2
-- **Estimated duration:** 30m
+- **Exercises:** 6
+- **Estimated duration:** 2h 55m
 - **Required environment:** RangeBox with browser and software-security lab targets
 - **Recommended next track:** `malware`
 - **Role alignment:** Secure Developer, Application Security Engineer, Penetration Tester
@@ -205,7 +210,8 @@ Framework alignment is selective. See [Framework alignment](FRAMEWORKS.md).
 
 | Chapter | Directory | Prerequisites | Recommended next |
 |---|---|---|---|
-| `SWSEC01` — Software Security Foundations | `CH_SWSEC_Software_Security` | WEB02 | `MAL01` |
+| `SWSEC01` — Software Security Foundations | `CH_SWSEC_Software_Security` | WEB02 | `SWSEC02` |
+| `SWSEC02` — API Testing with Karate | `CH_SWSEC_Karate_API_Testing` | SWSEC01 | `MAL01` |
 
 ### Malware Analysis (`malware`)
 
@@ -230,8 +236,8 @@ Framework alignment is selective. See [Framework alignment](FRAMEWORKS.md).
 - **Audience:** Intermediate learners who want to investigate memory, disk, endpoint, email, browser, and network evidence.
 - **Difficulty:** intermediate
 - **Track prerequisites:** NET02
-- **Exercises:** 4
-- **Estimated duration:** 2h 35m
+- **Exercises:** 5
+- **Estimated duration:** 4h 35m
 - **Required environment:** RangeBox with forensic evidence images, PCAPs, and the synthetic DFIR evidence pack
 - **Recommended next track:** `osint`
 - **Role alignment:** Digital Forensics Examiner, Incident Responder, Threat Intelligence Analyst
@@ -241,15 +247,16 @@ Framework alignment is selective. See [Framework alignment](FRAMEWORKS.md).
 |---|---|---|---|
 | `FOR01` — Memory Forensics | `CH_FOR01_Memory_Forensics` | NET02 | `FOR02` |
 | `FOR02` — Network Forensics | `CH_FOR02_Network_Forensics` | FOR01 | `FOR03` |
-| `FOR03` — Topology Forensics | `CH_FOR03_Topology_Forensics` | FOR02 | `OSINT01` |
+| `FOR03` — Topology Forensics | `CH_FOR03_Topology_Forensics` | FOR02 | `FOR03B` |
+| `FOR03B` — Live Memory Acquisition | `CH_FOR03_Live_Memory` | FOR01 | `OSINT01` |
 
 ### OSINT (`osint`)
 
 - **Audience:** Adult learners who want public-source investigation skills; Grades 9-12 are not assigned the live extensions.
 - **Difficulty:** beginner
 - **Track prerequisites:** NET00
-- **Exercises:** 9
-- **Estimated duration:** 4h 50m
+- **Exercises:** 10
+- **Estimated duration:** 5h 35m
 - **Required environment:** Browser and RangeBox; offline mirrors, with optional read-only adult extensions
 - **Recommended next track:** `identity`
 - **Role alignment:** OSINT Analyst, Threat Intelligence Analyst, Investigator
@@ -324,8 +331,8 @@ Framework alignment is selective. See [Framework alignment](FRAMEWORKS.md).
 - **Audience:** Intermediate learners who have completed the beginner pathway or have equivalent terminal and networking experience.
 - **Difficulty:** intermediate
 - **Track prerequisites:** BEG04, NET00
-- **Exercises:** 53
-- **Estimated duration:** 103h 15m
+- **Exercises:** 62
+- **Estimated duration:** 118h 55m
 - **Required environment:** RangeBox with terminal, browser, and Windows lab targets
 - **Recommended next track:** `linpt`
 - **Role alignment:** Penetration Tester, Red Team Operator, SOC Analyst
@@ -342,7 +349,8 @@ Framework alignment is selective. See [Framework alignment](FRAMEWORKS.md).
 | `WIN07` — LDAP Enumeration | `CH07_LDAP_Enumeration` | WIN06 | `WIN08` |
 | `WIN08` — Credential Reuse and Lateral Movement | `CH08_Credential_Reuse` | WIN07 | `WIN09` |
 | `WIN09` — Complete Network Assessment | `CH09_Assessment` | WIN08 | `WIN10` |
-| `WIN10` — Active Directory and Authentication | `CH_WIN10_AD_Authentication` | WIN02 | `LIN01` |
+| `WIN10` — Active Directory and Authentication | `CH_WIN10_AD_Authentication` | WIN02 | `WIN11` |
+| `WIN11` — Active Directory Attack Pathway | `CH_WIN11_AD_Pathway` | WIN10 | `LIN01` |
 
 ### Linux Fundamentals (`linpt`)
 
@@ -484,7 +492,7 @@ Framework alignment is selective. See [Framework alignment](FRAMEWORKS.md).
 
 ## Recommended pathway
 
-`BEG01` → `BEG02` → `BEG03` → `BEG04` → `NET00` → `NET01` → `NET01B` → `NET02` → `NET03` → `NET04` → `WEB01` → `WEB01B` → `WEB02` → `WEB02B` → `WEB03` → `SWSEC01` → `MAL01` → `MAL02` → `MAL03` → `FOR01` → `FOR02` → `FOR03` → `OSINT01` → `OSINT02` → `OSINT03` → `IAM01` → `IAM02` → `IAM03` → `IAM04` → `IAM05` → `IAM06` → `IAM07` → `IAM08` → `IAM09` → `OT01` → `OT02` → `AI01` → `AI02` → `WIN01` → `WIN02` → `WIN03` → `WIN04` → `WIN05` → `WIN06` → `WIN07` → `WIN08` → `WIN09` → `WIN10` → `LIN01` → `LIN01B` → `LIN02` → `LIN02B` → `LIN03` → `LIN03B` → `LIN04` → `LIN05` → `LIN09` → `MSF01` → `MSF02` → `VM01` → `VM02` → `VM03` → `VM04` → `VM05` → `VM06` → `VM07` → `VM08` → `SOC01` → `SOC02` → `SOC03` → `SOC04` → `SOC05` → `SOC06` → `SOC07` → `SOC08` → `PLAT01` → `PLAT02` → `PLAT03` → `PLAT04` → `PLAT05` → `PLAT06` → `PLAT07` → `PLAT08` → `PLAT09` → `NENG01` → `NENG02` → `NENG03` → `NENG04` → `NENG05` → `NENG06` → `NENG07` → `NENG08` → `NENG09`
+`BEG01` → `BEG02` → `BEG03` → `BEG04` → `NET00` → `NET01` → `NET01B` → `NET02` → `NET03` → `NET04` → `WEB01` → `WEB01B` → `WEB02` → `WEB02B` → `WEB03` → `WEB11` → `SWSEC01` → `SWSEC02` → `MAL01` → `MAL02` → `MAL03` → `FOR01` → `FOR02` → `FOR03` → `FOR03B` → `OSINT01` → `OSINT02` → `OSINT03` → `IAM01` → `IAM02` → `IAM03` → `IAM04` → `IAM05` → `IAM06` → `IAM07` → `IAM08` → `IAM09` → `OT01` → `OT02` → `AI01` → `AI02` → `WIN01` → `WIN02` → `WIN03` → `WIN04` → `WIN05` → `WIN06` → `WIN07` → `WIN08` → `WIN09` → `WIN10` → `WIN11` → `LIN01` → `LIN01B` → `LIN02` → `LIN02B` → `LIN03` → `LIN03B` → `LIN04` → `LIN05` → `LIN09` → `MSF01` → `MSF02` → `VM01` → `VM02` → `VM03` → `VM04` → `VM05` → `VM06` → `VM07` → `VM08` → `SOC01` → `SOC02` → `SOC03` → `SOC04` → `SOC05` → `SOC06` → `SOC07` → `SOC08` → `PLAT01` → `PLAT02` → `PLAT03` → `PLAT04` → `PLAT05` → `PLAT06` → `PLAT07` → `PLAT08` → `PLAT09` → `NENG01` → `NENG02` → `NENG03` → `NENG04` → `NENG05` → `NENG06` → `NENG07` → `NENG08` → `NENG09`
 
 ## Evidence ladder
 

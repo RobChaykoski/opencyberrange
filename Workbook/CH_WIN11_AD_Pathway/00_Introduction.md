@@ -1,4 +1,11 @@
-# WIN11: Active Directory Attack and Remediation
+# WIN11: Active Directory Attack Pathway
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `WIN11` — Active Directory Attack Pathway
+    **Prerequisites:** `WIN10` — Active Directory and Authentication
+    **Recommended next:** `LIN01` — Linux Service Enumeration
+<!-- END GENERATED CHAPTER POSITION -->
 
 Nine exercises take a learner from directory enumeration to an evidence-backed attack path and remediation plan. The directory is an LDAP simulation of Active Directory, so the labs run without a Windows domain controller.
 

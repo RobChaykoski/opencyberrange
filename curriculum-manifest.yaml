@@ -116,9 +116,19 @@ tracks:
         prerequisites: [WIN02]
         exercises: 2
         estimated_minutes: 75
-        recommended_next: LIN01
+        recommended_next: WIN11
         status: published
         intro: CH_WIN10_AD_Authentication/00_Introduction.md
+      - id: WIN11
+        directory: CH_WIN11_AD_Pathway
+        display_name: "Active Directory Attack Pathway"
+        difficulty: "intermediate"
+        prerequisites: [WIN10]
+        exercises: 9
+        estimated_minutes: 940
+        recommended_next: LIN01
+        status: published
+        intro: CH_WIN11_AD_Pathway/00_Introduction.md
 
   - id: linpt
     pathway_order: 12
@@ -384,9 +394,19 @@ tracks:
         prerequisites: [WEB02B]
         exercises: 3
         estimated_minutes: 210
-        recommended_next: SWSEC01
+        recommended_next: WEB11
         status: published
         intro: CH_WEB03_Advanced_Exploitation/00_Introduction.md
+      - id: WEB11
+        directory: CH_WEB11_AppSec_Pathway
+        display_name: "Modern Application Security"
+        difficulty: "intermediate"
+        prerequisites: [WEB02]
+        exercises: 11
+        estimated_minutes: 1020
+        recommended_next: SWSEC01
+        status: published
+        intro: CH_WEB11_AppSec_Pathway/00_Introduction.md
 
   - id: malware
     pathway_order: 5
@@ -606,9 +626,19 @@ tracks:
         prerequisites: [WEB02]
         exercises: 2
         estimated_minutes: 30
-        recommended_next: MAL01
+        recommended_next: SWSEC02
         status: published
         intro: CH_SWSEC_Software_Security/00_Introduction.md
+      - id: SWSEC02
+        directory: CH_SWSEC_Karate_API_Testing
+        display_name: "API Testing with Karate"
+        difficulty: "intermediate"
+        prerequisites: [SWSEC01]
+        exercises: 4
+        estimated_minutes: 145
+        recommended_next: MAL01
+        status: published
+        intro: CH_SWSEC_Karate_API_Testing/00_Introduction.md
 
   - id: identity
     pathway_order: 8
@@ -744,9 +774,19 @@ tracks:
         prerequisites: [FOR02]
         exercises: 2
         estimated_minutes: 60
-        recommended_next: OSINT01
+        recommended_next: FOR03B
         status: published
         intro: CH_FOR03_Topology_Forensics/00_Introduction.md
+      - id: FOR03B
+        directory: CH_FOR03_Live_Memory
+        display_name: "Live Memory Acquisition"
+        difficulty: "intermediate"
+        prerequisites: [FOR01]
+        exercises: 1
+        estimated_minutes: 120
+        recommended_next: OSINT01
+        status: published
+        intro: CH_FOR03_Live_Memory/00_Introduction.md
 
   - id: vm
     pathway_order: 12

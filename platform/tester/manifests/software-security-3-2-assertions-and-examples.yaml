@@ -1,0 +1,33 @@
+# Generated from platform/labs/Software Security/software-security-3-2-assertions-and-examples/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: software-security-3-2-assertions-and-examples
+track: Software Security
+difficulty: beginner
+source: platform/labs/Software Security/software-security-3-2-assertions-and-examples/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr-tester:latest
+  command: /tests/software-security-3-2-assertions-and-examples.sh
+  steps:
+  - name: Echo reports the value length
+    command: curl -s 'http://{target.api}:8080/api/v1/echo?value=karate' | jq -r .length
+    expect: '6'
+  - name: Catalogue contains the expected product
+    command: curl -s http://{target.api}:8080/api/v1/products | jq -r '.products[] | select(.name == "Karate Gi") | .price'
+    expect: '65'
+  - name: Echo returns the flag for the exact value
+    command: curl -s 'http://{target.api}:8080/api/v1/echo?value=karate' | jq -r .flag
+    expect: '{flag}'
+expected_flag_count: 1
+expected_flag: '{flag}'
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 352
+max_cpu: 0.4

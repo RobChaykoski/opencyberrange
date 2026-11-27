@@ -1,5 +1,5 @@
 framework: NICE
-generated_at: '2026-11-26T22:56:05.686244+00:00'
+generated_at: '2026-11-27T01:20:40.240886+00:00'
 mappings:
   ai-1-1-prompt-injection-basics:
     confidence: medium
@@ -2767,6 +2767,93 @@ mappings:
     - T1135
     - T1202
     - T1302
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  software-security-3-1-first-karate-feature:
+    confidence: low
+    knowledge:
+    - K0717
+    - K0716
+    - K0744
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0465
+    - S0466
+    - S0572
+    source: derived_from_competency_and_category
+    tasks:
+    - T1019
+    - T1084
+    - T1091
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  software-security-3-2-assertions-and-examples:
+    confidence: medium
+    knowledge:
+    - K0717
+    - K0693
+    - K0701
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0466
+    - S0688
+    - S0465
+    source: derived_from_competency_and_category
+    tasks:
+    - T1019
+    - T1084
+    - T1091
+    work_roles:
+    - DD-WRL-005
+    - PD-WRL-007
+    - DD-WRL-003
+  software-security-3-3-authentication-and-reuse:
+    confidence: medium
+    knowledge:
+    - K0686
+    - K0742
+    - K0685
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0593
+    - S0844
+    source: derived_from_competency_and_category
+    tasks:
+    - T1130
+    - T1548
+    - T1571
+    work_roles:
+    - PD-WRL-001
+    - IO-WRL-005
+    - IO-WRL-006
+  software-security-3-4-negative-tests-and-evidence:
+    confidence: medium
+    knowledge:
+    - K0685
+    - K0716
+    - K0717
+    review_status: provisional
+    reviewed_at: null
+    reviewed_by: null
+    skills:
+    - S0466
+    - S0569
+    - S0574
+    source: derived_from_competency_and_category
+    tasks:
+    - T1052
+    - T1083
+    - T1091
     work_roles:
     - DD-WRL-005
     - PD-WRL-007

@@ -1,0 +1,23 @@
+services:
+  api:
+    mem_limit: 96m
+    cpus: 0.15
+    build:
+      context: ../../_karate_shared
+      dockerfile: Dockerfile
+    hostname: api
+    labels:
+      ip_offset: "94"
+    environment:
+      LAB_MODE: "auth"
+      FLAG: "OCR{k4r4t3_c4ll_s1ngl3_t0k3n}"
+      COMPANY: "Northwind Training API"
+      PORT: "8080"
+    read_only: true
+    tmpfs:
+      - /tmp:size=8m,mode=1777
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped

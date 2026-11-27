@@ -1,0 +1,313 @@
+name: Documentation review
+description: Acknowledge a documentation requirement, score the document, and set its review timeline, labels, and storage.
+title: "[Doc review] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for a scheduled review, a release-gate review, or an ad-hoc
+        review. The rules, rubrics, labels, and retention classes are in
+        `docs/documentation/DOCUMENTATION-STANDARDS.md`.
+
+        Do not paste learner rows, credentials, tokens, private keys, or live
+        addresses. Record the location and handling instead.
+
+  - type: input
+    id: document_path
+    attributes:
+      label: Document path
+      description: Exact path from the repository root.
+      placeholder: docs/ARCHITECTURE.md
+    validations:
+      required: true
+
+  - type: input
+    id: document_title
+    attributes:
+      label: Document title
+      placeholder: Architecture
+    validations:
+      required: true
+
+  - type: dropdown
+    id: group
+    attributes:
+      label: Group
+      description: One group only. See docs/documentation/README.md.
+      options:
+        - Governance, risk and assurance
+        - Architecture, design and decisions
+        - Operations and service management
+        - Security engineering and assurance
+        - Curriculum, learning and assessment
+        - Integrations and ecosystem
+        - Product, releases and change
+        - Research, pilots and community
+        - Archive
+        - Documentation system
+    validations:
+      required: true
+
+  - type: dropdown
+    id: doc_type
+    attributes:
+      label: Document type
+      options:
+        - policy
+        - standard
+        - procedure
+        - runbook
+        - architecture
+        - design
+        - adr
+        - reference
+        - report
+        - assessment
+        - register
+        - form
+        - index
+        - release
+        - generated
+        - archive
+    validations:
+      required: true
+
+  - type: dropdown
+    id: audience
+    attributes:
+      label: Primary audience
+      options:
+        - public
+        - learner
+        - instructor
+        - operator
+        - developer
+        - auditor
+        - executive
+        - partner
+    validations:
+      required: true
+
+  - type: dropdown
+    id: classification
+    attributes:
+      label: Classification
+      description: Align with docs/DATA-CLASSIFICATION.md.
+      options:
+        - public
+        - internal
+        - confidential
+        - restricted
+    validations:
+      required: true
+
+  - type: input
+    id: review_basis
+    attributes:
+      label: Version, commit, or signed tag reviewed
+      placeholder: v5.56.1 / b9656e16
+    validations:
+      required: true
+
+  - type: textarea
+    id: requirement_acknowledgment
+    attributes:
+      label: Requirement acknowledgment
+      description: Name the requirement this document serves and the evidence that proves it. Use source plus identifier.
+      placeholder: |
+        NIST SP 800-53 Rev. 5 PM-1: the document records the policy and names the approver. Evidence: section 2, approved 2026-11-26.
+        NIST CSF 2.0 GV.PO-01: ...
+    validations:
+      required: true
+
+  - type: input
+    id: requirement_ids
+    attributes:
+      label: Requirement identifiers
+      description: Comma-separated, for example GV.PO-01, PM-1, 03.12.04, PW.1.
+      placeholder: GV.PO-01, PM-1
+    validations:
+      required: true
+
+  - type: textarea
+    id: relevance_statement
+    attributes:
+      label: Project relevance statement
+      description: Two to four sentences. Why does this document matter now, to whom, and for which outcome or decision?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: relevance_score
+    attributes:
+      label: Relevance score (1-5)
+      options:
+        - "5 - Essential"
+        - "4 - High"
+        - "3 - Useful"
+        - "2 - Marginal"
+        - "1 - Obsolete"
+    validations:
+      required: true
+
+  - type: input
+    id: quality_score
+    attributes:
+      label: Quality score (0-100)
+      description: Use the weighted rubric in docs/documentation/DOCUMENTATION-STANDARDS.md.
+      placeholder: "0-100"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: decision
+    attributes:
+      label: Review decision
+      options:
+        - Approve as authoritative
+        - Approve with minor corrections
+        - Revise and re-review
+        - Retire and archive
+        - Escalate to the group owner
+    validations:
+      required: true
+
+  - type: input
+    id: last_reviewed
+    attributes:
+      label: Last reviewed
+      placeholder: YYYY-MM-DD
+    validations:
+      required: true
+
+  - type: dropdown
+    id: cadence
+    attributes:
+      label: Review cadence
+      options:
+        - quarterly
+        - semiannual
+        - annual
+        - biennial
+    validations:
+      required: true
+
+  - type: input
+    id: next_review
+    attributes:
+      label: Next review due
+      placeholder: YYYY-MM-DD
+    validations:
+      required: true
+
+  - type: input
+    id: reviewer
+    attributes:
+      label: Reviewer
+      placeholder: Name, role
+    validations:
+      required: true
+
+  - type: input
+    id: approver
+    attributes:
+      label: Approver
+      description: Must not be the only reviewer for a restricted document.
+      placeholder: Name, role
+    validations:
+      required: true
+
+  - type: dropdown
+    id: lifecycle
+    attributes:
+      label: Lifecycle
+      options:
+        - draft
+        - active
+        - deprecated
+        - archived
+        - generated
+    validations:
+      required: true
+
+  - type: dropdown
+    id: sensitivity
+    attributes:
+      label: Sensitivity
+      options:
+        - none
+        - pii
+        - security
+        - credentials
+        - learner_evidence
+    validations:
+      required: true
+
+  - type: dropdown
+    id: retention
+    attributes:
+      label: Retention class
+      description: R0 permanent release evidence; R1 policy; R2 operational; R3 generated; R4 working; R5 archive.
+      options:
+        - R0
+        - R1
+        - R2
+        - R3
+        - R4
+        - R5
+    validations:
+      required: true
+
+  - type: input
+    id: published_location
+    attributes:
+      label: Published location
+      description: MkDocs page or URL. Write "not published" if it has no public or authenticated page.
+      placeholder: https://... or not published
+    validations:
+      required: true
+
+  - type: input
+    id: evidence_location
+    attributes:
+      label: Evidence or archive location
+      description: Release bundle, OpenGRC reference, or docs/archive path. Write "n/a" if none.
+      placeholder: docs/archive/... or n/a
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: nist_methods
+    attributes:
+      label: NIST SP 800-53A review methods used
+      options:
+        - label: Examine (documents, records, configurations, logs)
+        - label: Interview (owner, operator, instructor, reviewer)
+        - label: Test (procedure run, link check, restore drill, control test)
+
+  - type: textarea
+    id: findings
+    attributes:
+      label: Findings and assessment notes
+      description: One finding per line. Include severity, evidence, action, owner, and due date.
+      placeholder: |
+        [major] Runbook omits the restore verification step -> ... -> owner -> 2026-12-10
+        [observation] Two links point to the old API page -> ...
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: attestation
+    attributes:
+      label: Attestation
+      options:
+        - label: The requirement and evidence are accurate for the review date.
+          required: true
+        - label: The document contains no learner rows, credentials, tokens, private keys, or live addresses.
+          required: true
+        - label: The classification matches the most sensitive content in the document.
+          required: true
+        - label: Generated files were regenerated, not hand-edited.
+          required: true
+        - label: The register and group page were updated with the values above.
+          required: true

@@ -37,7 +37,7 @@ def test_every_lab_has_a_complete_outcome_contract():
     labs = document.get("labs") or {}
     slugs = {path.parent.name for path in LABS.rglob("lab.yaml")}
     assert set(labs) == slugs
-    assert len(labs) == 218
+    assert len(labs) == 222
     for slug, entry in labs.items():
         assert entry["track"], slug
         assert entry["difficulty"] in {"beginner", "intermediate", "advanced", "expert", "unknown"}

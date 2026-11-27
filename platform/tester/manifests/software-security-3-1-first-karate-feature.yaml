@@ -1,0 +1,33 @@
+# Generated from platform/labs/Software Security/software-security-3-1-first-karate-feature/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: software-security-3-1-first-karate-feature
+track: Software Security
+difficulty: beginner
+source: platform/labs/Software Security/software-security-3-1-first-karate-feature/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr-tester:latest
+  command: /tests/software-security-3-1-first-karate-feature.sh
+  steps:
+  - name: Health endpoint answers
+    command: curl -s http://{target.api}:8080/api/v1/health | jq -r .status
+    expect: ok
+  - name: First job is the expected role
+    command: curl -s http://{target.api}:8080/api/v1/jobs | jq -r '.jobs[0].title'
+    expect: Junior API Tester
+  - name: Jobs endpoint returns the flag
+    command: curl -s http://{target.api}:8080/api/v1/jobs | jq -r .flag
+    expect: '{flag}'
+expected_flag_count: 1
+expected_flag: '{flag}'
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 352
+max_cpu: 0.4

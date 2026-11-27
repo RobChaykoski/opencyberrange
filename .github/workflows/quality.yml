@@ -112,6 +112,9 @@ jobs:
       - name: Validate every lab
         run: python scripts/validate-lab.py --all
 
+      - name: Verify the documentation map and group pages
+        run: python scripts/documentation_map.py --check
+
       - name: Check internal links and MkDocs nav
         run: python scripts/check-links.py --mkdocs
 

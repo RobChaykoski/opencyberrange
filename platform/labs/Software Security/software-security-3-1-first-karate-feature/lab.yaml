@@ -1,0 +1,122 @@
+title: "Karate 101: Your First API Test"
+category: web
+difficulty: beginner
+estimated_time: 25
+prerequisites:
+  - software-security-1-1-hidden-export-route
+# By completion students will be able to:
+learning_outcomes:
+  - Explain what Karate is and how a feature file maps to one HTTP request
+  - Write a feature with Feature, Scenario, url, path, method, status, and match
+  - Run the feature with the standalone Karate jar and read the run summary
+  - Explain why a passing status and body assertion together are evidence of a working endpoint
+mapped_skills:
+  - web_api
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+  - Submit the Karate feature file and the run summary.
+  - Explain in one sentence what the status assertion proves.
+mitre_attack:
+  - tactic: Reconnaissance
+    technique: T1595.002
+    technique_name: "Active Scanning: Vulnerability Scanning"
+    detection: Alert on scripted request bursts against API inventory or smoke-test endpoints outside an approved test window.
+owner: "OpenCyberRange Curriculum"
+content_version: "1.0.0"
+reviewed_at: "2026-11-26"
+review_status: "automated static proof; live walkthrough pending"
+description: "A first, deliberately small Karate exercise. The learner turns one API request into a readable test, runs it, and captures a flag that is only useful when the assertion is understood."
+visibility: public
+flag: "OCR{k4r4t3_f1rst_f34tur3_p4ss3d}"
+
+tools:
+  - terminal
+  - curl
+  - java
+
+scenario: |
+  Northwind Training runs a small jobs board for its fictional staff. The
+  quality engineer asks for the smallest useful API test: call the jobs
+  endpoint, assert that it answers, and prove the first job is the one the
+  team expects.
+
+  The service is a training target. Every job, person, and team in it is
+  fictional, and it has no external network access.
+
+  Your job is to write the test in Karate, run it, and record the flag from the
+  jobs response. The flag is not the lesson by itself: the run summary and your
+  explanation are the evidence that the test actually checked something.
+
+troubleshooting: "If the target is unreachable, confirm the lab is running and use http://api.lab:8080. If Karate reports a connection error, check that the feature starts with the base URL and that the container is healthy. If the jar will not start, confirm Java 17 or newer is installed and run java -version. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "A smoke test is a control, not a formality. Assert the status, the shape, and one business fact so a broken deploy fails the test instead of silently returning an empty page. Keep the test small, deterministic, and runnable by any team member."
+difficulty_evidence: "Static student-tester walkthrough of the lab definition, target API, workbook, and solver steps; live lab run not recorded; declared difficulty 'beginner' retained as provisional because the learner writes and runs a first feature file."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-26"
+workbook: "wiki/range/software-security/CH_SWSEC_Karate_API_Testing/01_First_Karate_Feature/"
+
+hostnames:
+  - ip_offset: "92"
+    hostname: "api.lab"
+    description: "Northwind Training jobs API (HTTP 8080)"
+
+topology:
+  nodes:
+    - id: "api"
+      label: "Northwind Training jobs API"
+      type: "server"
+      ip_offset: "92"
+      ports: [8080]
+      services: ["http", "json"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Open http://api.lab:8080 in the lab browser. Read the endpoint list, then
+      call http://api.lab:8080/api/v1/jobs with curl. The response is JSON.
+      This is a training API; every record is fictional.
+    unlock_after_minutes: 0
+
+  - text: |
+      A Karate feature has four parts you need here: `url`, `path`, `method`,
+      and `status`. Start with:
+
+      Feature: Jobs API
+        Scenario: list jobs
+          * url 'http://api.lab:8080'
+          * path 'api/v1/jobs'
+          * method get
+          * status 200
+    unlock_after_minutes: 5
+
+  - text: |
+      Add the match step and run the feature:
+
+      * match response.jobs[0].title == 'Junior API Tester'
+
+      java -jar karate.jar features/jobs.feature
+
+      The flag is the `flag` field in the jobs response. Record it only after
+      the run passes.
+    unlock_after_minutes: 10
+
+test:
+  steps:
+    - name: "Health endpoint answers"
+      command: "curl -s http://{target.api}:8080/api/v1/health | jq -r .status"
+      expect: "ok"
+      timeout: 20
+
+    - name: "First job is the expected role"
+      command: "curl -s http://{target.api}:8080/api/v1/jobs | jq -r '.jobs[0].title'"
+      expect: "Junior API Tester"
+      timeout: 20
+
+    - name: "Jobs endpoint returns the flag"
+      command: "curl -s http://{target.api}:8080/api/v1/jobs | jq -r .flag"
+      expect: "OCR{k4r4t3_f1rst_f34tur3_p4ss3d}"
+      timeout: 20

@@ -1,0 +1,127 @@
+title: "Negative Tests and Evidence Reports"
+category: web
+difficulty: intermediate
+estimated_time: 45
+prerequisites:
+  - software-security-3-3-authentication-and-reuse
+# By completion students will be able to:
+learning_outcomes:
+  - Write a negative test that expects 403 for another user's object
+  - Read a failing assertion and decide whether the test or the service is wrong
+  - Use tags and a run report to separate security checks from functional checks
+  - Explain broken object level authorization and name the control that prevents it
+mapped_skills:
+  - web_api
+  - identity_access
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+  - Submit the feature file with a passing negative test and the failing result that exposed the bug.
+  - Write a short finding with the account id, the observed status, and the control change.
+mitre_attack:
+  - tactic: Initial Access
+    technique: T1190
+    technique_name: Exploit Public-Facing Application
+    detection: Alert when one authenticated identity requests object ids it does not own, especially across account or tenant boundaries.
+owner: "OpenCyberRange Curriculum"
+content_version: "1.0.0"
+reviewed_at: "2026-11-26"
+review_status: "automated static proof; live walkthrough pending"
+description: "A negative-testing lab built around a deliberate BOLA bug. The correct test expects 403 for another user's account; the service returns 200 with the other account's data and the flag, so the failed assertion is the evidence."
+visibility: public
+flag: "OCR{k4r4t3_n3g4t1v3_r3v34ls_b0l4}"
+
+tools:
+  - terminal
+  - curl
+  - java
+
+scenario: |
+  Northwind's account endpoint is supposed to return only the signed-in user's
+  account. The analyst account owns account 1001. Account 1002 belongs to a
+  manager and should return 403.
+
+  The service has a broken object level authorization check. Your job is to
+  write the test that should pass, run it, and explain why the failure is a
+  real finding rather than a broken test. The flag is in the response the
+  service should never have returned.
+
+  The accounts, balances, and people are fictional. Do not test this pattern
+  against a real service.
+
+troubleshooting: "If the account request returns 401, confirm you are reusing the login token from the previous lab. If the test expects 403 but receives 200, do not weaken the assertion: print the response, record the account id and status, and treat it as the finding. If the flag is missing, confirm the id is 1002."
+defensive_takeaways: "Authorize every object read against the authenticated subject, not just the object id. Prefer a server-side ownership check or a policy layer over a client-supplied role. Add a regression test that expects 403 for a foreign object, and make the test part of the release gate."
+difficulty_evidence: "Static student-tester walkthrough of the deliberately vulnerable account endpoint, workbook, and solver steps; live lab run not recorded; declared difficulty 'intermediate' retained as provisional because the learner must interpret a failing security assertion."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-26"
+workbook: "wiki/range/software-security/CH_SWSEC_Karate_API_Testing/04_Negative_Tests_And_Evidence/"
+
+hostnames:
+  - ip_offset: "95"
+    hostname: "api.lab"
+    description: "Northwind Training accounts API (HTTP 8080)"
+
+topology:
+  nodes:
+    - id: "api"
+      label: "Northwind Training accounts API"
+      type: "server"
+      ip_offset: "95"
+      ports: [8080]
+      services: ["http", "json"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Read your own account first:
+
+      curl -s http://api.lab:8080/api/v1/accounts/1001
+
+      Then request 1002. The correct expectation is 403, but the service
+      returns another user's account. That difference is the bug.
+    unlock_after_minutes: 0
+
+  - text: |
+      Write the test you expect to pass:
+
+      Scenario: another user's account is forbidden
+        * url 'http://api.lab:8080'
+        * path 'api/v1/accounts/1002'
+        * method get
+        * status 403
+
+      Run it. A failure here is evidence, not a mistake in the test.
+    unlock_after_minutes: 8
+
+  - text: |
+      Tag the security checks so the report separates them:
+
+      @security @bola
+      Scenario: another user's account is forbidden
+        ...
+
+      Run with the tag and keep the report:
+      java -jar karate.jar -t @security features/
+
+      The flag is in the 1002 response body.
+    unlock_after_minutes: 15
+
+test:
+  steps:
+    - name: "Own account is available"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.api}:8080/api/v1/accounts/1001"
+      expect: "200"
+      timeout: 20
+
+    - name: "Missing account returns 404"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.api}:8080/api/v1/accounts/9999"
+      expect: "404"
+      timeout: 20
+
+    - name: "Foreign account leaks the flag"
+      command: "curl -s http://{target.api}:8080/api/v1/accounts/1002 | jq -r .flag"
+      expect: "OCR{k4r4t3_n3g4t1v3_r3v34ls_b0l4}"
+      timeout: 20

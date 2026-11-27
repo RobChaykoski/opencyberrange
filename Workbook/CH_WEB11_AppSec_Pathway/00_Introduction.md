@@ -1,6 +1,13 @@
 # WEB11: Modern Application Security
 
-Ten exercises cover the modern application-security surface: API inventory, object and function authorization, GraphQL, JWT, OAuth, CI/CD, containers, Kubernetes, supply chain, and a capstone assessment.
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `WEB11` — Modern Application Security
+    **Prerequisites:** `WEB02` — SQL Injection and Web Exploitation
+    **Recommended next:** `SWSEC01` — Software Security Foundations
+<!-- END GENERATED CHAPTER POSITION -->
+
+Eleven exercises cover the modern application-security surface: API inventory, object and function authorization, GraphQL, JWT, OAuth, CI/CD, containers, Kubernetes, supply chain, ZAP baseline triage, and a capstone assessment.
 
 | Exercise | Focus | Time |
 |---|---|---:|
@@ -14,6 +21,7 @@ Ten exercises cover the modern application-security surface: API inventory, obje
 | W11.8 | Kubernetes Security | 120 min |
 | W11.9 | Supply Chain and Artifact Integrity | 80 min |
 | W11.10 | Modern Application Security Capstone | 160 min |
+| W11.11 | ZAP Baseline Triage | 60 min |
 
 ## Rules
 

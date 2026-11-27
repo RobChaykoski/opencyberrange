@@ -19,7 +19,7 @@
       "sha256": "f4824fc426bbfbe23c5ad7c67be4a318dec48d662ad015bf9e9690e212c00232"
     },
     ".github/workflows/quality.yml": {
-      "sha256": "5a1f6f2566b011c373da29c711744f64d67479cc62d6e2b4ac330e9bdd1d423c"
+      "sha256": "feaf3efb5bcb60f650238965c7c5893f0e4730acea11c8ca00c655fd9693fc64"
     },
     ".github/workflows/trivy.yml": {
       "sha256": "4e33daf5440aa286d3144424e8dac52daf6536f36c42b8319e8ea77b635e26a0"
@@ -64,7 +64,7 @@
       "sha256": "b4e5cc77a8408624fcdd3b95e22773d1ce59fd5ea755e4100e1bae7c47648460"
     },
     "platform/backend/app/data/competency-contracts.yaml": {
-      "sha256": "e221b7f1932149e0c74e552b923a9552aca04125fe650fb02378b8af2b568ab5"
+      "sha256": "fa905729e891927b6ef53bf3b8f71a5ee6398a1bf54296412a2ab68256720697"
     },
     "platform/backend/app/data/competency-mapping.yaml": {
       "sha256": "23cd82a50b8c2c23970cdc5a9eb77afcc0e5a96b018bcd5fa791e5b306fc0c32"
@@ -163,7 +163,7 @@
       "sha256": "d073d2202db1e15c9b259640ea31cde86fc10329b3918c9fdc18fab906fd4d4d"
     },
     "platform/backend/app/data/lab-outcomes.yaml": {
-      "sha256": "ab5d1013c8c97360107adc181db5f19601b58973aa4e7e5216ae9f32429aa724"
+      "sha256": "f6bf5947682b911c0e0664067952e2202ff2883f898cf7fcd121982a6fbec17e"
     },
     "platform/backend/app/data/malware-samples.yaml": {
       "sha256": "4e6a00ce7febc54336c44fe167b45180fbc8ae8cbb4343f772b2ad0554cc77be"
@@ -178,7 +178,7 @@
       "sha256": "877500e2e2d33af4263cae4b4b208166f4c500c8e4648d6b5b8d24ac122829c1"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "5cb50d4f02e7b0c0823ce2cc89c1406ca916341227dd755f1c64646d667aad84"
+      "sha256": "d3771a2810677d08104912536003e45586036ff0cff03561243179c23d801b87"
     },
     "platform/backend/app/data/threat-awareness.json": {
       "sha256": "78703d33386e1b62becfa5cfb1b27a22f770fff20a3e38411b0787e76f7c48ea"
@@ -1192,6 +1192,30 @@
       "content_hash": "41a059253149d378e04af9f21b8d37d0431b54fe9f0330a0174467aee51ebc3d",
       "services": [
         "diagnostics"
+      ]
+    },
+    "software-security-3-1-first-karate-feature": {
+      "content_hash": "adf10ec5f0e82bc8b3788d94e6492e51b7555191d309127b5253e4a50210acfc",
+      "services": [
+        "api"
+      ]
+    },
+    "software-security-3-2-assertions-and-examples": {
+      "content_hash": "f737d848e8ec3c8f02e8ee2a3f5ab33d17f04fbce6897bcabc0e357e9ed00e90",
+      "services": [
+        "api"
+      ]
+    },
+    "software-security-3-3-authentication-and-reuse": {
+      "content_hash": "f07449162cfd93e1462148e2d8018c82eab377e029af4cd9da3eb28616f8df4e",
+      "services": [
+        "api"
+      ]
+    },
+    "software-security-3-4-negative-tests-and-evidence": {
+      "content_hash": "dfd0d39d07e694fa10a87322aca630f0adb1a09999e8529893ddd3634ea292bc",
+      "services": [
+        "api"
       ]
     },
     "web-1-1-basic-directory-enumeration": {

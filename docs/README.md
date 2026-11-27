@@ -11,7 +11,7 @@ The signed tag and [`versions.yaml`](../versions.yaml) win over any page.
 | [Production deployment statement](PRODUCTION-DEPLOYMENT-STATEMENT.md) | The deployed release, cutover state, and evidence |
 | [Deployment runbook](DEPLOYMENT-RUNBOOK.md) | Operating the development and production hosts |
 | [Validation report](VALIDATION-REPORT.md) | Reproducible test, build, lab, and smoke evidence |
-| [Lab and content counts](COUNTS.md) | The canonical 218-lab definitions and counts |
+| [Lab and content counts](COUNTS.md) | The canonical 222-lab definitions and counts |
 | [Deployment topology and sizing](DEPLOYMENT-TOPOLOGY-AND-SIZING.md) | Supported shape, ports, and database budget |
 
 ## Browse by area
@@ -23,6 +23,27 @@ The signed tag and [`versions.yaml`](../versions.yaml) win over any page.
 - [Integrations](integrations/index.md)
 - [Compliance and procurement](compliance/index.md)
 - [Archive](archive/README.md)
+
+## Documentation governance
+
+The set is grouped by the decision a reader is making. Every document has one
+group, a label set, a review cadence, and a storage/retention class.
+
+- [Documentation hub](documentation/README.md) — how the set is governed
+- [Documentation standard](documentation/DOCUMENTATION-STANDARDS.md) — groups,
+  labels, scoring, cadence, NIST mapping, storage, and retention
+- [Document review form](documentation/DOCUMENT-REVIEW-FORM.md) — acknowledge a
+  requirement, assign a relevance and quality score, set the review timeline
+- Groups: [governance](documentation/groups/governance.md),
+  [architecture](documentation/groups/architecture.md),
+  [operations](documentation/groups/operations.md),
+  [security](documentation/groups/security.md),
+  [curriculum](documentation/groups/curriculum.md),
+  [integrations](documentation/groups/integrations.md),
+  [product](documentation/groups/product.md),
+  [research](documentation/groups/research.md),
+  [archive](documentation/groups/archive.md), and
+  [documentation](documentation/groups/documentation.md)
 
 ## Release and governance
 

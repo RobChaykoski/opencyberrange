@@ -4,7 +4,7 @@
 !!! note "Curriculum position"
     **Chapter:** `WIN10` — Active Directory and Authentication
     **Prerequisites:** `WIN02` — SMB Reconnaissance
-    **Recommended next:** `LIN01` — Linux Service Enumeration
+    **Recommended next:** `WIN11` — Active Directory Attack Pathway
 <!-- END GENERATED CHAPTER POSITION -->
 
 Two exercises connect directory fundamentals to the SMB skills already used in

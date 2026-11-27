@@ -1,0 +1,33 @@
+# Generated from platform/labs/Software Security/software-security-3-3-authentication-and-reuse/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: software-security-3-3-authentication-and-reuse
+track: Software Security
+difficulty: intermediate
+source: platform/labs/Software Security/software-security-3-3-authentication-and-reuse/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr-tester:latest
+  command: /tests/software-security-3-3-authentication-and-reuse.sh
+  steps:
+  - name: Login returns a token
+    command: 'curl -s -X POST http://{target.api}:8080/api/v1/login -H ''Content-Type: application/json'' -d ''{"username":"analyst","password":"karate-demo-2026"}'' | jq -r .token'
+    expect: northwind-karate-demo-token
+  - name: Profile rejects a missing token
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.api}:8080/api/v1/me
+    expect: '401'
+  - name: Profile returns the flag with a valid token
+    command: 'T=$(curl -s -X POST http://{target.api}:8080/api/v1/login -H ''Content-Type: application/json'' -d ''{"username":"analyst","password":"karate-demo-2026"}'' | jq -r .token); curl -s -H "Authorization: Bearer $T" http://{target.api}:8080/api/v1/me | jq -r .flag'
+    expect: '{flag}'
+expected_flag_count: 1
+expected_flag: '{flag}'
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 352
+max_cpu: 0.4

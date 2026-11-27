@@ -123,6 +123,8 @@ chapter_defaults:
   WIN07: {primary_competency: identity_access, framework_refs: [NICE, CWE]}
   WIN08: {primary_competency: identity_access, framework_refs: [NICE, MITRE_ATTACK]}
   WIN09: {primary_competency: network_systems, framework_refs: [NICE, MITRE_ATTACK]}
+  WIN10: {primary_competency: identity_access, framework_refs: [NICE, MITRE_ATTACK]}
+  WIN11: {primary_competency: identity_access, framework_refs: [NICE, MITRE_ATTACK]}
 
   LIN01: {primary_competency: network_systems, framework_refs: [NICE, MITRE_ATTACK]}
   LIN01B: {primary_competency: network_systems, framework_refs: [NICE, MITRE_ATTACK]}
@@ -146,13 +148,22 @@ chapter_defaults:
   WEB02: {primary_competency: web_api, framework_refs: [OWASP_TOP10, CWE]}
   WEB02B: {primary_competency: web_api, framework_refs: [OWASP_TOP10, OWASP_ASVS]}
   WEB03: {primary_competency: web_api, framework_refs: [OWASP_TOP10, OWASP_ASVS]}
+  WEB11: {primary_competency: web_api, framework_refs: [OWASP_TOP10, OWASP_ASVS]}
 
   MAL01: {primary_competency: malware, framework_refs: [NICE, MITRE_ATTACK]}
   MAL02: {primary_competency: malware, framework_refs: [NICE, MITRE_ATTACK]}
+  MAL03: {primary_competency: malware, framework_refs: [NICE, MITRE_ATTACK]}
+
+  MSF01: {primary_competency: network_systems, framework_refs: [NICE, MITRE_ATTACK]}
+  MSF02: {primary_competency: network_systems, framework_refs: [NICE, MITRE_ATTACK]}
 
   OT01: {primary_competency: ot_ics, framework_refs: [NIST_800_82, IEC_62443]}
+  OT02: {primary_competency: ot_ics, framework_refs: [NIST_800_82, IEC_62443]}
   AI01: {primary_competency: ai_security, framework_refs: [NIST_AI_RMF, OWASP_LLM]}
+  AI02: {primary_competency: ai_security, framework_refs: [NIST_AI_RMF, OWASP_LLM]}
   OSINT01: {primary_competency: osint, framework_refs: [NICE, MITRE_ATTACK]}
+  OSINT02: {primary_competency: osint, framework_refs: [NICE, MITRE_ATTACK]}
+  OSINT03: {primary_competency: osint, framework_refs: [NICE, MITRE_ATTACK]}
 
   BEG01: {primary_competency: system_administration, framework_refs: [NICE, NIST_CSF]}
   BEG02: {primary_competency: system_administration, framework_refs: [NICE, NIST_CSF]}
@@ -160,9 +171,61 @@ chapter_defaults:
   BEG04: {primary_competency: digital_safety, framework_refs: [NICE, NIST_CSF]}
 
   SWSEC01: {primary_competency: secure_development, framework_refs: [NIST_SSDF, CWE]}
+  SWSEC02: {primary_competency: secure_development, framework_refs: [NIST_SSDF, CWE]}
   IAM01: {primary_competency: identity_access, framework_refs: [NICE, NIST_CSF]}
   FOR01: {primary_competency: incident_forensics, framework_refs: [NICE, NIST_CSF]}
   FOR02: {primary_competency: incident_forensics, framework_refs: [NICE, NIST_CSF]}
+  FOR03: {primary_competency: incident_forensics, framework_refs: [NICE, NIST_CSF]}
+  FOR03B: {primary_competency: incident_forensics, framework_refs: [NICE, NIST_CSF]}
+
+  # Planned tracks: defaults are set before the workbooks are authored so a new
+  # lab inherits its track's competency axis instead of failing the map check.
+  IAM02: {primary_competency: identity_access, framework_refs: [NICE, NIST_CSF]}
+  IAM03: {primary_competency: identity_access, framework_refs: [NICE, NIST_CSF]}
+  IAM04: {primary_competency: identity_access, framework_refs: [NICE, NIST_CSF]}
+  IAM05: {primary_competency: identity_access, framework_refs: [NICE, NIST_CSF]}
+  IAM06: {primary_competency: identity_access, framework_refs: [NICE, NIST_CSF]}
+  IAM07: {primary_competency: identity_access, framework_refs: [NICE, NIST_CSF]}
+  IAM08: {primary_competency: identity_access, framework_refs: [NICE, NIST_CSF]}
+  IAM09: {primary_competency: identity_access, framework_refs: [NICE, NIST_CSF]}
+
+  VM01: {primary_competency: system_administration, framework_refs: [NICE, NIST_CSF]}
+  VM02: {primary_competency: system_administration, framework_refs: [NICE, NIST_CSF]}
+  VM03: {primary_competency: system_administration, framework_refs: [NICE, NIST_CSF]}
+  VM04: {primary_competency: system_administration, framework_refs: [NICE, NIST_CSF]}
+  VM05: {primary_competency: system_administration, framework_refs: [NICE, NIST_CSF]}
+  VM06: {primary_competency: system_administration, framework_refs: [NICE, NIST_CSF]}
+  VM07: {primary_competency: system_administration, framework_refs: [NICE, NIST_CSF]}
+  VM08: {primary_competency: system_administration, framework_refs: [NICE, NIST_CSF]}
+
+  SOC01: {primary_competency: incident_forensics, framework_refs: [NICE, NIST_CSF]}
+  SOC02: {primary_competency: incident_forensics, framework_refs: [NICE, NIST_CSF]}
+  SOC03: {primary_competency: incident_forensics, framework_refs: [NICE, NIST_CSF]}
+  SOC04: {primary_competency: incident_forensics, framework_refs: [NICE, NIST_CSF]}
+  SOC05: {primary_competency: incident_forensics, framework_refs: [NICE, NIST_CSF]}
+  SOC06: {primary_competency: incident_forensics, framework_refs: [NICE, NIST_CSF]}
+  SOC07: {primary_competency: incident_forensics, framework_refs: [NICE, NIST_CSF]}
+  SOC08: {primary_competency: incident_forensics, framework_refs: [NICE, NIST_CSF]}
+
+  PLAT01: {primary_competency: system_administration, framework_refs: [NICE, NIST_CSF]}
+  PLAT02: {primary_competency: system_administration, framework_refs: [NICE, NIST_CSF]}
+  PLAT03: {primary_competency: system_administration, framework_refs: [NICE, NIST_CSF]}
+  PLAT04: {primary_competency: system_administration, framework_refs: [NICE, NIST_CSF]}
+  PLAT05: {primary_competency: system_administration, framework_refs: [NICE, NIST_CSF]}
+  PLAT06: {primary_competency: system_administration, framework_refs: [NICE, NIST_CSF]}
+  PLAT07: {primary_competency: system_administration, framework_refs: [NICE, NIST_CSF]}
+  PLAT08: {primary_competency: system_administration, framework_refs: [NICE, NIST_CSF]}
+  PLAT09: {primary_competency: system_administration, framework_refs: [NICE, NIST_CSF]}
+
+  NENG01: {primary_competency: network_systems, framework_refs: [NICE, NIST_CSF]}
+  NENG02: {primary_competency: network_systems, framework_refs: [NICE, NIST_CSF]}
+  NENG03: {primary_competency: network_systems, framework_refs: [NICE, NIST_CSF]}
+  NENG04: {primary_competency: network_systems, framework_refs: [NICE, NIST_CSF]}
+  NENG05: {primary_competency: network_systems, framework_refs: [NICE, NIST_CSF]}
+  NENG06: {primary_competency: network_systems, framework_refs: [NICE, NIST_CSF]}
+  NENG07: {primary_competency: network_systems, framework_refs: [NICE, NIST_CSF]}
+  NENG08: {primary_competency: network_systems, framework_refs: [NICE, NIST_CSF]}
+  NENG09: {primary_competency: network_systems, framework_refs: [NICE, NIST_CSF]}
 
 lab_overrides:
   # Selective additions where the governing framework is more specific than the
@@ -173,6 +236,12 @@ lab_overrides:
     framework_refs: [NIST_SSDF, CWE]
   software-security-2-1-diagnostics-command-injection:
     framework_refs: [NIST_SSDF, CWE]
+  software-security-3-3-authentication-and-reuse:
+    primary_competency: identity_access
+    framework_refs: [OWASP_ASVS, CWE]
+  software-security-3-4-negative-tests-and-evidence:
+    primary_competency: web_api
+    framework_refs: [OWASP_TOP10, CWE]
   # Beginner-stage labs cross several chapter themes. Keep the primary
   # competency specific to the exercise rather than the whole stage.
   high-school-9-3-cyberchef-base64-basics: {primary_competency: digital_safety, framework_refs: [NICE, NIST_CSF]}
@@ -201,3 +270,6 @@ lab_overrides:
   linux-midterm-3-blind-penetration-test: {primary_competency: network_systems, framework_refs: [NICE, MITRE_ATTACK]}
   windows-10-1-network-enumeration-assessment: {primary_competency: network_systems, framework_refs: [NICE, MITRE_ATTACK]}
   windows-10-2-midterm-assessment: {primary_competency: network_systems, framework_refs: [NICE, MITRE_ATTACK]}
+  # Labs that map to a workbook file rather than a chapter directory.
+  network-2-7-arkime-session-triage: {primary_competency: network_systems, framework_refs: [NICE, NIST_CSF]}
+  ot-3-1-ics-pcap-forensics: {primary_competency: ot_ics, framework_refs: [NIST_800_82, IEC_62443]}

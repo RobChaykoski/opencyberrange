@@ -4,7 +4,7 @@
 !!! note "Curriculum position"
     **Chapter:** `FOR03` — Topology Forensics
     **Prerequisites:** `FOR02` — Network Forensics
-    **Recommended next:** `OSINT01` — OSINT Foundations
+    **Recommended next:** `FOR03B` — Live Memory Acquisition
 <!-- END GENERATED CHAPTER POSITION -->
 
 Two exercises share the same evidence question: **which path did the request take

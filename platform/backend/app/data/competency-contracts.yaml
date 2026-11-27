@@ -7144,6 +7144,238 @@ labs:
     usage_source: null
     review_status: baseline_derived
     reviewed_at: null
+  software-security-3-1-first-karate-feature:
+    lab_id: software-security-3-1-first-karate-feature
+    track: Software Security
+    difficulty: beginner
+    expected_duration_minutes: 25
+    prerequisites:
+    - software-security-1-1-hidden-export-route
+    workbook: wiki/range/software-security/CH_SWSEC_Karate_API_Testing/01_First_Karate_Feature/
+    competency_ids:
+    - id: WEB-001
+      weight: 0.4
+    - id: WEB-005
+      weight: 0.3
+    - id: WEB-009
+      weight: 0.2
+    - id: WEB-019
+      weight: 0.1
+    evidence:
+    - type: flag
+      weight: 0.35
+      source: lab.flag
+      validation: exact_match
+    - type: validation_step
+      weight: 0.35
+      source: platform/tester/manifests/software-security-3-1-first-karate-feature.yaml
+      validation: all_steps_pass
+    - type: analyst_answer
+      weight: 0.2
+      source: workbook.analysis_questions
+      validation: rubric
+    - type: artifact
+      weight: 0.1
+      source: submitted_artifact
+      validation: rubric
+    prohibited_collection:
+    - keystrokes
+    - mouse_movement
+    - exhaustive_terminal_history
+    assessment_reliability:
+      level: medium
+      score: 0.65
+      evidence_completeness: medium
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Baseline contract derived from the reviewed competency mapping. The evidence types and weights are explicit; live harness evidence and analyst-answer moderation are required before marking reviewed.
+    assessment_criteria:
+    - Submit the correct flag.
+    - Pass every automated test step in the lab manifest.
+    - Submit the Karate feature file and the run summary.
+    - Explain in one sentence what the status assertion proves.
+    test_steps: 3
+    flag_required: true
+    content_version: 1.0.0
+    usage_rank: null
+    usage_completions: null
+    usage_source: null
+    review_status: baseline_derived
+    reviewed_at: null
+  software-security-3-2-assertions-and-examples:
+    lab_id: software-security-3-2-assertions-and-examples
+    track: Software Security
+    difficulty: beginner
+    expected_duration_minutes: 35
+    prerequisites:
+    - software-security-3-1-first-karate-feature
+    workbook: wiki/range/software-security/CH_SWSEC_Karate_API_Testing/02_Assertions_And_Data_Tables/
+    competency_ids:
+    - id: WEB-001
+      weight: 0.4
+    - id: WEB-005
+      weight: 0.3
+    - id: WEB-009
+      weight: 0.2
+    - id: WEB-019
+      weight: 0.1
+    evidence:
+    - type: flag
+      weight: 0.35
+      source: lab.flag
+      validation: exact_match
+    - type: validation_step
+      weight: 0.35
+      source: platform/tester/manifests/software-security-3-2-assertions-and-examples.yaml
+      validation: all_steps_pass
+    - type: analyst_answer
+      weight: 0.2
+      source: workbook.analysis_questions
+      validation: rubric
+    - type: artifact
+      weight: 0.1
+      source: submitted_artifact
+      validation: rubric
+    prohibited_collection:
+    - keystrokes
+    - mouse_movement
+    - exhaustive_terminal_history
+    assessment_reliability:
+      level: medium
+      score: 0.65
+      evidence_completeness: medium
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Baseline contract derived from the reviewed competency mapping. The evidence types and weights are explicit; live harness evidence and analyst-answer moderation are required before marking reviewed.
+    assessment_criteria:
+    - Submit the correct flag.
+    - Pass every automated test step in the lab manifest.
+    - Submit the feature file with at least one Scenario Outline and one negative assertion.
+    - Explain the difference between a status assertion and a body assertion.
+    test_steps: 3
+    flag_required: true
+    content_version: 1.0.0
+    usage_rank: null
+    usage_completions: null
+    usage_source: null
+    review_status: baseline_derived
+    reviewed_at: null
+  software-security-3-3-authentication-and-reuse:
+    lab_id: software-security-3-3-authentication-and-reuse
+    track: Software Security
+    difficulty: intermediate
+    expected_duration_minutes: 40
+    prerequisites:
+    - software-security-3-2-assertions-and-examples
+    workbook: wiki/range/software-security/CH_SWSEC_Karate_API_Testing/03_Authentication_And_Reuse/
+    competency_ids:
+    - id: WIN-012
+      weight: 0.4
+    - id: WEB-007
+      weight: 0.3
+    - id: WEB-010
+      weight: 0.2
+    - id: CLD-002
+      weight: 0.1
+    evidence:
+    - type: flag
+      weight: 0.35
+      source: lab.flag
+      validation: exact_match
+    - type: validation_step
+      weight: 0.35
+      source: platform/tester/manifests/software-security-3-3-authentication-and-reuse.yaml
+      validation: all_steps_pass
+    - type: analyst_answer
+      weight: 0.2
+      source: workbook.analysis_questions
+      validation: rubric
+    - type: artifact
+      weight: 0.1
+      source: submitted_artifact
+      validation: rubric
+    prohibited_collection:
+    - keystrokes
+    - mouse_movement
+    - exhaustive_terminal_history
+    assessment_reliability:
+      level: medium
+      score: 0.65
+      evidence_completeness: medium
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Baseline contract derived from the reviewed competency mapping. The evidence types and weights are explicit; live harness evidence and analyst-answer moderation are required before marking reviewed.
+    assessment_criteria:
+    - Submit the correct flag.
+    - Pass every automated test step in the lab manifest.
+    - Submit the feature file with one login feature and one reusable token call.
+    - Explain why logging in for every scenario is slower and harder to audit.
+    test_steps: 3
+    flag_required: true
+    content_version: 1.0.0
+    usage_rank: null
+    usage_completions: null
+    usage_source: null
+    review_status: baseline_derived
+    reviewed_at: null
+  software-security-3-4-negative-tests-and-evidence:
+    lab_id: software-security-3-4-negative-tests-and-evidence
+    track: Software Security
+    difficulty: intermediate
+    expected_duration_minutes: 45
+    prerequisites:
+    - software-security-3-3-authentication-and-reuse
+    workbook: wiki/range/software-security/CH_SWSEC_Karate_API_Testing/04_Negative_Tests_And_Evidence/
+    competency_ids:
+    - id: WEB-001
+      weight: 0.4
+    - id: WEB-005
+      weight: 0.3
+    - id: WEB-009
+      weight: 0.2
+    - id: WEB-019
+      weight: 0.1
+    evidence:
+    - type: flag
+      weight: 0.35
+      source: lab.flag
+      validation: exact_match
+    - type: validation_step
+      weight: 0.35
+      source: platform/tester/manifests/software-security-3-4-negative-tests-and-evidence.yaml
+      validation: all_steps_pass
+    - type: analyst_answer
+      weight: 0.2
+      source: workbook.analysis_questions
+      validation: rubric
+    - type: artifact
+      weight: 0.1
+      source: submitted_artifact
+      validation: rubric
+    prohibited_collection:
+    - keystrokes
+    - mouse_movement
+    - exhaustive_terminal_history
+    assessment_reliability:
+      level: medium
+      score: 0.65
+      evidence_completeness: medium
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Baseline contract derived from the reviewed competency mapping. The evidence types and weights are explicit; live harness evidence and analyst-answer moderation are required before marking reviewed.
+    assessment_criteria:
+    - Submit the correct flag.
+    - Pass every automated test step in the lab manifest.
+    - Submit the feature file with a passing negative test and the failing result that exposed the bug.
+    - Write a short finding with the account id, the observed status, and the control change.
+    test_steps: 3
+    flag_required: true
+    content_version: 1.0.0
+    usage_rank: null
+    usage_completions: null
+    usage_source: null
+    review_status: baseline_derived
+    reviewed_at: null
   web-1-1-basic-directory-enumeration:
     lab_id: web-1-1-basic-directory-enumeration
     track: Web

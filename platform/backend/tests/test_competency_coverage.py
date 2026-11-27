@@ -10,17 +10,17 @@ from app.services.competency_coverage import (
 
 def test_coverage_summary_matches_the_contracts():
     summary = coverage_summary()
-    assert summary["total"] == 218
+    assert summary["total"] == 222
     assert summary["reviewed"] == 25
-    assert summary["pending"] == 193
+    assert summary["pending"] == 197
     assert summary["reviewed"] + summary["pending"] == summary["total"]
     assert 0 < summary["coverage_percent"] < 100
 
 
 def test_release6_audit_has_no_structural_mapping_gaps():
     audit = release6_audit()
-    assert audit["labs"]["total"] == 218
-    assert audit["labs"]["contracts"] == 218
+    assert audit["labs"]["total"] == 222
+    assert audit["labs"]["contracts"] == 222
     assert audit["labs"]["missing_contract"] == []
     assert audit["labs"]["missing_competencies"] == []
     assert audit["labs"]["unknown_competencies"] == []

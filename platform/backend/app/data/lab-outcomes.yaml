@@ -6785,6 +6785,226 @@ labs:
         reviewed.
     review_status: baseline_derived
     reviewed_at: null
+  software-security-3-1-first-karate-feature:
+    track: Software Security
+    difficulty: beginner
+    expected_duration_minutes: 25
+    workbook: wiki/range/software-security/CH_SWSEC_Karate_API_Testing/01_First_Karate_Feature/
+    skills_earned:
+    - id: WEB-001
+      name: HTML Fundamentals
+      weight: 0.4
+    - id: WEB-005
+      name: HTTP Methods
+      weight: 0.3
+    - id: WEB-009
+      name: Input Validation
+      weight: 0.2
+    - id: WEB-019
+      name: OWASP Top 10 Mapping
+      weight: 0.1
+    competencies_proven:
+    - id: WEB-001
+      name: HTML Fundamentals
+      weight: 0.4
+      category: Web Fundamentals
+    - id: WEB-005
+      name: HTTP Methods
+      weight: 0.3
+      category: Web Fundamentals
+    - id: WEB-009
+      name: Input Validation
+      weight: 0.2
+      category: Web Security
+    - id: WEB-019
+      name: OWASP Top 10 Mapping
+      weight: 0.1
+      category: Web Vulnerabilities
+    knowledge_domains:
+    - id: WEB
+      label: Web Technologies
+    practice_axes:
+    - Web and API
+    - Network systems
+    evidence_artifacts:
+    - flag
+    - automated validation
+    - analyst finding
+    - submitted artifact
+    confidence:
+      score: 0.65
+      level: medium
+      basis: Baseline contract derived from the reviewed competency mapping. The evidence types and weights
+        are explicit; live harness evidence and analyst-answer moderation are required before marking
+        reviewed.
+    review_status: baseline_derived
+    reviewed_at: null
+  software-security-3-2-assertions-and-examples:
+    track: Software Security
+    difficulty: beginner
+    expected_duration_minutes: 35
+    workbook: wiki/range/software-security/CH_SWSEC_Karate_API_Testing/02_Assertions_And_Data_Tables/
+    skills_earned:
+    - id: WEB-001
+      name: HTML Fundamentals
+      weight: 0.4
+    - id: WEB-005
+      name: HTTP Methods
+      weight: 0.3
+    - id: WEB-009
+      name: Input Validation
+      weight: 0.2
+    - id: WEB-019
+      name: OWASP Top 10 Mapping
+      weight: 0.1
+    competencies_proven:
+    - id: WEB-001
+      name: HTML Fundamentals
+      weight: 0.4
+      category: Web Fundamentals
+    - id: WEB-005
+      name: HTTP Methods
+      weight: 0.3
+      category: Web Fundamentals
+    - id: WEB-009
+      name: Input Validation
+      weight: 0.2
+      category: Web Security
+    - id: WEB-019
+      name: OWASP Top 10 Mapping
+      weight: 0.1
+      category: Web Vulnerabilities
+    knowledge_domains:
+    - id: WEB
+      label: Web Technologies
+    practice_axes:
+    - Web and API
+    - Network systems
+    evidence_artifacts:
+    - flag
+    - automated validation
+    - analyst finding
+    - submitted artifact
+    confidence:
+      score: 0.65
+      level: medium
+      basis: Baseline contract derived from the reviewed competency mapping. The evidence types and weights
+        are explicit; live harness evidence and analyst-answer moderation are required before marking
+        reviewed.
+    review_status: baseline_derived
+    reviewed_at: null
+  software-security-3-3-authentication-and-reuse:
+    track: Software Security
+    difficulty: intermediate
+    expected_duration_minutes: 40
+    workbook: wiki/range/software-security/CH_SWSEC_Karate_API_Testing/03_Authentication_And_Reuse/
+    skills_earned:
+    - id: WIN-012
+      name: Authentication Concepts
+      weight: 0.4
+    - id: WEB-007
+      name: Authentication Security
+      weight: 0.3
+    - id: WEB-010
+      name: Session Security
+      weight: 0.2
+    - id: CLD-002
+      name: Microsoft Entra ID
+      weight: 0.1
+    competencies_proven:
+    - id: WIN-012
+      name: Authentication Concepts
+      weight: 0.4
+      category: Active Directory
+    - id: WEB-007
+      name: Authentication Security
+      weight: 0.3
+      category: Web Security
+    - id: WEB-010
+      name: Session Security
+      weight: 0.2
+      category: Web Security
+    - id: CLD-002
+      name: Microsoft Entra ID
+      weight: 0.1
+      category: Azure
+    knowledge_domains:
+    - id: CLD
+      label: Cloud Security
+    - id: WEB
+      label: Web Technologies
+    - id: WIN
+      label: Windows
+    practice_axes:
+    - Identity and access
+    - Web and API
+    evidence_artifacts:
+    - flag
+    - automated validation
+    - analyst finding
+    - submitted artifact
+    confidence:
+      score: 0.65
+      level: medium
+      basis: Baseline contract derived from the reviewed competency mapping. The evidence types and weights
+        are explicit; live harness evidence and analyst-answer moderation are required before marking
+        reviewed.
+    review_status: baseline_derived
+    reviewed_at: null
+  software-security-3-4-negative-tests-and-evidence:
+    track: Software Security
+    difficulty: intermediate
+    expected_duration_minutes: 45
+    workbook: wiki/range/software-security/CH_SWSEC_Karate_API_Testing/04_Negative_Tests_And_Evidence/
+    skills_earned:
+    - id: WEB-001
+      name: HTML Fundamentals
+      weight: 0.4
+    - id: WEB-005
+      name: HTTP Methods
+      weight: 0.3
+    - id: WEB-009
+      name: Input Validation
+      weight: 0.2
+    - id: WEB-019
+      name: OWASP Top 10 Mapping
+      weight: 0.1
+    competencies_proven:
+    - id: WEB-001
+      name: HTML Fundamentals
+      weight: 0.4
+      category: Web Fundamentals
+    - id: WEB-005
+      name: HTTP Methods
+      weight: 0.3
+      category: Web Fundamentals
+    - id: WEB-009
+      name: Input Validation
+      weight: 0.2
+      category: Web Security
+    - id: WEB-019
+      name: OWASP Top 10 Mapping
+      weight: 0.1
+      category: Web Vulnerabilities
+    knowledge_domains:
+    - id: WEB
+      label: Web Technologies
+    practice_axes:
+    - Web and API
+    - Identity and access
+    evidence_artifacts:
+    - flag
+    - automated validation
+    - analyst finding
+    - submitted artifact
+    confidence:
+      score: 0.65
+      level: medium
+      basis: Baseline contract derived from the reviewed competency mapping. The evidence types and weights
+        are explicit; live harness evidence and analyst-answer moderation are required before marking
+        reviewed.
+    review_status: baseline_derived
+    reviewed_at: null
   web-1-1-basic-directory-enumeration:
     track: Web
     difficulty: beginner

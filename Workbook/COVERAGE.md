@@ -16,10 +16,10 @@ links.
 | Network | 22 |
 | OSINT | 10 |
 | OT | 4 |
-| Software Security | 2 |
+| Software Security | 6 |
 | Web | 27 |
 | Windows | 62 |
-| **Total** | **207** |
+| **Total** | **211** |
 
 ## Labs
 
@@ -141,8 +141,12 @@ links.
 | OT | Trailline Industrial - Modbus Register Triage (`ot-1-1-modbus-register-analysis`) | `wiki/range/ot/CH_OT01_Modbus_Fundamentals/01_Modbus_Register_Analysis/` |
 | OT | Trailline Industrial - S7comm Data Block Read (`ot-2-1-s7comm-register-access`) | `wiki/range/ot/CH_OT02_S7comm_Data_Blocks/01_S7comm_Data_Block_Read/` |
 | OT | Trailline Industrial - Setpoint Tampering (`ot-1-2-modbus-setpoint-tampering`) | `wiki/range/ot/CH_OT01_Modbus_Fundamentals/02_Modbus_Write_Setpoint/` |
+| Software Security | Assertions and Data Tables (`software-security-3-2-assertions-and-examples`) | `wiki/range/software-security/CH_SWSEC_Karate_API_Testing/02_Assertions_And_Data_Tables/` |
+| Software Security | Authenticate Once, Reuse Everywhere (`software-security-3-3-authentication-and-reuse`) | `wiki/range/software-security/CH_SWSEC_Karate_API_Testing/03_Authentication_And_Reuse/` |
 | Software Security | Diagnostics Command Injection (`software-security-2-1-diagnostics-command-injection`) | `wiki/range/software-security/CH_SWSEC_Software_Security/02_Diagnostics_Command_Injection/` |
 | Software Security | Hidden Export Route (`software-security-1-1-hidden-export-route`) | `wiki/range/software-security/CH_SWSEC_Software_Security/01_Hidden_Export_Route/` |
+| Software Security | Karate 101: Your First API Test (`software-security-3-1-first-karate-feature`) | `wiki/range/software-security/CH_SWSEC_Karate_API_Testing/01_First_Karate_Feature/` |
+| Software Security | Negative Tests and Evidence Reports (`software-security-3-4-negative-tests-and-evidence`) | `wiki/range/software-security/CH_SWSEC_Karate_API_Testing/04_Negative_Tests_And_Evidence/` |
 | Web | API Security: BOLA and BFLA (`web-11-2-api-bola-bfla`) | `wiki/range/webpt/CH_WEB11_AppSec_Pathway/02_BOLA_and_BFLA/` |
 | Web | API Security: GraphQL (`web-11-3-graphql-security`) | `wiki/range/webpt/CH_WEB11_AppSec_Pathway/03_GraphQL_Security/` |
 | Web | API Security: Inventory and Attack Surface Mapping (`web-11-1-api-inventory`) | `wiki/range/webpt/CH_WEB11_AppSec_Pathway/01_API_Inventory/` |
