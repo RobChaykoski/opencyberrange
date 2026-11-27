@@ -72,6 +72,7 @@ group, a label set, a review cadence, and a storage/retention class.
   [MkDocs governance](MKDOCS-GOVERNANCE.md)
 - [Tracked exceptions and open findings](TRACKED-EXCEPTIONS.md)
 - [Governance](../GOVERNANCE.md) and [citation](../CITATION.cff)
+- [Privacy exclusion audit](PRIVACY-AUDIT.md)
 - [Open-source readiness](OPEN-SOURCE-READINESS.md)
 - [Legal and institutional readiness](LEGAL-READINESS.md)
 - [Flag exposure](FLAG-EXPOSURE.md)

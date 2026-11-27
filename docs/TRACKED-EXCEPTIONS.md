@@ -55,7 +55,7 @@ replace the detailed pages it references.
 | RB-02 | Middleware decodes the JWT 2–3 times and opens 2–4 DB sessions per request | High | Open | Decode once per request; share the session or close it deterministically. |
 | RB-03 | `exercise_tester.py` cross-tenant flag disclosure | Critical | Open | Scope every lookup to the caller's tenant; add a denial test. |
 | RB-04 | `exercise_tester.py` `timeout` command injection | Critical | Open | Pass arguments as a list; never interpolate into a shell. Add a regression test. |
-| RB-05 | Analytics minor exclusion misses `course_pulse_comments` and `survey_responses` | High | Open | Apply the same under-18 exclusion used elsewhere; add a test. |
+| RB-05 | Analytics minor exclusion misses `course_pulse_comments` and `survey_responses` | High | **Closed** | `_pulse_rows` and `_reaction_rows` now accept a minor-filtered `user_ids` set, and both course-level call sites pass it. The response endpoints already filtered. `scripts/audit-privacy-exclusions.py` is now a CI gate and `docs/PRIVACY-AUDIT.md` is the generated report. |
 | RB-06 | Wiki served same-origin with `unsafe-inline` CSP on internet-facing installs | High | Partial | HSTS, Referrer-Policy, and Permissions-Policy are now present in every generated wiki location, and `server_tokens off` is set. The wiki CSP still needs `unsafe-inline` for MkDocs Material; the durable fix is a split origin or a nonce pipeline. |
 | RB-07 | Manual TLS renewal | Medium | Open | Automate renewal or document a checked runbook. |
 | RB-08 | Backups unencrypted at rest | High | Open | Confirm GPG/age encryption on every target; test a restore. |

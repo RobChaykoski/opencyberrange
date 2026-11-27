@@ -79,6 +79,11 @@ jobs:
       - name: Audit publication metadata and answer keys
         run: python scripts/audit-publication.py --summary
 
+      - name: Audit under-18 exclusion in analytics
+        run: |
+          python scripts/audit-privacy-exclusions.py --report docs/PRIVACY-AUDIT.md
+          git diff --exit-code -- docs/PRIVACY-AUDIT.md
+
       - name: Audit flag exposure
         run: python scripts/audit_flag_exposure.py --fail-on-leaks
 
