@@ -355,7 +355,7 @@
       "sha256": "107c6c242335d422fa18289528403446f46107397eaf810f9127a38357a49afe"
     },
     "scripts/deploy-updates.sh": {
-      "sha256": "ad181381948e8afbd4ce680a28fc9875f43727babdb0ca3f2c0350c5799e9f38"
+      "sha256": "14d2f78c2d1d6e369a50924197b16e20acc4674dab8e5fa628862b69365a7450"
     },
     "scripts/export-contract-reviews.py": {
       "sha256": "65945aa34ece82cda4eb8aed0d47e10f7fc7bab91dce51b0c94f2ac50ce50b1a"
@@ -388,7 +388,7 @@
       "sha256": "e6c423a7bd77efce87b02511565d5db376ebc5427d9b9a1b071e44b139251521"
     },
     "scripts/install-platform.sh": {
-      "sha256": "1a3b590dfea7db1868aa833fe45c49c92f3ca2626d54aff57f6607e086aa7f77"
+      "sha256": "1f6a8045c76e6ef84fc9ae1bbca7e5f7fcacfcab137aa8cea4f2e9189e0ac033"
     },
     "scripts/lab_build_hash.py": {
       "sha256": "47f9b084a529c6ef0460cdb0895f0b90d3adf18c6c37ecf97b4f34bfabe952cf"

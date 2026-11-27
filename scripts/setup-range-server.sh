@@ -135,25 +135,30 @@ install_compose_binary() {
         x86_64|aarch64) ;;
         *) return 1 ;;
     esac
+    # Pin the Compose release and its per-arch SHA-256. Do not trust a checksum
+    # fetched from the same origin as the binary.
+    local compose_version="v5.8.1"
+    local expected
+    case "$arch" in
+        x86_64) expected="cf2713394ca63900da5d00e0be12045634cea93a504e1ab2f2ae24eed7f2d359" ;;
+        aarch64) expected="e169103deb35aa6633a78eca0a2a0658275d573dd689a33c839c71badfa00cce" ;;
+    esac
     mkdir -p /usr/local/lib/docker/cli-plugins
-    local base="https://github.com/docker/compose/releases/latest/download/docker-compose-linux-${arch}"
-    local tmp_bin tmp_sha expected actual
+    local base="https://github.com/docker/compose/releases/download/${compose_version}/docker-compose-linux-${arch}"
+    local tmp_bin actual
     tmp_bin=$(mktemp)
-    tmp_sha=$(mktemp)
-    if ! curl -fsSL "$base" -o "$tmp_bin" \
-        || ! curl -fsSL "${base}.sha256" -o "$tmp_sha"; then
-        rm -f "$tmp_bin" "$tmp_sha"
+    if ! curl -fsSL "$base" -o "$tmp_bin"; then
+        rm -f "$tmp_bin"
         return 1
     fi
-    expected=$(tr -d '[:space:]' < "$tmp_sha")
     actual=$(sha256sum "$tmp_bin" | awk '{print $1}')
     if [ -z "$expected" ] || [ "$expected" != "$actual" ]; then
-        rm -f "$tmp_bin" "$tmp_sha"
-        err "Docker Compose download failed SHA-256 verification"
+        rm -f "$tmp_bin"
+        err "Docker Compose ${compose_version} download failed SHA-256 verification"
         return 1
     fi
     install -m 0755 "$tmp_bin" /usr/local/lib/docker/cli-plugins/docker-compose
-    rm -f "$tmp_bin" "$tmp_sha"
+    rm -f "$tmp_bin"
     docker compose version >/dev/null 2>&1
 }
 

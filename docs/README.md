@@ -21,7 +21,7 @@ The signed tag and [`versions.yaml`](../versions.yaml) win over any page.
 | Install the platform | [Server deployment](../Manual-Lite/00_Server_Deployment/), [prerequisites](../Manual-Lite/00_Server_Deployment/01_Prerequisites.md), [local deployment](../Manual-Lite/00_Server_Deployment/02_Local_Deployment.md) |
 | Operate or upgrade a host | [Deployment runbook](DEPLOYMENT-RUNBOOK.md), [upgrade guide](../Manual-Lite/00_Server_Deployment/07_Upgrade_And_Verify.md), [backup and restore](BACKUP-RESTORE-TEST.md) |
 | Understand the design | [Architecture](ARCHITECTURE.md), [architecture hub](architecture/index.md) |
-| Review security and privacy | [Security policy](../SECURITY.md), [privacy notice](PRIVACY-NOTICE.md), [security hub](security/index.md), [flag exposure](FLAG-EXPOSURE.md) |
+| Review security and privacy | [Security policy](../SECURITY.md), [privacy notice](PRIVACY-NOTICE.md), [security hub](security/index.md), [tracked exceptions](TRACKED-EXCEPTIONS.md), [flag exposure](FLAG-EXPOSURE.md) |
 | Build or review curriculum | [Learning framework](LEARNING-FRAMEWORK.md), [curriculum map](../Workbook/CURRICULUM.md), [NICE mapping](NICE-MAPPING.md), [OSINT resources](OSINT-RESOURCES.md) |
 | Look up a fact or limit | [Counts](COUNTS.md), [supported versions](SUPPORTED-VERSIONS.md), [API error codes](API-ERROR-CODES.md), [data dictionary](DATA-DICTIONARY.md) |
 | Trace history or a past release | [Release tags](RELEASES.md), [changelog](../CHANGELOG.md), [archive](archive/README.md) |
@@ -70,6 +70,7 @@ group, a label set, a review cadence, and a storage/retention class.
   [licensing](../LICENSING.md)
 - [Repository hygiene](REPOSITORY-HYGIENE.md) and
   [MkDocs governance](MKDOCS-GOVERNANCE.md)
+- [Tracked exceptions and open findings](TRACKED-EXCEPTIONS.md)
 - [Governance](../GOVERNANCE.md) and [citation](../CITATION.cff)
 - [Open-source readiness](OPEN-SOURCE-READINESS.md)
 - [Legal and institutional readiness](LEGAL-READINESS.md)

@@ -125,3 +125,67 @@ cannot use the package.
    systemd journal for the incident review.
 5. Re-run the supply-chain check and the lab isolation audit before restoring
    service.
+
+## Deploy updates audit
+
+Reviewed 27 November 2026 against `main` at `c9559c29`.
+
+**Trust order is correct.** The script fetches tags, selects a tag, loads the
+public key from the current tree, checks the key fingerprint against the pinned
+`RELEASE_GPG_FINGERPRINT`, verifies the tag, checks out the verified commit, runs
+the supply-chain lock check, and only then copies files and rebuilds.
+
+Three defects were found and fixed:
+
+1. **Fingerprint substring bypass.** The old check searched the whole
+   `git verify-tag` output for the release fingerprint. A tag signed by an
+   attacker key whose UID embeds that string would pass. The check now parses the
+   `using ... key <fpr>` line and compares the signer fingerprint exactly.
+2. **Tag-repoint race.** Verification and checkout were separate name lookups.
+   The script now resolves the tag object, verifies that object, records its
+   commit SHA, and checks out the SHA.
+3. **Backup permissions.** The pre-update backup directory inherited the process
+   umask and could expose `.env`. It is now mode 700.
+
+Four hardening changes came from the follow-up review:
+
+- Prerelease tags (`-rc`, `-beta`, `-alpha`, `-pre`, `-preview`, `-dev`) are
+  excluded from automatic selection; pass `DEPLOY_TAG` to deploy one on purpose.
+- An overridden `RELEASE_GPG_FINGERPRINT` logs a loud warning against the pinned
+  value.
+- The state file records `verified_ref` and `verified_sha` (or `null` for an
+  unsigned update), so an auditor can see what was actually deployed.
+- Backups keep the last `BACKUP_KEEP` snapshots (default 10).
+
+Residual behaviour, recorded in
+[Tracked exceptions](TRACKED-EXCEPTIONS.md#known-bypass-variables-in-the-host-updater):
+
+- `ALLOW_UNSIGNED_MAIN=1`, `ALLOW_UNSIGNED_ZIP=1`, and
+  `SUPPLY_CHAIN_STRICT=0` are explicit opt-outs. Never set them in production.
+- Key rotation has a bootstrap order: place the new public key on the host
+  before tagging with the new key, because the updater reads the key from the
+  current tree.
+
+Still unaudited: `setup-range-server.sh`, `install-platform.sh`,
+`harden-lab-egress.sh`, and the systemd units (tracked as HS-02 to HS-05).
+
+## Installer audit
+
+Reviewed `setup-range-server.sh` and `install-platform.sh` on 27 November 2026.
+
+**`setup-range-server.sh`** generates secrets under a scoped `umask 077`, sets
+mode 600 on the WireGuard and peer-manager material, validates the peer
+`allowed_ips` against the client subnet, refuses wildcard binds, and hardens the
+Peer Manager unit with `NoNewPrivileges` and `ProtectSystem`. Fixed: the Compose
+fallback downloaded `latest` and trusted a checksum from the same origin; it now
+pins **v5.8.1** with per-arch SHA-256 values.
+
+**`install-platform.sh`** runs the lock and signature check before any install
+or update, always generates a `SETUP_TOKEN` to close the first-admin race, keeps
+`.env` and the erasure ledger across an update, and prints the Microsoft licence
+notice. Fixed: the last-resort Fernet key was a hex string, not a valid Fernet
+key; the generated compose had a `labpass` fallback; and a stale "change this"
+comment sat above a generated secret.
+
+**Accepted:** the Peer Manager still runs as root. The capability-drop design is
+tracked as HS-09 and needs a host test before rollout.

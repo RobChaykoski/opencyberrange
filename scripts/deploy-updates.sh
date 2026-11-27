@@ -43,18 +43,21 @@ STATE_FILE="$REPO_DIR/scripts/.update-state"
 # out or applies any pulled code. The public key is checked against this
 # fingerprint, so replacing the key file in a compromised tree cannot widen
 # trust.
-RELEASE_GPG_FINGERPRINT="${RELEASE_GPG_FINGERPRINT:-68A817762C831475F00DB54E775050A4C4921814}"
+RELEASE_FINGERPRINT_PINNED="68A817762C831475F00DB54E775050A4C4921814"
+RELEASE_GPG_FINGERPRINT="${RELEASE_GPG_FINGERPRINT:-$RELEASE_FINGERPRINT_PINNED}"
 DEPLOY_TAG="${DEPLOY_TAG:-}"
 ALLOW_UNSIGNED_MAIN="${ALLOW_UNSIGNED_MAIN:-0}"
 ALLOW_UNSIGNED_ZIP="${ALLOW_UNSIGNED_ZIP:-0}"
 SUPPLY_CHAIN_STRICT="${SUPPLY_CHAIN_STRICT:-1}"
 VERIFIED_RELEASE_REF=""
+VERIFIED_RELEASE_SHA=""
 OCR_RELEASE_GNUPGHOME=""
 
 # Default options
 DEPLOY_PLATFORM=false
 DRY_RUN=false
 PREBUILD_IMAGES=false
+FORCE=false
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
@@ -71,9 +74,13 @@ while [[ $# -gt 0 ]]; do
             PREBUILD_IMAGES=true
             shift
             ;;
+        --force|--yes)
+            FORCE=true
+            shift
+            ;;
         *)
             echo -e "${RED}Unknown option: $1${NC}"
-            echo "Usage: $0 [--platform] [--all] [--dry-run]"
+            echo "Usage: $0 [--platform] [--all] [--dry-run] [--prebuild] [--force]"
             exit 1
             ;;
     esac
@@ -95,8 +102,24 @@ error_exit() {
     exit 1
 }
 
+# Surface the failing line in the deploy log instead of a bare exit.
+trap 'code=$?; log "${RED}[fail] ${BASH_SOURCE[0]}:${LINENO}: ${BASH_COMMAND} (exit ${code})${NC}"' ERR
+
 # Pre-flight checks
 preflight_checks() {
+    if [ "${RELEASE_GPG_FINGERPRINT^^}" != "${RELEASE_FINGERPRINT_PINNED^^}" ]; then
+        log "${YELLOW}[warn] RELEASE_GPG_FINGERPRINT is overridden (${RELEASE_GPG_FINGERPRINT}); the pinned key is ${RELEASE_FINGERPRINT_PINNED}.${NC}"
+    fi
+
+    local avail_kb
+    avail_kb=$(df -Pk "$PLATFORM_DIR" 2>/dev/null | awk 'NR==2 {print $4}')
+    if [ -n "${avail_kb:-}" ]; then
+        if [ "$avail_kb" -lt 5242880 ]; then
+            error_exit "Less than 5 GB free on the platform volume; an update needs room for a build and a backup."
+        elif [ "$avail_kb" -lt 10485760 ]; then
+            log "${YELLOW}[warn] Less than 10 GB free on the platform volume; build and backup may not both fit.${NC}"
+        fi
+    fi
     log "${BLUE}Running pre-flight checks...${NC}"
     # Check if running on server
     if [ ! -d "$PLATFORM_DIR" ]; then
@@ -162,6 +185,26 @@ verify_supply_chain() {
     fi
 }
 
+# Refuse to interrupt live classes unless the operator forces it.
+check_active_sessions() {
+    local active
+    active=$(docker network ls --format '{{.Name}}' 2>/dev/null | grep -cE '^lab_' || true)
+    if [ "${active:-0}" -eq 0 ] || [ "$FORCE" = true ]; then
+        return 0
+    fi
+    log "${YELLOW}[warn] ${active} active lab network(s) detected. A rebuild interrupts learners.${NC}"
+    if [ -t 0 ]; then
+        local answer
+        read -r -p "Continue the update? [y/N] " answer
+        case "$answer" in
+            [yY]*) ;;
+            *) error_exit "Update cancelled. Re-run with --force during a maintenance window." ;;
+        esac
+    else
+        error_exit "Active lab sessions detected. Re-run with --force or wait for a maintenance window."
+    fi
+}
+
 # Create backup
 create_backup() {
     local timestamp=$(date +%Y%m%d_%H%M%S)
@@ -175,6 +218,7 @@ create_backup() {
     fi
     
     mkdir -p "$backup_path"
+    chmod 700 "$backup_path"
     
     # Backup critical files
     if [ -f "$PLATFORM_DIR/.env" ]; then
@@ -198,6 +242,14 @@ create_backup() {
     fi
     
     log "${GREEN}[ok] Backup created${NC}"
+    # Keep the last BACKUP_KEEP update snapshots; a full backend+frontend copy
+    # per update otherwise fills the disk over a year.
+    local keep="${BACKUP_KEEP:-10}"
+    if [ -d "$BACKUP_DIR" ]; then
+        ls -1dt "$BACKUP_DIR"/*/ 2>/dev/null \
+            | tail -n +$((keep + 1)) \
+            | xargs -r rm -rf
+    fi
     echo "$backup_path"
 }
 
@@ -251,10 +303,15 @@ verify_release_tag() {
         git -c safe.directory="$REPO_DIR" -C "$REPO_DIR" verify-tag "$tag" 2>&1); then
         error_exit "Release tag $tag is not signed or its signature is invalid:\n$output"
     fi
-    local compact
-    compact=$(printf '%s' "$output" | tr -d ' \n' | tr '[:lower:]' '[:upper:]')
-    if [ "${compact#*$RELEASE_GPG_FINGERPRINT}" = "$compact" ]; then
-        error_exit "Release tag $tag was not signed by $RELEASE_GPG_FINGERPRINT"
+    # Parse the signer fingerprint from the "using ... key <fpr>" line. Do not
+    # search the whole output: a tag signed by an attacker key whose UID embeds
+    # the release fingerprint would otherwise pass a substring check.
+    local signer
+    signer=$(printf '%s\n' "$output" \
+        | sed -n 's/.*using .* key \([0-9A-Fa-f]\{40\}\).*/\1/p' \
+        | head -n 1)
+    if [ -z "$signer" ] || [ "${signer^^}" != "${RELEASE_GPG_FINGERPRINT^^}" ]; then
+        error_exit "Release tag $tag was signed by ${signer:-an unknown key}, not $RELEASE_GPG_FINGERPRINT"
     fi
     log "${GREEN}[ok] Release tag $tag is signed by $RELEASE_GPG_FINGERPRINT${NC}"
 }
@@ -277,7 +334,9 @@ fetch_and_verify_release() {
     git_owner fetch --tags --prune
     local tag="${DEPLOY_TAG:-}"
     if [ -z "$tag" ]; then
-        tag=$(git_owner tag --list 'v*' --sort=-v:refname | head -1)
+        tag=$(git_owner tag --list 'v*' --sort=-v:refname \
+        | grep -viE -- '-(rc|beta|alpha|pre|preview|dev)[0-9.]*$' \
+        | head -1)
     fi
     if [ -z "$tag" ]; then
         if [ "${ALLOW_UNSIGNED_MAIN:-0}" = "1" ]; then
@@ -289,8 +348,14 @@ fetch_and_verify_release() {
     fi
 
     load_release_key
-    verify_release_tag "$tag"
+    # Resolve the tag object, verify that exact object, then bind the checkout
+    # to its commit so a tag moved between verification and checkout cannot run
+    # unverified code.
+    local tag_object
+    tag_object=$(git_owner rev-parse "$tag")
+    verify_release_tag "$tag_object"
     VERIFIED_RELEASE_REF="$tag"
+    VERIFIED_RELEASE_SHA=$(git_owner rev-parse "$tag_object^{commit}")
 }
 
 checkout_verified_release() {
@@ -298,7 +363,10 @@ checkout_verified_release() {
         return 0
     fi
 
-    if [ -n "$VERIFIED_RELEASE_REF" ]; then
+    if [ -n "$VERIFIED_RELEASE_SHA" ]; then
+        log "${BLUE}Checking out verified release $VERIFIED_RELEASE_REF ($VERIFIED_RELEASE_SHA)...${NC}"
+        git_owner checkout --detach "$VERIFIED_RELEASE_SHA"
+    elif [ -n "$VERIFIED_RELEASE_REF" ]; then
         log "${BLUE}Checking out verified release $VERIFIED_RELEASE_REF...${NC}"
         git_owner checkout --detach "$VERIFIED_RELEASE_REF"
     else
@@ -442,10 +510,10 @@ patch_docker_compose() {
     fi
 
     # Add entrypoint line after "container_name: ocr-db"
-    sed -i '/container_name: ocr-db/a\    entrypoint: ["/usr/local/bin/ensure-db-password.sh"]' "$compose_file"
+    sed -i.bak '/container_name: ocr-db/a\    entrypoint: ["/usr/local/bin/ensure-db-password.sh"]' "$compose_file"
 
     # Add volume mount for the entrypoint script after the postgres_data volume line
-    sed -i '/postgres_data:\/var\/lib\/postgresql\/data/a\      - ./db/ensure-db-password.sh:/usr/local/bin/ensure-db-password.sh:ro' "$compose_file"
+    sed -i.bak '/postgres_data:\/var\/lib\/postgresql\/data/a\      - ./db/ensure-db-password.sh:/usr/local/bin/ensure-db-password.sh:ro' "$compose_file"
 
     log "${GREEN}[ok] docker-compose.yml patched with password sync entrypoint${NC}"
 }
@@ -473,13 +541,13 @@ patch_workbook_volumes() {
     fi
 
     # Add workbook + wiki volumes to backend service (after the /labs:ro line)
-    sed -i '/\${LABS_HOST_PATH}:\/labs:ro/a\      - workbook_data:/workbook\n      - wiki_html:/wiki_output' "$compose_file"
+    sed -i.bak '/\${LABS_HOST_PATH}:\/labs:ro/a\      - workbook_data:/workbook\n      - wiki_html:/wiki_output' "$compose_file"
 
     # Add wiki volume to frontend service (before depends_on: backend)
-    sed -i '/container_name: ocr-frontend/a\    volumes:\n      - wiki_html:/usr/share/nginx/wiki' "$compose_file"
+    sed -i.bak '/container_name: ocr-frontend/a\    volumes:\n      - wiki_html:/usr/share/nginx/wiki' "$compose_file"
 
     # Add named volumes at the end (after postgres_data:)
-    sed -i '/postgres_data:/a\  workbook_data:\n  wiki_html:' "$compose_file"
+    sed -i.bak '/postgres_data:/a\  workbook_data:\n  wiki_html:' "$compose_file"
 
     log "${GREEN}[ok] docker-compose.yml patched with workbook/wiki volumes${NC}"
 }
@@ -515,13 +583,13 @@ patch_wiki_courses_volume() {
     fi
 
     # Add wiki_courses volume to backend service (after wiki_html line)
-    sed -i '/wiki_html:\/wiki_output/a\      - wiki_courses:/wiki_courses' "$compose_file"
+    sed -i.bak '/wiki_html:\/wiki_output/a\      - wiki_courses:/wiki_courses' "$compose_file"
 
     # Add wiki_courses volume to frontend service (after wiki_html line)
-    sed -i '/wiki_html:\/usr\/share\/nginx\/wiki$/a\      - wiki_courses:/usr/share/nginx/wiki-courses' "$compose_file"
+    sed -i.bak '/wiki_html:\/usr\/share\/nginx\/wiki$/a\      - wiki_courses:/usr/share/nginx/wiki-courses' "$compose_file"
 
     # Add named volume at the end (after wiki_html:)
-    sed -i '/^  wiki_html:$/a\  wiki_courses:' "$compose_file"
+    sed -i.bak '/^  wiki_html:$/a\  wiki_courses:' "$compose_file"
 
     log "${GREEN}[ok] docker-compose.yml patched with wiki_courses volume${NC}"
 }
@@ -692,6 +760,9 @@ rebuild_containers() {
     cd "$PLATFORM_DIR"
     
     log "Building containers (this may take a while)..."
+    if ! docker compose config -q; then
+        error_exit "docker compose config failed after the update patches; refusing to build"
+    fi
     if ! docker compose build --no-cache backend frontend; then
         error_exit "Docker build failed"
     fi
@@ -868,11 +939,21 @@ update_state() {
     fi
     
     # Try to write state file, but don't fail if we can't
+    local verified_ref_json="null"
+    local verified_sha_json="null"
+    if [ -n "$VERIFIED_RELEASE_REF" ]; then
+        verified_ref_json="\"$VERIFIED_RELEASE_REF\""
+    fi
+    if [ -n "$VERIFIED_RELEASE_SHA" ]; then
+        verified_sha_json="\"$VERIFIED_RELEASE_SHA\""
+    fi
     if cat > "$STATE_FILE" << EOF 2>/dev/null; then
 {
     "last_deployment": "$timestamp",
     "platform_applied": $DEPLOY_PLATFORM,
-    "backup_path": "$BACKUP_DIR"
+    "backup_path": "$BACKUP_DIR",
+    "verified_ref": $verified_ref_json,
+    "verified_sha": $verified_sha_json
 }
 EOF
         log "${GREEN}[ok] State file updated${NC}"
@@ -904,6 +985,9 @@ main() {
     fi
     
     preflight_checks
+    log ""
+    
+    check_active_sessions
     log ""
     
     local backup_path=$(create_backup)

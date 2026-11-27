@@ -8,7 +8,7 @@ Learning design, tracks and pathways, labs, competencies, assessment, analytics,
 - **NIST SP 800-53 Rev. 5:** AT-2, PM-5, SA-11
 - **Owner:** Curriculum lead
 
-86 document(s) in this group.
+87 document(s) in this group.
 
 | Document | Type | Classification | Review | Score | Next review |
 |---|---|---|---|---:|---|
@@ -89,6 +89,7 @@ Learning design, tracks and pathways, labs, competencies, assessment, analytics,
 | [Skill DNA](../../SKILL-DNA.md) | `reference` | internal | unreviewed |  | unset |
 | [Student risk engine](../../STUDENT-RISK-ENGINE.md) | `reference` | internal | unreviewed |  | unset |
 | [Supply chain security pathway](../../SUPPLY-CHAIN-SECURITY-PATHWAY.md) | `reference` | internal | unreviewed |  | unset |
+| [Tracked exceptions and open findings](../../TRACKED-EXCEPTIONS.md) | `reference` | internal | unreviewed |  | unset |
 | [Capstone runbook (training lab)](../../TRAINING-CAPSTONES.md) | `reference` | internal | unreviewed |  | unset |
 | [Training ecosystem (dev only)](../../TRAINING-ECOSYSTEM.md) | `reference` | internal | unreviewed |  | unset |
 | [Training instructor guide](../../TRAINING-INSTRUCTOR-GUIDE.md) | `reference` | internal | unreviewed |  | unset |

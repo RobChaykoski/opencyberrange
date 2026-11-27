@@ -16,6 +16,39 @@ SOURCES=(
 )
 
 mapfile -t network_ids < <(docker network ls --format '{{.ID}}')
+
+# The rules below are IPv4-only. If any Docker network has IPv6 enabled, the
+# containment model has a hole; stop rather than apply a partial policy.
+v6_networks=$(for id in "${network_ids[@]}"; do
+  docker network inspect "$id" --format '{{.Name}} {{.EnableIPv6}}' 2>/dev/null || true
+done | awk '$2 == "true" {print $1}')
+if [ -n "$v6_networks" ]; then
+  cat >&2 <<EOF
+ERROR: Docker network(s) have IPv6 enabled:
+$(printf '  %s\n' $v6_networks)
+Disable IPv6 on those networks (or add equivalent ip6tables rules) before
+relying on lab egress containment.
+EOF
+  exit 1
+fi
+
+if [[ "$IMAGE" != *"@sha256:"* ]]; then
+  echo "WARN: $IMAGE is not pinned by digest; a mutable tag can run arbitrary code as root." >&2
+  if [ "${HARDEN_STRICT:-0}" = "1" ]; then
+    echo "ERROR: HARDEN_STRICT=1 requires a digest-pinned IMAGE." >&2
+    exit 1
+  fi
+fi
+
+DRY_RUN=0
+case "${1:-}" in
+  --dry-run) DRY_RUN=1 ;;
+  "") ;;
+  *) echo "usage: $0 [--dry-run]" >&2; exit 2 ;;
+esac
+
+rules_file=$(mktemp)
+trap 'rm -f "$rules_file"' EXIT
 gateways=()
 for id in "${network_ids[@]}"; do
   while read -r subnet gateway; do
@@ -55,7 +88,14 @@ fi
     echo "iptables -C DOCKER-USER -s $src -d 169.254.0.0/16 -j DROP 2>/dev/null || iptables -A DOCKER-USER -s $src -d 169.254.0.0/16 -j DROP"
     echo "iptables -C DOCKER-USER -s $src -j DROP 2>/dev/null || iptables -A DOCKER-USER -s $src -j DROP"
   done
-} | docker run --rm -i --privileged --net=host --user 0 \
-      --entrypoint sh "$IMAGE" -s
+} > "$rules_file"
+
+if [ "$DRY_RUN" = "1" ]; then
+  cat "$rules_file"
+  exit 0
+fi
+
+docker run --rm -i --privileged --net=host --user 0 \
+  --entrypoint sh "$IMAGE" -s < "$rules_file"
 
 echo "Applied egress rules for ${#SOURCES[@]} lab range(s), ${#gateways[@]} gateway(s)"
