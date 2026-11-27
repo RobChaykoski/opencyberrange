@@ -178,7 +178,7 @@
       "sha256": "877500e2e2d33af4263cae4b4b208166f4c500c8e4648d6b5b8d24ac122829c1"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "92743a0a42b00fadbab3ef1d1d0d4f5749a949eb97e930649ecb8a3d08c06680"
+      "sha256": "f2d3e18672eebcaeb04f02b18bcaf46b4452340d534cbf10e7cbd331daa70d01"
     },
     "platform/backend/app/data/threat-awareness.json": {
       "sha256": "78703d33386e1b62becfa5cfb1b27a22f770fff20a3e38411b0787e76f7c48ea"
@@ -859,7 +859,7 @@
       ]
     },
     "malware-1-1-eicar-triage": {
-      "content_hash": "adc0c7d3a99a18282c1e223ddc5f0e92798b392342c66cb4ea754a953ae4a0f3",
+      "content_hash": "0631a93a19b23f25d06375455cf0ea1a2181a26ccc633943a31663e0a5d4dad0",
       "services": [
         "evidence"
       ]
@@ -1225,7 +1225,7 @@
       ]
     },
     "web-1-2-technology-identification": {
-      "content_hash": "f45ebd0a1e913a681f47198582a52d2dfed84fd9db7b51e43cf1a69b589078b9",
+      "content_hash": "8d85b26515cac9e1761bc8dc2468482b3d577bece8eac00b68160139d9909e89",
       "services": [
         "webserver"
       ]
@@ -1251,7 +1251,7 @@
       ]
     },
     "web-1-6-comprehensive-web-reconnaissance": {
-      "content_hash": "a4a5624d17b6e586995cae1374de9cb5f8c3dc8bd002b6cd181331957730d7cd",
+      "content_hash": "66af73e1e67fa54044ac09ae43199794885df94ebbf73434ad7370a0a438ece6",
       "services": [
         "webserver"
       ]
@@ -1509,7 +1509,7 @@
       ]
     },
     "windows-2-3-smb-anonymous-share-access": {
-      "content_hash": "459582a3615bcd6cedcd1411d36306b56b5b6addffa1bd99f8b69c85da6543a9",
+      "content_hash": "626fde65f05e1d088410ee820cc486a2407910d330b355d505a2a49ae095160b",
       "services": [
         "target"
       ]

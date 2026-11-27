@@ -69,6 +69,12 @@ scenario: |
   to assess the scope of potential information disclosure.
 
 flag: "OCR{smb_4n0n_sh4r3}"
+flag_path: /tmp/public/flag.txt
+flag_service: target
+flag_command:
+  - smbd
+  - -F
+  - --no-process-group
 
 hints:
   - text: |
