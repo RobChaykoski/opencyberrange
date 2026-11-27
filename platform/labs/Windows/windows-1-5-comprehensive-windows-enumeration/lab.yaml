@@ -70,6 +70,13 @@ scenario: |
 
 
 flag: "OCR{c0mpr3h3ns1v3_3num}"
+flag_path: /etc/samba/smb.conf
+flag_service: target
+flag_command:
+  - /bin/sh
+  - -c
+  - 'service smbd start && service xrdp start && /usr/sbin/slapd -h "ldap:///" -g openldap -u openldap -d 0'
+flag_mode: replace
 
 hints:
   - text: |

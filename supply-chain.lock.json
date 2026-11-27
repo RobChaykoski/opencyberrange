@@ -178,7 +178,7 @@
       "sha256": "877500e2e2d33af4263cae4b4b208166f4c500c8e4648d6b5b8d24ac122829c1"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "29bb7ecebf766b4c41bb5844e65802c58e5cf3b4a93e604f99c4ba4b4df10d52"
+      "sha256": "4481cefb21b8920b52896f22faac73c9b66158c9cff1a517d64f59efff8df816"
     },
     "platform/backend/app/data/threat-awareness.json": {
       "sha256": "78703d33386e1b62becfa5cfb1b27a22f770fff20a3e38411b0787e76f7c48ea"
@@ -1414,7 +1414,7 @@
       ]
     },
     "windows-1-5-comprehensive-windows-enumeration": {
-      "content_hash": "3f2bd0a97be5333e9c3264b394e434da07c3e6d6ec45e94acd42ed83105cc17b",
+      "content_hash": "d556f5a22d804334691b2a87227d763fb29975e266691e574de7bfaa2e1393d0",
       "services": [
         "target"
       ]
@@ -1611,7 +1611,7 @@
       ]
     },
     "windows-4-6-rdp-session-access-and-flag-retrieval": {
-      "content_hash": "2b21555f5dabf19aca19c92da0060f8ce60ab504622d17af2546ac12a459d19f",
+      "content_hash": "0b0f03e1e15ddd1928d7443f9e7629b88adc3e16d2bd71e4c7a629d1c982efc6",
       "services": [
         "target"
       ]
@@ -1659,7 +1659,7 @@
       ]
     },
     "windows-6-2-mssql-version-and-instance-enumeration": {
-      "content_hash": "9636abc6248d738159c90b6c17d878e3bd8b106e86acf1f25ff322bf6a9a513c",
+      "content_hash": "229be310933044a9d2a78f4794fd0dcaeee57ce87bf13472173a2b771f1f8770",
       "services": [
         "target"
       ]
@@ -1737,19 +1737,19 @@
       ]
     },
     "windows-8-2-cross-service-credential-reuse": {
-      "content_hash": "decb7201386a32e083cf36a3cafe7f6a69401d387970307e16bca52c42765592",
+      "content_hash": "c696ee48160c5e226d4e15102af7748c6a3b21b7430865b3bc2519dc0c461827",
       "services": [
         "target"
       ]
     },
     "windows-8-3-multi-service-credential-reuse": {
-      "content_hash": "3455697347e2a773aac287108ddc9884ba269cbcdb47d3b00b6dda0dd4a385bb",
+      "content_hash": "f8d93455fdcab458e828211f6f242869467c59103fd98ca727dbf4d6debab8a3",
       "services": [
         "target"
       ]
     },
     "windows-8-4-credential-discovery-and-reuse-chain": {
-      "content_hash": "1752dede1830bf3f7937fc5cf23276d424e0255eaf6646637e384329a200f68b",
+      "content_hash": "3bb636990acdd97ce692316457993af31042797dfab25ee4b128f8776c9cdd71",
       "services": [
         "target"
       ]
@@ -1769,13 +1769,13 @@
       ]
     },
     "windows-9-2-multi-service-exploitation": {
-      "content_hash": "b2bbbe3c934bafa26448471b3675e020b53475d80f54ad5db6969fa90d0334ef",
+      "content_hash": "54db020e813b3c37ce8c0b43fab3dde156b42ec79d846832e3a0bf7bad011109",
       "services": [
         "target"
       ]
     },
     "windows-9-3-complete-windows-penetration-test": {
-      "content_hash": "4a372dfd4c91d32cdd04b173a11d80dfe733ee7b5262c20bd07131383d4ab7c3",
+      "content_hash": "d0eb049a07d730ad0340f6ec4710025ecf74eb45e605342fc7c05699524de7d9",
       "services": [
         "target"
       ]

@@ -72,6 +72,12 @@ scenario: |
   your engagement and provide FinanceCorp with actionable security recommendations.
 
 flag: "OCR{c0mpl3t3_w1nd0ws_p3nt3st}"
+flag_path: /tmp/private/flag.txt
+flag_service: target
+flag_command:
+  - /bin/sh
+  - -c
+  - 'service smbd start && service xrdp start && /usr/sbin/sshd -D'
 
 hints:
   - id: 1

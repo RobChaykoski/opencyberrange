@@ -69,6 +69,12 @@ scenario: |
   comprehensive scope of credential reuse vulnerabilities.
 
 flag: "OCR{cr3d_r3us3_mult1}"
+flag_path: /tmp/private/flag.txt
+flag_service: target
+flag_command:
+  - /bin/sh
+  - -c
+  - 'service smbd start && service xrdp start && /usr/sbin/sshd -D'
 
 hints:
   - id: 1

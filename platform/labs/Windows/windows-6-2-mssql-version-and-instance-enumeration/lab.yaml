@@ -74,6 +74,12 @@ scenario: |
   `ms-sql-*` scripts and use port 3306 instead of 1433.
 
 flag: "OCR{mssql_v3rs10n}"
+flag_path: /tmp/flag.txt
+flag_service: target
+flag_command:
+  - /bin/sh
+  - -c
+  - 'service mysql start && tail -f /dev/null'
 
 hints:
   - id: 1
