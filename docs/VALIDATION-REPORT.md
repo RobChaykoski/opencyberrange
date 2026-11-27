@@ -1,11 +1,16 @@
 # Validation report
 
+> **Historical.** This records the 5.17.7 validation run (17 November 2026). For
+> current evidence, use the CI run at HEAD, the
+> [production deployment statement](PRODUCTION-DEPLOYMENT-STATEMENT.md), and the
+> [changelog](../CHANGELOG.md).
+
 **Release:** 5.17.7
 **Commit:** `a7a9509a` (signed tag `v5.17.7`)
 **Date:** 17 November 2026
 
-This is the reproducible validation record for the current release. Commands
-are run from the repository root unless noted.
+This was the reproducible validation record for the 5.17.7 release. Commands
+were run from the repository root unless noted.
 
 ## CI
 
