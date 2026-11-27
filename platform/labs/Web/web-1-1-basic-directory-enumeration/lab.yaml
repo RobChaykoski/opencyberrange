@@ -13,6 +13,32 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "web application security"
+  - "HTTP request and response"
+  - "attack surface mapping"
+  - "basic directory enumeration"
+  - "directory enumeration concepts"
+competency_tags:
+  - "web.basic_directory_enumeration"
+  - "web.directory_enumeration"
+  - "web.api"
+  - "web.fundamentals"
+defensive_skills:
+  - "encode_input_at_the_server"
+  - "enforce_authorization_on_every_object"
+  - "monitor_unusual_request_patterns"
+evidence_required:
+  - "flag"
+  - "request_and_response"
+  - "evidence"
+  - "interpretation"
+report_questions:
+  - "Which request or response shows the weakness?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Discovery
     technique: T1083
@@ -144,7 +170,7 @@ hints:
     unlock_after_minutes: 25
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Validate and encode input at the server, enforce authorization on every object, and monitor unusual request patterns."
+defensive_takeaways: "Validate and encode input at the server, enforce authorization on every object, and monitor unusual request patterns. In this lab, apply that to basic directory enumeration and record the evidence before recommending the fix."
 workbook: "wiki/range/webpt/CH_WEB01_Web_Reconnaissance/05_Content_Directory_and_File_Discovery/"
 
 test:

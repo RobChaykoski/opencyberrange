@@ -16,6 +16,31 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+  - Explain why the extension alone is not evidence of a file's type.
+learning_concepts:
+  - file type identification
+  - magic bytes
+  - evidence over labels
+  - safe handling of unexpected files
+competency_tags:
+  - forensics.file_type_identification
+  - forensics.magic_bytes
+  - cyber_safety.unexpected_files
+  - evidence.reasoning
+defensive_skills:
+  - check_magic_bytes_before_opening
+  - do_not_trust_extensions
+  - report_suspicious_files
+  - preserve_evidence
+evidence_required:
+  - file_type_output
+  - extracted_token
+  - concept_check_answer
+report_questions:
+  - Why was event-photo.png worth investigating?
+  - What evidence showed the file was not a PNG?
+  - Why is a filename extension only a label?
+  - What would you do before opening an unexpected attachment?
 mitre_attack:
   - tactic: Defense Evasion
     technique: T1036
@@ -128,6 +153,7 @@ test:
     - name: "The budget file is plain text with a decoy token"
       command: "curl -s http://{target.portal}:8080/downloads/budget.pdf | grep -o 'OCR{[^}]*}'"
       expect: "OCR{d3c0y_n0t_th3_r34l_fl4g}"
+      allow_flag_mismatch: true
       timeout: 20
 
     - name: "Extracting the archive reveals the real token"

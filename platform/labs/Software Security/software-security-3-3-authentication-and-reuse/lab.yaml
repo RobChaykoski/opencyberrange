@@ -18,6 +18,35 @@ assessment_criteria:
   - Pass every automated test step in the lab manifest.
   - Submit the feature file with one login feature and one reusable token call.
   - Explain why logging in for every scenario is slower and harder to audit.
+learning_concepts:
+  - "authentication"
+  - "session management"
+  - "identity assurance"
+  - "authenticate once, reuse everywhere"
+  - "send a json login request from a"
+competency_tags:
+  - "identity.security_authentication_and_reuse"
+  - "identity.and_reuse"
+  - "identity.access"
+  - "web.api"
+  - "identity.fundamentals"
+defensive_skills:
+  - "treat_tokens_as_credentials_keep_them_out_of_logs"
+  - "scope_them_to_the_task"
+  - "expire_them"
+  - "test_both_the_positive_path"
+  - "the_missing_token_path"
+evidence_required:
+  - "flag"
+  - "request_and_response"
+  - "configuration_review"
+  - "interpretation"
+report_questions:
+  - "Which identity or session control failed?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Defense Evasion
     technique: T1550.001

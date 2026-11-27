@@ -1,6 +1,6 @@
 title: "Media Provenance: Is It Real?"
 category: forensics
-difficulty: beginner
+difficulty: intermediate
 estimated_time: 35
 prerequisites:
   - high-school-10-4-mfa-lost-phone
@@ -16,7 +16,32 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
-  - State one thing the evidence does not prove.
+  - State one supported statement and one statement the evidence does not support.
+learning_concepts:
+  - media provenance
+  - metadata limitations
+  - independent corroboration
+  - evidence-based uncertainty
+competency_tags:
+  - osint.media_provenance
+  - forensics.metadata_analysis
+  - evidence.corroboration
+  - misinformation.assessment
+defensive_skills:
+  - check_source_before_visuals
+  - seek_independent_corroboration
+  - state_what_evidence_does_not_prove
+  - avoid_publishing_synthetic_people
+evidence_required:
+  - supported_statement
+  - unsupported_statement
+  - confidence
+  - alternative_explanation
+report_questions:
+  - Which statement about the supported image is backed by independent corroboration?
+  - Which statement about the anonymous image is not supported by the evidence?
+  - What would raise or lower your confidence?
+  - What would you do before publishing either image?
 mitre_attack:
   - tactic: Defense Evasion
     technique: T1036
@@ -58,7 +83,7 @@ scenario: |
 
 troubleshooting: "If the archive images do not render, open the media URL directly. If a verification request returns 403, the item is synthetic; return to the provenance record and compare source and corroboration. Do not use a real reverse-image service with a real person's image."
 defensive_takeaways: "Source and independent corroboration are stronger than a single metadata field or a visual artefact. Metadata is often stripped or editable. State what the evidence supports and what it does not prove, and never publish a synthetic image of a real person without consent and legal review."
-difficulty_evidence: "Static student-tester walkthrough of the lab definition, archive, and workbook; live lab run not recorded; declared difficulty 'intermediate' retained as provisional because the learner must compare several evidence lines."
+difficulty_evidence: "Static student-tester walkthrough of the lab definition, archive, and workbook; live lab run not recorded; declared difficulty 'intermediate' retained as provisional because the learner must compare source, metadata, independent corroboration, and state the limits of the evidence."
 difficulty_evidence_source: "reviewer_walkthrough"
 difficulty_evidence_sample: 1
 difficulty_evidence_quality: "provisional"

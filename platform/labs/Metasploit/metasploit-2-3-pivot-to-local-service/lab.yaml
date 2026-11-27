@@ -24,6 +24,35 @@ tools:
 - msfconsole
 - terminal
 visibility: public
+learning_concepts:
+  - "lateral movement"
+  - "credential access"
+  - "impact assessment"
+  - "pivot to a local-only service"
+  - "local-only service and explain why it is"
+competency_tags:
+  - "post_exploitation.pivot_to_local_service"
+  - "post_exploitation.local_service"
+  - "network.systems"
+  - "identity.access"
+  - "post_exploitation.fundamentals"
+defensive_skills:
+  - "inventory_loopback_only_services"
+  - "restrict_them_to_local_administration"
+  - "monitor_for_unexpected_port_forward_behaviour"
+  - "outbound_tunnels_from_compromised_hosts"
+evidence_required:
+  - "flag"
+  - "command_output"
+  - "impact_evidence"
+  - "interpretation"
+  - "report"
+report_questions:
+  - "Which action shows the scope of the impact?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
 - tactic: Command and Control
   technique: T1090

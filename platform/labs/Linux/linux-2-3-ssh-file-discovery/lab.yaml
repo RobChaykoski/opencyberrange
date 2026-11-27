@@ -16,6 +16,33 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "lateral movement"
+  - "credential access"
+  - "impact assessment"
+  - "ssh file discovery"
+  - "navigate linux file system after authentication"
+competency_tags:
+  - "post_exploitation.ssh_file_discovery"
+  - "post_exploitation.file_discovery"
+  - "network.systems"
+  - "identity.access"
+  - "post_exploitation.fundamentals"
+defensive_skills:
+  - "disable_unused_services"
+  - "enforce_key_based_ssh_with_least_privilege"
+  - "alert_on_unexpected_authentication_or_command_execution"
+evidence_required:
+  - "flag"
+  - "command_output"
+  - "impact_evidence"
+  - "interpretation"
+report_questions:
+  - "Which action shows the scope of the impact?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Discovery
     technique: T1083
@@ -344,6 +371,7 @@ hints:
       $db_user = "webapp_user";
       $db_pass = "SecretP@ssw0rd";
       $db_name = "financecorp_db";
+      # security-delta: allow credential-like assignment - lab fixture
       $api_key = "FAKE_API_KEY_DO_NOT_USE";
       ?>
       ```
@@ -700,6 +728,7 @@ hints:
 
       // API Configuration
       $api_endpoint = "https://api.financecorp.local";
+      # security-delta: allow credential-like assignment - lab fixture
       $api_key = "FAKE_API_KEY_DO_NOT_USE";
 
       // Application Settings
@@ -827,6 +856,7 @@ hints:
 
       **2. API keys exposed:**
       ```php
+      # security-delta: allow credential-like assignment - lab fixture
       $api_key = "FAKE_API_KEY_DO_NOT_USE";
       ```
       - Production API key in source code
@@ -960,12 +990,12 @@ hints:
 
 credentials:
   - username: "webadmin"
-    password: "WebServer2024#"
+    password: "WebServer2024#"  # security-delta: allow credential-like assignment - lab fixture
     role: "ssh-user"
     description: "SSH login credentials for webadmin account"
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Disable unused services, enforce key-based SSH with least privilege, and alert on unexpected authentication or command execution."
+defensive_takeaways: "Disable unused services, enforce key-based SSH with least privilege, and alert on unexpected authentication or command execution. In this lab, apply that to ssh file discovery and record the evidence before recommending the fix."
 difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
 difficulty_evidence_source: "reviewer_walkthrough"
 difficulty_evidence_sample: 1

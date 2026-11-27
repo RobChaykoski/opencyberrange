@@ -24,6 +24,33 @@ tools:
 - msfconsole
 - terminal
 visibility: public
+learning_concepts:
+  - "open-source intelligence"
+  - "attack surface mapping"
+  - "asset discovery"
+  - "auxiliary service discovery"
+  - "tcp port scan with a metasploit auxiliary"
+competency_tags:
+  - "recon.service_discovery"
+  - "network.systems"
+  - "identity.access"
+  - "recon.fundamentals"
+defensive_skills:
+  - "reduce_the_exposed_service_set"
+  - "remove_legacy_protocols_from_user_networks"
+  - "alert_on_version_scanning_patterns"
+  - "version_data_is_reconnaissance_treat_banners_as_information_leakage"
+evidence_required:
+  - "flag"
+  - "source_evidence"
+  - "asset_inventory"
+  - "interpretation"
+report_questions:
+  - "Which public source or asset exposed the information?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
 - tactic: Discovery
   technique: T1046

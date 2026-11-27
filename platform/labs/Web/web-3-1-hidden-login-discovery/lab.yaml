@@ -19,6 +19,32 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "web application security"
+  - "HTTP request and response"
+  - "attack surface mapping"
+  - "novatech solutions - hidden login discovery"
+  - "directory enumeration against the web application to"
+competency_tags:
+  - "web.hidden_login_discovery"
+  - "web.login_discovery"
+  - "web.api"
+  - "web.fundamentals"
+defensive_skills:
+  - "encode_input_at_the_server"
+  - "enforce_authorization_on_every_object"
+  - "monitor_unusual_request_patterns"
+evidence_required:
+  - "flag"
+  - "request_and_response"
+  - "evidence"
+  - "interpretation"
+report_questions:
+  - "Which request or response shows the weakness?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Discovery
     technique: T1083
@@ -59,11 +85,11 @@ scenario: |
 
 credentials:
   - username: "admin"
-    password: "NovaTech2024#"
+    password: "NovaTech2024#"  # security-delta: allow credential-like assignment - lab fixture
     role: "staff"
     description: "Default staff portal credentials (discovered during assessment)"
   - username: "novatech_app"
-    password: "Pr0d_DB_2024#"
+    password: "Pr0d_DB_2024#"  # security-delta: allow credential-like assignment - lab fixture
     role: "db"
     description: "MySQL application credentials (leaked from staff portal config)"
 
@@ -130,7 +156,7 @@ topology:
       access: "internal"
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Validate and encode input at the server, enforce authorization on every object, and monitor unusual request patterns."
+defensive_takeaways: "Validate and encode input at the server, enforce authorization on every object, and monitor unusual request patterns. In this lab, apply that to novatech solutions - hidden login discovery and record the evidence before recommending the fix."
 test:
   steps:
     - name: "Web application responds on port 80"

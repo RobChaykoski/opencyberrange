@@ -14,6 +14,7 @@ How the platform is put together and where its trust boundaries are.
 | [Data dictionary](../DATA-DICTIONARY.md) | Every table and its owner |
 | [Supply chain](../SUPPLY-CHAIN.md) | Lock, signatures, and release inputs |
 | [Deployment topology and sizing](../DEPLOYMENT-TOPOLOGY-AND-SIZING.md) | Supported shape and capacity |
+| [Scaling and hardening roadmap](SCALING-ROADMAP.md) | Single-host hardening, worker nodes, microVMs, registry, and telemetry |
 | [Network sandbox](../NETWORK-SANDBOX.md) | Lab isolation and firewall model |
 | [Device topology](../DEVICE-TOPOLOGY.md) | Host, container, and lab network layout |
 | [KasmVNC](../KASMVNC.md) | The browser desktop transport |

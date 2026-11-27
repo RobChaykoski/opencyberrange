@@ -19,6 +19,35 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "network fundamentals"
+  - "protocol analysis"
+  - "segmentation"
+  - "rangebox beginner challenge"
+  - "complete a target preflight before acting"
+competency_tags:
+  - "network.school_rangebox_beginner_challenge"
+  - "network.beginner_challenge"
+  - "incident.forensics"
+  - "network.systems"
+  - "identity.access"
+defensive_skills:
+  - "preflight_first"
+  - "a_service_answering_is_not_a_vulnerability"
+  - "separate_observation_from_interpretation"
+  - "state_confidence"
+  - "give_an_alternative_explanation"
+evidence_required:
+  - "flag"
+  - "command_output"
+  - "packet_or_log_evidence"
+  - "interpretation"
+report_questions:
+  - "Which host, port, or protocol is involved?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Discovery
     technique: T1046

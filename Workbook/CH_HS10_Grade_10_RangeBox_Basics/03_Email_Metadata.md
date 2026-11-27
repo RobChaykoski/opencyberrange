@@ -163,6 +163,23 @@ CyberChef with the file as input; the headers are plain text at the top.
 | `X-Spam-Status` | Local spam score and tests. |
 | `X-OCR-Case-Token` | Training case metadata for this exercise. |
 
+## Verdict
+
+Complete both parts, not just the header name:
+
+1. **Which header influenced your decision?**
+2. **Why?**
+
+For example:
+
+```text
+Header: Authentication-Results
+Reason: SPF failed, and the message claimed to come from a trusted sender.
+        The From/Return-Path mismatch supports the same conclusion.
+```
+
+A header name alone is extraction. The reason is the analysis.
+
 ## Analysis Questions
 
 **1. Why can the `From` header disagree with the envelope sender?**

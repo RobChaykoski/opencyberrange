@@ -230,6 +230,21 @@ attack or a vulnerability.
 | `ss` missing | `command not found` | Try `netstat -tuln`; otherwise ask. Do not install tools. |
 | Unsure about a state | A line says `FILTERED` or `UNREACHABLE` | Record the observation and your uncertainty. Do not guess. |
 
+## Optional: Confirm the Port
+
+If your instructor includes `nmap` in the toolbox, confirm the assigned port with
+one bounded observation:
+
+```bash
+nmap -p 8080 network.lab
+```
+
+**Expected result:** `8080/tcp open`.
+
+Do not scan other hosts or ports. This is a service observation, not a
+vulnerability scan. The goal is to connect the hostname, the port, and the HTTP
+response.
+
 ## Record Your Evidence
 
 | Field | Value |
@@ -262,6 +277,8 @@ copy the `X-OCR-Token` value into the exercise panel.
 ## Key Takeaways
 
 - A hostname maps to an IP address; a port identifies a service.
+- Response headers and status codes are evidence; read them before the body.
+- Metadata often explains what the body hides.
 - A client uses a local port to reach a remote port.
 - TCP sets up a connection; UDP does not.
 - `LISTEN` means waiting; `ESTABLISHED` means active; `CLOSED`, `FILTERED`, and

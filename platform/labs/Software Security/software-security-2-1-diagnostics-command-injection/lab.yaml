@@ -16,6 +16,31 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+  - Explain the vulnerable call and show the argument-array replacement.
+learning_concepts:
+  - command injection
+  - shell metacharacters
+  - secure process invocation
+competency_tags:
+  - appsec.command_injection
+  - appsec.secure_process_execution
+  - appsec.input_validation
+  - secure_coding.argument_arrays
+defensive_skills:
+  - avoid_shell_strings
+  - use_argument_arrays
+  - allowlist_host_input
+  - least_privilege_service
+  - test_metacharacters
+evidence_required:
+  - benign_lookup_output
+  - injected_command_output
+  - secure_code_example
+report_questions:
+  - Which input reached the shell, and how did you know?
+  - What evidence shows the second command executed?
+  - Why is an argument array safer than a shell string?
+  - Which metacharacters would your regression test include?
 mitre_attack:
   - tactic: Execution
     technique: T1059
@@ -47,7 +72,7 @@ scenario: |
   dropped.
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Remove dangerous execution paths, validate input at the trust boundary, and add a regression test."
+defensive_takeaways: "Avoid invoking a shell when a direct API or an argument array will do. Pass arguments as a list, allowlist the host value, run the service with least privilege, treat all input as untrusted, and add regression tests for metacharacters such as ; & | $ backticks and parentheses."
 difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
 difficulty_evidence_source: "reviewer_walkthrough"
 difficulty_evidence_sample: 1
@@ -87,13 +112,16 @@ hints:
     unlock_after_minutes: 4
 
   - text: |
-      The training flag is in /tmp/flag inside the target container. Try this
-      value in the host field:
+      The training flag is in /tmp/flag inside the target container. Build up
+      from a harmless command rather than jumping straight to the file:
 
+      127.0.0.1; id
+      127.0.0.1; ls /tmp
       127.0.0.1; cat /tmp/flag
 
-      The lookup result should include the flag. Ask a facilitator if you are
-      stuck; using a hint is expected.
+      The first shows the service account, the second shows what it can see,
+      and the third reads the flag. Ask a facilitator if you are stuck; using a
+      hint is expected.
     unlock_after_minutes: 8
 
 test:

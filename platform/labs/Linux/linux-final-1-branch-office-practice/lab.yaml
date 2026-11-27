@@ -17,6 +17,33 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "security assessment"
+  - "evidence collection"
+  - "reporting"
+  - "atlas distribution - final exam practice"
+  - "discover all in-scope hosts on the branch"
+competency_tags:
+  - "assessment.final_branch_office_practice"
+  - "assessment.office_practice"
+  - "incident.forensics"
+  - "network.systems"
+  - "assessment.fundamentals"
+defensive_skills:
+  - "disable_unused_services"
+  - "enforce_key_based_ssh_with_least_privilege"
+  - "alert_on_unexpected_authentication_or_command_execution"
+evidence_required:
+  - "flag"
+  - "findings"
+  - "evidence_index"
+  - "report"
+report_questions:
+  - "Which finding is best supported by the evidence?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Lateral Movement
     technique: T1021
@@ -131,7 +158,7 @@ topology:
       access: "direct"
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Disable unused services, enforce key-based SSH with least privilege, and alert on unexpected authentication or command execution."
+defensive_takeaways: "Disable unused services, enforce key-based SSH with least privilege, and alert on unexpected authentication or command execution. In this lab, apply that to atlas distribution - final exam practice and record the evidence before recommending the fix."
 test:
   steps:
     - name: "SMB port responds"

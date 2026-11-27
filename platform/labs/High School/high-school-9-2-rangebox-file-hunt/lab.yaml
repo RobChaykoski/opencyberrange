@@ -17,6 +17,29 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+  - Record the file inventory, the search command, and the path to the real token.
+learning_concepts:
+  - file triage
+  - evidence preservation
+  - searching before opening
+competency_tags:
+  - foundations.file_navigation
+  - forensics.file_triage
+  - evidence.evidence_preservation
+defensive_skills:
+  - preserve_the_original_archive
+  - narrow_before_reading
+  - do_not_execute_unknown_files
+  - record_the_evidence_path
+evidence_required:
+  - file_inventory
+  - search_command
+  - identified_real_token
+report_questions:
+  - Which command narrowed the file list?
+  - How did you tell the real token from the decoy?
+  - Why should you preserve the original archive?
+  - What would you record before opening a file?
 mitre_attack:
   - tactic: Discovery
     technique: T1083
@@ -55,7 +78,7 @@ scenario: |
   The archive is fictional and safe to unpack. If you get stuck, use the hints.
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Verify the account or device with a trusted adult, report suspicious activity, and keep software updated."
+defensive_takeaways: "Filenames are labels, not evidence. Narrow the set with find and grep, then read the file that matters. Preserve the original archive, do not execute unknown files, and record the path and the evidence you used."
 difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
 difficulty_evidence_source: "reviewer_walkthrough"
 difficulty_evidence_sample: 1

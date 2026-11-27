@@ -16,6 +16,33 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "network fundamentals"
+  - "protocol analysis"
+  - "segmentation"
+  - "two-router transit - static routes across a transit link"
+  - "why two routers need a route to"
+competency_tags:
+  - "network.two_router_transit"
+  - "network.router_transit"
+  - "network.systems"
+  - "network.fundamentals"
+defensive_skills:
+  - "transit_links_are_a_natural_inspection_point"
+  - "static_routes_should_be_documented"
+  - "paired_with_a_return_path"
+  - "missing_return_routes_are_a_common_outage"
+evidence_required:
+  - "flag"
+  - "command_output"
+  - "packet_or_log_evidence"
+  - "interpretation"
+report_questions:
+  - "Which host, port, or protocol is involved?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Discovery
     technique: T1016

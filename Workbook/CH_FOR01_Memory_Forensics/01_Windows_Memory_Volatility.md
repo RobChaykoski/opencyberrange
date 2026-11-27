@@ -92,7 +92,7 @@ Find the `student` row. The fourth field is the NTLM hash. Take its first 8
 characters and place them inside `OCR{...}`.
 
 For example, if the hash began with `abcd1234`, the flag would be
-`OCR{abcd1234}`. Use the value from your own output, not the example.
+`OCR{<hash-prefix>}`. Use the value from your own output, not the example.
 
 ## What Just Happened?
 

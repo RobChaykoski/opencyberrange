@@ -1432,12 +1432,18 @@ def _public_profile_page() -> str:
         <p><strong>Research marker:</strong> <code>{_esc(FLAG)}</code></p>
       </section>
       <section class="card">
-        <p class="eyebrow">Offline path</p>
-        <h2>Read the mirror</h2>
-        <p>
-          This local mirror is the assessed path. There is no live social-media
-          target, no QR code to a real profile, and no personal data.
-        </p>
+        <p class="eyebrow">Public fields</p>
+        <h2>What a stranger can see</h2>
+        <table>
+          <tr><th>Role</th><td>Community cloud engineer</td></tr>
+          <tr><th>Employer</th><td>Northstar Community Cloud</td></tr>
+          <tr><th>Team</th><td>Community Cloud Platform</td></tr>
+          <tr><th>Public email</th><td><code>riley.chen@northstar-community.example</code></td></tr>
+          <tr><th>Handle</th><td><code>@rileybuilds</code></td></tr>
+          <tr><th>Technologies</th><td>Kubernetes, Terraform, Grafana</td></tr>
+          <tr><th>Timezone</th><td>UTC-5</td></tr>
+          <tr><th>Conference</th><td><a href="/talk">Community Cloud Summit 2027</a></td></tr>
+        </table>
       </section>
     </div>
     <p class="muted">
@@ -1446,6 +1452,30 @@ def _public_profile_page() -> str:
     </p>
     """
     return _shell("Public profile", body, active="people")
+
+
+def _public_talk_page() -> str:
+    """A second public source that correlates with the profile handle."""
+    body = """
+    <p class="eyebrow">Conference talk · fictional</p>
+    <h1>Community Cloud Summit 2027</h1>
+    <p class="lead">
+      A public speaker page for the same fictional persona. It repeats the
+      handle and adds travel and session context.
+    </p>
+    <section class="card">
+      <h2>Session</h2>
+      <p><strong>Speaker:</strong> Riley Chen (<code>@rileybuilds</code>)</p>
+      <p><strong>Talk:</strong> Small services, strong evidence</p>
+      <p><strong>Day:</strong> 2027-05-14, afternoon session</p>
+      <p><strong>Location:</strong> Community track, Hall B</p>
+      <p><strong>Bio:</strong> Riley builds cloud services for community
+      organisations and writes about responsible prototyping.</p>
+      <p><strong>Travel note:</strong> Arriving 2027-05-13, departing 2027-05-16.</p>
+    </section>
+    <p class="muted">Fictional conference and persona. No real travel data.</p>
+    """
+    return _shell("Conference talk", body, active="people")
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -1517,6 +1547,8 @@ class Handler(BaseHTTPRequestHandler):
                 self._send(200, b"ok\n", "text/plain; charset=utf-8")
             elif path in ("/", "/profile"):
                 self._html(_public_profile_page())
+            elif path == "/talk":
+                self._html(_public_talk_page())
             elif path == "/api/profile":
                 self._json(
                     {
@@ -1525,6 +1557,12 @@ class Handler(BaseHTTPRequestHandler):
                             "Community cloud engineer at Northstar Community "
                             "Cloud. Fictional training persona."
                         ),
+                        "public_email": "riley.chen@northstar-community.example",
+                        "handle": "@rileybuilds",
+                        "team": "Community Cloud Platform",
+                        "technologies": ["Kubernetes", "Terraform", "Grafana"],
+                        "timezone": "UTC-5",
+                        "conference": "Community Cloud Summit 2027",
                         "research_marker": FLAG,
                         "profile_url": None,
                     }

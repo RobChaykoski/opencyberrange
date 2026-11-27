@@ -230,21 +230,47 @@ No backfill or reference repair is required.
 
 ## Known gaps
 
-- **Session coverage.** 36 dev and 116 production completions have no matching
-  non-diagnostic session. Completion, hint, attempt, and time signals are
-  reliable; `started_rate` is not. The application creates sessions on launch;
-  historical rows need a reviewed backfill or an explicit label.
+- **Session coverage and metric reliability.** 36 dev and 116 production
+  completions have no matching non-diagnostic session. Completion, hint,
+  attempt, and time signals remain reliable; `started_rate` is not reliable for
+  those historical rows. The application creates sessions on launch, so a
+  reviewed backfill or an explicit “incomplete coverage” label is required
+  before the rate is used for a trend.
+
+  | Metric | Historical reliability | Use |
+  |---|---|---|
+  | `completion_rate` | High; derived from completion rows | Compare cohorts |
+  | `attempt_rate` | High; derived from attempt rows | Compare cohorts |
+  | `time_to_complete` | High where timestamps exist | Compare medians, not individual rows |
+  | `started_rate` | Low where sessions are missing | Label as incomplete or backfill before trending |
+  | `abandonment_rate` | Low where sessions are missing | Do not present as a precise rate |
+
 - **Placeholder completions.** A hint request may create a `lab_completions` row
   with an empty flag and a start timestamp. It is intentional and is excluded
   from completion metrics. The audit labels it as info.
 - **No creator on seeded labs.** All 149 seeded labs have `created_by = NULL`.
   This is expected for imported content, not a deleted account.
 - **Superuser can disable triggers.** A database superuser can drop the ledger
-  triggers. The control is tamper-evident, not tamper-proof. Keep the ledger
-  backup and the signed manifest off the database host.
+  triggers. The control is tamper-evident, not tamper-proof. The database
+  superuser is trusted for availability, not for integrity. Keep the ledger
+  backup and the signed manifest off the database host, and compare a restored
+  database against the off-host manifest before trusting it. Restoring the
+  database alone does not prove integrity.
 - **`application_name` is not a security boundary.** A manual client can set it
   to `ocr-app`. The actor context is the stronger signal; review unattributed
   writes, not just the label.
+
+## Audit findings and hardening checklist
+
+These are the four integrity-model questions an external reviewer should ask.
+The first three are implemented; the fourth is a documented residual risk.
+
+| Area | Finding | Current control | Residual risk / action |
+|---|---|---|---|
+| **Superuser and table-owner bypass** | A PostgreSQL superuser or table owner can run `SET session_replication_role = 'replica'` or `ALTER TABLE ... DISABLE TRIGGER` and change rows without firing the ledger trigger. | The runtime role is non-superuser and non-owner; the startup check warns on a superuser. Signed manifests and backups are written off-host. | The ledger is **tamper-evident, not tamper-proof**. Keep signed manifests and WAL archives off-host, restrict superuser access, and alert on role or trigger changes. `scripts/archive-ledger.py` uses `DISABLE TRIGGER` as a reviewed privileged archive step. |
+| **High-write chain serialization** | A linear hash chain must read the previous `entry_hash` before inserting the next row. Without a lock, concurrent writes can fork the chain. | `ocr_integrity_trigger()` takes `pg_advisory_xact_lock(hashtext('ocr.data_integrity_ledger'))` before reading `prev_hash` and inserting. | The advisory lock serializes ledger writes but can become a throughput bottleneck under extreme concurrency. Monitor ledger insert latency; batch or shard only with a reviewed chain design. |
+| **Session-context spoofing** | If actor context is set with `SET` instead of transaction-scoped `SET LOCAL`, a pooled connection can leak `ocr.actor_id` into the next request. | `app/database.py` uses `set_config('ocr.actor_type', ..., true)` and the same form for `actor_id`, `request_id`, `institution_id`, and `system_admin`. The `true` argument is transaction-local. | Add a pooled-connection regression test that sets an actor, rolls back, and confirms the next transaction is unattributed. |
+| **JSONB and row canonicalization drift** | `row_hash` uses `row_to_json(NEW)::text`. A major PostgreSQL upgrade could change key order or whitespace and produce false drift findings. The `entry_hash` itself uses explicit fields and is stable. | `entry_hash = SHA-256(prev_hash || table_name || row_pk || operation || row_hash || actor_type || actor_id || request_id || occurred_at)`. | Add a cross-version regression fixture for `row_hash`; on a major PostgreSQL upgrade, verify the fixture before trusting drift reports. Do not rewrite the chain without a reviewed rehash migration. |
 
 ## Scheduled verification
 

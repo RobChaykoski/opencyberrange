@@ -24,6 +24,34 @@ tools:
 - msfconsole
 - terminal
 visibility: public
+learning_concepts:
+  - "lateral movement"
+  - "credential access"
+  - "impact assessment"
+  - "database credentials and data access"
+  - "mysql service and version"
+competency_tags:
+  - "post_exploitation.database_credentials"
+  - "network.systems"
+  - "identity.access"
+  - "post_exploitation.fundamentals"
+defensive_skills:
+  - "require_strong_database_authentication"
+  - "bind_mysql_to_management_interfaces"
+  - "remove_default_accounts"
+  - "monitor_authentication_failures"
+  - "unusual_sql_clients"
+evidence_required:
+  - "flag"
+  - "command_output"
+  - "impact_evidence"
+  - "interpretation"
+report_questions:
+  - "Which action shows the scope of the impact?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
 - tactic: Credential Access
   technique: T1078

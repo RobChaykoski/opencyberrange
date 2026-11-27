@@ -80,6 +80,18 @@ http://web.lab:8080/robots.txt
 `robots.txt` is a request to well-behaved crawlers. It is not an access control
 system. A page listed as disallowed can still be opened by a person.
 
+## Concept Check
+
+??? question "Why was the token visible?"
+    A. The browser hid it accidentally.  
+    B. The comment was sent to the browser even though it was not displayed on screen.  
+    C. Comments are encrypted.  
+    D. The server made an error.
+
+    **Correct answer: B.** The server sent the whole HTML document, including
+    the comment. The browser chose not to render it. Viewing the source or using
+    `curl` shows the same document the browser received.
+
 ## Analysis Questions
 
 **1. What is the difference between what the browser displays and the HTML source?**

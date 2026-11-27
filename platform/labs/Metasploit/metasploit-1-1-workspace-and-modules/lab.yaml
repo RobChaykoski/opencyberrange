@@ -22,6 +22,32 @@ tools:
 - msfconsole
 - terminal
 visibility: public
+learning_concepts:
+  - "security fundamentals"
+  - "safe practice"
+  - "evidence-based reasoning"
+  - "workspace and module discipline"
+  - "metasploit workspace and confirm database connectivity"
+competency_tags:
+  - "foundations.workspace_and_modules"
+  - "foundations.and_modules"
+  - "network.systems"
+  - "identity.access"
+  - "foundations.fundamentals"
+defensive_skills:
+  - "inventory_exposed_management_services"
+  - "restrict_them_to_administration_networks"
+  - "log_scanner_style_connection_attempts"
+evidence_required:
+  - "flag"
+  - "short_explanation"
+  - "safe_next_step"
+report_questions:
+  - "What evidence supports your conclusion?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
 - tactic: Discovery
   technique: T1595

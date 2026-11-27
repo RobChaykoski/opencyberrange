@@ -65,6 +65,32 @@ exercise panel.
   readable candidate.
 - A simple shift is not suitable for protecting real information.
 
+## Concept Check
+
+??? question "Which statement is true?"
+    A. ROT13 securely encrypts messages.  
+    B. ROT13 changes every letter by a fixed amount and can be reversed easily.  
+    C. ROT13 protects passwords.  
+    D. ROT13 is stronger than AES.
+
+    **Correct answer: B.** ROT13 is a Caesar shift of 13 places. It changes
+    each letter by a fixed amount, and applying it twice returns the original
+    text. It provides no confidentiality.
+
+## Encoding, Obfuscation, and Encryption
+
+| Technique | What it does | Confidentiality | Reversible by anyone? |
+|---|---|---|---|
+| Base64 | Represents bytes as text | None | Yes, trivially |
+| ROT13 | Shifts every letter 13 places | None | Yes, trivially |
+| Caesar shift | Shifts every letter a fixed amount | Very weak | Yes, by trying every shift |
+| AES | Symmetric encryption with a key | Strong when used correctly | Only with the key |
+| RSA | Asymmetric encryption with a key pair | Strong when used correctly | Only with the private key |
+
+This table is a mental model, not a recommendation to build your own
+cryptography. Use a reviewed library and a managed key when you need real
+confidentiality.
+
 ## Analysis Questions
 
 **1. What stays the same when a message is shifted with a Caesar cipher?**

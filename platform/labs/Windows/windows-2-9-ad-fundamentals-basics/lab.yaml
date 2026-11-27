@@ -16,6 +16,33 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "authentication"
+  - "session management"
+  - "identity assurance"
+  - "active directory fundamentals - read the directory"
+  - "role of a domain, directory, and distinguished"
+competency_tags:
+  - "identity.ad_fundamentals_basics"
+  - "identity.fundamentals_basics"
+  - "network.systems"
+  - "identity.fundamentals"
+defensive_skills:
+  - "service_account_descriptions_are_a_common_leak"
+  - "use_managed_service_accounts"
+  - "rotate_credentials"
+  - "alert_on_directory_searches_that_enumerate_privileged_groups"
+evidence_required:
+  - "flag"
+  - "request_and_response"
+  - "configuration_review"
+  - "interpretation"
+report_questions:
+  - "Which identity or session control failed?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Discovery
     technique: T1087

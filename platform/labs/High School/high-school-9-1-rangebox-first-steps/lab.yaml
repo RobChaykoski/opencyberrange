@@ -16,6 +16,27 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+  - Record the commands you ran, what each returned, and one thing you learned about the desktop.
+learning_concepts:
+  - command-line orientation
+  - host and user context
+  - evidence notes
+competency_tags:
+  - foundations.command_line
+  - foundations.host_orientation
+  - foundations.evidence_notes
+defensive_skills:
+  - read_output_before_the_next_command
+  - stay_within_scope
+  - keep_command_notes
+evidence_required:
+  - terminal_orientation
+  - command_output
+  - short_explanation
+report_questions:
+  - Which command told you who you are?
+  - What did each command return, and what does it mean?
+  - Why should you keep notes of the commands you run?
 mitre_attack:
   - tactic: Discovery
     technique: T1083
@@ -58,7 +79,7 @@ scenario: |
   command at a time.
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Verify the account or device with a trusted adult, report suspicious activity, and keep software updated."
+defensive_takeaways: "A command prompt is a precise way to ask a system a question. Read the output before running the next command. Only run commands on systems you own or have written permission to test, and keep notes of what you ran and what it returned."
 difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
 difficulty_evidence_source: "reviewer_walkthrough"
 difficulty_evidence_sample: 1

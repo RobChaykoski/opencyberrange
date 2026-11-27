@@ -7,6 +7,7 @@ How exercises, outcomes, and credentials fit together.
 | [Learning framework](../LEARNING-FRAMEWORK.md) | Tracks, levels, labs, and the assessment model |
 | [Lab and content counts](../COUNTS.md) | The canonical 210-lab definitions and counts |
 | [Lab metadata schema](../LAB-METADATA-SCHEMA.md) | Required `lab.yaml` fields and enums |
+| [Lab review backlog](LAB-REVIEW-BACKLOG.md) | Open curriculum-review findings and the Release 6 content fixes |
 | [Lab outcomes contract](../LAB-OUTCOMES.md) | Skills, competencies, evidence, and confidence |
 | [Competency contracts](../COMPETENCY-CONTRACTS.md) | Per-lab competency weights and reliability |
 | [Active Directory pathway](../ACTIVE-DIRECTORY-PATHWAY.md) | Ten-module AD attack and remediation path |

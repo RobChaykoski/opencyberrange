@@ -16,6 +16,33 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "local privilege escalation"
+  - "misconfiguration analysis"
+  - "least privilege"
+  - "ironforge systems - password hash cracking"
+  - "discover exposed password hash files through filesystem"
+competency_tags:
+  - "privesc.password_hash_cracking"
+  - "privesc.hash_cracking"
+  - "identity.access"
+  - "network.systems"
+  - "privesc.fundamentals"
+defensive_skills:
+  - "disable_unused_services"
+  - "enforce_key_based_ssh_with_least_privilege"
+  - "alert_on_unexpected_authentication_or_command_execution"
+evidence_required:
+  - "flag"
+  - "command_output"
+  - "privilege_evidence"
+  - "interpretation"
+report_questions:
+  - "Which permission or configuration allowed the escalation?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Credential Access
     technique: T1110.002
@@ -53,7 +80,7 @@ scenario: |
 
 credentials:
   - username: "technician"
-    password: "Ir0nf0rg3_T3ch#"
+    password: "Ir0nf0rg3_T3ch#"  # security-delta: allow credential-like assignment - lab fixture
     role: "technician"
     description: "Low-privilege technician account"
 
@@ -100,7 +127,7 @@ topology:
       access: "direct"
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Disable unused services, enforce key-based SSH with least privilege, and alert on unexpected authentication or command execution."
+defensive_takeaways: "Disable unused services, enforce key-based SSH with least privilege, and alert on unexpected authentication or command execution. In this lab, apply that to ironforge systems - password hash cracking and record the evidence before recommending the fix."
 test:
   steps:
     - name: "SSH as technician"

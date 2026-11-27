@@ -18,9 +18,10 @@ A community centre is overdue for its quarterly access review. The volunteer
 coordinator left 14 months ago. The account was never disabled, and the API
 token was never revoked.
 
-The directory shows current accounts, roles, last login dates, tokens, and
-scopes. Your job is to find the account that should have been removed, test its
-access, recover the training token, and write the offboarding fixes.
+The directory shows current accounts, roles, departments, last login dates,
+tokens, and scopes. Your job is to find the leaver who should have been removed,
+find the mover who kept old access, test the token, recover the training token,
+and write the offboarding and mover fixes.
 
 ## Background
 
@@ -53,8 +54,8 @@ Open:
 http://identity-life.lab:8080/directory
 ```
 
-The table shows each account's user, role, status, last login, API token, and
-scope.
+The table shows each account's user, role, department, move history, status,
+last login, API token, and scope.
 
 ### Step 2: Find the account that should not be active
 
@@ -86,7 +87,40 @@ curl -s 'http://identity-life.lab:8080/api/reports?token=tok_rowan_9f2c'
 The export opens and contains the training token. Copy the `OCR{...}` value into
 the flag box.
 
-### Step 5: Write the offboarding fix
+### Step 5: Find the mover
+
+Look for an account with a department change and an old scope that survived it.
+
+`priya` moved from **Finance** to **Community Programs** on 2026-08-15. Her role
+changed, but her scope still includes `finance:read`. That is a **mover**
+finding: the old department's access should have been removed when the move
+happened.
+
+A mover checklist:
+
+```text
+1. Remove the old department's access.
+2. Grant only the new department's access.
+3. Review shared drives and distribution lists.
+4. Update the account owner and the review record.
+```
+
+A role change is not an access review. The old permission persists until someone
+removes it.
+
+## Concept Check
+
+??? question "Which account is the mover finding?"
+    A. `amara`.  
+    B. `rowan`.  
+    C. `priya`.  
+    D. `svc-reports`.
+
+    **Correct answer: C.** `priya` moved from Finance to Community Programs but
+    still has `finance:read`. `rowan` is the leaver; `amara` and `svc-reports`
+    are current accounts.
+
+### Step 6: Write the offboarding fix
 
 Write a short checklist for the coordinator:
 
@@ -124,16 +158,17 @@ Write a short checklist for the coordinator:
 
 **2. What is the difference between a user account and a service account?**
 
-**3. Which account in the directory should have been removed, and what evidence
-supports that?**
+**3. Which account is the leaver, and what evidence supports that?**
 
-**4. Why did the read-only token return 403 instead of 200?**
+**4. Which account is the mover, and which scope should have been removed?**
 
-**5. What should happen to a leaver's files and shared drives?**
+**5. Why did the read-only token return 403 instead of 200?**
 
-**6. How would you prove that an access review actually happened?**
+**6. What should happen to a leaver's files and shared drives?**
 
-**7. What would you check first if a former employee's token appeared in a log?**
+**7. How would you prove that an access review actually happened?**
+
+**8. What would you check first if a former employee's token appeared in a log?**
 
 ## Accessibility
 

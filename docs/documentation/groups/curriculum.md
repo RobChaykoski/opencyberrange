@@ -8,7 +8,7 @@ Learning design, tracks and pathways, labs, competencies, assessment, analytics,
 - **NIST SP 800-53 Rev. 5:** AT-2, PM-5, SA-11
 - **Owner:** Curriculum lead
 
-83 document(s) in this group.
+84 document(s) in this group.
 
 | Document | Type | Classification | Review | Score | Next review |
 |---|---|---|---|---:|---|
@@ -94,6 +94,7 @@ Learning design, tracks and pathways, labs, competencies, assessment, analytics,
 | [V2 Learning Analytics and Research Dashboard](../../V2-LEARNING-ANALYTICS.md) | `reference` | internal | unreviewed |  | unset |
 | [VulnHub VM sourcing and licence alignment](../../VULNHUB-SOURCING.md) | `reference` | internal | unreviewed |  | unset |
 | [Workforce readiness and job matching](../../WORKFORCE-READINESS-JOB-MATCHING.md) | `reference` | internal | unreviewed |  | unset |
+| [Lab review backlog](../../curriculum/LAB-REVIEW-BACKLOG.md) | `reference` | internal | unreviewed |  | unset |
 | [Curriculum and assessment](../../curriculum/index.md) | `reference` | internal | unreviewed |  | unset |
 
 Review a document with the [document review form](../DOCUMENT-REVIEW-FORM.md). Grouping rules and labels are defined in the [documentation standard](../DOCUMENTATION-STANDARDS.md).

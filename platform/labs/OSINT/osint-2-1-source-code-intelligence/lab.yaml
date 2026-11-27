@@ -17,6 +17,31 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+  - Explain why client-side code is public and name one remediation.
+learning_concepts:
+  - client-side code review
+  - source maps and build metadata
+  - secrets in static assets
+  - deployment review
+competency_tags:
+  - osint.source_code_intelligence
+  - appsec.client_side_secrecy
+  - web.static_asset_review
+defensive_skills:
+  - assume_all_client_side_code_is_public
+  - remove_secrets_from_javascript_css_and_comments
+  - review_source_maps_before_release
+  - include_static_assets_in_deployment_reviews
+evidence_required:
+  - source_excerpt
+  - exposed_asset
+  - interpretation
+  - remediation
+report_questions:
+  - Which static asset exposed the clue?
+  - Why is client-side code public even when it is minified?
+  - What would you remove or rotate after finding the token?
+  - How would you prevent the same leak in the next release?
 mitre_attack:
   - tactic: Reconnaissance
     technique: T1596
@@ -61,7 +86,7 @@ scenario: |
   exercise.
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Minimise public metadata and review what the organisation publishes about people, systems, and suppliers."
+defensive_takeaways: "Assume all client-side code is public. Do not place secrets, tokens, credentials, internal URLs, or staging information inside JavaScript, CSS, comments, or source maps. Review static assets during security testing and deployment reviews, and rotate anything that was exposed."
 difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'intermediate' retained as provisional."
 difficulty_evidence_source: "reviewer_walkthrough"
 difficulty_evidence_sample: 1

@@ -7,14 +7,41 @@ prerequisites:
 # By completion students will be able to:
 learning_outcomes:
   - Treat a public professional profile as an OSINT source
-  - Use a phone to open the profile and read the public About section
-  - Explain why a public marker is not a secret
-  - Recover the marker from a fictional public profile
+  - Separate visible fields from less-obvious correlation fields
+  - Correlate the profile with a public conference page
+  - Map each field to the exposure it enables
+  - Explain why a public marker is not a secret and recover it
 mapped_skills:
   - osint
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+  - Build an exposure map and name one cross-source correlation.
+learning_concepts:
+  - exposure mapping
+  - identity correlation
+  - public profile review
+  - remediation prioritisation
+competency_tags:
+  - osint.exposure_mapping
+  - osint.identity_correlation
+  - privacy.profile_review
+  - remediation.prioritisation
+defensive_skills:
+  - inventory_visible_and_less_obvious_fields
+  - correlate_identifiers_across_sources
+  - remove_contact_details_the_role_does_not_need
+  - separate_personal_and_professional_presence
+evidence_required:
+  - profile_inventory
+  - exposure_map
+  - correlation_field
+  - remediation
+report_questions:
+  - What information could be correlated across the profile and the conference page?
+  - Which field enables the most cross-source correlation, and why?
+  - Which field is the highest risk, and why?
+  - What would you remove first, and what would you keep for professional contact?
 mitre_attack:
   - tactic: Reconnaissance
     technique: T1593.001
@@ -55,7 +82,7 @@ scenario: |
   for a real person, send connection requests, or collect personal data.
 
 troubleshooting: "If the live profile is unreachable, use the training mirror at the lab target. If the marker is rejected, copy it exactly as it appears and confirm the uppercase OCR prefix."
-defensive_takeaways: "Public profiles are an OSINT source. Review what you publish, separate personal and professional presence, and treat every public field as permanent."
+defensive_takeaways: "Treat every public profile field as permanent and copyable. Map visible and less-obvious fields to the exposure they enable, correlate identifiers across sources, remove contact details the role does not need, and separate personal and professional presence."
 difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
 difficulty_evidence_source: "reviewer_walkthrough"
 difficulty_evidence_sample: 1
@@ -105,6 +132,21 @@ test:
     - name: "Training mirror names the fictional organisation"
       command: "curl -s http://{target.profile}:8080/ | grep -o 'Northstar Community Cloud'"
       expect: "Northstar Community Cloud"
+      timeout: 20
+
+    - name: "Profile exposes the public email and handle"
+      command: "curl -s http://{target.profile}:8080/ | grep -c 'riley.chen@northstar-community.example'"
+      expect: "1"
+      timeout: 20
+
+    - name: "Conference page repeats the handle and travel dates"
+      command: "curl -s http://{target.profile}:8080/talk | grep -c '@rileybuilds'"
+      expect: "1"
+      timeout: 20
+
+    - name: "Profile API returns the same identifier"
+      command: "curl -s http://{target.profile}:8080/api/profile | grep -o '@rileybuilds'"
+      expect: "@rileybuilds"
       timeout: 20
 
     - name: "Training mirror contains the marker"

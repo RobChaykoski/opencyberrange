@@ -15,6 +15,33 @@ mapped_skills:
 assessment_criteria:
 - Submit the correct flag.
 - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "web application security"
+  - "HTTP request and response"
+  - "attack surface mapping"
+  - "api security: oauth and oidc abuse"
+  - "oauth authorization-code flow"
+competency_tags:
+  - "web.oauth_abuse"
+  - "web.api"
+  - "web.fundamentals"
+defensive_skills:
+  - "server_side_authorization"
+  - "strict_token_validation"
+  - "least_privilege_runtime"
+  - "artifact_verification_remove_this_class_of_weakness"
+evidence_required:
+  - "flag"
+  - "request_and_response"
+  - "evidence"
+  - "interpretation"
+  - "report"
+report_questions:
+  - "Which request or response shows the weakness?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
 - tactic: Defense Evasion
   technique: T1550.001
@@ -45,7 +72,7 @@ test:
     expect: OCR{0auth_r3d1r3ct_byp4ss}
 visibility: public
 week: 11
-defensive_takeaways: Server-side authorization, strict token validation, least-privilege runtime, and artifact verification remove this class of weakness.
+defensive_takeaways: "Server-side authorization, strict token validation, least-privilege runtime, and artifact verification remove this class of weakness. In this lab, apply that to api security: oauth and oidc abuse and record the evidence before recommending the fix."
 troubleshooting: If the service is slow, allow the first build to finish. Confirm the container is on the lab network before curling it.
 difficulty_evidence: Pathway implementation with a static endpoint walkthrough; live learner walkthrough and harness evidence pending.
 difficulty_evidence_source: validator_and_static_walkthrough

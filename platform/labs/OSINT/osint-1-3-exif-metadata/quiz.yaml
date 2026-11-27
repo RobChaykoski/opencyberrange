@@ -6,30 +6,30 @@ certification:
 
 questions:
   - id: "secplus-exif-1"
-    prompt: "What does EXIF stand for?"
+    prompt: "A teacher uploads photos from a field trip. What creates the greatest privacy risk?"
     options:
-      - "Exchangeable Image File Format"
-      - "Extended Internet File Format"
-      - "Encrypted Image Export Format"
-      - "External Information File"
-    correct: 0
-    explanation: "EXIF is the Exchangeable Image File Format, a metadata standard used by cameras and phones to store settings, timestamps, and sometimes GPS coordinates."
+      - "The large image file size"
+      - "GPS coordinates in the EXIF metadata"
+      - "JPEG compression"
+      - "The screen resolution"
+    correct: 1
+    explanation: "GPS coordinates can reveal where a photo was taken, often down to a building or street. File size, compression, and screen resolution do not disclose the location."
     reference:
-      label: "CIPA DC-008 EXIF standard"
-      url: "https://exiftool.org/TagNames/EXIF.html"
+      label: "ExifTool GPS tags"
+      url: "https://exiftool.org/TagNames/GPS.html"
 
   - id: "secplus-exif-2"
-    prompt: "Which tool is commonly used to read EXIF metadata from an image?"
+    prompt: "Which statement is supported by the metadata alone?"
     options:
-      - "exiftool"
-      - "nmap"
-      - "sqlmap"
-      - "kubectl"
+      - "The photo contains GPS coordinates."
+      - "The photographer definitely intended to publish the GPS location."
+      - "The photo was taken by a student."
+      - "The location is safe to publish."
     correct: 0
-    explanation: "ExifTool reads, writes, and removes metadata from images and many other file types. It is the standard command-line tool for this task."
+    explanation: "The metadata supports the observation that GPS coordinates are present. It does not prove intent, identity, or safety. Intent is an interpretation that needs more evidence."
     reference:
-      label: "ExifTool documentation"
-      url: "https://exiftool.org/"
+      label: "NIST SP 800-86: Forensic techniques"
+      url: "https://csrc.nist.gov/pubs/sp/800/86/final"
 
   - id: "secplus-exif-3"
     prompt: "Which EXIF fields can reveal where a photo was taken?"

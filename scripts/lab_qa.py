@@ -41,7 +41,23 @@ TOOL_BASELINE = ROOT / "platform" / "tester" / "tool-version-baseline.yaml"
 
 FLAG_RE = re.compile(r"OCR\{[^}\n]+\}")
 PLACEHOLDER_FLAGS = {"OCR{...}", "OCR{<flag>}", "OCR{flag}", "OCR{FLAG}"}
+PLACEHOLDER_MARKERS = (
+    "...",
+    "<",
+    ">",
+    "replace_me",
+    "flag_here",
+    "example",
+    "placeholder",
+    "your_flag",
+    "token1",
+    "token2",
+    "token3",
+    "`",
+)
+FLAG_REGEX_CHARS = set("[]()\\|+*?^$")
 STRICT_FLAGS = False
+STRICT_CONTENT = False
 IMAGE_RE = re.compile(r"!\[([^\]]*)\]\(([^)]+)\)")
 LINK_RE = re.compile(r"(?<!!)\[[^\]]+\]\(([^)]+)\)")
 IPV4_RE = re.compile(r"(?<![\d.])(?:\d{1,3}\.){3}\d{1,3}(?![\d.])")
@@ -75,6 +91,29 @@ def load_yaml(path: Path) -> dict:
 
 def add(findings: list[dict], level: str, check: str, lab: str, detail: str) -> None:
     findings.append({"level": level, "check": check, "lab": lab, "detail": detail})
+
+
+def is_placeholder_flag(flag: str) -> bool:
+    """True for redacted examples, templates, and regex fragments.
+
+    Workbooks deliberately show shapes such as ``OCR{_______________}``,
+    ``OCR{<flag_here>}``, and ``OCR{[^}]*}``. Comparing those to the real flag
+    produces noise and hides a genuine mismatch, so they are not flags.
+    """
+    if flag in PLACEHOLDER_FLAGS:
+        return True
+    if not flag.startswith("OCR{") or not flag.endswith("}"):
+        return True
+    inner = flag[4:-1]
+    if not inner.strip():
+        return True
+    lowered = inner.lower()
+    if any(marker in lowered for marker in PLACEHOLDER_MARKERS):
+        return True
+    if any(char in FLAG_REGEX_CHARS for char in inner):
+        return True
+    # All-underscore, all-x, all-dot, or all-space placeholders.
+    return set(inner) <= set("_ -xX.*")
 
 
 def lab_files() -> list[Path]:
@@ -191,9 +230,16 @@ def check_links_and_urls(slug: str, page: Path, text: str, findings: list[dict])
             add(findings, "warning", "workbook-host", slug, f"hostname not declared in lab.yaml: {host}")
 
 
-def check_text_safety(slug: str, text: str, lab_flag: str, findings: list[dict]) -> None:
+def check_text_safety(
+    slug: str,
+    text: str,
+    lab_flag: str,
+    findings: list[dict],
+    allowed_flags: set[str] | None = None,
+) -> None:
+    allowed_flags = allowed_flags or set()
     for flag in sorted(set(FLAG_RE.findall(text))):
-        if flag in PLACEHOLDER_FLAGS:
+        if is_placeholder_flag(flag) or flag in allowed_flags:
             continue
         if lab_flag and flag != lab_flag:
             add(
@@ -235,8 +281,10 @@ def check_commands(slug: str, text: str, findings: list[dict]) -> None:
             continue
         # Placeholders and Windows prompts are not Bash. Skip them rather than
         # reporting a syntax error the workbook never claimed.
-        if re.search(r"\{[A-Za-z_][^}]*\}", body) or re.search(
-            r"(?m)^\s*(PS [A-Z]:|C:\\|PS>|>)", body
+        if (
+            re.search(r"\{[A-Za-z_][^}]*\}", body)
+            or re.search(r"<[^>\n]+>", body)
+            or re.search(r"(?m)^\s*(PS [A-Z]:|C:\\|PS>|>)", body)
         ):
             continue
         # A workbook may show prompts and placeholders. Syntax-check the block
@@ -315,7 +363,98 @@ def check_path_plan(slug: str, findings: list[dict]) -> None:
             add(findings, "warning", "path-plan", slug, f"bypass check {index} has no rationale")
 
 
-def check_lab(path: Path, findings: list[dict]) -> None:
+GENERIC_DEFENSIVE = (
+    "Validate and encode input at the server, enforce authorization on every "
+    "object, and monitor unusual request patterns."
+)
+
+
+def check_test_flags(slug: str, lab: dict, findings: list[dict]) -> None:
+    """The lab flag is the only answer; every test expectation must agree."""
+    lab_flag = str(lab.get("flag") or "").strip()
+    if not lab_flag:
+        add(findings, "error", "lab-flag", slug, "lab.yaml has no flag")
+        return
+    if is_placeholder_flag(lab_flag):
+        add(findings, "error", "lab-flag", slug, f"lab.yaml flag is a placeholder: {lab_flag}")
+        return
+    steps = (lab.get("test") or {}).get("steps") or []
+    for index, step in enumerate(steps, start=1):
+        if step.get("allow_flag_mismatch"):
+            continue
+        name = str(step.get("name") or f"step {index}")
+        for field in ("command", "expect"):
+            for found in FLAG_RE.findall(str(step.get(field) or "")):
+                if is_placeholder_flag(found):
+                    continue
+                if found != lab_flag:
+                    add(
+                        findings,
+                        "error",
+                        "test-flag",
+                        slug,
+                        f"{name}: {field} expects {found}, lab.yaml flag is {lab_flag}",
+                    )
+
+
+def check_content_quality(
+    slug: str,
+    lab: dict,
+    findings: list[dict],
+    duplicate_defensive: dict[str, list[str]],
+) -> None:
+    defensive = str(lab.get("defensive_takeaways") or "").strip()
+    if defensive:
+        if defensive == GENERIC_DEFENSIVE:
+            add(
+                findings,
+                "error" if STRICT_CONTENT else "warning",
+                "generic-defensive",
+                slug,
+                "defensive_takeaways is the shared boilerplate; write the control this lab teaches",
+            )
+        others = [item for item in duplicate_defensive.get(defensive, []) if item != slug]
+        if others:
+            add(
+                findings,
+                "error" if STRICT_CONTENT else "warning",
+                "duplicate-defensive",
+                slug,
+                "same defensive_takeaways as " + ", ".join(sorted(others)[:5]),
+            )
+    else:
+        add(findings, "warning", "defensive", slug, "no defensive_takeaways")
+
+    skills = [str(item) for item in (lab.get("mapped_skills") or [])]
+    if skills == ["web_api"] and not lab.get("competency_tags"):
+        add(
+            findings,
+            "error" if STRICT_CONTENT else "warning",
+            "generic-skill",
+            slug,
+            "mapped_skills is only web_api; add the fine-grained competency_tags too",
+        )
+
+    category = str(lab.get("category") or "")
+    if (
+        category in {"reconnaissance", "web", "exploitation"}
+        and not lab.get("analyst_finding_required")
+        and not lab.get("evidence_required")
+    ):
+        add(
+            findings,
+            "error" if STRICT_CONTENT else "info",
+            "missing-evidence",
+            slug,
+            "recon/exploitation lab has no analyst_finding_required or evidence_required",
+        )
+
+
+def check_lab(
+    path: Path,
+    findings: list[dict],
+    duplicate_defensive: dict[str, list[str]],
+) -> None:
     lab = load_yaml(path)
     slug = path.parent.name
     lab_flag = str(lab.get("flag") or "")
@@ -326,22 +465,41 @@ def check_lab(path: Path, findings: list[dict]) -> None:
         text = page.read_text(encoding="utf-8", errors="ignore")
         check_images(slug, page, text, findings)
         check_links_and_urls(slug, page, text, findings)
-        check_text_safety(slug, text, lab_flag, findings)
+        check_text_safety(
+            slug,
+            text,
+            lab_flag,
+            findings,
+            {str(item) for item in (lab.get("allowed_workbook_flags") or [])},
+        )
         check_commands(slug, text, findings)
         check_tool_versions(slug, text, findings)
     check_path_plan(slug, findings)
+    check_test_flags(slug, lab, findings)
+    check_content_quality(slug, lab, findings, duplicate_defensive)
+
+
+def duplicate_defensive_map(paths: list[Path]) -> dict[str, list[str]]:
+    seen: dict[str, list[str]] = {}
+    for path in paths:
+        lab = load_yaml(path)
+        text = str(lab.get("defensive_takeaways") or "").strip()
+        if text:
+            seen.setdefault(text, []).append(path.parent.name)
+    return seen
 
 
 def run_static(selected: list[str] | None, as_json: bool, fail_on_warnings: bool) -> int:
     findings: list[dict] = []
     paths = lab_files()
+    duplicates = duplicate_defensive_map(paths)
     if selected:
         wanted = set(selected)
         paths = [path for path in paths if path.parent.name in wanted]
         for missing in sorted(wanted - {path.parent.name for path in paths}):
             add(findings, "error", "lab", missing, "lab not found")
     for path in paths:
-        check_lab(path, findings)
+        check_lab(path, findings, duplicates)
 
     counts = {
         level: sum(1 for item in findings if item["level"] == level)
@@ -403,10 +561,16 @@ def main() -> int:
         action="store_true",
         help="treat a workbook flag mismatch as an error after the allowlist is reviewed",
     )
+    parser.add_argument(
+        "--strict-content",
+        action="store_true",
+        help="treat generic or duplicated guidance as an error (release gate)",
+    )
     parser.add_argument("--write-screenshots", action="store_true")
     args = parser.parse_args()
-    global STRICT_FLAGS
+    global STRICT_FLAGS, STRICT_CONTENT
     STRICT_FLAGS = args.strict_flags
+    STRICT_CONTENT = args.strict_content
 
     if args.write_screenshots:
         return write_screenshot_manifest()

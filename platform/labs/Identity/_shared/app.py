@@ -33,6 +33,9 @@ ACCOUNTS = [
     {
         "user": "amara",
         "role": "staff",
+        "department": "Community Programs",
+        "moved_from": "",
+        "moved_on": "",
         "status": "active",
         "last_login": "2026-11-10",
         "token": "tok_amara_staff_2b7c",
@@ -41,14 +44,31 @@ ACCOUNTS = [
     {
         "user": "rowan",
         "role": "reports-admin",
+        "department": "Volunteer Coordination",
+        "moved_from": "",
+        "moved_on": "",
         "status": "active",
         "last_login": "2025-09-14",
         "token": "tok_rowan_9f2c",
         "scope": "reports:admin",
     },
     {
+        "user": "priya",
+        "role": "programs-coordinator",
+        "department": "Community Programs",
+        "moved_from": "Finance",
+        "moved_on": "2026-08-15",
+        "status": "active",
+        "last_login": "2026-11-08",
+        "token": "tok_priya_programs_7a1d",
+        "scope": "programs:read, finance:read",
+    },
+    {
         "user": "svc-reports",
         "role": "service",
+        "department": "Platform",
+        "moved_from": "",
+        "moved_on": "",
         "status": "active",
         "last_login": "2026-11-10",
         "token": "tok_svc_reports_4d1a",
@@ -428,6 +448,9 @@ def lifecycle_directory_body() -> str:
         "<tr>"
         f"<td>{html.escape(account['user'])}</td>"
         f"<td>{html.escape(account['role'])}</td>"
+        f"<td>{html.escape(account['department'])}</td>"
+        f"<td>{html.escape(account['moved_from'])}</td>"
+        f"<td>{html.escape(account['moved_on'])}</td>"
         f"<td>{html.escape(account['status'])}</td>"
         f"<td>{html.escape(account['last_login'])}</td>"
         f"<td><code>{html.escape(account['token'])}</code></td>"
@@ -439,18 +462,22 @@ def lifecycle_directory_body() -> str:
       <span class="pill">Directory</span>
       <h1>Accounts and tokens</h1>
       <p class="lede">These are the active accounts in the community centre
-      directory. Status and last login are part of the review.</p>
+      directory. Status, last login, and department moves are part of the
+      review.</p>
       <table>
         <thead>
-          <tr><th>User</th><th>Role</th><th>Status</th><th>Last login</th>
+          <tr><th>User</th><th>Role</th><th>Department</th><th>Moved from</th>
+          <th>Moved on</th><th>Status</th><th>Last login</th>
           <th>API token</th><th>Scope</th></tr>
         </thead>
         <tbody>{rows}</tbody>
       </table>
       <div class="card note">
-        <h2>Review question</h2>
+        <h2>Review questions</h2>
         <p>Which account has not signed in for more than a year but still has an
         active token? What access does that token grant?</p>
+        <p>Which account moved department but kept its old scope? That is a
+        <strong>mover</strong> finding, not a leaver finding.</p>
       </div>
       <p><a href="/">Back to the access review</a></p>
     """

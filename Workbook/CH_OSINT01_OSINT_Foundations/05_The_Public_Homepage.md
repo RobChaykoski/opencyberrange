@@ -19,8 +19,9 @@ collected.
 ## Your Objectives
 
 - Treat a public homepage as an OSINT source
-- Fetch the page source instead of only reading the rendered page
-- Search metadata and comments for a hidden marker
+- Inventory author, generator, keywords, Open Graph, Twitter card, and custom metadata
+- Explain what each metadata field reveals to an outsider
+- Decide which metadata field provides the most useful information
 - Record the exact URL and source location of the finding
 
 ## Background: The Head Is Part of the Page
@@ -58,14 +59,32 @@ personal data.
 curl -s http://connect.lab:8080/ -o swocts.html
 ```
 
-### Step 3: Search the head
+### Step 3: Build a metadata inventory
+
+Do not search only for the flag. List every field, then decide which field is
+most useful to an outsider:
 
 ```bash
-grep -i 'OCR{\|osint\|meta name' swocts.html
+grep -iE '<title|<meta' swocts.html
 ```
 
-The flag is in a custom `meta` tag in the document head. It is not visible in
-the rendered page.
+Complete the inventory:
+
+| Field | Example value | What it reveals |
+|---|---|---|
+| `author` | SWOCTS Community Team | Who maintains the page, or the team name |
+| `generator` | Hugo 0.125.7 | The build tool and version, which narrows known issues |
+| `keywords` | cybersecurity, community, workshops | The site's topics and audience |
+| `og:title` / `og:description` | SWOCTS Hub / Free community events | What social platforms display when the link is shared |
+| `og:image` | `/images/hub-cover.png` | A public asset path and image metadata |
+| `twitter:card` | `summary_large_image` | The social-preview format |
+| `x-swocts-osint` | `OCR{...}` | A deliberate custom marker; the flag is here |
+
+Then answer: **which metadata field reveals the most useful information?**
+
+There is no single correct answer. A generator version can narrow known
+vulnerabilities; an author field can identify a team; a custom tag can expose an
+internal marker. The skill is to inventory the fields and justify the priority.
 
 ### Step 4: Submit the flag
 
@@ -84,15 +103,19 @@ head, and search for identifiers that should not be there.
 
 ## Analysis Questions
 
-**1. Why is a `meta` tag a good place for a deliberate OSINT clue?**
+**1. Which metadata field revealed the most useful information, and why?**
 
-**2. What kinds of real secrets are sometimes leaked in page metadata?**
+**2. What does the `generator` field tell an outsider?**
 
-**3. How would you archive the page so the finding is reproducible after the site changes?**
+**3. How can Open Graph or Twitter card data expose internal context?**
 
-**4. What is the difference between viewing the rendered page and viewing the source?**
+**4. Which fields would you remove before publishing the page?**
 
-**5. How would you report a real metadata leak without publishing the secret?**
+**5. What kinds of real secrets are sometimes leaked in page metadata?**
+
+**6. How would you archive the page so the finding is reproducible after the site changes?**
+
+**7. How would you report a real metadata leak without publishing the secret?**
 
 ## Defensive Takeaways
 

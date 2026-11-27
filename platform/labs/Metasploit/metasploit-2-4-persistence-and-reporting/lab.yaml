@@ -24,6 +24,36 @@ tools:
 - msfconsole
 - terminal
 visibility: public
+learning_concepts:
+  - "lateral movement"
+  - "credential access"
+  - "impact assessment"
+  - "persistence, evidence, and cleanup"
+  - "document system identity and platform evidence from"
+competency_tags:
+  - "post_exploitation.persistence_and_reporting"
+  - "post_exploitation.and_reporting"
+  - "network.systems"
+  - "identity.access"
+  - "post_exploitation.fundamentals"
+defensive_skills:
+  - "monitor_scheduled_task"
+  - "startup_changes_against_a_baseline"
+  - "alert_on_new_cron_entries"
+  - "unexpected_interpreters"
+  - "files_written_to_temporary_directories_by_scheduled_jobs"
+evidence_required:
+  - "flag"
+  - "command_output"
+  - "impact_evidence"
+  - "interpretation"
+  - "report"
+report_questions:
+  - "Which action shows the scope of the impact?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
 - tactic: Persistence
   technique: T1053

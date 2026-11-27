@@ -20,6 +20,36 @@ assessment_criteria:
   - Submit a short analyst finding with the destination, the token, and a confidence statement.
   - Record the Arkime expression used to find the session.
 analyst_finding_required: true
+learning_concepts:
+  - "packet analysis"
+  - "protocol analysis"
+  - "detection"
+  - "helios freight - full packet capture triage"
+  - "search and filter indexed network sessions by"
+competency_tags:
+  - "network_analysis.arkime_session_triage"
+  - "network_analysis.session_triage"
+  - "network.systems"
+  - "incident.forensics"
+  - "network_analysis.fundamentals"
+defensive_skills:
+  - "index_outbound_sessions"
+  - "baseline_destinations"
+  - "alert_on_a_new_external_host_with_a_short_token_path"
+  - "keep_full_packet_capture_access_read_only"
+  - "export_the_session_summary_rather_than_the_payload"
+evidence_required:
+  - "flag"
+  - "packet_or_log_evidence"
+  - "timeline"
+  - "interpretation"
+  - "report"
+report_questions:
+  - "Which packet or log entry supports your conclusion?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Exfiltration
     technique: T1041

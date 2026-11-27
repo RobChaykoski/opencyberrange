@@ -7,14 +7,40 @@ prerequisites:
 # By completion students will be able to:
 learning_outcomes:
   - Treat a public homepage as an OSINT source
-  - Fetch the page source instead of only reading the rendered page
-  - Search metadata and comments for a hidden marker
+  - Inventory author, generator, keywords, Open Graph, Twitter card, and custom metadata
+  - Explain what each metadata field reveals to an outsider
+  - Decide which metadata field provides the most useful information
   - Record the exact URL and source location of the finding
 mapped_skills:
   - osint
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+  - Name the metadata field that revealed the most useful information, and explain why.
+learning_concepts:
+  - web metadata enumeration
+  - Open Graph and social previews
+  - generator and author disclosure
+  - source-code OSINT
+competency_tags:
+  - osint.metadata_enumeration
+  - osint.web_metadata
+  - web.open_graph
+  - evidence.analysis
+defensive_skills:
+  - review_page_metadata_before_publication
+  - remove_unnecessary_author_and_generator_fields
+  - treat_source_as_public
+  - review_social_preview_data
+evidence_required:
+  - metadata_inventory
+  - most_useful_field
+  - interpretation
+report_questions:
+  - Which metadata field revealed the most useful information, and why?
+  - What does the generator field tell an outsider?
+  - How can Open Graph or Twitter card data expose internal context?
+  - Which fields would you remove before publishing the page?
 mitre_attack:
   - tactic: Reconnaissance
     technique: T1593
@@ -55,7 +81,7 @@ scenario: |
   No personal data is used in this lab.
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Minimise public metadata and review what the organisation publishes about people, systems, and suppliers."
+defensive_takeaways: "Review page metadata before publication. Custom meta tags, Open Graph data, comments, and source code can disclose information that is not visible in the rendered page. Treat website source as public information."
 difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
 difficulty_evidence_source: "reviewer_walkthrough"
 difficulty_evidence_sample: 1
@@ -88,10 +114,13 @@ hints:
     unlock_after_minutes: 4
 
   - text: |
-      Search the mirror's source for the flag prefix and for anything unusual in
-      the document head:
+      Build a metadata inventory before you search for the flag:
 
-      curl -s http://connect.lab:8080/ | grep -i 'OCR{\|osint\|meta name'
+      curl -s http://connect.lab:8080/ | grep -iE '<title|<meta'
+
+      Record the author, generator, keywords, Open Graph (`og:`), Twitter card,
+      and any custom `x-` tag. Then ask which field reveals the most useful
+      information to an outsider.
     unlock_after_minutes: 10
 
   - text: |
@@ -105,6 +134,21 @@ test:
     - name: "Mirror homepage responds"
       command: "curl -s -o /dev/null -w '%{http_code}' http://{target.publicsite}:8080/"
       expect: "200"
+      timeout: 20
+
+    - name: "Metadata inventory includes a generator"
+      command: "curl -s http://{target.publicsite}:8080/ | grep -c 'name=\"generator\"'"
+      expect: "1"
+      timeout: 20
+
+    - name: "Open Graph preview metadata is present"
+      command: "curl -s http://{target.publicsite}:8080/ | grep -c 'property=\"og:title\"'"
+      expect: "1"
+      timeout: 20
+
+    - name: "Twitter card metadata is present"
+      command: "curl -s http://{target.publicsite}:8080/ | grep -c 'name=\"twitter:card\"'"
+      expect: "1"
       timeout: 20
 
     - name: "Flag is present in the page metadata"

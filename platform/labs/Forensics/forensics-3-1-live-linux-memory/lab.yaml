@@ -21,6 +21,35 @@ assessment_criteria:
   - Record the acquisition command, file size, and SHA-256 hash.
   - Explain why the flag exists in memory but not in a disk file.
 analyst_finding_required: true
+learning_concepts:
+  - "digital forensics"
+  - "evidence handling"
+  - "timeline analysis"
+  - "live linux memory acquisition"
+  - "acquire volatile memory from a running linux"
+competency_tags:
+  - "forensics.live_linux_memory"
+  - "forensics.linux_memory"
+  - "incident.forensics"
+  - "network.systems"
+  - "forensics.fundamentals"
+defensive_skills:
+  - "volatile_memory_can_contain_secrets_that_never_touch_disk"
+  - "collect_it_early"
+  - "hash_the_image"
+  - "encrypt_it_at_rest"
+  - "restrict_access"
+evidence_required:
+  - "flag"
+  - "artifact"
+  - "timeline"
+  - "interpretation"
+report_questions:
+  - "Which artifact supports your timeline?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Collection
     technique: T1005

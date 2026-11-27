@@ -17,6 +17,35 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "packet analysis"
+  - "protocol analysis"
+  - "detection"
+  - "smtp email content analysis"
+  - "ssh into network analyst workstation"
+competency_tags:
+  - "network_analysis.smtp_email_analysis"
+  - "network_analysis.email_analysis"
+  - "network.systems"
+  - "incident.forensics"
+  - "network_analysis.fundamentals"
+defensive_skills:
+  - "segment_the_network"
+  - "deny_unnecessary_egress"
+  - "alert_on_scanning"
+  - "credential_failures"
+  - "unusual_data_flows"
+evidence_required:
+  - "flag"
+  - "packet_or_log_evidence"
+  - "timeline"
+  - "interpretation"
+report_questions:
+  - "Which packet or log entry supports your conclusion?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Collection
     technique: T1114
@@ -334,7 +363,7 @@ hints:
       The flag is in the suspicious email's body text.
     unlock_after_minutes: 25
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Segment the network, deny unnecessary egress, and alert on scanning, credential failures, and unusual data flows."
+defensive_takeaways: "Segment the network, deny unnecessary egress, and alert on scanning, credential failures, and unusual data flows. In this lab, apply that to smtp email content analysis and record the evidence before recommending the fix."
 difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'intermediate' retained as provisional."
 difficulty_evidence_source: "reviewer_walkthrough"
 difficulty_evidence_sample: 1
@@ -344,7 +373,7 @@ workbook: "wiki/range/netfor/CH_NET02_PCAP_Forensics/02_SMTP_Email_Analysis/"
 
 credentials:
   - username: "analyst"
-    password: "MediCare2024#"
+    password: "MediCare2024#"  # security-delta: allow credential-like assignment - lab fixture
     role: "analyst"
     description: "Analyst workstation SSH credentials"
 

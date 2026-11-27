@@ -1,6 +1,6 @@
 title: "Crypto Rug Pull: Follow the Liquidity"
 category: crypto
-difficulty: beginner
+difficulty: intermediate
 estimated_time: 35
 prerequisites:
   - high-school-11-2-media-provenance
@@ -17,6 +17,32 @@ assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
   - Name two red flags and the drained wallet.
+  - State which evidence most strongly supported your conclusion, and why.
+learning_concepts:
+  - financial fraud
+  - ledger tracing
+  - red-flag analysis
+  - evidence-based conclusions
+competency_tags:
+  - osint.financial_investigation
+  - crypto.ledger_analysis
+  - fraud.rug_pull
+  - evidence.reasoning
+defensive_skills:
+  - follow_the_liquidity
+  - treat_guaranteed_returns_as_a_red_flag
+  - verify_team_and_audit
+  - avoid_recovery_agent_scams
+evidence_required:
+  - red_flags
+  - drained_wallet
+  - strongest_evidence
+  - safe_next_step
+report_questions:
+  - Which evidence most strongly supported your conclusion, and why?
+  - Which two red flags were strongest in this offer?
+  - Why is the ledger stronger evidence than the token page?
+  - What would you tell a friend who was about to connect a wallet?
 mitre_attack:
   - tactic: Impact
     technique: T1657

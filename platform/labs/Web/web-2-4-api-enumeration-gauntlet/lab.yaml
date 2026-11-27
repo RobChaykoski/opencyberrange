@@ -16,6 +16,32 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "web application security"
+  - "HTTP request and response"
+  - "attack surface mapping"
+  - "stonebridge capital - api enumeration gauntlet"
+  - "that the documented v1 api requires authentication"
+competency_tags:
+  - "web.api_enumeration_gauntlet"
+  - "web.enumeration_gauntlet"
+  - "web.api"
+  - "web.fundamentals"
+defensive_skills:
+  - "encode_input_at_the_server"
+  - "enforce_authorization_on_every_object"
+  - "monitor_unusual_request_patterns"
+evidence_required:
+  - "flag"
+  - "request_and_response"
+  - "evidence"
+  - "interpretation"
+report_questions:
+  - "Which request or response shows the weakness?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Reconnaissance
     technique: T1595
@@ -52,7 +78,7 @@ scenario: |
 
 credentials:
   - username: "sb_app"
-    password: "St0n3br1dg3_DB#"
+    password: "St0n3br1dg3_DB#"  # security-delta: allow credential-like assignment - lab fixture
     role: "db"
     description: "MySQL application credentials (leaked from admin config endpoint)"
 
@@ -117,7 +143,7 @@ topology:
       access: "internal"
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Validate and encode input at the server, enforce authorization on every object, and monitor unusual request patterns."
+defensive_takeaways: "Validate and encode input at the server, enforce authorization on every object, and monitor unusual request patterns. In this lab, apply that to stonebridge capital - api enumeration gauntlet and record the evidence before recommending the fix."
 test:
   steps:
     - name: "Confirm v1 API requires authentication (401)"

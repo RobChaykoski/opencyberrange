@@ -10,7 +10,7 @@ learning_outcomes:
   - Explain the difference between a hostname and an IP address
   - Request a URL with curl and read the status line
   - Inspect HTTP response headers
-  - Run one bounded service observation against the assigned port
+  - Run one bounded service observation against the assigned port, for example `nmap -p 8080 network.lab`
   - Describe why response metadata matters in investigations
 mapped_skills:
   - network_systems
@@ -19,6 +19,35 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "network fundamentals"
+  - "protocol analysis"
+  - "segmentation"
+  - "rangebox network basics"
+  - "difference between a hostname and an ip"
+competency_tags:
+  - "network.school_rangebox_network_basics"
+  - "network.network_basics"
+  - "network.systems"
+  - "identity.access"
+  - "web.api"
+defensive_skills:
+  - "response_headers_often_contain_useful_information"
+  - "security_investigations_frequently_depend_on_metadata_such_as_status_codes"
+  - "server_banners"
+  - "custom_headers"
+  - "review_the_whole_response_before_drawing_a_conclusion"
+evidence_required:
+  - "flag"
+  - "command_output"
+  - "packet_or_log_evidence"
+  - "interpretation"
+report_questions:
+  - "Which host, port, or protocol is involved?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Discovery
     technique: T1016
@@ -61,7 +90,7 @@ scenario: |
   lab.
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Verify the account or device with a trusted adult, report suspicious activity, and keep software updated."
+defensive_takeaways: "Response headers often contain useful information. Security investigations frequently depend on metadata such as status codes, server banners, and custom headers. Review the whole response before drawing a conclusion; small details can explain a larger technical problem."
 difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
 difficulty_evidence_source: "reviewer_walkthrough"
 difficulty_evidence_sample: 1
@@ -112,6 +141,16 @@ hints:
 
       The value after the colon is the training token.
     unlock_after_minutes: 15
+
+  - text: |
+      Optional: confirm the port with one bounded observation:
+
+      nmap -p 8080 network.lab
+
+      You should see 8080/tcp open. Do not scan other hosts or ports. The point
+      is to connect the hostname, the port, and the HTTP response, not to run a
+      broad scan.
+    unlock_after_minutes: 20
 
 test:
   steps:

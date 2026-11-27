@@ -17,6 +17,35 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "packet analysis"
+  - "protocol analysis"
+  - "detection"
+  - "dns query anomaly detection"
+  - "dns fundamentals and why attackers abuse dns"
+competency_tags:
+  - "network_analysis.dns_anomaly_detection"
+  - "network_analysis.anomaly_detection"
+  - "network.systems"
+  - "incident.forensics"
+  - "network_analysis.fundamentals"
+defensive_skills:
+  - "segment_the_network"
+  - "deny_unnecessary_egress"
+  - "alert_on_scanning"
+  - "credential_failures"
+  - "unusual_data_flows"
+evidence_required:
+  - "flag"
+  - "packet_or_log_evidence"
+  - "timeline"
+  - "interpretation"
+report_questions:
+  - "Which packet or log entry supports your conclusion?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Command and Control
     technique: T1071.004
@@ -309,7 +338,7 @@ hints:
       Look carefully at the domain names and log comments!
     unlock_after_minutes: 20
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Segment the network, deny unnecessary egress, and alert on scanning, credential failures, and unusual data flows."
+defensive_takeaways: "Segment the network, deny unnecessary egress, and alert on scanning, credential failures, and unusual data flows. In this lab, apply that to dns query anomaly detection and record the evidence before recommending the fix."
 difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
 difficulty_evidence_source: "reviewer_walkthrough"
 difficulty_evidence_sample: 1

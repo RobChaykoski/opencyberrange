@@ -238,6 +238,11 @@ UI and the API documentation.
 | `derived.competency_score` | Evidence summary across mapped exercises | Show growth, not mastery | Service | Computed on read | Self; instructor aggregate; admin | `self`, `reports` | Recomputed |
 | `derived.free_text_themes` | Aggregated themes from comments | Identify recurring confusion | Consent | Computed on read; source comments retained per consent | Instructor aggregate above minimum cohort; admin | `analytics` aggregate only | Recomputed |
 
+> **Historical metric caveat:** completion and attempt rates remain reliable
+> where their source rows exist. `started_rate` and `abandonment_rate` are
+> incomplete where older records lack a matching non-diagnostic session. Label
+> the affected period or backfill it before using either rate for a trend.
+
 ## Sessions, RBAC, and security evidence
 
 | Field | Description | Purpose | Authority | Retention | Access | Exports | On deletion |

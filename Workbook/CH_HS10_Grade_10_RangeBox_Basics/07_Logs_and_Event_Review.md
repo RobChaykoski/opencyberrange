@@ -4,6 +4,16 @@ This activity uses a small synthetic web access log. You will identify **who,
 what, when, where, and result**, separate observation from interpretation, and
 explain why one failed event does not prove an attack.
 
+This is also an introduction to the security-operations workflow. A SOC analyst
+does not jump from one log line to a conclusion. The work follows four stages:
+
+| Stage | What you do | Where in this lab |
+|---|---|---|
+| **Collect** | Save the log and confirm the source, time range, and scope | Step 1 |
+| **Analyze** | Read the whole log, count status codes, and find repeated patterns | Steps 2–6 |
+| **Interpret** | Separate what the log says from what you think it means; consider benign explanations | Steps 7–8 |
+| **Document** | Record the evidence, confidence, alternative explanation, and next safe step | Evidence table |
+
 The log is fictional. Do not investigate classmates, real school systems, or
 real personal data.
 
@@ -246,6 +256,18 @@ Then answer:
 6. What is a false positive?
 7. Why must you separate observation from interpretation?
 8. What should you do if a log contains a real credential?
+
+## Concept Check
+
+??? question "Which statement is best supported by the log alone?"
+    A. An attack definitely occurred.  
+    B. The server was compromised.  
+    C. Several failed requests occurred and one unusual success was recorded.  
+    D. The attacker gained administrative access.
+
+    **Correct answer: C.** The log supports the observations: repeated failures
+    and one unusual success. It does not prove intent, compromise, or
+    administrative access. Those are interpretations that need more evidence.
 
 ## What Success Looks Like
 

@@ -16,6 +16,33 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "lateral movement"
+  - "credential access"
+  - "impact assessment"
+  - "ssh history analysis"
+  - "bash history file structure"
+competency_tags:
+  - "post_exploitation.ssh_history_analysis"
+  - "post_exploitation.history_analysis"
+  - "network.systems"
+  - "identity.access"
+  - "post_exploitation.fundamentals"
+defensive_skills:
+  - "disable_unused_services"
+  - "enforce_key_based_ssh_with_least_privilege"
+  - "alert_on_unexpected_authentication_or_command_execution"
+evidence_required:
+  - "flag"
+  - "command_output"
+  - "impact_evidence"
+  - "interpretation"
+report_questions:
+  - "Which action shows the scope of the impact?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Credential Access
     technique: T1552.003
@@ -309,6 +336,7 @@ hints:
       ```bash
       $ cat ~/.python_history
       import requests
+      # security-delta: allow credential-like assignment - lab fixture
       api_key = "FAKE_API_KEY_DO_NOT_USE"
       requests.get(url, headers={"Authorization": f"Bearer {api_key}"})
       ```
@@ -733,6 +761,7 @@ hints:
 
       developer@fin-dev-01:~$ cat ~/.python_history
       import requests
+      # security-delta: allow credential-like assignment - lab fixture
       api_key = "FAKE_DEV_API_KEY_DO_NOT_USE"
       headers = {"Authorization": f"Bearer {api_key}"}
       response = requests.get("https://api-dev.financecorp.local/users", headers=headers)
@@ -986,12 +1015,12 @@ hints:
 
 credentials:
   - username: "developer"
-    password: "DevAccess2024#"
+    password: "DevAccess2024#"  # security-delta: allow credential-like assignment - lab fixture
     role: "ssh-user"
     description: "SSH login credentials for developer account"
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Disable unused services, enforce key-based SSH with least privilege, and alert on unexpected authentication or command execution."
+defensive_takeaways: "Disable unused services, enforce key-based SSH with least privilege, and alert on unexpected authentication or command execution. In this lab, apply that to ssh history analysis and record the evidence before recommending the fix."
 difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'intermediate' retained as provisional."
 difficulty_evidence_source: "reviewer_walkthrough"
 difficulty_evidence_sample: 1

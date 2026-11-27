@@ -24,6 +24,33 @@ tools:
 - msfconsole
 - terminal
 visibility: public
+learning_concepts:
+  - "lateral movement"
+  - "credential access"
+  - "impact assessment"
+  - "meterpreter session"
+  - "java rmi service and its registry port"
+competency_tags:
+  - "post_exploitation.meterpreter_session"
+  - "network.systems"
+  - "identity.access"
+  - "post_exploitation.fundamentals"
+defensive_skills:
+  - "remove_exposed_rmi_registries"
+  - "restrict_them_to_trusted_hosts"
+  - "monitor_for_unexpected_class_loading"
+  - "outbound_callbacks_from_application_servers"
+evidence_required:
+  - "flag"
+  - "command_output"
+  - "impact_evidence"
+  - "interpretation"
+report_questions:
+  - "Which action shows the scope of the impact?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
 - tactic: Execution
   technique: T1059

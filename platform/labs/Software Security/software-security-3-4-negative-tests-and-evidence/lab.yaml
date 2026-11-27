@@ -18,6 +18,34 @@ assessment_criteria:
   - Pass every automated test step in the lab manifest.
   - Submit the feature file with a passing negative test and the failing result that exposed the bug.
   - Write a short finding with the account id, the observed status, and the control change.
+learning_concepts:
+  - "web application security"
+  - "HTTP request and response"
+  - "attack surface mapping"
+  - "negative tests and evidence reports"
+  - "negative test that expects 403 for another"
+competency_tags:
+  - "web.security_negative_tests_and_evidence"
+  - "web.and_evidence"
+  - "web.api"
+  - "identity.access"
+  - "web.fundamentals"
+defensive_skills:
+  - "authorize_every_object_read_against_the_authenticated_subject"
+  - "not_just_the_object_id"
+  - "add_a_regression_test_that_expects_403_for_a_foreign_object"
+  - "make_the_test_part_of_the_release_gate"
+evidence_required:
+  - "flag"
+  - "request_and_response"
+  - "evidence"
+  - "interpretation"
+report_questions:
+  - "Which request or response shows the weakness?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Initial Access
     technique: T1190

@@ -17,6 +17,35 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "packet analysis"
+  - "protocol analysis"
+  - "detection"
+  - "northwind freight - websocket c2 tunnel"
+  - "why an attacker wraps c2 traffic in"
+competency_tags:
+  - "network_analysis.wstunnel_c2_tunneling"
+  - "network_analysis.c2_tunneling"
+  - "network.systems"
+  - "incident.forensics"
+  - "network_analysis.fundamentals"
+defensive_skills:
+  - "treat_long_lived_websocket_upgrades_to_non_application_paths_as_suspicious"
+  - "baseline_beacon_intervals"
+  - "baseline_normal_traffic"
+  - "alert_on_anomalies"
+  - "retain_packets"
+evidence_required:
+  - "flag"
+  - "packet_or_log_evidence"
+  - "timeline"
+  - "interpretation"
+report_questions:
+  - "Which packet or log entry supports your conclusion?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Command and Control
     technique: T1071.001

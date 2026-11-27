@@ -24,6 +24,33 @@ tools:
 - msfconsole
 - terminal
 visibility: public
+learning_concepts:
+  - "vulnerability exploitation"
+  - "impact assessment"
+  - "defensive controls"
+  - "samba exploitation and first session"
+  - "smb service and version"
+competency_tags:
+  - "exploitation.first_shell"
+  - "network.systems"
+  - "identity.access"
+  - "exploitation.fundamentals"
+defensive_skills:
+  - "remove_smbv1"
+  - "unsupported_samba_versions"
+  - "restrict_file_sharing_to_trusted_networks"
+  - "alert_on_unexpected_outbound_reverse_connections_from_file_servers"
+evidence_required:
+  - "flag"
+  - "request_or_command_output"
+  - "impact_evidence"
+  - "interpretation"
+report_questions:
+  - "Which request or command shows the impact?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
 - tactic: Lateral Movement
   technique: T1210

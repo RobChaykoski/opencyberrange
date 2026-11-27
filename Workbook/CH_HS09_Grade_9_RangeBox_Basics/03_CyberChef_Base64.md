@@ -71,6 +71,19 @@ resolve, ask your instructor for the address shown in the exercise.
 - Encoded text is still readable by anyone who knows the encoding, so treat it
   as public unless it is protected by real encryption.
 
+## Concept Check
+
+??? question "Which statement is true?"
+    A. Base64 encrypts text.  
+    B. Base64 hides text permanently.  
+    C. Base64 changes how text is represented and can be reversed easily.  
+    D. Base64 protects passwords.
+
+    **Correct answer: C.** Base64 is an encoding. It changes the
+    representation so text can travel through systems that expect a limited
+    character set. Anyone who recognises the encoding can reverse it without a
+    key.
+
 ## Analysis Questions
 
 **1. Why is Base64 described as encoding rather than encryption?**

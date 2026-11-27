@@ -68,7 +68,23 @@ there. This is the same information a stranger could find.
 Submit the username and the book title. The recovery flow resets MFA and shows
 the training token. Copy the `OCR{...}` value into the flag box.
 
-### Step 6: Write the lost-phone plan
+### Step 6: Compare the recovery options
+
+Now that recovery succeeded, compare the path you used with the alternatives:
+
+| Recovery option | Strength | Why |
+|---|---|---|
+| Security question | Weak | The answer may be public, guessable, or stable for life. It is often weaker than the password it resets. |
+| Recovery codes | Stronger | Pre-generated, single-use, and usable offline. They do not depend on a public profile or a phone number. |
+| Secondary authenticator | Stronger | A second enrolled app or device keeps a possession factor when the first device is lost. |
+| Hardware security key | Strongest common option | It is bound to the site's origin and requires physical possession, so a lookalike site cannot replay it. |
+
+The hierarchy is not a licence to skip recovery design. The strongest setup
+combines a phishing-resistant primary factor, a second enrolled authenticator,
+and recovery codes stored offline. A security question should not be the only
+way back in.
+
+### Step 7: Write the lost-phone plan
 
 Write five steps the centre should follow when a volunteer loses a phone:
 

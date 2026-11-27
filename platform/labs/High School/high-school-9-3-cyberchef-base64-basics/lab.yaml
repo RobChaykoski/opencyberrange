@@ -16,6 +16,28 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+  - Answer the concept check that separates encoding from encryption.
+learning_concepts:
+  - data representation
+  - encoding versus encryption
+  - safe handling of unexpected attachments
+competency_tags:
+  - data.representation
+  - crypto.encoding_vs_encryption
+  - security.decoding_tools
+defensive_skills:
+  - treat_encoded_content_as_readable
+  - verify_sender_through_second_channel
+  - avoid_pasting_secrets_into_web_tools
+evidence_required:
+  - decoded_message
+  - concept_check_answer
+  - short_explanation
+report_questions:
+  - Which CyberChef operation did you use, and why?
+  - What evidence shows the message was encoded rather than encrypted?
+  - Why is encoded text still readable to anyone who knows the encoding?
+  - How would you verify the sender before acting on the message?
 mitre_attack:
   - tactic: Defense Evasion
     technique: T1140

@@ -153,6 +153,18 @@ the terminal path. Do not open the file in an image viewer to "check" it.
 5. **Report it.** Send it to your instructor or IT contact without forwarding it
    to classmates.
 
+## Concept Check
+
+??? question "Why was the file named event-photo.png worth investigating?"
+    A. PNG files are always malicious.  
+    B. The filename extension alone is not reliable evidence of the content.  
+    C. ZIP files cannot contain images.  
+    D. All renamed files are dangerous.
+
+    **Correct answer: B.** The name is a label. The first bytes said `PK`, so
+    the file was a ZIP archive. Renaming a file does not change its content, and
+    a familiar extension is not proof that the file is safe.
+
 ## Analysis Questions
 
 **1. Why is a filename extension not proof of a file's real type?**

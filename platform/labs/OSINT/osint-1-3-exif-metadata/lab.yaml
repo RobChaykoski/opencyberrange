@@ -14,6 +14,31 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+  - Document the metadata fields that exposed location or internal context.
+learning_concepts:
+  - EXIF metadata
+  - geolocation privacy
+  - evidence preservation
+  - publication sanitisation
+competency_tags:
+  - osint.exif_analysis
+  - privacy.metadata_leakage
+  - evidence.preservation
+defensive_skills:
+  - review_gps_timestamps_device_and_author_fields
+  - sanitize_before_publication
+  - keep_original_in_a_controlled_archive
+  - publish_a_sanitized_copy
+evidence_required:
+  - metadata_fields
+  - gps_location
+  - leak_interpretation
+  - sanitized_copy
+report_questions:
+  - Which metadata fields exposed the most context?
+  - Why keep the original evidence file and publish a sanitized copy?
+  - What would you strip before publishing the image?
+  - What does the metadata not prove about the event?
 mitre_attack:
   - tactic: Reconnaissance
     technique: T1592
@@ -57,7 +82,7 @@ scenario: |
   simulated image. It contains no real person and no real credentials.
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Minimise public metadata and review what the organisation publishes about people, systems, and suppliers."
+defensive_takeaways: "Photos often contain hidden metadata. Review GPS coordinates, timestamps, device identifiers, author fields, and comments before publication. Keep original evidence files in a controlled archive and publish sanitized copies when possible."
 difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
 difficulty_evidence_source: "reviewer_walkthrough"
 difficulty_evidence_sample: 1

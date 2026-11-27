@@ -261,6 +261,44 @@ def test_event_participation_is_not_scored_until_event_success(db_session, test_
     assert "event awards" in leader["evidence"]
 
 
+def test_placeholder_completion_does_not_inflate_builder(db_session, test_user):
+    web = _track(db_session, "Web Application Security", "web")
+    lab = _lab(db_session, web, name="Placeholder Lab", category="web")
+    now = datetime.now(timezone.utc)
+    db_session.add(
+        LabCompletion(
+            user_id=test_user.id,
+            lab_id=lab.id,
+            flag_submitted="",
+            attempts=1,
+            hints_used=0,
+            time_spent_minutes=0,
+            completed_at=now,
+        )
+    )
+    db_session.commit()
+
+    dna = build_skill_dna(db_session, test_user)
+    builder = next(row for row in dna["dimensions"] if row["key"] == "builder")
+    assert builder["score"] == 0, "an empty placeholder completion is not a solve"
+
+    placeholder = (
+        db_session.query(LabCompletion)
+        .filter(
+            LabCompletion.user_id == test_user.id,
+            LabCompletion.lab_id == lab.id,
+        )
+        .one()
+    )
+    placeholder.flag_submitted = "OCR{skill_dna_test}"
+    placeholder.time_spent_minutes = 20
+    db_session.commit()
+
+    dna = build_skill_dna(db_session, test_user)
+    builder = next(row for row in dna["dimensions"] if row["key"] == "builder")
+    assert builder["score"] > 0
+
+
 def test_skill_dna_scores_and_class(db_session, test_user):
     _seed_activity(db_session, test_user)
 

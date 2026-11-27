@@ -6,17 +6,17 @@ certification:
 
 questions:
   - id: "mfa-recovery-1"
-    prompt: "Which authentication method is generally the strongest against phishing and SIM-swap attacks?"
+    prompt: "Why are passkeys resistant to phishing attacks?"
     options:
-      - "A hardware security key or passkey"
-      - "A six-digit SMS code"
-      - "A security question"
-      - "A password reused across accounts"
+      - "They are bound to the site's origin, so a lookalike site cannot use them"
+      - "They are stored in the browser's history"
+      - "They use SMS as a backup channel"
+      - "They never expire"
     correct: 0
-    explanation: "Hardware keys and passkeys are bound to the site's origin, so a lookalike site cannot use them. SMS codes can be intercepted or stolen through SIM swap."
+    explanation: "A passkey is bound to the relying party's origin. A lookalike site on a different origin cannot trigger the credential, even if the learner approves a prompt."
     reference:
-      label: "CISA: More than a password"
-      url: "https://www.cisa.gov/MFA"
+      label: "FIDO Alliance: Passkeys"
+      url: "https://fidoalliance.org/passkeys/"
 
   - id: "mfa-recovery-2"
     prompt: "Why is a security question such as 'What is your favourite book?' a weak recovery method?"
@@ -45,14 +45,14 @@ questions:
       url: "https://www.cisa.gov/MFA"
 
   - id: "mfa-recovery-4"
-    prompt: "What should happen first after a phone with an authenticator app is lost?"
+    prompt: "You lose your phone and still have your printed recovery codes. What should you do first?"
     options:
-      - "Revoke old sessions and re-enroll MFA on a trusted device"
+      - "Sign in with one recovery code, then revoke old sessions and re-enroll MFA"
       - "Disable MFA permanently"
       - "Share the backup codes in a group chat"
       - "Reuse the old password on a new account"
     correct: 0
-    explanation: "Revoke sessions, re-enroll the factor, and check for unusual sign-ins. Do not weaken the account by turning MFA off."
+    explanation: "Use one recovery code to regain access, then revoke old sessions, re-enroll MFA on a trusted device, and check for unusual sign-ins. Do not weaken the account by turning MFA off."
     reference:
       label: "NIST SP 800-63B: Account recovery"
       url: "https://pages.nist.gov/800-63-4/sp800-63b.html"

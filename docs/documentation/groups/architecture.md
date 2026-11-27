@@ -8,7 +8,7 @@ System and data architecture, interfaces, schemas, and architecture decision rec
 - **NIST SP 800-53 Rev. 5:** CM-2, CM-3, CM-4, SA-5, SA-8, SA-11, SI-12
 - **Owner:** Architecture lead
 
-21 document(s) in this group.
+22 document(s) in this group.
 
 | Document | Type | Classification | Review | Score | Next review |
 |---|---|---|---|---:|---|
@@ -20,6 +20,7 @@ System and data architecture, interfaces, schemas, and architecture decision rec
 | [Data dictionary](../../DATA-DICTIONARY.md) | `generated` | internal | unreviewed |  | unset |
 | [Information design: progressive disclosure](../../INFORMATION-DESIGN-PROGRESSIVE-DISCLOSURE.md) | `design` | internal | unreviewed |  | unset |
 | [Lab metadata schema](../../LAB-METADATA-SCHEMA.md) | `architecture` | internal | unreviewed |  | unset |
+| [Scaling and hardening roadmap](../../architecture/SCALING-ROADMAP.md) | `architecture` | internal | unreviewed |  | unset |
 | [OCR Sizing & Settings — Single Source of Truth](../../architecture/SIZING-AND-SETTINGS.md) | `architecture` | internal | unreviewed |  | unset |
 | [Architecture](../../architecture/index.md) | `architecture` | internal | unreviewed |  | unset |
 | [ADR 0002: Base, Pro, and Enterprise editions](../../decisions/0002-edition-model.md) | `adr` | internal | unreviewed |  | unset |

@@ -90,9 +90,7 @@ The script:
 
 ```bash
 tshark -r voip-call.pcap -d udp.port==40002,rtp -Y rtp \
-  -T fields -e rtp.payload \
-  | tr -d '\n' \
-  | xxd -r -p > call.ulaw
+  -T fields -e rtp.payload | tr -d '\n' | xxd -r -p > call.ulaw
 
 ffmpeg -f mulaw -ar 8000 -ac 1 -i call.ulaw call.wav
 ```

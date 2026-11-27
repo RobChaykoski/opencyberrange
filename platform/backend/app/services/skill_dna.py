@@ -304,7 +304,11 @@ def _completion_rows(
             .joinedload(Lab.level)
             .joinedload(Level.track)
         )
-        .filter(LabCompletion.user_id == user_id)
+        .filter(
+            LabCompletion.user_id == user_id,
+            LabCompletion.flag_submitted.isnot(None),
+            LabCompletion.flag_submitted != "",
+        )
     )
     if before is not None:
         query = query.filter(LabCompletion.completed_at < before)

@@ -15,6 +15,34 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "operational technology"
+  - "industrial protocols"
+  - "control-network security"
+  - "trailline industrial - setpoint tampering"
+  - "holding register with function code 0x06"
+competency_tags:
+  - "ot.modbus_setpoint_tampering"
+  - "ot.setpoint_tampering"
+  - "ot.ics"
+  - "ot.fundamentals"
+defensive_skills:
+  - "modbus_writes_are_unauthenticated"
+  - "segment_the_control_network"
+  - "put_a_filtering_gateway_in_front_of_controllers"
+  - "restrict_write_function_codes_at_the_boundary"
+  - "alert_on_setpoint_changes_outside_the_operating_envelope"
+evidence_required:
+  - "flag"
+  - "packet_or_register_evidence"
+  - "segmentation_plan"
+  - "interpretation"
+report_questions:
+  - "Which register, packet, or control action changed?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Impair Process Control
     technique: T0855

@@ -16,6 +16,33 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "service enumeration"
+  - "protocol identification"
+  - "attack surface mapping"
+  - "blackwell & associates - smb share enumeration"
+  - "smb enumeration tools to discover available network"
+competency_tags:
+  - "enumeration.smb_share_enumeration"
+  - "enumeration.share_enumeration"
+  - "network.systems"
+  - "identity.access"
+  - "enumeration.fundamentals"
+defensive_skills:
+  - "disable_unused_services"
+  - "enforce_key_based_ssh_with_least_privilege"
+  - "alert_on_unexpected_authentication_or_command_execution"
+evidence_required:
+  - "flag"
+  - "command_output"
+  - "service_inventory"
+  - "interpretation"
+report_questions:
+  - "Which host, port, or service is involved?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Discovery
     technique: T1083
@@ -49,7 +76,7 @@ scenario: |
 
 credentials:
   - username: "hr_svc"
-    password: "Bl4ckw3ll_HR#"
+    password: "Bl4ckw3ll_HR#"  # security-delta: allow credential-like assignment - lab fixture
     role: "hr"
     description: "HR service account credentials (discovered in public share)"
 
@@ -96,7 +123,7 @@ topology:
       access: "direct"
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Disable unused services, enforce key-based SSH with least privilege, and alert on unexpected authentication or command execution."
+defensive_takeaways: "Disable unused services, enforce key-based SSH with least privilege, and alert on unexpected authentication or command execution. In this lab, apply that to blackwell & associates - smb share enumeration and record the evidence before recommending the fix."
 test:
   steps:
     - name: "SMB port is accessible"

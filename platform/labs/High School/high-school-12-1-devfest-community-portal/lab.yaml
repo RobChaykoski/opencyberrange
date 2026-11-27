@@ -18,6 +18,28 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+  - Name the metadata field that leaked context and one step to remove it before publishing.
+learning_concepts:
+  - metadata leakage
+  - file publication
+  - document properties
+  - privacy review
+competency_tags:
+  - osint.metadata_analysis
+  - data.file_publication
+  - privacy.document_metadata
+defensive_skills:
+  - review_files_before_publishing
+  - remove_unintended_metadata
+  - assume_downloads_reveal_context
+evidence_required:
+  - metadata_field
+  - leaked_context
+  - safe_publication_step
+report_questions:
+  - Which metadata field leaked the most context?
+  - What would you remove before publishing the file?
+  - Why can a downloadable file reveal more than what appears on screen?
 mitre_attack:
   - tactic: Reconnaissance
     technique: T1593
@@ -60,7 +82,7 @@ scenario: |
   at a time.
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Verify the account or device with a trusted adult, report suspicious activity, and keep software updated."
+defensive_takeaways: "Metadata is part of a file. Review exported images, PDFs, and documents before publishing. Remove notes, comments, hidden layers, tracked changes, and metadata that are not intended for public release. Assume a downloadable file may reveal more information than appears on screen."
 difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
 difficulty_evidence_source: "reviewer_walkthrough"
 difficulty_evidence_sample: 1

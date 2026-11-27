@@ -122,9 +122,16 @@ What I checked:
 What I recommend:
 ```
 
-A complete answer names both clues: the lookalike host after the `@`, and the
-archive disguised as a PNG. The recommendation should be to verify the grant
-through a trusted contact and not open the attachment.
+A complete answer records **two independent pieces of evidence**:
+
+| # | Evidence | Why it matters |
+|---|---|---|
+| 1 | The real host came after `@`, not before it: `communitycentre.example@grant-portal-secure.example`. | The familiar text was userinfo. The browser goes to the lookalike host after the `@`. |
+| 2 | The file named `grant-pack.png` reported as a ZIP archive. | The extension is a label. The first bytes said `PK`, so the content was different from the name. |
+
+The recommendation should be to verify the grant through a trusted contact and
+not open the attachment. One clue alone might be a mistake; two independent
+clues justify stopping.
 
 ## If You Do Not Have a Terminal
 

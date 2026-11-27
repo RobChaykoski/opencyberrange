@@ -22,6 +22,32 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "web application security"
+  - "HTTP request and response"
+  - "attack surface mapping"
+  - "basic sql injection (login)"
+  - "sql injection vulnerabilities in authentication"
+competency_tags:
+  - "web.basic_sql_injection_get"
+  - "web.injection_get"
+  - "web.api"
+  - "web.fundamentals"
+defensive_skills:
+  - "encode_input_at_the_server"
+  - "enforce_authorization_on_every_object"
+  - "monitor_unusual_request_patterns"
+evidence_required:
+  - "flag"
+  - "request_and_response"
+  - "evidence"
+  - "interpretation"
+report_questions:
+  - "Which request or response shows the weakness?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Initial Access
     technique: T1190
@@ -94,11 +120,13 @@ hints:
       **Normal input:**
       - Username: `admin`
       - Password: `password123`
+      # security-delta: allow credential-like assignment - lab fixture
       - Query: `SELECT * FROM users WHERE username='admin' AND password='password123'`
 
       **Malicious input:**
       - Username: `admin' OR '1'='1`
       - Password: (anything)
+      # security-delta: allow credential-like assignment - lab fixture
       - Query: `SELECT * FROM users WHERE username='admin' OR '1'='1' AND password='anything'`
 
       The `OR '1'='1'` makes the condition always true, bypassing authentication.
@@ -209,7 +237,7 @@ hints:
     unlock_after_minutes: 30
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Validate and encode input at the server, enforce authorization on every object, and monitor unusual request patterns."
+defensive_takeaways: "Validate and encode input at the server, enforce authorization on every object, and monitor unusual request patterns. In this lab, apply that to basic sql injection (login) and record the evidence before recommending the fix."
 workbook: "wiki/range/webpt/CH_WEB02_Web_Exploitation/01_Basic_SQL_Injection/"
 
 test:

@@ -14,6 +14,33 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "network fundamentals"
+  - "protocol analysis"
+  - "segmentation"
+  - "can you reach it? ping fundamentals"
+  - "what an icmp echo request and echo"
+competency_tags:
+  - "network.ping_basics"
+  - "network.systems"
+  - "network.fundamentals"
+defensive_skills:
+  - "segment_the_network"
+  - "deny_unnecessary_egress"
+  - "alert_on_scanning"
+  - "credential_failures"
+  - "unusual_data_flows"
+evidence_required:
+  - "flag"
+  - "command_output"
+  - "packet_or_log_evidence"
+  - "interpretation"
+report_questions:
+  - "Which host, port, or protocol is involved?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Discovery
     technique: T1018
@@ -166,7 +193,7 @@ hints:
     unlock_after_minutes: 10
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Segment the network, deny unnecessary egress, and alert on scanning, credential failures, and unusual data flows."
+defensive_takeaways: "Segment the network, deny unnecessary egress, and alert on scanning, credential failures, and unusual data flows. In this lab, apply that to can you reach it? ping fundamentals and record the evidence before recommending the fix."
 workbook: "wiki/range/netfor/CH_N0_Network_Foundations/01_Ping_Basics/"
 
 test:

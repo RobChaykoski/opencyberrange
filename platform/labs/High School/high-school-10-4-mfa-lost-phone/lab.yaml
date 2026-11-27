@@ -16,7 +16,31 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
-  - Name the recovery weakness and one safer alternative.
+  - Name the recovery weakness and rank at least two stronger recovery options.
+learning_concepts:
+  - multifactor authentication
+  - account recovery design
+  - recovery-code handling
+  - authenticator hierarchy
+competency_tags:
+  - identity.mfa
+  - identity.account_recovery
+  - identity.recovery_codes
+  - identity.hardware_keys
+defensive_skills:
+  - prefer_recovery_codes_over_security_questions
+  - store_recovery_codes_offline
+  - enroll_a_second_authenticator
+  - revoke_sessions_after_recovery
+evidence_required:
+  - recovery_weakness
+  - recovery_option_ranking
+  - lost_phone_plan
+report_questions:
+  - Why is a security question weaker than recovery codes?
+  - Which recovery option would you deploy first, and why?
+  - Where should recovery codes be stored, and who can reach them?
+  - What should happen to old sessions after a recovery?
 mitre_attack:
   - tactic: Credential Access
     technique: T1556

@@ -16,6 +16,31 @@ assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
   - Explain why MFA at login did not protect the admin console.
+  - "Identify all four session-design problems: client-side role, no server lookup, predictable structure, and no integrity validation."
+learning_concepts:
+  - session management
+  - client-side trust
+  - authorization
+  - integrity validation
+competency_tags:
+  - identity.session_management
+  - identity.authorization
+  - appsec.client_side_trust
+  - crypto.integrity
+defensive_skills:
+  - use_server_side_sessions
+  - use_opaque_identifiers
+  - validate_integrity
+  - rotate_sessions
+evidence_required:
+  - decoded_cookie
+  - session_problems
+  - fixes
+report_questions:
+  - "Which of these are problems: role stored client-side, no server session lookup, predictable structure, or no integrity validation?"
+  - Why is a client-side role claim not authorization?
+  - Why did MFA at login not protect the admin action?
+  - What would you store on the server to make the session trustworthy?
 mitre_attack:
   - tactic: Credential Access
     technique: T1539

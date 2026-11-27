@@ -14,6 +14,31 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+  - Recommend segmentation, TCP 502 restriction, jump hosts, monitoring, and an asset inventory.
+learning_concepts:
+  - Modbus security
+  - OT network segmentation
+  - industrial asset inventory
+  - control-network monitoring
+competency_tags:
+  - ot.modbus
+  - ot.network_segmentation
+  - ot.asset_inventory
+  - ot.monitoring
+defensive_skills:
+  - segment_the_control_network
+  - restrict_tcp_502
+  - use_jump_hosts_and_ot_firewalls
+  - monitor_register_reads_and_writes
+  - inventory_exposed_assets
+evidence_required:
+  - register_evidence
+  - segmentation_plan
+report_questions:
+  - Which register or value changed, and what evidence supports that?
+  - Which control would stop direct Modbus access from the enterprise network?
+  - What would you monitor for unexpected register reads and writes?
+  - Which exposed industrial assets would you inventory first?
 mitre_attack:
   - tactic: Discovery
     technique: T0846
@@ -45,7 +70,7 @@ scenario: |
   registers, and recover the analyst marker stored in the first block.
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Segment the control network, restrict Modbus access, and monitor register writes for unexpected changes."
+defensive_takeaways: "Segment the control network. Restrict access to TCP 502. Use jump hosts and OT firewalls. Monitor unexpected register reads and writes. Inventory exposed industrial assets regularly. Avoid exposing Modbus directly to enterprise or internet-connected networks."
 difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
 difficulty_evidence_source: "reviewer_walkthrough"
 difficulty_evidence_sample: 1

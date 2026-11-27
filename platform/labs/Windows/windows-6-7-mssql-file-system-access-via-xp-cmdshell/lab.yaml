@@ -16,6 +16,35 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "vulnerability exploitation"
+  - "impact assessment"
+  - "defensive controls"
+  - "ms-sql file system access via load_file (mysql xp_cmdshell equivalent)"
+  - "xp_cmdshell to read flag file"
+competency_tags:
+  - "exploitation.mssql_file_system_access_via_xp_cmdshell"
+  - "exploitation.xp_cmdshell"
+  - "identity.access"
+  - "web.api"
+  - "network.systems"
+defensive_skills:
+  - "require_mfa"
+  - "least_privilege_on_the_exposed_service"
+  - "monitor_authentication"
+  - "lateral_movement_events"
+  - "remove_anonymous_or_default_access"
+evidence_required:
+  - "flag"
+  - "request_or_command_output"
+  - "impact_evidence"
+  - "interpretation"
+report_questions:
+  - "Which request or command shows the impact?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Execution
     technique: T1059
@@ -510,12 +539,12 @@ hints:
 
 credentials:
   - username: "sa"
-    password: "password"
+    password: "password"  # security-delta: allow credential-like assignment - lab fixture
     role: "sa"
     description: "sa credentials"
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Require MFA and least privilege on the exposed service, monitor authentication and lateral-movement events, and remove anonymous or default access."
+defensive_takeaways: "Require MFA and least privilege on the exposed service, monitor authentication and lateral-movement events, and remove anonymous or default access. In this lab, apply that to ms-sql file system access via load_file (mysql xp_cmdshell equivalent) and record the evidence before recommending the fix."
 difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'intermediate' retained as provisional."
 difficulty_evidence_source: "reviewer_walkthrough"
 difficulty_evidence_sample: 1

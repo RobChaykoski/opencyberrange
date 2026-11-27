@@ -1,6 +1,6 @@
 title: Badge Photo Intelligence
 category: osint
-difficulty: beginner
+difficulty: intermediate
 estimated_time: 45
 prerequisites:
   - osint-1-1-public-footprint
@@ -15,6 +15,33 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+  - Explain why the metadata was not enough and how the payload was hidden.
+learning_concepts:
+  - image metadata
+  - file signatures
+  - PNG structure
+  - least-significant-bit steganography
+  - evidence preservation
+competency_tags:
+  - osint.image_intelligence
+  - forensics.steganography
+  - forensics.file_signatures
+  - evidence.preservation
+defensive_skills:
+  - minimise_public_metadata
+  - review_published_files
+  - preserve_the_original_file
+  - do_not_trust_visible_content
+evidence_required:
+  - metadata_output
+  - file_signature
+  - extraction_method
+  - interpretation
+report_questions:
+  - What did the metadata prove, and what did it not prove?
+  - How did the PNG signature help you confirm the file type?
+  - Why should you preserve the original image instead of re-saving it?
+  - How was the payload hidden, and why is it not visible?
 mitre_attack:
   - tactic: Reconnaissance
     technique: T1592
@@ -58,8 +85,8 @@ scenario: |
   credentials.
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Minimise public metadata and review what the organisation publishes about people, systems, and suppliers."
-difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
+defensive_takeaways: "Review files before publishing. Metadata and embedded payloads can survive export workflows. Sanitize images, documents, and media before public release, and assume a downloadable file may reveal more than what is visually displayed."
+difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'intermediate' reviewed as provisional because the learner must inspect metadata, validate the PNG signature, understand least-significant-bit steganography, and run an extractor."
 difficulty_evidence_source: "reviewer_walkthrough"
 difficulty_evidence_sample: 1
 difficulty_evidence_quality: "provisional"

@@ -15,6 +15,32 @@ mapped_skills:
 assessment_criteria:
 - Submit the correct flag.
 - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "credential security"
+  - "authentication weaknesses"
+  - "detection"
+  - "active directory: as-rep roasting and password spray"
+  - "accounts that do not require kerberos pre-authentication"
+competency_tags:
+  - "credentials.asrep_spray"
+  - "identity.access"
+  - "credentials.fundamentals"
+defensive_skills:
+  - "tier_administration"
+  - "managed_service_accounts"
+  - "least_privilege_acls"
+  - "directory_change_auditing_remove_this_class_of_path"
+evidence_required:
+  - "flag"
+  - "command_output"
+  - "credential_evidence"
+  - "interpretation"
+report_questions:
+  - "Which credential weakness made the access possible?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
 - tactic: Credential Access
   technique: T1558.004
@@ -47,7 +73,7 @@ test:
     expect: OCR{4sr3p_n0_pr34uth}
 visibility: public
 week: 11
-defensive_takeaways: Tier administration, managed service accounts, least-privilege ACLs, and directory-change auditing remove this class of path.
+defensive_takeaways: "Tier administration, managed service accounts, least-privilege ACLs, and directory-change auditing remove this class of path. In this lab, apply that to active directory: as-rep roasting and password spray and record the evidence before recommending the fix."
 troubleshooting: If the bind fails, use the full DN and confirm the service is healthy. If the search returns nothing, confirm the base DN and the uid filter.
 difficulty_evidence: Pathway implementation with a static directory walkthrough; live learner walkthrough and harness evidence pending.
 difficulty_evidence_source: validator_and_static_walkthrough

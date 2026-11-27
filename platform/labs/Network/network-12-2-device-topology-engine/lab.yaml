@@ -16,6 +16,33 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "network fundamentals"
+  - "protocol analysis"
+  - "segmentation"
+  - "device topology - routed path to a protected service"
+  - "three-node topology from the lab metadata and"
+competency_tags:
+  - "network.device_topology_engine"
+  - "network.topology_engine"
+  - "network.systems"
+  - "network.fundamentals"
+defensive_skills:
+  - "a_routed_segment_is_a_natural_enforcement"
+  - "monitoring_point"
+  - "default_routes"
+  - "forwarding_are_configuration_that_should_be_reviewed"
+evidence_required:
+  - "flag"
+  - "command_output"
+  - "packet_or_log_evidence"
+  - "interpretation"
+report_questions:
+  - "Which host, port, or protocol is involved?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Discovery
     technique: T1016

@@ -14,6 +14,33 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "open-source intelligence"
+  - "identity correlation"
+  - "exposure mapping"
+  - "the public footprint"
+  - "visible pages of the kestrel connect intranet"
+competency_tags:
+  - "osint.public_footprint"
+  - "osint"
+  - "osint.fundamentals"
+defensive_skills:
+  - "minimise_public_metadata"
+  - "review_what_the_organisation_publishes_about_people"
+  - "minimise_public_identity"
+  - "separate_identities"
+  - "review_public_sources"
+evidence_required:
+  - "flag"
+  - "source_evidence"
+  - "exposure_map"
+  - "interpretation"
+report_questions:
+  - "Which public source exposed the information?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Reconnaissance
     technique: T1593

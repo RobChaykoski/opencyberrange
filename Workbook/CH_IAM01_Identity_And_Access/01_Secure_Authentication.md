@@ -107,6 +107,41 @@ MFA was checked when the administrator signed in. It was **not** checked when a
 request arrived with a cookie claiming to be an administrator. The server
 trusted the claim. That is the core failure.
 
+## Which of These Are Problems?
+
+Compare the two session values you have seen:
+
+```text
+staff:staff
+admin:admin
+```
+
+Mark each statement:
+
+| Statement | Problem? | Why |
+|---|---|---|
+| Role stored client-side | Yes | The client can read and change the role; the server has no independent record. |
+| No server session lookup | Yes | A cookie is accepted without checking a server-side session, user, or role. |
+| Predictable structure | Yes | `user:role` is guessable and easy to forge; it is not a random identifier. |
+| No integrity validation | Yes | Nothing signs or authenticates the cookie, so any value is accepted. |
+
+**All of them are problems.** A better Base64 alphabet, a longer username, or a
+secret-looking role name would not fix the architecture. The fix is a
+server-side session with an opaque identifier, integrity protection, and an
+authorization check on every request.
+
+## Concept Check
+
+??? question "Which of these are problems with the session design?"
+    A. The role is stored client-side only.  
+    B. There is no server-side session lookup only.  
+    C. The structure is predictable only.  
+    D. All of the above.
+
+    **Correct answer: D.** Each issue is real, and they compound. The client can
+    edit the role, the server does not check a session record, the format is
+    guessable, and there is no integrity validation.
+
 ## What Just Happened?
 
 - The session cookie contained authorization data, not just an identifier.
@@ -138,17 +173,20 @@ operations.
 **1. What is the difference between authentication and authorization in this
 lab?**
 
-**2. Why is a Base64-encoded `user:role` value not a session?**
+**2. Which of these are problems: role stored client-side, no server session
+lookup, predictable structure, or no integrity validation? Why?**
 
-**3. Which cookie attribute would have limited the impact of a stolen cookie?**
+**3. Why is a Base64-encoded `user:role` value not a session?**
 
-**4. Why did MFA not protect the admin console?**
+**4. Which cookie attribute would have limited the impact of a stolen cookie?**
 
-**5. What would you store on the server to make the session trustworthy?**
+**5. Why did MFA not protect the admin console?**
 
-**6. Why is MD5 unsuitable for password storage, even with a salt?**
+**6. What would you store on the server to make the session trustworthy?**
 
-**7. What would you log to detect a forged or replayed session?**
+**7. Why is MD5 unsuitable for password storage, even with a salt?**
+
+**8. What would you log to detect a forged or replayed session?**
 
 ## Accessibility
 

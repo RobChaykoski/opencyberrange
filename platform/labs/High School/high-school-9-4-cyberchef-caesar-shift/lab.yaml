@@ -16,6 +16,30 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+  - Answer the concept check that explains why ROT13 is not secure.
+learning_concepts:
+  - data representation
+  - classical ciphers
+  - encoding versus encryption
+  - limitations of obfuscation
+competency_tags:
+  - data.representation
+  - crypto.classical_ciphers
+  - crypto.encoding_vs_encryption
+  - security.decoding_tools
+defensive_skills:
+  - recognise_weak_obfuscation
+  - verify_sender_through_second_channel
+  - choose_reviewed_cryptography
+evidence_required:
+  - decoded_message
+  - concept_check_answer
+  - short_explanation
+report_questions:
+  - What stays the same when a message is shifted with a Caesar cipher?
+  - Why is ROT13 easy to reverse without a key?
+  - What evidence shows this is obfuscation rather than encryption?
+  - Why should a real secret use a reviewed cryptographic library instead?
 mitre_attack:
   - tactic: Defense Evasion
     technique: T1140

@@ -97,6 +97,23 @@ The successful request carries a training token in `OCR{...}` format.
 
 Copy the full token, including `OCR{` and `}`, and submit it in the platform.
 
+## Confidence and Alternative Explanation
+
+A finding is stronger when you state how sure you are and what else could explain
+it. Complete the table in your notes:
+
+| Field | Example | Your answer |
+|---|---|---|
+| Observation | Five requests returned `404`. | |
+| Interpretation | Possible probing. | |
+| Confidence | Medium. | |
+| Alternative explanation | A user followed an outdated bookmark. | |
+| What would raise confidence | A matching firewall or IDS log, or the same pattern from the same source over several days. | |
+| What would lower confidence | A known broken link, a scheduled link checker, or a user reporting a stale bookmark. | |
+
+The observation is what the log says. The interpretation is what you think it
+means. Confidence is how strongly the evidence supports that interpretation.
+
 ## Analysis Questions
 
 **1. What makes the repeated 404 requests stand out from the normal traffic?**

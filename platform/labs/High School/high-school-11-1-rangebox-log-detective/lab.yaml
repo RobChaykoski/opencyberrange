@@ -17,6 +17,33 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+  - Record the observation, interpretation, confidence, and one alternative explanation.
+learning_concepts:
+  - security operations
+  - log analysis
+  - evidence interpretation
+  - confidence scoring
+competency_tags:
+  - soc.log_analysis
+  - soc.interpretation
+  - soc.confidence_scoring
+  - soc.documentation
+defensive_skills:
+  - preserve_logs_as_evidence
+  - separate_observation_from_interpretation
+  - state_confidence
+  - record_alternative_explanations
+evidence_required:
+  - log_inventory
+  - observation
+  - interpretation
+  - confidence
+  - alternative_explanation
+report_questions:
+  - Which source made the repeated failed requests?
+  - What observation supports a probing interpretation?
+  - What is one benign explanation for the same pattern?
+  - How confident are you, and what would raise or lower that confidence?
 mitre_attack:
   - tactic: Discovery
     technique: T1046
@@ -58,7 +85,7 @@ scenario: |
   The service and the log are fictional and isolated.
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Verify the account or device with a trusted adult, report suspicious activity, and keep software updated."
+defensive_takeaways: "Logs are evidence. Repeated failures may indicate probing, mistakes, automated tools, or broken links. Document observations first, state your confidence, and record at least one alternative explanation. Avoid conclusions that the evidence does not support, and keep logs protected and reviewed regularly."
 difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
 difficulty_evidence_source: "reviewer_walkthrough"
 difficulty_evidence_sample: 1

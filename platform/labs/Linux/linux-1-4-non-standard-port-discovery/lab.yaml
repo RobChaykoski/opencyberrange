@@ -16,6 +16,33 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "open-source intelligence"
+  - "attack surface mapping"
+  - "asset discovery"
+  - "non-standard port discovery"
+  - "that services can run on any port"
+competency_tags:
+  - "recon.non_standard_port_discovery"
+  - "recon.port_discovery"
+  - "network.systems"
+  - "identity.access"
+  - "recon.fundamentals"
+defensive_skills:
+  - "disable_unused_services"
+  - "enforce_key_based_ssh_with_least_privilege"
+  - "alert_on_unexpected_authentication_or_command_execution"
+evidence_required:
+  - "flag"
+  - "source_evidence"
+  - "asset_inventory"
+  - "interpretation"
+report_questions:
+  - "Which public source or asset exposed the information?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Discovery
     technique: T1046
@@ -494,12 +521,12 @@ hints:
 
 credentials:
   - username: "techstart"
-    password: "TechStart2024#"
+    password: "TechStart2024#"  # security-delta: allow credential-like assignment - lab fixture
     role: "ssh-user"
     description: "SSH login credentials found on web page"
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Disable unused services, enforce key-based SSH with least privilege, and alert on unexpected authentication or command execution."
+defensive_takeaways: "Disable unused services, enforce key-based SSH with least privilege, and alert on unexpected authentication or command execution. In this lab, apply that to non-standard port discovery and record the evidence before recommending the fix."
 difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
 difficulty_evidence_source: "reviewer_walkthrough"
 difficulty_evidence_sample: 1

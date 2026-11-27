@@ -17,6 +17,35 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "web application security"
+  - "HTTP request and response"
+  - "attack surface mapping"
+  - "rangebox browser and source"
+  - "page in the rangebox browser"
+competency_tags:
+  - "web.school_rangebox_browser_and_source"
+  - "web.and_source"
+  - "network.systems"
+  - "identity.access"
+  - "web.api"
+defensive_skills:
+  - "review_pages_for_unintended_disclosures_before_publishing"
+  - "remove_comments_that_contain_sensitive_information"
+  - "never_leave_credentials"
+  - "internal_urls"
+  - "or_developer_notes_in_source_code"
+evidence_required:
+  - "flag"
+  - "request_and_response"
+  - "evidence"
+  - "interpretation"
+report_questions:
+  - "Which request or response shows the weakness?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Reconnaissance
     technique: T1593
@@ -58,7 +87,7 @@ scenario: |
   The page is fictional. It contains no real staff data.
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Verify the account or device with a trusted adult, report suspicious activity, and keep software updated."
+defensive_takeaways: "Review pages for unintended disclosures before publishing. Remove comments that contain sensitive information. Never leave credentials, tokens, internal URLs, or developer notes in source code. Visitors receive the entire page source, not only what appears on screen."
 difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
 difficulty_evidence_source: "reviewer_walkthrough"
 difficulty_evidence_sample: 1

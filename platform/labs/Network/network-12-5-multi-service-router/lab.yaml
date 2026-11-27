@@ -16,6 +16,32 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "network fundamentals"
+  - "protocol analysis"
+  - "segmentation"
+  - "multi-service router - map and reach two services"
+  - "three-link router topology from the status endpoint"
+competency_tags:
+  - "network.multi_service_router"
+  - "network.service_router"
+  - "network.systems"
+  - "network.fundamentals"
+defensive_skills:
+  - "multi_service_routers_concentrate_reachability"
+  - "document_every_link"
+  - "then_monitor_the_paths_you_actually_intend_to_expose"
+evidence_required:
+  - "flag"
+  - "command_output"
+  - "packet_or_log_evidence"
+  - "interpretation"
+report_questions:
+  - "Which host, port, or protocol is involved?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Discovery
     technique: T1016

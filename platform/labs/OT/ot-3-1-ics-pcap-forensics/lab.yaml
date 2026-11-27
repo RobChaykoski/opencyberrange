@@ -18,6 +18,36 @@ assessment_criteria:
   - Submit a short analyst finding (what happened, evidence, confidence, next step), not only the flag.
   - Record the tshark filters and counts used to support each finding.
 analyst_finding_required: true
+learning_concepts:
+  - "operational technology"
+  - "industrial protocols"
+  - "control-network security"
+  - "ics/ot pcap forensics - triton, industroyer2, and goose"
+  - "ot capture and identify the industrial protocols"
+competency_tags:
+  - "ot.ics_pcap_forensics"
+  - "ot.pcap_forensics"
+  - "ot.ics"
+  - "incident.forensics"
+  - "ot.fundamentals"
+defensive_skills:
+  - "engineering_protocols_such_as_tristation"
+  - "goose_have_no_authentication"
+  - "segment_the_control_network"
+  - "restrict_engineering_access_to_planned_windows"
+  - "alert_on_command_traffic_from_unexpected_hosts"
+evidence_required:
+  - "flag"
+  - "packet_or_register_evidence"
+  - "segmentation_plan"
+  - "interpretation"
+  - "report"
+report_questions:
+  - "Which register, packet, or control action changed?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Execution
     technique: T0843

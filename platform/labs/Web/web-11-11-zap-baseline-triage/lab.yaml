@@ -18,6 +18,34 @@ assessment_criteria:
   - Pass every automated test step in the lab manifest.
   - Submit a short triage note with the finding, evidence, impact, fix, and retest.
 analyst_finding_required: true
+learning_concepts:
+  - "web application security"
+  - "HTTP request and response"
+  - "attack surface mapping"
+  - "northshore arts - zap baseline triage"
+  - "authorised baseline scan against a practice web"
+competency_tags:
+  - "web.zap_baseline_triage"
+  - "web.baseline_triage"
+  - "web.api"
+  - "web.fundamentals"
+defensive_skills:
+  - "remove_export"
+  - "backup_directories_from_the_public_document_root"
+  - "require_authentication_for_shared_files"
+  - "set_explicit_security_headers"
+  - "do_not_expose_framework_versions"
+evidence_required:
+  - "flag"
+  - "request_and_response"
+  - "evidence"
+  - "interpretation"
+report_questions:
+  - "Which request or response shows the weakness?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Reconnaissance
     technique: T1595.002

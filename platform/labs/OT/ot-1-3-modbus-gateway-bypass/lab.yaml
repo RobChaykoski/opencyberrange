@@ -15,6 +15,34 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "operational technology"
+  - "industrial protocols"
+  - "control-network security"
+  - "trailline industrial - modbus gateway bypass"
+  - "how a modbus gateway segments the control"
+competency_tags:
+  - "ot.modbus_gateway_bypass"
+  - "ot.gateway_bypass"
+  - "ot.ics"
+  - "ot.fundamentals"
+defensive_skills:
+  - "a_modbus_gateway_must_inspect_every_write_function_code"
+  - "including_0x0f_coils"
+  - "0x10_multiple_registers"
+  - "0x17_read_write_multiple"
+  - "filter_by_register_range_on_the_decoded_pdu"
+evidence_required:
+  - "flag"
+  - "packet_or_register_evidence"
+  - "segmentation_plan"
+  - "interpretation"
+report_questions:
+  - "Which register, packet, or control action changed?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Impair Process Control
     technique: T0855

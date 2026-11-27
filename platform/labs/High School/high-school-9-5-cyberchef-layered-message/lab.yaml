@@ -16,6 +16,35 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "cryptography"
+  - "encoding versus encryption"
+  - "key management"
+  - "cyberchef: peel back two layers"
+  - "break a small decoding task into ordered"
+competency_tags:
+  - "crypto.school_cyberchef_layered_message"
+  - "crypto.layered_message"
+  - "web.api"
+  - "incident.forensics"
+  - "crypto.fundamentals"
+defensive_skills:
+  - "layered_encoding_can_make_a_message_look_mysterious"
+  - "but_it_is_reversible"
+  - "does_not_protect_a_secret"
+  - "use_a_trusted_decoder"
+  - "verify_the_sender"
+evidence_required:
+  - "flag"
+  - "encoded_or_encrypted_sample"
+  - "analysis"
+  - "interpretation"
+report_questions:
+  - "What does the evidence show about the encoding or key?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Defense Evasion
     technique: T1140

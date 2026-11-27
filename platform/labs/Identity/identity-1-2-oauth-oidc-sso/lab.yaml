@@ -7,10 +7,10 @@ prerequisites:
 # By completion students will be able to:
 learning_outcomes:
   - Trace an authorization-code flow and name each parameter
-  - Explain redirect URI allowlisting, state, PKCE, and token audience
+  - Explain redirect URI allowlisting, state, PKCE, audience, and the client/provider fixes
+  - Validate an ID token's issuer, audience, expiry, and nonce
   - Demonstrate how an unvalidated callback receives another user's code
   - Exchange a stolen code and read the victim profile
-  - Describe the client and provider fixes
 mapped_skills:
   - identity_access
   - web_api
@@ -18,6 +18,32 @@ assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
   - Name the redirect URI and state controls that were missing.
+  - List the ID token claims that must be validated and what each one binds.
+learning_concepts:
+  - OAuth authorization-code flow
+  - OpenID Connect identity layer
+  - token validation
+  - redirect and request binding
+competency_tags:
+  - identity.oauth_oidc
+  - identity.token_validation
+  - identity.pkce
+  - identity.redirect_uri
+defensive_skills:
+  - exact_redirect_allowlist
+  - verify_state_and_nonce
+  - validate_issuer_audience_expiry
+  - use_pkce_for_public_clients
+evidence_required:
+  - redirect_validation
+  - state_and_pkce
+  - id_token_claims
+  - fixes
+report_questions:
+  - Which ID token claims must be validated, and what does each one bind?
+  - Which claim binds the token to this client?
+  - Why is nonce needed when state already exists?
+  - What happens if exp or aud is not checked?
 mitre_attack:
   - tactic: Credential Access
     technique: T1528

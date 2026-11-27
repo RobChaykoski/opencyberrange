@@ -67,9 +67,22 @@ http://diag.lab:8080
 
 Leave the default `127.0.0.1` and submit. The page shows the lookup output.
 
-### Step 2: Add a second command
+### Step 2: Confirm the command runs
 
-In the host field, try:
+In the host field, start with a harmless second command:
+
+```text
+127.0.0.1; id
+```
+
+The output should include the user the diagnostics service runs as. Then list
+what that account can see:
+
+```text
+127.0.0.1; ls /tmp
+```
+
+Only then read the training flag:
 
 ```text
 127.0.0.1; cat /tmp/flag
@@ -89,6 +102,58 @@ flag file.
 
 The bug is not "the flag file exists." The bug is that untrusted input reached a
 shell.
+
+## Developer Reflection
+
+The vulnerability is a coding choice, not a missing firewall.
+
+**Vulnerable: the input becomes part of a shell string**
+
+```python
+subprocess.run(
+    f"getent hosts {user_input}",
+    shell=True,
+)
+```
+
+**Secure: the input stays one argument to one program**
+
+```python
+subprocess.run(
+    ["getent", "hosts", user_input],
+    shell=False,
+)
+```
+
+The argument array does not make the value trusted. It stops the shell from
+parsing metacharacters as command syntax. Add an allowlist for the host format,
+run the service as an unprivileged user, and keep the flag or secret outside
+the service account's reach.
+
+| Character | What the shell may do |
+|---|---|
+| `;` | Run another command |
+| `&` | Run a command in the background or chain it |
+| `|` | Pipe output into another command |
+| `$()` | Substitute the output of a command |
+| Backticks | Substitute the output of a command |
+| `(` `)` | Group commands in a subshell |
+
+Your regression test should send each of these and assert that the service
+returns a validation error, not command output.
+
+## Concept Check
+
+??? question "Which change removes the command-injection path?"
+    A. Add a longer blocklist of shell characters.  
+    B. Run the service as root so it can validate input.  
+    C. Pass the host as a separate argument to `getent` and do not invoke a shell.  
+    D. Hide the form behind authentication.
+
+    **Correct answer: C.** The shell is the problem. An argument array with
+    `shell=False` keeps the value as data. A blocklist is bypassable,
+    authentication does not remove the injection, and more privilege makes the
+    impact worse.
 
 ## Analysis Questions
 

@@ -28,8 +28,9 @@ host. Read the banner and recover the marker.
 
 1. Search the mirror by organisation.
 2. Narrow the results by product or port.
-3. Read a service banner for exposed metadata.
-4. Recover the marker from the verbose banner.
+3. Read a service banner for exposed metadata, product, and version.
+4. Explain why a public version number is useful to an attacker.
+5. Recover the marker from the verbose banner.
 
 ## Background: scan databases and banners
 
@@ -85,17 +86,48 @@ The build host is `build.kestrel-ridge.example` on port `8080`.
 Open the build host result and read the raw banner. It contains an
 `X-Build-Marker` header. That value is the flag.
 
-### 5. Submit the flag
+### 5. Analyse the version
+
+Read the banner as structured data:
+
+| Field | Value | What it reveals |
+|---|---|---|
+| Product | Jenkins | The CI service and its ecosystem |
+| Version | `2.426` (`X-Jenkins`) | A specific release, which narrows known issues and default behaviour |
+| Server | `Jetty(10.0.x)` | The embedded web server and its major line |
+
+Ask: **why might a publicly exposed version number be useful to an attacker?**
+
+A version number is a lead, not proof. It helps an attacker narrow which
+vulnerabilities and default behaviours to check. It does not prove the host is
+unpatched, exposed, or exploitable; the patch level, configuration, and network
+path still decide that.
+
+### 6. Submit the flag
 
 Copy the marker exactly and submit it on the exercise page.
+
+## Concept Check
+
+??? question "Which statement is best supported by the banner alone?"
+    A. The host is definitely vulnerable.  
+    B. The service is Jenkins 2.426 behind Jetty 10.0.x.  
+    C. The host is unpatched.  
+    D. The host is internal-only.
+
+    **Correct answer: B.** The banner supports the product and version
+    observation. It does not prove vulnerability, patch level, or network
+    placement. Those need more evidence.
 
 ## Analysis Questions
 
 1. Which fields in the result helped you find the build host?
 2. What does the banner reveal that a normal web page would not?
-3. Why is a verbose banner useful to an attacker?
-4. What would you remove from the banner before exposing the service?
-5. Why is a synthetic mirror safer for this lesson than the real Shodan service?
+3. Which product and version did the banner expose?
+4. Why is a public version number useful to an attacker?
+5. Does the version alone prove the host is vulnerable? Why not?
+6. What would you remove from the banner before exposing the service?
+7. Why is a synthetic mirror safer for this lesson than the real Shodan service?
 
 ## Defensive Takeaways
 

@@ -303,6 +303,11 @@ def search_page(query: str) -> str:
             "Profile page — role, public email, office, conference travel, ORCID, GitHub handle.",
         ),
         (
+            "Maya Chen — Lakeside Community School",
+            "/search?q=maya-chen-school",
+            "Different person — a school staff page with the same common name. No research affiliation; do not merge this record.",
+        ),
+        (
             "Coastal Data Summit 2027 — speaker list",
             "/search?q=coastal-data-summit",
             "Conference listing — name, talk title, and travel dates.",
@@ -311,6 +316,11 @@ def search_page(query: str) -> str:
             "mayachen_lab on Example Forum",
             "/search?q=mayachen_lab",
             "Forum profile — same handle, old posts, and a link to a personal blog.",
+        ),
+        (
+            "Maya Chen | Fictional Institute for Coastal Resilience (cached)",
+            f"/profile/{RESEARCHER['slug']}",
+            "Duplicate profile — a cached copy of the same page. Confirm the canonical URL before recording it.",
         ),
         (
             "Have I Been Exposed? (synthetic record)",
@@ -409,7 +419,7 @@ def breach_page() -> str:
 
 
 def photo_page() -> str:
-    body = f"""
+    body = """
     <p class="eyebrow">Synthetic photo metadata</p>
     <h1>Badge photo record</h1>
     <p class="lead">
@@ -444,26 +454,39 @@ def review_page() -> str:
       ticket is the last step; the flag is in the page source.
     </p>
     <h2>Findings</h2>
+    <p class="muted">Risk: Low means limited context; Medium means useful for correlation; High means direct location, contact, or account-recovery exposure.</p>
     <table>
-      <tr><th>Exposure</th><th>Why it matters</th><th>Action</th></tr>
-      <tr><td>Public email plus handle</td><td>Links a professional identity to a forum account and a breach record</td><td>Use a role address; separate the personal handle; check account recovery paths</td></tr>
-      <tr><td>Office and travel dates</td><td>Reveals physical location and absence windows</td><td>Publish only the conference city or a “remote” status</td></tr>
-      <tr><td>Photo metadata</td><td>Confirms device, time, and an internal building</td><td>Strip metadata; publish a re-encoded copy</td></tr>
-      <tr><td>Stale forum profile</td><td>Keeps an old identifier and personal blog discoverable</td><td>Retire or update the profile; remove the old link</td></tr>
+      <tr><th>Exposure</th><th>Risk</th><th>Why it matters</th><th>Action</th></tr>
+      <tr><td>Public email</td><td>Low</td><td>Needed for professional contact, but useful for phishing and account discovery</td><td>Use a role address; keep the personal address off the public page</td></tr>
+      <tr><td>Handle reuse</td><td>High</td><td>Links a professional identity to a forum account and a breach record</td><td>Separate the personal handle; check account recovery paths</td></tr>
+      <tr><td>Office and travel dates</td><td>Medium</td><td>Reveals physical location and absence windows</td><td>Publish only the conference city or a “remote” status</td></tr>
+      <tr><td>Photo metadata</td><td>High</td><td>Confirms device, time, and an internal building</td><td>Strip metadata; publish a re-encoded copy</td></tr>
+      <tr><td>Stale forum profile</td><td>Medium</td><td>Keeps an old identifier and personal blog discoverable</td><td>Retire or update the profile; remove the old link</td></tr>
+    </table>
+    <h2 style="margin-top:1.2rem;">Exposure score</h2>
+    <p class="muted">Use the score to order remediation. It supports the risk rating; it does not replace it.</p>
+    <table>
+      <tr><th>Signal</th><th>Weight</th><th>Present?</th><th>Score</th></tr>
+      <tr><td>Public email</td><td>+2</td><td>Yes</td><td>2</td></tr>
+      <tr><td>Handle reuse</td><td>+3</td><td>Yes</td><td>3</td></tr>
+      <tr><td>Travel schedule</td><td>+3</td><td>Yes</td><td>3</td></tr>
+      <tr><td>Photo metadata</td><td>+4</td><td>Yes</td><td>4</td></tr>
+      <tr><th>Total</th><th></th><th></th><th>12</th></tr>
     </table>
     <h2 style="margin-top:1.2rem;">Remediation checklist</h2>
-    <ul>
-      <li>Remove the public personal email; keep a role address.</li>
-      <li>Stop reusing the lab handle for non-professional accounts.</li>
-      <li>Strip EXIF and GPS before publishing images.</li>
-      <li>Remove office room numbers and precise travel dates.</li>
-      <li>Retire stale profiles and old links.</li>
-      <li>Enable MFA and review active sessions after any breach notice.</li>
-    </ul>
+    <table>
+      <tr><th>Action</th><th>Owner</th><th>Due date</th><th>Verification date</th></tr>
+      <tr><td>Remove the public personal email; keep a role address</td><td>Maya Chen</td><td>2027-04-15</td><td>2027-04-18</td></tr>
+      <tr><td>Stop reusing the lab handle for non-professional accounts</td><td>Maya Chen</td><td>2027-04-20</td><td>2027-04-22</td></tr>
+      <tr><td>Strip EXIF and GPS before publishing images</td><td>Comms team</td><td>2027-04-10</td><td>2027-04-11</td></tr>
+      <tr><td>Remove office room numbers and precise travel dates</td><td>Web team</td><td>2027-04-12</td><td>2027-04-14</td></tr>
+      <tr><td>Retire stale profiles and old links</td><td>Maya Chen</td><td>2027-04-30</td><td>Pending</td></tr>
+      <tr><td>Enable MFA and review active sessions after any breach notice</td><td>IT support</td><td>2027-04-08</td><td>2027-04-09</td></tr>
+    </table>
     <div class="notice">
-      A complete finding names the exposure, the evidence, the action, the
-      owner, and the verification date. “Be more careful online” is not a
-      remediation plan.
+      A complete finding names the exposure, the evidence, the risk, the action,
+      the owner, and the verification date. “Be more careful online” is not a
+      remediation plan. A pending verification is still an open finding.
     </div>
     """
     return shell("Review ticket", body, "")
@@ -493,7 +516,7 @@ class Handler(BaseHTTPRequestHandler):
     def _html(self, body: str, status: int = 200) -> None:
         self._send(status, body.encode("utf-8"), "text/html; charset=utf-8")
 
-    def do_GET(self) -> None:  # noqa: N802
+    def do_GET(self) -> None:
         parsed = urlparse(self.path)
         path = parsed.path
         if path == "/health":
@@ -534,7 +557,7 @@ class Handler(BaseHTTPRequestHandler):
             404,
         )
 
-    def do_HEAD(self) -> None:  # noqa: N802
+    def do_HEAD(self) -> None:
         self.do_GET()
 
     def log_message(self, fmt: str, *args) -> None:

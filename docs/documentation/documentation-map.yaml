@@ -6591,6 +6591,31 @@ documents:
     published: true
     evidence: false
     retention: R2
+- path: docs/architecture/SCALING-ROADMAP.md
+  title: Scaling and hardening roadmap
+  group: architecture
+  doc_type: architecture
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
 - path: docs/architecture/SIZING-AND-SETTINGS.md
   title: OCR Sizing & Settings — Single Source of Truth
   group: architecture
@@ -7044,6 +7069,31 @@ documents:
 - path: docs/compliance/index.md
   title: Compliance and procurement
   group: governance
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/curriculum/LAB-REVIEW-BACKLOG.md
+  title: Lab review backlog
+  group: curriculum
   doc_type: reference
   audience:
   - developer
@@ -8541,6 +8591,31 @@ documents:
     published: true
     evidence: true
     retention: R0
+- path: docs/security/ATTACK-SURFACE-AUDIT.md
+  title: 'Attack-surface audit: five high-impact areas'
+  group: security
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
 - path: docs/security/SECURITY-VALIDATION-PLAN.md
   title: Security validation plan
   group: security

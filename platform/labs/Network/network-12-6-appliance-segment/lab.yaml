@@ -16,6 +16,33 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "network fundamentals"
+  - "protocol analysis"
+  - "segmentation"
+  - "network appliance segmentation - pivot through an openwrt gateway"
+  - "two network segments attached to an openwrt"
+competency_tags:
+  - "network.appliance_segment"
+  - "network.systems"
+  - "network.fundamentals"
+defensive_skills:
+  - "a_dual_homed_appliance_is_both_a_control"
+  - "a_pivot_point"
+  - "keep_management_access_on_a_separate_path"
+  - "restrict_who_can_log_in_to_the_appliance"
+  - "log_ssh_local_forwards"
+evidence_required:
+  - "flag"
+  - "command_output"
+  - "packet_or_log_evidence"
+  - "interpretation"
+report_questions:
+  - "Which host, port, or protocol is involved?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Discovery
     technique: T1016

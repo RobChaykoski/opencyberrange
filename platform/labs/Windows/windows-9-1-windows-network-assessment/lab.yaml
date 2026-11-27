@@ -19,6 +19,35 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "security assessment"
+  - "evidence collection"
+  - "reporting"
+  - "windows network assessment"
+  - "complete enumeration of windows network"
+competency_tags:
+  - "assessment.windows_network_assessment"
+  - "assessment.network_assessment"
+  - "identity.access"
+  - "network.systems"
+  - "assessment.fundamentals"
+defensive_skills:
+  - "require_mfa"
+  - "least_privilege_on_the_exposed_service"
+  - "monitor_authentication"
+  - "lateral_movement_events"
+  - "remove_anonymous_or_default_access"
+evidence_required:
+  - "flag"
+  - "findings"
+  - "evidence_index"
+  - "report"
+report_questions:
+  - "Which finding is best supported by the evidence?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Lateral Movement
     technique: T1021
@@ -376,7 +405,7 @@ hints:
       - Submit the flag value in the format `OCR{...}`
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Require MFA and least privilege on the exposed service, monitor authentication and lateral-movement events, and remove anonymous or default access."
+defensive_takeaways: "Require MFA and least privilege on the exposed service, monitor authentication and lateral-movement events, and remove anonymous or default access. In this lab, apply that to windows network assessment and record the evidence before recommending the fix."
 difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'intermediate' retained as provisional."
 difficulty_evidence_source: "reviewer_walkthrough"
 difficulty_evidence_sample: 1

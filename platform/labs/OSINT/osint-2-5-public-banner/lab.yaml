@@ -8,13 +8,38 @@ prerequisites:
 learning_outcomes:
   - Use a Shodan-style query against a synthetic public-data mirror
   - Filter by organisation, product, port, and hostname
-  - Read a service banner for exposed metadata
+  - Read a service banner for exposed metadata, product, and version
+  - Explain why a public version number is useful to an attacker
   - Recover the flag from a verbose banner
 mapped_skills:
   - osint
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+  - Identify the product and version, and explain why the version is useful to an attacker.
+learning_concepts:
+  - banner analysis
+  - version enumeration
+  - exposure and risk
+  - public scan data
+competency_tags:
+  - osint.banner_analysis
+  - osint.version_enumeration
+  - vulnerability.risk_assessment
+defensive_skills:
+  - reduce_service_banners
+  - remove_version_and_build_metadata
+  - monitor_public_scan_data
+  - treat_version_as_a_lead_not_proof
+evidence_required:
+  - product_version
+  - version_risk
+  - remediation
+report_questions:
+  - Which product and version did the banner expose?
+  - Why is a public version number useful to an attacker?
+  - Does the version alone prove the host is vulnerable? Why not?
+  - What would you change in the banner, and what would you monitor?
 mitre_attack:
   - tactic: Reconnaissance
     technique: T1596.005
@@ -58,7 +83,7 @@ scenario: |
   real internet or the real Shodan service.
 
 troubleshooting: "If the mirror shows no matches, use a broader query such as org:\"Kestrel Ridge\" or product:Jenkins. If the phone cannot reach the target, use the address shown in your Active Lab View."
-defensive_takeaways: "Public scan data exposes banners, ports, and product versions. Reduce the banner, remove default pages, and monitor your own public footprint."
+defensive_takeaways: "Public scan data exposes banners, ports, and product versions. A version number is a lead for vulnerability research, not proof that the host is vulnerable. Reduce the banner, remove version and build metadata, remove default pages, and monitor your own public footprint."
 difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
 difficulty_evidence_source: "reviewer_walkthrough"
 difficulty_evidence_sample: 1
@@ -102,6 +127,18 @@ hints:
     unlock_after_minutes: 12
 
   - text: |
+      Read the banner as structured data, not one line:
+
+      Product: Jenkins
+      Version: 2.426  (X-Jenkins)
+      Server: Jetty(10.0.x)
+
+      A public version number narrows known issues and default behaviour. It
+      does not prove the host is vulnerable; the patch level and configuration
+      still matter.
+    unlock_after_minutes: 15
+
+  - text: |
       The build host banner contains an X-Build-Marker header. That value is the
       flag. Copy it exactly.
     unlock_after_minutes: 18
@@ -121,6 +158,11 @@ test:
     - name: "Product query returns the flag banner"
       command: "curl -s 'http://{target.shodan}:8080/?q=product:Jenkins' | grep -o 'OCR{[^}]*}'"
       expect: "OCR{sh0d4n_b4nn3r_l34k}"
+      timeout: 20
+
+    - name: "Banner exposes the product version"
+      command: "curl -s 'http://{target.shodan}:8080/?q=product:Jenkins' | grep -o 'X-Jenkins: 2.426'"
+      expect: "X-Jenkins: 2.426"
       timeout: 20
 
     - name: "JSON API returns the flag"

@@ -15,6 +15,34 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "operational technology"
+  - "industrial protocols"
+  - "control-network security"
+  - "trailline industrial - s7comm data block read"
+  - "s7comm service on tcp 102"
+competency_tags:
+  - "ot.s7comm_register_access"
+  - "ot.register_access"
+  - "ot.ics"
+  - "ot.fundamentals"
+defensive_skills:
+  - "segment_the_control_network"
+  - "block_tcp_102_at_the_boundary"
+  - "monitor_s7comm_reads_from_engineering"
+  - "student_subnets"
+  - "prefer_s7_or_a_vpn_appliance_for_remote_engineering_access"
+evidence_required:
+  - "flag"
+  - "packet_or_register_evidence"
+  - "segmentation_plan"
+  - "interpretation"
+report_questions:
+  - "Which register, packet, or control action changed?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Collection
     technique: T0801

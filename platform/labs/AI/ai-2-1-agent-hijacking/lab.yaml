@@ -15,6 +15,33 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "AI security"
+  - "prompt and tool trust"
+  - "agent boundaries"
+  - "poisoned vendor report and trailguard ai agent hijacking"
+  - "how retrieved content becomes an instruction channel"
+competency_tags:
+  - "ai.agent_hijacking"
+  - "ai.security"
+  - "ai.fundamentals"
+defensive_skills:
+  - "treat_retrieved_documents_as_untrusted_input"
+  - "give_tools_the_narrowest_possible_scope"
+  - "require_explicit_approval_for_exports"
+  - "validate_tool_arguments_against_a_schema"
+  - "log_every_tool_call_with_its_source_document"
+evidence_required:
+  - "flag"
+  - "prompt_or_trace"
+  - "control_recommendation"
+  - "interpretation"
+report_questions:
+  - "Which instruction or trust boundary failed?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Initial Access
     technique: T1566

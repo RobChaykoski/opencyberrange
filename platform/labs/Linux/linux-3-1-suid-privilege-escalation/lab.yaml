@@ -25,6 +25,33 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "local privilege escalation"
+  - "misconfiguration analysis"
+  - "least privilege"
+  - "meridian data corp - suid privilege escalation"
+  - "enumerate the target system for privilege escalation"
+competency_tags:
+  - "privesc.suid_privilege_escalation"
+  - "privesc.privilege_escalation"
+  - "identity.access"
+  - "network.systems"
+  - "privesc.fundamentals"
+defensive_skills:
+  - "disable_unused_services"
+  - "enforce_key_based_ssh_with_least_privilege"
+  - "alert_on_unexpected_authentication_or_command_execution"
+evidence_required:
+  - "flag"
+  - "command_output"
+  - "privilege_evidence"
+  - "interpretation"
+report_questions:
+  - "Which permission or configuration allowed the escalation?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Privilege Escalation
     technique: T1548.001
@@ -66,7 +93,7 @@ scenario: |
 
 credentials:
   - username: "developer"
-    password: "M3r1d1an_D3v#"
+    password: "M3r1d1an_D3v#"  # security-delta: allow credential-like assignment - lab fixture
     role: "developer"
     description: "Low-privilege developer account obtained during Phase 1"
 
@@ -116,7 +143,7 @@ topology:
       access: "direct"
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Disable unused services, enforce key-based SSH with least privilege, and alert on unexpected authentication or command execution."
+defensive_takeaways: "Disable unused services, enforce key-based SSH with least privilege, and alert on unexpected authentication or command execution. In this lab, apply that to meridian data corp - suid privilege escalation and record the evidence before recommending the fix."
 test:
   steps:
     - name: "SSH access as developer"

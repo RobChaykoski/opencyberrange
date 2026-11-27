@@ -29,7 +29,7 @@ targets:
     stable_sha256: fb3785a091260692a59042ba068d9d5150b362a4f3165ada93e9be97dadcf45e
     checked_at: "2026-11-16"
     offline_mirror: platform/labs/OSINT/_shared/mirrors/swocts-public-homepage.html
-    offline_mirror_sha256: b7a341105dcea4663761dd6f35ead5e2b59467d572c04cbb1febbc0b569dd27e
+    offline_mirror_sha256: fd326044759bad7ec19cd4622cee73d54ed98c9f60a2715219676c38004c98a3
     pii: none
     audience: adult
     authorization: >-

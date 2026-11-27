@@ -160,7 +160,7 @@
       "sha256": "5b2e572553d623799466dc02a4e36f01f1d6d88073e8b0ea24f62a2c7fe8af7f"
     },
     "platform/backend/app/data/external-targets.yaml": {
-      "sha256": "d073d2202db1e15c9b259640ea31cde86fc10329b3918c9fdc18fab906fd4d4d"
+      "sha256": "97a2e8374f7ea624e397a972afa75747c253d6add702debf5dd8568557828040"
     },
     "platform/backend/app/data/lab-outcomes.yaml": {
       "sha256": "f6bf5947682b911c0e0664067952e2202ff2883f898cf7fcd121982a6fbec17e"
@@ -178,7 +178,7 @@
       "sha256": "877500e2e2d33af4263cae4b4b208166f4c500c8e4648d6b5b8d24ac122829c1"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "1435611b586da1e9cdef1392faa857fdf813bafe06409a93071c9053a9b0d6be"
+      "sha256": "b30b25f7deacc26d77b00ef144d8a9b1c9fd5c4c6774dcc29b74246bdb33be6c"
     },
     "platform/backend/app/data/threat-awareness.json": {
       "sha256": "78703d33386e1b62becfa5cfb1b27a22f770fff20a3e38411b0787e76f7c48ea"
@@ -202,7 +202,7 @@
       "sha256": "a752ba5f705afd320866f1c655de3222846d3c9d82f73c30bce8e940bb0249a1"
     },
     "platform/backend/lab_metadata.schema.json": {
-      "sha256": "7590d5bf2a3a9ea2ecf275ba18c82394dfec252b0a39fe0846d18e57d746c36c"
+      "sha256": "c61358830b72b8ef5c9bd2799f38836a19ffff3bfd41e10607247c7dc1d89302"
     },
     "platform/backend/pyproject.toml": {
       "sha256": "b6722dd013e620bc829bbeba74ce77a8a3fdac42f75d6f9804d74dc91f75196f"
@@ -259,7 +259,7 @@
       "sha256": "e379a1840c4f522e34ba54d72b409ae8464b5babb10e08a409dbedd267b9dfd8"
     },
     "platform/labs/OSINT/_shared/app.py": {
-      "sha256": "ba457462040994e9020e976dac1e27425c0d1c4ad67603ce8fb36c246053ea66"
+      "sha256": "9ef061c04e0bb1b1304516c6d428ff995dfc95c27df09f7cf8ae5318573f22b1"
     },
     "platform/labs/OSINT/_shared/leaks/kestrel-ridge-staging-note.md": {
       "sha256": "9d8f5e52c8d0cb79fe9caf7c3c302e409ca192e81ef7616414af44667812c0d8"
@@ -268,7 +268,7 @@
       "sha256": "bd46fe0499044374279f6baabfeba36cf9efb51ea90220fd99ddb321cca8578c"
     },
     "platform/labs/OSINT/_shared/mirrors/swocts-public-homepage.html": {
-      "sha256": "b7a341105dcea4663761dd6f35ead5e2b59467d572c04cbb1febbc0b569dd27e"
+      "sha256": "fd326044759bad7ec19cd4622cee73d54ed98c9f60a2715219676c38004c98a3"
     },
     "platform/labs/_swsec_shared/app.py": {
       "sha256": "8f95e55cdf2f480459deff52eacf188f40bf082932a07b9ea0e4b68ebc1e396a"
@@ -430,236 +430,236 @@
   "generator": "scripts/supply_chain.py",
   "labs": {
     "ai-1-1-prompt-injection-basics": {
-      "content_hash": "ab4b8c815b1c5255a08d4d4e9962df27191a27371ea973a28fc81cfa73606f5d",
+      "content_hash": "9e0be69f39da5de10e53e116bc5d555bb415e9cbe3930ca96ec6c040f2b789b2",
       "services": [
         "chatbot"
       ]
     },
     "ai-1-2-jailbreak-policy-bypass": {
-      "content_hash": "43d6a2e5ee5a019324d3df76984f949aa151f54f82128aae02e3bdb7bdc42bc1",
+      "content_hash": "678adfc58c8f4dccb1a6360022577ab277804e63e8e94b716ed9b224370ecef9",
       "services": [
         "chatbot"
       ]
     },
     "ai-1-3-indirect-prompt-injection": {
-      "content_hash": "310387ebf6c2a91ac891a14346e7e8161c6e908adcc2c2a5ea940d93ec6466af",
+      "content_hash": "6244c35fa91ece2c15f22fb47ea15610c4e66ea00b70676594b48aae788ff47f",
       "services": [
         "chatbot"
       ]
     },
     "ai-2-1-agent-hijacking": {
-      "content_hash": "14f7746050909e30c92648e7492d51750063b37fe8bf13ffe3a3cc3327e283f6",
+      "content_hash": "c69404203f0d9640a073ded4b4e56ee27070c7567a5d98f04cb94b859c723604",
       "services": [
         "intake"
       ]
     },
     "ai-2-2-multi-agent-privilege-escalation": {
-      "content_hash": "6bfd7df20c7d1a09493acdc638bf90d119cf5b51cf179b9cf46b3c889e860ddd",
+      "content_hash": "7bd9e99bd399f0f03105291a1d810bc1b494edfec3b33db4c092c5d276f899d9",
       "services": [
         "intake",
         "vault"
       ]
     },
     "forensics-1-1-windows-memory-volatility": {
-      "content_hash": "7561931ec5dad1b39ea467817820b4f02111c831aa26f38a88e29ad2d6552535",
+      "content_hash": "6758d1b484a2ee668df2a55df452400d1bd7360521dc4806a5ad67c2ce6155f1",
       "services": [
         "analyst"
       ]
     },
     "forensics-2-1-voip-call-reconstruction": {
-      "content_hash": "5e4f7e9bc8a237bd8eee030e9f01915458e14e0417aabbcbd450b23407e5b292",
+      "content_hash": "f63f93aa6f972e1e9c0cbac62f9694c8cb502d6c1b7518b5662adde02b79eceb",
       "services": [
         "evidence"
       ]
     },
     "forensics-2-2-topology-forensics-guided": {
-      "content_hash": "20cca8cb49da18013c5da3c5241d63c1fbe55c65fc53007aae813f05a4a5f20b",
+      "content_hash": "8d4b2bee84645574a6758d90919a9cf25b08001de376b55ad9389cb47c376b15",
       "services": []
     },
     "forensics-2-3-topology-forensics-independent": {
-      "content_hash": "041a95121e14c2a00af85761d4ac407e82b9623f0e44768f47ba28f9c70ba9dd",
+      "content_hash": "e2ab09017e3aab801cc8fbca8e937f1f674b47bfac8e3d8a8e4dd06f95e0131b",
       "services": []
     },
     "forensics-3-1-live-linux-memory": {
-      "content_hash": "e3dae5be2dc2fde8959ed4914e461571f8682efeafc8388a7bdb67ce2e96df51",
+      "content_hash": "ec0dd435ef0d3344f0ae28f30f484c298f38fee0c2aef0468b27c4d2ba8dd81e",
       "services": []
     },
     "high-school-10-1-rangebox-network-basics": {
-      "content_hash": "b94c08a11b61c5b098a22588acbe5d02740412d10882188bf63c23a2d2b5ee71",
+      "content_hash": "23934e6445016b96c6be9ee64b7c8262e05b03eafb3c66455c3aa03043f3992e",
       "services": [
         "network"
       ]
     },
     "high-school-10-2-rangebox-browser-and-source": {
-      "content_hash": "748c7d46d6ff5cf590b64a7860d638993f0eeb2dea0ae8a8e96ec5f618f959af",
+      "content_hash": "96c8b70a187100953091cae233d6a6acb09b71263d1d2af1dc7b9c6aeb9c2e05",
       "services": [
         "web"
       ]
     },
     "high-school-10-3-email-metadata": {
-      "content_hash": "32d6bca87cd52dd152d3b6c9bc2ef6744462c5504c11af99dda18cff4d982572",
+      "content_hash": "dc9706731a3d71f8cf41b7fd7e80070ce9ba59d67885e4176f53ca2e80c371fb",
       "services": [
         "portal"
       ]
     },
     "high-school-10-4-mfa-lost-phone": {
-      "content_hash": "e1f18021b8c71e99c8a1f7d59a90d76f54636ae4ad9756e8946b1671a88f8566",
+      "content_hash": "602d725af4852ed0f3469d3c153df8c399fba6cc17a9afebbf273bb6fafab422",
       "services": [
         "portal"
       ]
     },
     "high-school-10-5-rangebox-log-review": {
-      "content_hash": "4b8e79d6475c55e56a232cc24efc81d773118da973823613d0b0c2c03fe2ba95",
+      "content_hash": "b6734998055ec5cf7fd340938d7ad4acc856d74707ff7e6d9a0a9cb8416087ca",
       "services": [
         "events"
       ]
     },
     "high-school-10-6-rangebox-beginner-challenge": {
-      "content_hash": "207752b4147657b825e221112a639b2cff0c3e56ff7c5acefcfb694393183f4e",
+      "content_hash": "1fde11f041450705b789818779d7e837449052b3bf23290164108b0d0c67c0af",
       "services": [
         "challenge"
       ]
     },
     "high-school-11-1-rangebox-log-detective": {
-      "content_hash": "ba4fedc0a2bf5cceb121d10ee2caa21fcdc44b28eed801a3d3b05a49507150de",
+      "content_hash": "b6656f9debfca6b795764884f6b26f9caac90057f2f992bee9c3d6e9ef368950",
       "services": [
         "logs"
       ]
     },
     "high-school-11-2-media-provenance": {
-      "content_hash": "188197578bcfe120da840424a016b5bac29defb9d5642bbef4be9fc65be84c01",
+      "content_hash": "6a655ccd6b67f94500fb3abde3f4c1af0458e3788021fb052ab2fcf6bfdd1706",
       "services": [
         "portal"
       ]
     },
     "high-school-12-1-devfest-community-portal": {
-      "content_hash": "bf92dba2e778742b7b4b9a0b2e62772e0455b7127e40f02c4256d9ab773a2145",
+      "content_hash": "a60430970e14c2df5a55e2ce16624f1b849b2c7f2ee908cb10e578a0c3ee1477",
       "services": [
         "portal"
       ]
     },
     "high-school-12-2-crypto-rug-pull": {
-      "content_hash": "1aab65004c473eb516c99d09100171a0e9ce71c48c4d21b0a1323097757e3218",
+      "content_hash": "6053fc0a248fdfec2dd4d02c35a63a1cca309105cacbb06d9f2d6c326aa18c96",
       "services": [
         "portal"
       ]
     },
     "high-school-9-1-rangebox-first-steps": {
-      "content_hash": "ef5441b6b764f9262b8bca20903dd5f701d12310a9dce1ca3760216fb5fdf3dd",
+      "content_hash": "112e85903e68e59024b683451f836ec02d2df70afc7d8ed26fdc0e917b86f361",
       "services": [
         "portal"
       ]
     },
     "high-school-9-2-rangebox-file-hunt": {
-      "content_hash": "df1c1f62e81fcd7fd9d153e4766fab3463b626c5a1506af756a87dd35ce0c9d0",
+      "content_hash": "80adf612d9700cfa632aeba0d6f28862d2eb794f52984237bf1133a05715820b",
       "services": [
         "files"
       ]
     },
     "high-school-9-3-cyberchef-base64-basics": {
-      "content_hash": "ed4061cc96a041dbe65efcd929cf0d4f47841c738f3c6f7437698d2c9e77febd",
+      "content_hash": "d10bee6ed39a7ad6055a039a4992146bd2aef529e5220399a62423e08948b9d8",
       "services": [
         "portal"
       ]
     },
     "high-school-9-4-cyberchef-caesar-shift": {
-      "content_hash": "376f70723c31685a3d07950528b45d454f471299d7ccce60c76096c60575c2f9",
+      "content_hash": "1b09ead534b7e929ed6ae1141214b81315b13d0f5b23a2a0f3016ef3772a6179",
       "services": [
         "portal"
       ]
     },
     "high-school-9-5-cyberchef-layered-message": {
-      "content_hash": "e8a6823e36f9dbb5d9e8e38fd59e10c9b244ac5034ff485a724799eb222e770e",
+      "content_hash": "30cae9acc6386d16a838e845f379ade1731fd48d2b492e6c6667438436b40ce3",
       "services": [
         "portal"
       ]
     },
     "high-school-9-6-read-the-link": {
-      "content_hash": "121a2e0b693c1adf736a10395b4d04e7426cf3cdc57a0eda03ba7bf03a685334",
+      "content_hash": "aedf799569a1149c9e49454318f3d2b922318c4019143886e8296c4e47a62840",
       "services": [
         "portal"
       ]
     },
     "high-school-9-7-know-the-file": {
-      "content_hash": "90e46fa96c9bfccb0b14bc13386601de1b0e3e160c58530881705f9fbf51063d",
+      "content_hash": "978f0a52169ce32db88ce189241520d4f6de7c34d9679985f4012a91ac896cfe",
       "services": [
         "portal"
       ]
     },
     "high-school-9-8-forwarded-message": {
-      "content_hash": "9527ff65f888423e87b6f8767f07a2608c831accaccc089d2788dd42ac5137ba",
+      "content_hash": "1ed3053367deeea5fdaee1de858a35c7e7d7c2c581fdf4bfde78ff22223ff5e0",
       "services": [
         "portal"
       ]
     },
     "identity-1-1-secure-authentication": {
-      "content_hash": "d8275e73fcbfd404e111f6c9bdc3e89c6e719029bf424dac3ef2ee8223edbc7c",
+      "content_hash": "3901bffc940c65cdbfd303db0c024c48069f651dc227d2a72d036aa74a7c036e",
       "services": [
         "portal"
       ]
     },
     "identity-1-2-oauth-oidc-sso": {
-      "content_hash": "24be75c2beaf94f15ca94b6107f8f5051321f1c78e45ea510bb1a3d462db4b55",
+      "content_hash": "c5d1407223dcdfc16edc0076d182ae29f7f8d9505d058d3ac4402a3c4f154ed9",
       "services": [
         "portal"
       ]
     },
     "identity-1-3-nhi-oauth-abuse": {
-      "content_hash": "2286656780a99f3a6d16513a311f7a384784dffd05921f1ea40e2b5c446d2441",
+      "content_hash": "3282e730dca0f9246d0da06d953954aee66455f4305a8d4988689ba90bdc7109",
       "services": [
         "nhi"
       ]
     },
     "identity-2-1-identity-lifecycle": {
-      "content_hash": "9857fe4ad882691561be9655e8be79b0d4a94b58e5fe2b315e45ffd3c9e119ed",
+      "content_hash": "f1bb2ea648ce5434edc17e6a0104924ce094a6aa4892b421f50297792a0e576b",
       "services": [
         "portal"
       ]
     },
     "linux-1-1-ssh-service-detection": {
-      "content_hash": "9684cfc3843d3b2baf7d572a35db772a4fca3a671e2b9d1dd5a6467ce8ea6b44",
+      "content_hash": "d3e65d1e9d68c7d0fcec1ea2d1d8555a216b090e5d4362138565aced533f0e48",
       "services": [
         "target"
       ]
     },
     "linux-1-2-multi-service-discovery": {
-      "content_hash": "8af615fbaeb11984e077ae2fd27bfb04ce4b24c5a426294604bf853f91a9c31b",
+      "content_hash": "3c6e620538306399567f0e5d6cf60ff8c2ad261ececda8220904a8e3d2968ad1",
       "services": [
         "target"
       ]
     },
     "linux-1-3-service-interaction": {
-      "content_hash": "e0c499f971ea1ad7c756dac2d0793b68fea274c5d8a3cd8be1045b4be9caea94",
+      "content_hash": "a65c6385b55499fb8c0530f8123fe3868908bef78d8e788870016b31b4e97273",
       "services": [
         "target"
       ]
     },
     "linux-1-4-non-standard-port-discovery": {
-      "content_hash": "8d52191db6d4b58e1ae628718eaf971b40f16d260357239a927afce40b261bc7",
+      "content_hash": "a017a22a9eee86c653520eb8d26cf35caec7b63deeb3ea5dbf9bb7bd1d54dd5c",
       "services": [
         "target"
       ]
     },
     "linux-1-5-nse-script-enumeration": {
-      "content_hash": "eb01b6d7b17dbe84caa786776bbf7b5d2f3ecf3f6322cbb8799e0dced9cca696",
+      "content_hash": "1aa95e1c091c36907874ff48f6be3db0886f92cb3c68b5d72b74d9d07e5b90d3",
       "services": [
         "target"
       ]
     },
     "linux-1-6-version-vulnerability-identification": {
-      "content_hash": "a6b7f8f4b239cf11e99e74523d2d04b07d9344d4c01fc18bc2ebf8276f68720a",
+      "content_hash": "dfd999f06eebaf6534adb496d774e87fac7263d2b14446ca206564f85559d5f1",
       "services": [
         "target"
       ]
     },
     "linux-1-7-network-discovery": {
-      "content_hash": "41a73fbfbcd2a7347a805991eb0f868ddf50f3700ba238313f710c21c20f3201",
+      "content_hash": "5019ca0858b8cca8d5bdeed6c9c4ad21c53b41d0476c1e1710aa00ebc384b60e",
       "services": [
         "target"
       ]
     },
     "linux-1-8-service-triage": {
-      "content_hash": "063a33f3b1c3e3fb54c4b0dfef0a5cd72818fd1a7cf789e7d3dbc0110a4f746a",
+      "content_hash": "2edd9ec5f37478fa0f0aec50a526418a420269ceb1d696b78a59b52750ee58ca",
       "services": [
         "target-alpha",
         "target-bravo",
@@ -667,104 +667,104 @@
       ]
     },
     "linux-2-1-ssh-basic-login": {
-      "content_hash": "c2ff2ea8c1fed06327ec57fe2cb6ecc9a490c5faceae892be2fd0c60e531a196",
+      "content_hash": "4ad449172a04aa6dd755f132de98aa8898a1b70a68c262a513c0c8c3ac575163",
       "services": [
         "target"
       ]
     },
     "linux-2-10-snmp-breadcrumb-trail": {
-      "content_hash": "be0025ec6d8dd9de68e28f51cfc4dd06c6341132596277ea561b5e12bc4726b2",
+      "content_hash": "7f640b02306678d2c355a1c2e8ef187f235d871494244e29428f3061cc47bfc3",
       "services": [
         "target"
       ]
     },
     "linux-2-2-ssh-user-discovery": {
-      "content_hash": "1ce946b66fea981783accb88bfc8f20a5d5d60877cf983067cc2612f900c15db",
+      "content_hash": "5e8f5b790c7637763e92239c701d9304f3854f6ca6b914683af3f898033211a7",
       "services": [
         "target"
       ]
     },
     "linux-2-3-ssh-file-discovery": {
-      "content_hash": "0135f23576ff12c0aa648361617846c50290e0af6d4bcc3bee6d7992c3e1e0d0",
+      "content_hash": "2ca2b128451f224271d21def7c83ab1117aff00376c6347c65fae11da18f1b9a",
       "services": [
         "target"
       ]
     },
     "linux-2-4-ssh-command-execution": {
-      "content_hash": "d4f60d11c8a3acdc960f4154aa54c5a41855d555e2f212946380216240d938a5",
+      "content_hash": "c16497d94c7d66e4fc682f84f503faedd91b3cb2eb3c03217e6e2d546ff17864",
       "services": [
         "target"
       ]
     },
     "linux-2-5-ssh-history-analysis": {
-      "content_hash": "c3000ef8604067dfb0eede8491a9f44982fad4be9f6b7de0fe13af8a21888c9a",
+      "content_hash": "7b8b24229577e4b3f17a6c4e4686ba394b4d26e1fe010bd9fe3ad5eb2f288fa6",
       "services": [
         "target"
       ]
     },
     "linux-2-6-ssh-privilege-escalation": {
-      "content_hash": "d722af1459ea012b1e19ed25cceb93c20cd651ed7f702982dc0d99f453ddebfd",
+      "content_hash": "8b1646429c7528bd80f8d4c0eba5341736566da7dc10e556b05f39a6fb603a2f",
       "services": [
         "target"
       ]
     },
     "linux-2-7-smb-share-enumeration": {
-      "content_hash": "a296bbb3e62f6680771d53af2487f9f6e4fd4d8318b981336bf05d090b06c58c",
+      "content_hash": "04501e74a8775dd6de6c945f866eb3e3607c94fd53755b5c78f2e08b8856a2d8",
       "services": [
         "target"
       ]
     },
     "linux-2-8-snmp-community-strings": {
-      "content_hash": "af119dd4dd91ec25ace09eadffe2230bfb90ecd364e7c6fcaa4108a70a56c379",
+      "content_hash": "0e2e378a5d0075d09587da0d88a80cfab3eff456a1d48b529ce65a2223b17e56",
       "services": [
         "target"
       ]
     },
     "linux-2-9-smb-credential-hunt": {
-      "content_hash": "33d87b6b9592b34dd505b89bb049a084fdb9c211663dfbb9de4c6beccf550dc3",
+      "content_hash": "0f6678c05764eddca6fea5c72df3e374472c67d3535cf357c10d1fdb53bb6fa9",
       "services": [
         "target"
       ]
     },
     "linux-3-1-suid-privilege-escalation": {
-      "content_hash": "cb638513c3c76a4570cf80947761e27e2ddbc79966ac0e90c9a7f1ecc0896b18",
+      "content_hash": "30c39cbfaf7ad2f22159d85b07e8a81d1b173c9ec1192d8912dfe80ab7ef94cf",
       "services": [
         "target"
       ]
     },
     "linux-3-2-password-hash-cracking": {
-      "content_hash": "3c314e594253265babf8cf7b6522eb3fed5ec69303019bed2a066a366504776e",
+      "content_hash": "0a03af6466616a8d565319bfd3d47c1f7f757b0b1c7edb8c30aa43c8909925b3",
       "services": [
         "target"
       ]
     },
     "linux-3-3-suid-maze": {
-      "content_hash": "a2743cf6d6718c23efdea2b200c296cbc3f98393b37ef33afdb40f86fa54e80d",
+      "content_hash": "b1afd386501c64ef0643f4d17b440827cab5d3c0df0d3947508b16bcc2f63886",
       "services": [
         "target"
       ]
     },
     "linux-3-4-hash-relay": {
-      "content_hash": "1d99da9272c649a3eb86c09b99a157a94a9d23bdaf87ee570fc533d58e55f489",
+      "content_hash": "021ad8582d1ef350b9b1306c5f5cad435bf55fcec9e74cf4731e74750cea79bc",
       "services": [
         "target"
       ]
     },
     "linux-4-1-credential-pivot-attack": {
-      "content_hash": "08cefd0d116eb4dc2bd7d67cf28372827b7ea21d4e6d220cd264b4c5d59f8735",
+      "content_hash": "e643f379d45f994353d6280552fbabb5bb5dd72d42c73c07c4d86b86b4f03623",
       "services": [
         "dbserver",
         "webserver"
       ]
     },
     "linux-4-2-post-exploitation-data-harvest": {
-      "content_hash": "3ab94ea1dfc97fdd4c10ce7978f2d5e0bad446898ee9b987d1ac56fa76754a30",
+      "content_hash": "473ca9babc23d42bf1b8c570ec445982fa1b65f7f5c58f6f5634a2d71537986d",
       "services": [
         "target"
       ]
     },
     "linux-4-3-three-hop-pivot": {
-      "content_hash": "4e5dd7b016c276209e38b1272d13db9d9e810232692f4fa7330be5366756bdd4",
+      "content_hash": "23eb78d38912a856913b30e7d3af8a8d92019078372bc28c5812794336bdae51",
       "services": [
         "host-a",
         "host-b",
@@ -772,13 +772,13 @@
       ]
     },
     "linux-4-4-encrypted-exfiltration": {
-      "content_hash": "7b9be4342af56ee57594edaef82f30b2a3ca2f1c8f886c3b953d22150fe84fbb",
+      "content_hash": "878035c61f7868bb99e365b3055928e8ccd81eee00ecbbf15834c9fd17a18116",
       "services": [
         "target"
       ]
     },
     "linux-5-4-suricata-live-detection": {
-      "content_hash": "a7673daf3340f9f69946ef4e022956e435612284d693cbf32b1975b4d2c4a064",
+      "content_hash": "a0cf9a969471c1d5ac333b664de39bd0d9af8f3d82e9e3aa641640d1176d6bd4",
       "services": [
         "analyst",
         "attacker",
@@ -786,7 +786,7 @@
       ]
     },
     "linux-5-5-capstone-ctf": {
-      "content_hash": "75d6a264e844736d6ee221940427e3807176d46e8e23b10f70db7f75e2321b89",
+      "content_hash": "cd2fff244da19ecd10d8d59444c5517ce312e4e72529db5314d7d793b0bb1215",
       "services": [
         "appserver",
         "datastore",
@@ -794,7 +794,7 @@
       ]
     },
     "linux-5-6-brute-force-detection": {
-      "content_hash": "972ee8a0203924207331ecc23ed09be553807e226c20a219e3b1b0db937bcdeb",
+      "content_hash": "818cb705e49621981f849ab2ba36bbe8e9c98769989bf1b3a5c4a135b24b38a6",
       "services": [
         "attacker",
         "sensor",
@@ -802,7 +802,7 @@
       ]
     },
     "linux-5-7-black-box-ctf": {
-      "content_hash": "960db4258c413d9cadcba8c49772bdc4f477ce2fe205387c15b40d5d7373e7ff",
+      "content_hash": "17977761b77117f40e1437fd6f9e9e7f0a794d6d8b179059ef3afec497556538",
       "services": [
         "server-alpha",
         "server-bravo",
@@ -811,92 +811,92 @@
       ]
     },
     "linux-9-1-meridian-data-breach-assessment": {
-      "content_hash": "3227ea31423230ca66d1ccf89966e66d1400abe8bdd66367be51f92c4de06d94",
+      "content_hash": "8ff2c9bac5d0e1a1eec4146e1b0312e657d196c103ac207bce2039fcd47c32ae",
       "services": [
         "dbserver",
         "webserver"
       ]
     },
     "linux-9-2-cryptovault-recovery-operation": {
-      "content_hash": "4a6be8139256bb76d1f5185c1acbd18c6e76fa14d1d5cd39d3f152d12ac5bb45",
+      "content_hash": "ebdd8eed347491071b09dd5b2ca380b497ae7b385cc34b60f68a081fbb25b26c",
       "services": [
         "workstation"
       ]
     },
     "linux-final-1-branch-office-practice": {
-      "content_hash": "7763af7874713b3ab0b6c120241d8c4fa34d4607c7603f116d28512de0a8ddbd",
+      "content_hash": "6619214835772395aa16f868778664e0cea61457a5619a49ef34145d5c515664",
       "services": [
         "branch-fs",
         "branch-portal"
       ]
     },
     "linux-final-2-clinic-final": {
-      "content_hash": "5e5655e7c2e1d7c3480ad307f342d129835bc128f0c3b81a2ccd01a0be2c1ac5",
+      "content_hash": "eb9fa8f5e54e600d743675b0ac5487f5da65a1f4eaf729dfce37f02b93ebb702",
       "services": [
         "clinic-fs",
         "clinic-portal"
       ]
     },
     "linux-final-3-architecture-mock": {
-      "content_hash": "ffc9ebc862704b07b886dd50f50e8715e14837f8c47a9202ac632fc8aaabaa71",
+      "content_hash": "26f6f9d0e020e8deb41c8a16a1ded8a96ea34061c5fea1ccf4a9898f213592cf",
       "services": [
         "kestrel-fs",
         "kestrel-portal"
       ]
     },
     "linux-midterm-2-full-penetration-test": {
-      "content_hash": "36e678e6cdb2ac8da3d406cbfffb0fba6bc5d6b78a18e8e961cbd7e0931debee",
+      "content_hash": "4ea9debf3da360b5684d053318ea9b5450caa558a770df7abbb5f3158e38a2ed",
       "services": [
         "core",
         "perimeter"
       ]
     },
     "linux-midterm-3-blind-penetration-test": {
-      "content_hash": "8d7df12e5d8c35bf65f2eb53affa25847dad9780fe263bba0ecfcec0bbb40736",
+      "content_hash": "91881061b2f393be3c20f5d0f3a27bed99e7bfbc652888b2bbebfb5103241c2c",
       "services": [
         "backend",
         "webserver"
       ]
     },
     "malware-1-1-eicar-triage": {
-      "content_hash": "149c9d0ae249daf4f3365222ae164a10c6f07313acbd79155c3d73b70d34c7ad",
+      "content_hash": "0ce2ad44711961e223c385e63336a801dc9d2175d7af791370952fa1d7cdaaa2",
       "services": [
         "evidence"
       ]
     },
     "malware-1-2-strings-static-analysis": {
-      "content_hash": "95df96b35720edffffbc9bc452a4b043ce4c7de262b2bc1d3daf69b24cc64d05",
+      "content_hash": "1dff964ba92d435c4ce1976752ca153a1fe7b1fe0d89fd68cccbf9775b5fa50d",
       "services": [
         "evidence"
       ]
     },
     "malware-1-3-ghidra-static-reversing": {
-      "content_hash": "61ce2f4e32b8bd83aa9afb2e56086e65a36fd65ebbf4f5b108b055ac48873218",
+      "content_hash": "c6c60414731c06640162b100ec963d98b892cc0d0f8d843340a5271a68159eea",
       "services": [
         "evidence"
       ]
     },
     "malware-1-4-c2-pcap-wireshark": {
-      "content_hash": "31c3565e64c6729c8fa35768c379e4a7bf02bd307ad35c49b64a7622bbeb35ce",
+      "content_hash": "2db080474ed1e579109df8715f4d2ccf6c766e62a497eec1f3fe30c21681237d",
       "services": [
         "evidence"
       ]
     },
     "malware-1-5-inetsim-c2-detection": {
-      "content_hash": "4e6774380e971431a9b0d37cbea030405e1aadeedaf6d16659f734bff957b6a4",
+      "content_hash": "67b6b3cf3198a5b6dccd56adc44c3064e3f6a9b8db4e13da1fe6ca1f6211ef03",
       "services": [
         "inetsim",
         "victim"
       ]
     },
     "malware-1-6-email-attachment-analysis": {
-      "content_hash": "63b39485f546b338fd79fc254e630e01afe9f80c40b7241125138425c40b4c34",
+      "content_hash": "1bd3a0607e7b7b6ec7e2d7e353f656524de7d3d3733c7642c3c21347fb31eaac",
       "services": [
         "evidence"
       ]
     },
     "malware-1-7-embedded-js-worddoc-inetsim": {
-      "content_hash": "dc832f4ee89e5b7a2e33ad34231dda0e0f225f8392a3a89ffee6ae4417dc3139",
+      "content_hash": "88f82309e7b65208e2c0f1260b7b2bc6b5419d46381388283376144da3f4495b",
       "services": [
         "evidence",
         "inetsim",
@@ -904,112 +904,112 @@
       ]
     },
     "malware-2-1-pe-header-analysis": {
-      "content_hash": "830ac80b09160740551e28f94e3c3989faeac8f618e3729b45a3554d545790b8",
+      "content_hash": "5adb27445631bd852142ad2cc896222f49a15e92b088d2e2e5a1c1928ac8ac25",
       "services": [
         "evidence"
       ]
     },
     "malware-2-2-yara-fundamentals": {
-      "content_hash": "dc668e2afc2aefca46b35a4dcd740d79bfc2d47c2f6bb89c8977ce0f0e401fe1",
+      "content_hash": "3211153d5b4642cafca3cca421aa50e2810c55fbea9858cc532f79ad2742d2ef",
       "services": [
         "target"
       ]
     },
     "malware-2-3-yara-incident-triage": {
-      "content_hash": "43a603c89e541a611340cc050ccec349a5fe931c8b0f6153e93488275b8b2b29",
+      "content_hash": "8b5cd419d6bf71f9a36e3cefeab2f7b334ff259f163b0f0ad3ad74c0f0b9cbc5",
       "services": [
         "target"
       ]
     },
     "metasploit-1-1-workspace-and-modules": {
-      "content_hash": "81b2e1e0caee8e67cd156d12a6f8ecf99dd3df105a8ad0c8a3deb05d5d442e45",
+      "content_hash": "76606e60c128ef56fefedf77642493ba43686d7cd7dab98fda5234ea27af41aa",
       "services": []
     },
     "metasploit-1-2-service-discovery": {
-      "content_hash": "d4b4a2527d784e1791317f7418a4c06d823cc2ed4cc3da10b068d3cb1d691c83",
+      "content_hash": "3317cf4e8d78b3966655fe6cc3eba649f3f195ed3d4e80b947509ea4f6f2f746",
       "services": []
     },
     "metasploit-1-3-validate-before-exploit": {
-      "content_hash": "bb2ab9fa86f455a32b9a03d918c92251bca8ac9677d379a82a78b098a433572c",
+      "content_hash": "479f0e1617d544179ce03dc52248f147910251db38ed53a8e1b46e74de1063bd",
       "services": []
     },
     "metasploit-1-4-first-shell": {
-      "content_hash": "0a0eaa57c143dd6f42002e3a2b669f70f4db7b281f9c5792b8396f0f44bbc863",
+      "content_hash": "cd3fdaf57e5d52026157c94d9015761beacf7dcefb0b0ead1c51a1d33e5d8086",
       "services": []
     },
     "metasploit-2-1-meterpreter-session": {
-      "content_hash": "63f10dbeb861cc964f2fe8259c8a42ff4d038f93095489ef6ab348186be53efa",
+      "content_hash": "6b37ca6228f5dec3a25ed967bd21be0aa459b3b2eba5c5283af101f92e1f8c06",
       "services": []
     },
     "metasploit-2-2-database-credentials": {
-      "content_hash": "b768137d116983fad8967d526ae54367c90e5700ff43efa7a0a13e7ec100742a",
+      "content_hash": "fa24207a338e191669899dd40cd0fbb68d786d334bd2091dd50640a2964934ae",
       "services": []
     },
     "metasploit-2-3-pivot-to-local-service": {
-      "content_hash": "124a71566f683d243ac4b252c870d8a38c20daf5e2c7d6e0bb31b9435d4517dd",
+      "content_hash": "ac7257cc229bebaf020b8a3ae8cb73c67a6c17ecbc3a0d6f3ce62780c9626aba",
       "services": []
     },
     "metasploit-2-4-persistence-and-reporting": {
-      "content_hash": "6dcd43a1353774847f826cc4407adf16e66965d42a2c0cbb51f06caa234669b3",
+      "content_hash": "c012b411835132ece7bcbe52809fe2a08bfed677b578524046fea482d4aa1365",
       "services": []
     },
     "network-0-1-ping-basics": {
-      "content_hash": "c13038cf16f5e68b8ac4010471c404d2119d64e704b57aa55c2db2d7612a550f",
+      "content_hash": "084dc38cbd2bc2f0ece06bb0993c499ae5ae72c9e4e909a492425698d70d1b1c",
       "services": [
         "shell",
         "target"
       ]
     },
     "network-0-2-dns-basics": {
-      "content_hash": "b1bd5917d4e959161fead15f8f5595dd9a4d35f01d72f6bb4ed6ffa02f69a1fe",
+      "content_hash": "90c425806dfc323954f7046eaed49c0203ca05803de5b3f114e5802e2e4b7a39",
       "services": [
         "target"
       ]
     },
     "network-0-3-name-or-network": {
-      "content_hash": "eb05feafe3cbf9a2ce166dc8d858695572c87eb2598c763e7c572ca8dc2749ac",
+      "content_hash": "ba0d745838928fd85ac3167130ae853cb590100b7e3a109a748efca55cf5ccb5",
       "services": [
         "target"
       ]
     },
     "network-1-1-packet-capture-analysis": {
-      "content_hash": "ecf8c850aa59c463d7cf3916897ded63d30a738b8e4fa1f60ccef8d586106b01",
+      "content_hash": "0e047be6b254236b36c01b53d999bad870aee9369370ee5952cab7d77a204e4c",
       "services": [
         "analyst"
       ]
     },
     "network-1-1-port-scan-detection": {
-      "content_hash": "c8a0c2e56b34a225d72b58e264c343650e422a471c0ea0b2635d1a3481cf36de",
+      "content_hash": "57ade16f2cc4ec5717faa230ebac89e13872f07df0d037b778d9424daa313d93",
       "services": [
         "target"
       ]
     },
     "network-1-2-http-traffic-analysis": {
-      "content_hash": "ca502949df4673bd58880ff156d2abcf5d8f9c9933e911e848a6080c92361da2",
+      "content_hash": "6638bc6ea2df7a23440f2fc3a3708c1ccf3031b41e8222faf73cd8a063b55176",
       "services": [
         "target"
       ]
     },
     "network-1-2-log-correlation": {
-      "content_hash": "d382be8866b2acb15188976cece129890cf7502194986ff5f7d6975ca91e248e",
+      "content_hash": "4411cb2d4bcb13039487718e59160c58bc9aae46376db9d54779b8771ddd2798",
       "services": [
         "analyst"
       ]
     },
     "network-1-3-dns-anomaly-detection": {
-      "content_hash": "1b7418cfb1f287f660f32ef41dc106c35f7b5f307b23cef7d7bb5d2be8eecfe1",
+      "content_hash": "b212d39cd8dd7b831f7d91fd020da1ccfcd4a0d0d0b53af6ba1d9b8085849839",
       "services": [
         "dns-server"
       ]
     },
     "network-1-4-failed-login-analysis": {
-      "content_hash": "bf4a331bad75f21af54b56904d8cdd2cc8a6d2af740748431c8260c467a8ebd7",
+      "content_hash": "47f09adaf30187c3b5f6aca7d9740eb02e803d1d8c9cebd43153f4dbde7c7a17",
       "services": [
         "target"
       ]
     },
     "network-12-1-firewall-fundamentals": {
-      "content_hash": "0fa2047aef3c910016db03a11bc65c0f51a9ceea17715fe5aef016403e20180a",
+      "content_hash": "6fbb0e29f44d74f63e3a6b9b0fa9ec046b16cd785cdda53442c6dcec53cbe1e2",
       "services": [
         "firewall",
         "traffic-gen",
@@ -1017,11 +1017,11 @@
       ]
     },
     "network-12-2-device-topology-engine": {
-      "content_hash": "435be4d20673f93250866cf4c225ae1e89a411c0424e76a019b5902dca692d08",
+      "content_hash": "2ba0bb8f4f13383480dfb6612e478aaedacda98dfee8ec2fb1e959e105133225",
       "services": []
     },
     "network-12-2-firewall-policy-hardening": {
-      "content_hash": "9809e0d8f8162a6c582f6a7a733b7350531d7e70d7d1ae2414ffffd4471aa0d9",
+      "content_hash": "1aa1cf0030f8b101a25b8b854ba99deb4c701c4bea83c56bd08789caacf24981",
       "services": [
         "firewall",
         "traffic-gen",
@@ -1029,221 +1029,221 @@
       ]
     },
     "network-12-3-two-router-transit": {
-      "content_hash": "65c55243af91511b628060e194ff00f65fed59c8673edc6ac8ce64bb76c8892e",
+      "content_hash": "fb0826749934a44632b887b53aa38b8b6dee949e6d2def1bb5cbb54f81f0737b",
       "services": []
     },
     "network-12-4-firewall-service-path": {
-      "content_hash": "ea1035843be8cca04378c6c66c312dbc7a6f49edf57ed4e5716cde1aa73f8f50",
+      "content_hash": "aa47a9efff3df29869698bfc5f38eba6f281e6463261e5f1686566fb86052be2",
       "services": []
     },
     "network-12-5-multi-service-router": {
-      "content_hash": "0e2fdb5b6ba668c443d5932590ba8ad2fc055bdb9974fe1d89c618793476d798",
+      "content_hash": "9847641e7547fc8ac5bbae05c5520fe8d46d9c4bc823016e68428fb047080e1f",
       "services": []
     },
     "network-12-6-appliance-segment": {
-      "content_hash": "7a842ca3978d4e778f72fffdcb6999057d514d2f5f055d0bf1f0e3455b1c6b0a",
+      "content_hash": "24840c8fbc6fbc1a43003365ded04b4e7c5c9f1ba952b825eb30dd7e3cb00bc6",
       "services": [
         "protected"
       ]
     },
     "network-2-1-ftp-credential-extraction": {
-      "content_hash": "07fb6c364aed6203e1e87d1f72af51d0ff0e82b0a584a158af839b313e0d24d6",
+      "content_hash": "72ff63212c0361f517d97e57abab268d63b6a1c6905de4f3ab1acd4b90700aba",
       "services": [
         "analyst-workstation"
       ]
     },
     "network-2-2-smtp-email-analysis": {
-      "content_hash": "70af14c7b7dae668d42d3bec5f657c57cbc93600778a25ae48e631f6ec5db875",
+      "content_hash": "596f7d8513e2a125b912e8c696d8b81081ea0c9bf2bb59222cc60f517cbd14c7",
       "services": [
         "analyst-workstation"
       ]
     },
     "network-2-3-http-session-hijacking": {
-      "content_hash": "cbcdfdc2566755f643bd206db4cd6e257f752dabb63cae8ed4fec7a2059e5b99",
+      "content_hash": "f68983fc0b2e384bf003f7eedb1af517509494f7631b7b5b1aa7308166be8811",
       "services": [
         "analyst-workstation"
       ]
     },
     "network-2-4-dns-exfiltration": {
-      "content_hash": "57b02c6a312851dc2983d34d95f5d8d78b61e70eefdf07d526ad5edc0c7797d8",
+      "content_hash": "17ee94bd43f3de89466e63129e2961edf15c60a7be04ff0ee20f8d89c30cb2fc",
       "services": [
         "analyst-workstation"
       ]
     },
     "network-2-5-attack-chain-analysis": {
-      "content_hash": "4fbe7c9132cd9b70043c98ac0e2bce8af8368987784ce81db42f3fd9a462f827",
+      "content_hash": "62231b03d46a56840f8a40ede7927d14b075cb363fdfab4e821a5dbf7b28b1b5",
       "services": [
         "network-2-5"
       ]
     },
     "network-2-6-wstunnel-c2-tunneling": {
-      "content_hash": "dd47e4f20fa36422fd759edc0e1f044959d8a6ee05882efb8951d54a06f07354",
+      "content_hash": "4245af597b856d4e29718007f9fd726d09b80900708a299b325e7897b94f6f5a",
       "services": [
         "c2-relay",
         "victim"
       ]
     },
     "network-2-7-arkime-session-triage": {
-      "content_hash": "9df1fd428e6b0f5d4db68745f2b66b70dc19449bf90d2b14b366909611461cb0",
+      "content_hash": "9d5928ff0e07b6ceea499094a6a956463edf0f9c42036255ebc9073181b49a28",
       "services": [
         "arkime"
       ]
     },
     "osint-1-1-public-footprint": {
-      "content_hash": "16f566a0674e47513bcd87eb685ba2725e5dc020f6425a2863e5ccc99315ab76",
+      "content_hash": "989943769402e0c02df0dbb9fc36a12d3615eccc8f906096d6fb07965dafeef3",
       "services": [
         "intranet"
       ]
     },
     "osint-1-2-image-intelligence": {
-      "content_hash": "dc0378f9450892c7c35f605273adac3e7071d11f65c254ca47fc7b6e36933053",
+      "content_hash": "b2851f4a89f2546fc365aea290a7de63f7a6b530522805ae37c04dd154de4e0b",
       "services": [
         "intranet"
       ]
     },
     "osint-1-3-exif-metadata": {
-      "content_hash": "cc80cec14afc4606cc0537d8488e6b7f6ba28990fa548d30207842db44c59edb",
+      "content_hash": "d1e081d89b0f29cc90f46169f1ea5314869b16c9b5fc4e22921ca8a22a1c98b2",
       "services": [
         "archive"
       ]
     },
     "osint-1-4-researcher-self-audit": {
-      "content_hash": "56f99f44a821c47685268e9c0594aa1fd687e6521beacc7e444a3b2d7b9e228d",
+      "content_hash": "e0e7d6723a0fa04ea281b58cb893990ed35f6b8345042e253a44e3e87916dda2",
       "services": [
         "portal"
       ]
     },
     "osint-2-1-source-code-intelligence": {
-      "content_hash": "49c642feba02af62d2116755531127cabb87629767eb1614c168b5d2ee06d3ea",
+      "content_hash": "d16f68df0cfba0f559238c4aee8903bef178c2ded00d05079d2c2175ec37f718",
       "services": [
         "intranet"
       ]
     },
     "osint-2-2-public-homepage": {
-      "content_hash": "276d2160f50303918315f09e4df108cbb87240b0f5fb21438b25c81525f52f6f",
+      "content_hash": "497e7656bba6e79dadad084d3413200956303ba346446cb76b80f6cca078c43a",
       "services": [
         "publicsite"
       ]
     },
     "osint-2-3-responsive-leak": {
-      "content_hash": "430c1a53e4a4b70384bcc0b5c44ee0d1c19af301789f588d1a9dcb4d032f2766",
+      "content_hash": "44239a83aff5f38905e9516b82490e3dc51293b079735ee21b11a403a37d6188",
       "services": [
         "intranet"
       ]
     },
     "osint-2-4-public-profile": {
-      "content_hash": "2200b80c5a7b9d69ec01e01770210f1e7e9443d068a5bb119522c1663b447761",
+      "content_hash": "f888620b03d136a407fb375ab0458ceaec5230284bfa7b6fd52eebf9e60dcb75",
       "services": [
         "intranet"
       ]
     },
     "osint-2-5-public-banner": {
-      "content_hash": "f9b80f037484ef9bc31dd1b9d76982daf186c048f80a02d72e461da6909e28ad",
+      "content_hash": "9bb03dc79aebaedeaac1cecf325910b2df251f3011889b33282483e4a1369b04",
       "services": [
         "intranet"
       ]
     },
     "osint-3-1-noise-in-the-nest": {
-      "content_hash": "9de4fc708f0d2e6379d7fe1f83b0e4ac062b8c138e2c5c8a870485c85474b4fa",
+      "content_hash": "8d23c0d76181f9164a6b3fffb24c353a51aef498f156f46b265720fc8e85048c",
       "services": [
         "canary",
         "portal"
       ]
     },
     "ot-1-1-modbus-register-analysis": {
-      "content_hash": "7d57152ba2f596ce0011f688ce76f49002daa2edebb8843f93261cc2dd96df01",
+      "content_hash": "479413619fd255d164651ff0ddf2d55b0438bee0cd943b07d103594fdfe8417b",
       "services": [
         "plc"
       ]
     },
     "ot-1-2-modbus-setpoint-tampering": {
-      "content_hash": "7784e70ae3e11abadb1df3f70e65630d140aa5a1249557530d87cbac5bf838b7",
+      "content_hash": "1562173ef4d939e0cde152a77f249470b188a59a3989baf5f541968edfc5e0b0",
       "services": [
         "plc"
       ]
     },
     "ot-1-3-modbus-gateway-bypass": {
-      "content_hash": "aeed7e343b921ee3c0dd656c5b7b19ae2b52731c42f71aed6c194b3c6ac8a5db",
+      "content_hash": "81e5a14b2dda958946745ec0ae5c752d2b5745b8a6cf24042e9381dc0081a599",
       "services": [
         "gateway",
         "plc"
       ]
     },
     "ot-2-1-s7comm-register-access": {
-      "content_hash": "7f68ca5c92a28112bc6dd28bdb00d47ad2c7e3ffdc591d60337abc1b27108604",
+      "content_hash": "6b121c1de8e47ac269c9596856b4b5c46eaed7551fc340b5861035858be06e98",
       "services": [
         "plc"
       ]
     },
     "ot-3-1-ics-pcap-forensics": {
-      "content_hash": "4500f03a5657856f597b72dba41906ba8f654ae9a98e61dedaf465f4ad62f1a9",
+      "content_hash": "eef3ec1410ee85c05e6916eff0eee45750a4387464dc8af9968b876d1b0d9343",
       "services": [
         "analyst",
         "guide"
       ]
     },
     "software-security-1-1-hidden-export-route": {
-      "content_hash": "1b28f93ab7ebc0e52e0994fd8b765eb2b98df947b0879f2de0d48e91ec8a52c7",
+      "content_hash": "045953f43a1c647bee7eb201a414503d6945eeaccfcb5918c804fbeaea201735",
       "services": [
         "portal"
       ]
     },
     "software-security-2-1-diagnostics-command-injection": {
-      "content_hash": "41a059253149d378e04af9f21b8d37d0431b54fe9f0330a0174467aee51ebc3d",
+      "content_hash": "30c4482a0b63f073a7255ba315f973641f85035763906f08fc9f2cc206c379b6",
       "services": [
         "diagnostics"
       ]
     },
     "software-security-3-1-first-karate-feature": {
-      "content_hash": "adf10ec5f0e82bc8b3788d94e6492e51b7555191d309127b5253e4a50210acfc",
+      "content_hash": "d5d8a0d1b3a5daf7ede3c8bf8b8cf83e53bf63d8a91e0f176133b12b0f4a553f",
       "services": [
         "api"
       ]
     },
     "software-security-3-2-assertions-and-examples": {
-      "content_hash": "f737d848e8ec3c8f02e8ee2a3f5ab33d17f04fbce6897bcabc0e357e9ed00e90",
+      "content_hash": "77c18758838be7bbfbf09a0810c910c1b6750b5532277601e034acae9037b455",
       "services": [
         "api"
       ]
     },
     "software-security-3-3-authentication-and-reuse": {
-      "content_hash": "f07449162cfd93e1462148e2d8018c82eab377e029af4cd9da3eb28616f8df4e",
+      "content_hash": "7d2ae0ba8da81d5eb0dc4bb7a406a8d4ee50587d84d96902e962dbcffb125cbe",
       "services": [
         "api"
       ]
     },
     "software-security-3-4-negative-tests-and-evidence": {
-      "content_hash": "dfd0d39d07e694fa10a87322aca630f0adb1a09999e8529893ddd3634ea292bc",
+      "content_hash": "9f5f27c645a0861a2d800a0714371fe41342a4728b9e26c8a9456ab7e0541d94",
       "services": [
         "api"
       ]
     },
     "web-1-1-basic-directory-enumeration": {
-      "content_hash": "5ce5ba75491d61c97d61103093ff33a6d567573cb170bbde9e53bfd660040f51",
+      "content_hash": "9ad157f417218b67b5501a05263528ada5588210537310422f2be76b00327153",
       "services": [
         "webserver"
       ]
     },
     "web-1-2-technology-identification": {
-      "content_hash": "fbe816ba4ece5b51f3cb1bd85009890c459f4a3e24de6a882997c24365e7d0f2",
+      "content_hash": "5826e42d0ba2b5532506e131f90384f1473b55018ee788fab3b32dabfc60f0ad",
       "services": [
         "webserver"
       ]
     },
     "web-1-3-http-methods-enumeration": {
-      "content_hash": "8a5545593a3b0e4900d61adda7084bc8c10cf65f4211a59e99f887e75380d5dd",
+      "content_hash": "8a16b5fa52ea9a132ccfafb1fd4592f3f427694a4da6e0e59b7467c53ae631c7",
       "services": [
         "webserver"
       ]
     },
     "web-1-4-header-analysis": {
-      "content_hash": "284c45ea49017dbdfda6238913df132707e3a58f9234d152ace7e0937a7add88",
+      "content_hash": "81828e7af41260f2f30bf9e1456d80bff306be34cdbc35328133e00cf47a62f2",
       "services": [
         "webserver"
       ]
     },
     "web-1-5-subdomain-discovery": {
-      "content_hash": "fe3636699be27495a40d877c5baa9fb6ca82d0dcd10f21a3fed498378c237218",
+      "content_hash": "694c3af4ff244d38b898067b93e61bc717c6037abdc762eefd65557a849aa028",
       "services": [
         "admin",
         "api",
@@ -1251,137 +1251,137 @@
       ]
     },
     "web-1-6-comprehensive-web-reconnaissance": {
-      "content_hash": "cf125c12c1400bbf366db86cca743bd5e3f03e74e976742380c786f2dddb3511",
+      "content_hash": "0096f404b1e645b651b1d285baf605a5d49dd76453519b21f133b5f48dadb906",
       "services": [
         "webserver"
       ]
     },
     "web-1-7-directory-traversal": {
-      "content_hash": "dac8fe51ad697b21e2f16dacb1752e1b608cff6ee8fc70e26499d2b0b14ef3c5",
+      "content_hash": "816008beed165cad4d7f0ceced3ebb0fbb5ccf768b1eecb70c9d5b7007fcb8c9",
       "services": [
         "webapp"
       ]
     },
     "web-1-8-traversal-scavenger-hunt": {
-      "content_hash": "e117e132cccf666af94f818a9a60e68af2054527572b94bf866c2c4b53777b63",
+      "content_hash": "cb0cabdc5f54799fe6f76c8191e98f0bbcd254627f2b69ebcd9a84743b08ff4f",
       "services": [
         "webapp"
       ]
     },
     "web-11-1-api-inventory": {
-      "content_hash": "8cd192590bee7adeaf78eb6ed0c3585597882fb3a857fc27ec6cdef46d78fcd0",
+      "content_hash": "a6a14cc1aad2c25b75384420c74d557312201d1df14345dcfe64f594417737ed",
       "services": [
         "webapp"
       ]
     },
     "web-11-10-modern-appsec-capstone": {
-      "content_hash": "cb51a3ccab844375ccfe2b1f644a45a2445e48612cef486de72d2f4c3610e681",
+      "content_hash": "fed96567167c3081df35a045d4d126c6a41f9c42a9ac25fd35687893f3c835a0",
       "services": [
         "webapp"
       ]
     },
     "web-11-11-zap-baseline-triage": {
-      "content_hash": "31eaf6b6556eb4018d74bf85cb48ff74c5c8676a7574477cd5d48155bba14e3f",
+      "content_hash": "af7bd1cb69368699172fd93ad665a79c622eb27540db8455081abc81bee84eb3",
       "services": [
         "webapp"
       ]
     },
     "web-11-2-api-bola-bfla": {
-      "content_hash": "566b56c574ef66e5d963e724d067595b60edd0c0c6d43ca6dc88bd991638c4c9",
+      "content_hash": "c61408a78ff13995704454abbd655b765ea7e6f42d396ba8b4487ab5a4dab7fd",
       "services": [
         "webapp"
       ]
     },
     "web-11-3-graphql-security": {
-      "content_hash": "5152addfc575815fe0fc899a714a93be3bb00b201b24a9cc17992d4c0965deb4",
+      "content_hash": "c48157205e71cd8e3abbae101c2c38cdfb68dbd2fb0c8ca7dbf5bd5377b6a1a2",
       "services": [
         "webapp"
       ]
     },
     "web-11-4-jwt-security": {
-      "content_hash": "d9df4df601960bf55726063e8bc34b6e05f3ed16e3df29e836a80f6835dbd984",
+      "content_hash": "c5af320b4e2d829b875ed764df0a4d19406ff9be9a88f645879bc3978f095f70",
       "services": [
         "webapp"
       ]
     },
     "web-11-5-oauth-abuse": {
-      "content_hash": "f1e1e21f33a30a694b7bd4b59bd70cc82e47fe67869614b810ba06d19200474d",
+      "content_hash": "7722e683dc56256ed373b68b8cf20eea8f884b7f70111f6def5164d61b50e99a",
       "services": [
         "webapp"
       ]
     },
     "web-11-6-devsecops-pipeline": {
-      "content_hash": "8462188ee8f14e88f46c7e76d76db8a1b25be5457a6d134ec5277f0e215cfe90",
+      "content_hash": "63122ea5edcdbb7c68858f630aa45f833f52f61932b4e13b6cbbbe1a3d177d5e",
       "services": [
         "webapp"
       ]
     },
     "web-11-7-container-security": {
-      "content_hash": "dc0b5eaea2c33336861482787b4dd0df4d17b58faa40610df2ff01b0dd76b834",
+      "content_hash": "2ee59c58d7b8750aa170f7efb0f0d7713d7d491d828aa5e35d641d3043ba77ca",
       "services": [
         "webapp"
       ]
     },
     "web-11-8-kubernetes-security": {
-      "content_hash": "4e9d3b298cd78caa8ddaf733a1daf49c3b3a21557cd2d3197c4354eb38c4ab2d",
+      "content_hash": "350b34caea3e9a11f4b34698ce5aa130109aac56c09471121c3fc352f1dad8eb",
       "services": [
         "webapp"
       ]
     },
     "web-11-9-supply-chain-integrity": {
-      "content_hash": "63246d6892e002fe55368b7710c5cf0b162b4ba656b682fb48bea2c7a2aa7abe",
+      "content_hash": "d3cfde255a384dd0ff024b38495bffefa2be7d836e79b5a2449c536ba6c4698c",
       "services": [
         "webapp"
       ]
     },
     "web-2-1-basic-sql-injection-get": {
-      "content_hash": "913a40542dbb1c4e85dde5ab87b3f69b22b103808f496250018be2eb41d540c0",
+      "content_hash": "e1ab164c8fd91483d8ea430fe382d492f4ad68cdd9b27a55bfb47cead9fc170d",
       "services": [
         "database",
         "webserver"
       ]
     },
     "web-2-2-insecure-api-endpoints": {
-      "content_hash": "439cb958e7e4671a4e3782084fb59e1ea4cce75d26d4d9915b9b73558779cfaa",
+      "content_hash": "b4cdc2547d8b44d17dabdac63195018c9b52bae1d176566d1a4959b601947fc0",
       "services": [
         "webapp"
       ]
     },
     "web-2-3-command-injection": {
-      "content_hash": "a905ad88ed4cb9f358196564732ac468d2556a044a98ac7078b5cfdf5a09ed22",
+      "content_hash": "e51cd3a3b8f2ed324fe6ee636c7a8bd7a76bf978409530eac9d8c9a183bd3896",
       "services": [
         "webapp"
       ]
     },
     "web-2-4-api-enumeration-gauntlet": {
-      "content_hash": "2497672c679ef09fb3a622e4d958c929297b26ff86154cc7106fbdf6eeaf856d",
+      "content_hash": "678b1f87a0caacb7bfb316a9f4ab0d3d9ecfb35e10bd9651f82e5c65620a9e68",
       "services": [
         "dbserver",
         "webapp"
       ]
     },
     "web-2-5-filtered-injection": {
-      "content_hash": "4e76518cddb8545c647a039b2320d72f3870881da508aa073ac53395d3ecc317",
+      "content_hash": "53ecc08227ef12c68048ec42a2b632a41b4f56584ad4497307075e4a93be2278",
       "services": [
         "webapp"
       ]
     },
     "web-3-1-hidden-login-discovery": {
-      "content_hash": "5423efb446d5d142fb65a041aaa673a963a2c4e19bf0c7973af81fba7530e095",
+      "content_hash": "eb9bfb8a3391357584df3cd35cbfba531db333aa3a748762ac55726b193df842",
       "services": [
         "dbserver",
         "webapp"
       ]
     },
     "web-3-2-sql-injection-to-shell": {
-      "content_hash": "e6fd4ff3bece36b56c14bd6edae84d0de3440ab189ad8ad569fc5f7e6e03e3d8",
+      "content_hash": "0417f59f0b8f3fe1eac55d6fde9957bd049f65019f12c2ccba0c6229bf518af4",
       "services": [
         "dbserver",
         "webapp"
       ]
     },
     "web-3-3-full-web-to-root": {
-      "content_hash": "5359558b00f00bc9d50d0c94f517f4c1bd197a1aa3872e02ecb548bcd0056429",
+      "content_hash": "1e67c983b9cda0bbe161d03889374acdcc97c7f082a93c6d1cb17725489b2fc6",
       "services": [
         "dbserver",
         "internal",
@@ -1389,38 +1389,38 @@
       ]
     },
     "windows-1-1-basic-port-scan": {
-      "content_hash": "00e36030fe898492c8dec0b3a0cb12eef5efb5c47eb4db42687d6b02a284bfa7",
+      "content_hash": "fb15ab759179ca83683c052526b0fc56432df900edf475cecb0710447beb04a6",
       "services": [
         "target"
       ]
     },
     "windows-1-2-multiple-port-discovery": {
-      "content_hash": "b3e9af05a14b323a4e32e244625ad15145c20bd29067ef3c7127793672967076",
+      "content_hash": "7dcec4709c6099ce7782e19331b7a3477b2435b9731944f44a2472ee20602df8",
       "services": [
         "shell",
         "target"
       ]
     },
     "windows-1-3-windows-service-version-detection": {
-      "content_hash": "51b181dd4cc178ddcb26f444f464de0a804987ffdf40269b0d83ea296d04a3a1",
+      "content_hash": "78ace96462eef958a35ff06960649ff50dd763c2c71ef42bc4ab186accdda99b",
       "services": [
         "target"
       ]
     },
     "windows-1-4-windows-os-detection": {
-      "content_hash": "5b43037053fa9a125081ba4977d46d65690cd30aca7a5f69dead572cff90e0dd",
+      "content_hash": "e36748e429915de47f59f224567209f89e697ab0aadb69087ce4caf5e879fa74",
       "services": [
         "target"
       ]
     },
     "windows-1-5-comprehensive-windows-enumeration": {
-      "content_hash": "10f29c26279948b3c4ef922090e79e4edd089af7b36940fb6277f207128bc318",
+      "content_hash": "a245e96af3d534ac2cb1b26916ae6619e4b8fea4268501730edc899a5d8f40b9",
       "services": [
         "target"
       ]
     },
     "windows-10-1-network-enumeration-assessment": {
-      "content_hash": "da901735a527def5b63f941dccc5560fad572e30b9f4e47fd10b0eb7b6ed1435",
+      "content_hash": "f9a7b8cb4e972cfbfbf60e30b6a6844b8e536e565ebaba5718a23398ffd37d21",
       "services": [
         "dc",
         "fileserver",
@@ -1428,7 +1428,7 @@
       ]
     },
     "windows-10-2-midterm-assessment": {
-      "content_hash": "ac369875d166b6b5ba2351715d81ad2c2ca756992e35ff666350a74a2d5b176d",
+      "content_hash": "96b15222361195d692aef2fb69cf7c46e73ce0f6e5944132cd85b05445b1693e",
       "services": [
         "casemgmt",
         "docserver",
@@ -1436,326 +1436,326 @@
       ]
     },
     "windows-11-1-ad-domain-enumeration": {
-      "content_hash": "62d21d933785ab68d3ced791a6506421570dfc950e4dbcf34b1fb091abc21436",
+      "content_hash": "9d854ab6569af1d0bfa222ac58f7192df41b959fac97941e47ce349ae554c0b4",
       "services": [
         "ldap"
       ]
     },
     "windows-11-2-kerberoasting": {
-      "content_hash": "fec45812c0cbb24abc42d27414cc5c8883c78adca3474194eb6ea1b146b5241c",
+      "content_hash": "dbc937504496caa91e54b0ec28c1da02241e8d615e544a1ef408094cf5735d2c",
       "services": [
         "ldap"
       ]
     },
     "windows-11-3-asrep-spray": {
-      "content_hash": "8c93428ffe10cd68be050036a5941cb993326087c9bd093188885cddbe6de6f3",
+      "content_hash": "b079b1791e2f0d1347c76ece3d84c4da216796ce0d6a8fe01eae320a9c33aba0",
       "services": [
         "ldap"
       ]
     },
     "windows-11-4-acl-dacl-abuse": {
-      "content_hash": "0869aa29fdbe1a6cd7f1e3df4dab50859e008017e41c65c16052607392b756c2",
+      "content_hash": "80cd08f0fff5026767b9d74a36bd4a4ac8621bfb824cb06ad1e84255b6124c0c",
       "services": [
         "ldap"
       ]
     },
     "windows-11-5-delegation-abuse": {
-      "content_hash": "b2666dea171344538c58255886319c09f3013a4b8588be37bd3100fe9144b961",
+      "content_hash": "efdbfa2c1a92d7bf75a08cdc4281b67b747c9f9dcca152aad96183791ee2f04b",
       "services": [
         "ldap"
       ]
     },
     "windows-11-6-adcs-abuse": {
-      "content_hash": "558257a9a620fc435f6c84eb53e4315a5e6ebe3159a56d68b8a62e9b37e6ecac",
+      "content_hash": "1ebe1e29d475cad7c335bc6d5de9776bf15727fca33a2c26ea5fe64024f94a83",
       "services": [
         "ldap"
       ]
     },
     "windows-11-7-dcsync-tickets": {
-      "content_hash": "ff00b31555c9e2fd43aef36faeb38311034e811541cf02d372ec2265d0edfa8f",
+      "content_hash": "a65ce0dafde843b2ead7baa501b7d6cd898f40bdac4b4dd381814ac4182f2891",
       "services": [
         "ldap"
       ]
     },
     "windows-11-8-gpo-laps-defence": {
-      "content_hash": "845597849e405b83e53d0b3d36904508b8cf5faf37c0b960e1bed2c9b2a9b2ed",
+      "content_hash": "bed120f11c4d0b7de9b20028752cb211ebc82adb33e22f7350a2760ec142a6e9",
       "services": [
         "ldap"
       ]
     },
     "windows-11-9-ad-capstone": {
-      "content_hash": "06bb8e5bc8f0f0a00d79380fb954223dace1e0bfc3ecea4b04357c19c34cf8a2",
+      "content_hash": "2210b7f9eb047723faa688405af6bf279688ddfafaea3daa7259037001456ebb",
       "services": [
         "ldap"
       ]
     },
     "windows-2-1-smb-connection-test": {
-      "content_hash": "084f72d76de51818e8a7876738d11aa7c5c7f7279acea262276bca6b41b19839",
+      "content_hash": "c0b715714be689ce34631eb5b4f16b5a2381d1376efbdc9aa46407606e60af65",
       "services": [
         "target"
       ]
     },
     "windows-2-10-ad-to-smb-scenario": {
-      "content_hash": "0febfc631f82051075dcb1f0e06a097a744578da469e27c3fa96e73bf4fa600f",
+      "content_hash": "e6cf3e888aca86150d40614d03dbccf65bf015da5fb051b53b6a2149ef183639",
       "services": [
         "files",
         "ldap"
       ]
     },
     "windows-2-2-smb-share-listing": {
-      "content_hash": "fe2b00b6decfe129e43b17a71bf3862ab5192e34bfaf664afe089642f45e3e66",
+      "content_hash": "041252adb939e85bcbd909ffc4545d79e378349bee4eb3f65f704c06fd334027",
       "services": [
         "target"
       ]
     },
     "windows-2-3-smb-anonymous-share-access": {
-      "content_hash": "822d4576fd09a714cc87fea59b303b0d6aef63ef400bd98e152f5762c1fdbd3a",
+      "content_hash": "be5583808a1841d18299e2b6e5fd36bf28ac90446e6f98583f51d0f22238e01f",
       "services": [
         "target"
       ]
     },
     "windows-2-4-smb-file-retrieval": {
-      "content_hash": "c8e503dba86331905e721282cacb413a947d4eedd975bb85ddd53036a8a33269",
+      "content_hash": "2607c26888f2b80fff11bd5c609049f8ade5b04977c6e37cdd14875f7016daf9",
       "services": [
         "target"
       ]
     },
     "windows-2-5-smb-null-session-connection": {
-      "content_hash": "58592f52babb931a443aa28a229053d19314c23a38e180d2c4f5b8d763b86e64",
+      "content_hash": "6284daa0fddd58fd64b2665b2ccea35c085a229997a963fcc113aa9744a5baa7",
       "services": [
         "target"
       ]
     },
     "windows-2-6-smb-null-session-share-enumeration": {
-      "content_hash": "d168cd457ec5af5684f48118c6b95a70ef022d879ef94ceaf0dd9a88e966f354",
+      "content_hash": "2663f2de182ce12a2e7f3b66e9ced9a022d0531096e24a992aa139d178fcc990",
       "services": [
         "target"
       ]
     },
     "windows-2-7-smb-user-enumeration-via-null-session": {
-      "content_hash": "0aec913ebe45316b626b2c8d83dab9f269dfbe0b69271c20e6d73f1c4c20cfab",
+      "content_hash": "379906c1a195cb0a4eed6cdb0f72d40e2df31886522a5a7ffd8d4396d39d1678",
       "services": [
         "target"
       ]
     },
     "windows-2-8-smb-comprehensive-null-session-enumeration": {
-      "content_hash": "2ae53437a5f802338cd5d9bad6152a1fff7f94fe459a519cabdecd51fb78e79d",
+      "content_hash": "ef9c60cd751d5395e1aa2f58df79cd467c6fd052514902b071a45efb3450b29e",
       "services": [
         "target"
       ]
     },
     "windows-2-9-ad-fundamentals-basics": {
-      "content_hash": "0eab6ae3539dc4a805fedac66f3180217e454030abf6c0d62da7b1fa6441c2b7",
+      "content_hash": "971813a8cd991a97f6d238b8c0c149bd77f6d881808b2e5329a28a007461b2ea",
       "services": [
         "ldap"
       ]
     },
     "windows-3-1-smb-manual-credential-test": {
-      "content_hash": "8f8548b89dc8acf4bf34519e2805b686e48e2a7b886c71256522c702d220a9a5",
+      "content_hash": "c68cb97359ad8f7366ee0e8ce56f8db0eb3528c67bafb80ef2740d5035616151",
       "services": [
         "target"
       ]
     },
     "windows-3-2-smb-multiple-credential-testing": {
-      "content_hash": "ebf03813b7336467980a93b8373de3590082c2fd0cd45d9aa49be72b83652088",
+      "content_hash": "100764b25e47f3468a0c4af32ed71e2601c19fb97c556df373857c00b3ba2f20",
       "services": [
         "target"
       ]
     },
     "windows-3-3-smb-single-user-brute-force": {
-      "content_hash": "6fc175507d93d75eb65d29b0b1a700b791bac08f829f5ad2d93ea8d71ce49364",
+      "content_hash": "d5e61d59de7049b6c08c093d0ee741600c2d59f86994ac16e52d904f7c259fe6",
       "services": [
         "target"
       ]
     },
     "windows-3-4-smb-username-enumeration-and-brute-force": {
-      "content_hash": "10cab7737fb295f1bb25e3878066d8539b3a76826e5c9d58d90d718dac496b28",
+      "content_hash": "efa50613743ef8a7858bf5e094aadc46a9a05cd99cfa177381f3315a3ffee39d",
       "services": [
         "target"
       ]
     },
     "windows-3-5-smb-full-credential-attack": {
-      "content_hash": "bf9ee804cbd8cf534bfa53fc92ea6bf3f01fce12b97ff40a7e108ca0fad1b5de",
+      "content_hash": "aebf1cf895dd09fc971513e8d4ea835841fd877986e601e4ee4e707b63d8507d",
       "services": [
         "target"
       ]
     },
     "windows-4-1-rdp-service-detection": {
-      "content_hash": "93c95259fe7af5c3668fdaa9b439adb98df3e70f1ebff13bc62529fc196226e2",
+      "content_hash": "86b4cbe4dc3f671d036884cff042fd6020fa1020e2a6329cb67d141ad8bb5e57",
       "services": [
         "target"
       ]
     },
     "windows-4-2-rdp-version-enumeration": {
-      "content_hash": "93bc8128f9e32ef3fe5ea1a4f0cdf27e6a90feb11152c03a29e538f8f6eb8724",
+      "content_hash": "71b56674ce0c85460c2552435ff548bb82d3962506a8280f47834a75782661b0",
       "services": [
         "target"
       ]
     },
     "windows-4-3-rdp-manual-connection-test": {
-      "content_hash": "87093bcf991b332a446a8dd1dd0515d6aef29325b7332fa628018f6e087331b1",
+      "content_hash": "f97e511d9206f6bb37222c6b4c1347306e3f3b769ebe9ad511262b04a86285e5",
       "services": [
         "target"
       ]
     },
     "windows-4-4-rdp-credential-guessing": {
-      "content_hash": "52b1bfdd59ca0ab1cc1ba711d47a5df75b4f4175034718663dab2be72a56245c",
+      "content_hash": "87d3a4da5ae971d08f3a8b2ab53c4ac27562ce06e9f36419115d5c0f30fcfba8",
       "services": [
         "target"
       ]
     },
     "windows-4-5-rdp-brute-force-attack": {
-      "content_hash": "00b8231aa611966552d3bf7d714304ef26350818707c4450e23597cdc8313590",
+      "content_hash": "7a1be6dde0519879e9f3ed2befd445a104f62e48786248f2dd4307daca6942f0",
       "services": [
         "target"
       ]
     },
     "windows-4-6-rdp-session-access-and-flag-retrieval": {
-      "content_hash": "010a8b29cc99d10d19d6d40696cb8a32a59cb823a44063f71c242268f2701657",
+      "content_hash": "6032db5230612cc50639ddcd5b3271228e2072576d976cf8cfa73a59ab8b9dd2",
       "services": [
         "target"
       ]
     },
     "windows-5-1-winrm-service-detection": {
-      "content_hash": "d112b184e5c08132faf31560ea44e1151031859bf251ff4073741ac5cca3ecad",
+      "content_hash": "387f092dc4794504d98dcaff015628c718c99727f95acc94db3fa878af15078c",
       "services": [
         "target"
       ]
     },
     "windows-5-2-winrm-version-and-configuration-enumeration": {
-      "content_hash": "7c3ca94a0624fecd5eedf4ea11237073d8fa54e33db09f4f4bbb18b0dc232cdd",
+      "content_hash": "f9e76ab434998db969e4944d0ab2c1e471e057cc6c0e358fd22095db46d0aade",
       "services": [
         "target"
       ]
     },
     "windows-5-3-winrm-manual-authentication": {
-      "content_hash": "a46631ab2bd9c4ca12d97823e3bf3694e4266469b74ae38278f184c3544bb665",
+      "content_hash": "513cd25eb06b3cd5d37957c6e28903644964ce779eb2f079e52a888db4b55097",
       "services": [
         "target"
       ]
     },
     "windows-5-4-winrm-credential-brute-force": {
-      "content_hash": "38ef0eb005a2e9dbff5101a55359e439c63399531aae25f53ddd665a022d39e1",
+      "content_hash": "1c43280812841c189157de14c92c2b0b6b32ba561b3921d90d37ff73ed03bc16",
       "services": [
         "target"
       ]
     },
     "windows-5-5-winrm-command-execution": {
-      "content_hash": "12b736090fdcb7aca1092ef4eb18846c370445aea8ff8218870e6fb95b0cbb7d",
+      "content_hash": "2aea8da6c78d999c4cf78b4c4eeec7830e3431b784fddf5682c340f101fa1061",
       "services": [
         "target"
       ]
     },
     "windows-5-6-winrm-file-retrieval": {
-      "content_hash": "6eb05e02915211360cec3da12769ecdb70518e540d031ee5f1a8a0e42c84bd7d",
+      "content_hash": "dde3bd0f48658d36251732b1821777e5ead4b34cc3cd778d726d15f87cd5d780",
       "services": [
         "target"
       ]
     },
     "windows-6-1-mssql-service-detection": {
-      "content_hash": "f67b27e30357205e3019ef54528b146c06914dc43f2fecf41824b3237f56a7bd",
+      "content_hash": "f8ea0cae09a6784571c36a48fd299226b6d56f25b4361b98cff63ebf1cae318f",
       "services": [
         "target"
       ]
     },
     "windows-6-2-mssql-version-and-instance-enumeration": {
-      "content_hash": "87f2f7c642319197855c2946f39c9060be916e43c7e74837d9703f8e4a663937",
+      "content_hash": "a12c7bffac55be3fdaf2f6360c5dff4ffb0869a40744df653e8a0db1b5e3c83a",
       "services": [
         "target"
       ]
     },
     "windows-6-3-mssql-manual-authentication": {
-      "content_hash": "d62255233b9caec27fddc76586c347e77294d9be8500bf6110acc71a3fb56e79",
+      "content_hash": "6c3c206dcb625e89d959475e188b045961521d381d1fd25c1afb1de26775f960",
       "services": [
         "target"
       ]
     },
     "windows-6-4-mssql-credential-brute-force": {
-      "content_hash": "cae842ffb2dcaad516e957ea17b05ee392c0813f631fb0b16280daac936d56b8",
+      "content_hash": "6bd33fea4f16685b5195f03c2809df0f77b2cf9acac3f90b6ffca66c4a33be38",
       "services": [
         "target"
       ]
     },
     "windows-6-5-mssql-basic-query-execution": {
-      "content_hash": "03e8ab5113b8c31ecb2df954e25ee79892cc1b28aeeaeef79dc5607425b7fa08",
+      "content_hash": "683ecb87f3d10631eb62f6a16b395d88414ed12fffd906201a873829798ba51b",
       "services": [
         "target"
       ]
     },
     "windows-6-6-mssql-xp-cmdshell-activation": {
-      "content_hash": "f4283fbd43ed6ec524819eb6363a577daaa6f9d3a6613049bbfe7265901c1858",
+      "content_hash": "ee361f469b5290e22a1b9418e9e6d55f7772b86c2f7fb6b2348f047a10cfabf8",
       "services": [
         "target"
       ]
     },
     "windows-6-7-mssql-file-system-access-via-xp-cmdshell": {
-      "content_hash": "1831e0375c1a3d1043e7086a5262393d376403cdb10280eeb5887cbc2313afd6",
+      "content_hash": "55fea85885f1cfb8eb58bc799f2a445c375c78a6a3762607899ad6c14508d07b",
       "services": [
         "target"
       ]
     },
     "windows-7-1-ldap-service-detection": {
-      "content_hash": "33661d49c782bb526d90080748368c9a7614558ce26b088f0c39aa28b1dc751f",
+      "content_hash": "66e21db5f325f9982ecf400706d1b081c8c1b28a70513222587b46930e418995",
       "services": [
         "target"
       ]
     },
     "windows-7-2-ldap-anonymous-bind-test": {
-      "content_hash": "4325bae985837c4763f5d93ad5b67ec00a2bbfd5fea595a969530290cce0ae0b",
+      "content_hash": "ac11a1fb34e0f2f056ece4bb7f1cf016d2bf324d96684edce072d5f428c47e39",
       "services": [
         "target"
       ]
     },
     "windows-7-3-ldap-base-dn-enumeration": {
-      "content_hash": "dc3ccfa113a9c41ef5c40c1f5c57a5e0fca4da2ca5c2ca3aafabb727c8173adb",
+      "content_hash": "e10dc1dc332c882c0f6d5168dfbd5dd46fb7b1661de6132a8f05052f3b5a374d",
       "services": [
         "target"
       ]
     },
     "windows-7-4-ldap-user-enumeration": {
-      "content_hash": "f7a5a30fe4aea2f13a405c3ea53868c2d2c68edb4978141b76507e4841e1199d",
+      "content_hash": "8a512c44990425f20355c8907771ad6e12af081031b11777050400e6ad809854",
       "services": [
         "target"
       ]
     },
     "windows-7-5-ldap-group-enumeration": {
-      "content_hash": "89376641c79fe424d91c507142e65c046a86b9430e80033372d6366adb8adef8",
+      "content_hash": "d29a2d6a93c749ba93160c0228e21bfc90f5423c8bf20c69404610a806e807e4",
       "services": [
         "target"
       ]
     },
     "windows-7-6-ldap-comprehensive-enumeration": {
-      "content_hash": "b0a5e6ce1d9c5592acc06acef972b3ef00997276623a713332bd7e2481633639",
+      "content_hash": "4a59bb7e82070e4c2e69de388235619bbca7e4e6bd9e0230673632d4f20225e8",
       "services": [
         "target"
       ]
     },
     "windows-8-1-single-service-credential-discovery": {
-      "content_hash": "9f24b5cde88ad63045b8f1bbdeb5ffe01bfb6928bbf59472bb8b3c4c74fe3de0",
+      "content_hash": "77b305f5e417ec2c36d9f0f39a95724ac448ff3e5f1e47fdaff592ad08c49db4",
       "services": [
         "target"
       ]
     },
     "windows-8-2-cross-service-credential-reuse": {
-      "content_hash": "0729411361952ce022c140c0b17d5c9e13d6462c7e6e59a723cbc17fd7d2f6df",
+      "content_hash": "a0093d1bca541729b60e4a5994b3eb0abec472914988bdbeb9fe87c41c266a95",
       "services": [
         "target"
       ]
     },
     "windows-8-3-multi-service-credential-reuse": {
-      "content_hash": "aad089692a0c70309334cb280c06841a6d7fd4ede9636d74d4438c278ad86786",
+      "content_hash": "20dbdf261b4883981ae1cf38210c5577b1e9e1570bd1fb97ca2a1e4b973ebc33",
       "services": [
         "target"
       ]
     },
     "windows-8-4-credential-discovery-and-reuse-chain": {
-      "content_hash": "da8213cb2b06ee651e901e57d51608d690eb2e8c9194c8e0d350808665e77bf0",
+      "content_hash": "7240a6efa23cfdeca903269328559e4a30cfbdacee55a2c8607a00828a7278fa",
       "services": [
         "target"
       ]
     },
     "windows-8-5-cme-credential-reuse-automation": {
-      "content_hash": "789dd268f88170eb2c89041686df92fbc7ca41761facb2609c9b81ea3fd69924",
+      "content_hash": "66e22a76b345bfee8ddb7b65fbb7cd40d3f39415897193fc5d5507acab7fe018",
       "services": [
         "target1",
         "target2",
@@ -1763,19 +1763,19 @@
       ]
     },
     "windows-9-1-windows-network-assessment": {
-      "content_hash": "61948a721baae675df218934717629323c8243d9d7cc568616268ea8dd5c9f9f",
+      "content_hash": "bc97ecb68bff500bf4bb18147604f84ff38f0ff5b1d7f6e4e0ac3c133dce2380",
       "services": [
         "target"
       ]
     },
     "windows-9-2-multi-service-exploitation": {
-      "content_hash": "26eb01bca4408b0bef4dcdbe4542906cd02d2f4c7e12b99dd9c0756abaf4162b",
+      "content_hash": "d26e13b502442cd41fff4799b16aef0afd905fa3d7ece2e8ae616f486f67233e",
       "services": [
         "target"
       ]
     },
     "windows-9-3-complete-windows-penetration-test": {
-      "content_hash": "a7267f4dc93846dd833ceb86456bf76367c3c8d2d72a9868b44e051fb01a847d",
+      "content_hash": "41b60ee244bc85e66a115a322a03281df607d8c0fbbf05d4fa0f15c118b6a90e",
       "services": [
         "target"
       ]

@@ -12,6 +12,7 @@ The security posture, controls, and evidence for the current release.
 | [Security events](../SECURITY-EVENTS.md) | The append-only event store |
 | [Auth lifecycle](../AUTH-LIFECYCLE.md) | Sessions, MFA, and re-authentication |
 | [Database integrity](../DATABASE-INTEGRITY.md) | Checksums and the change ledger |
+| [Attack-surface audit](ATTACK-SURFACE-AUDIT.md) | Docker, IDOR, SSO, async, flag races, and the Celebration Wall |
 | [Supply chain](../SUPPLY-CHAIN.md) | Lock, signatures, and scanning |
 | [OWASP Top 10 baseline](../V2-SECURITY-OWASP-TOP-10.md) | The merge and release requirement |
 | [Security scanning](../SECURITY-SCANNING.md) | Trivy, CodeQL, and dependency audits |

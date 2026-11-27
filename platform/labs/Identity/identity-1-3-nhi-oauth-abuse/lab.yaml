@@ -9,6 +9,7 @@ learning_outcomes:
   - Explain why a non-human identity needs its own lifecycle, scope, and rotation
   - Find a service credential exposed in debug logs and name the logging defect
   - Use the token to call an internal API and read client audit evidence
+  - Describe the post-discovery rotation lifecycle
   - Recommend least-privilege scopes, secret redaction, and automatic rotation
 mapped_skills:
   - identity_access
@@ -17,6 +18,33 @@ assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
   - Name the logging and scoping controls that were missing.
+  - "List the post-discovery steps: revoke, replace, rotate automatically, review logs, and reduce scopes."
+learning_concepts:
+  - non-human identity
+  - token lifecycle
+  - rotation
+  - least privilege
+  - credential incident response
+competency_tags:
+  - identity.nhi
+  - identity.token_rotation
+  - incident.response
+  - identity.least_privilege
+defensive_skills:
+  - revoke_on_exposure
+  - issue_a_least_privilege_replacement
+  - rotate_automatically
+  - review_logs_for_use
+  - reduce_scopes
+evidence_required:
+  - leaked_token
+  - rotation_steps
+  - scope_reduction
+report_questions:
+  - What should happen first after a leaked service token is discovered?
+  - Which rotation step reduces future risk the most, and why?
+  - Which scopes would you remove from the worker?
+  - What would you review in the logs to determine whether the token was used?
 mitre_attack:
   - tactic: Credential Access
     technique: T1552.001

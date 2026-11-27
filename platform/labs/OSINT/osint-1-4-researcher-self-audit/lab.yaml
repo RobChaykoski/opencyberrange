@@ -18,7 +18,33 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
-  - Record one exposure, one remediation, and one verification step.
+  - Rate each finding Low, Medium, or High and calculate the exposure score.
+  - Record one exposure, one remediation, the owner, the due date, and the verification date.
+learning_concepts:
+  - exposure scoring
+  - risk rating
+  - remediation tracking
+  - search-result validation
+competency_tags:
+  - osint.self_audit
+  - privacy.exposure_scoring
+  - privacy.risk_rating
+  - remediation.tracking
+defensive_skills:
+  - rate_exposure_by_impact
+  - prioritise_remediation_by_score
+  - assign_owner_and_due_date
+  - verify_remediation
+evidence_required:
+  - findings_with_risk
+  - exposure_score
+  - remediation_plan
+  - verification_dates
+report_questions:
+  - Which exposure is the highest risk, and why?
+  - What exposure score did you calculate, and which signal drove it?
+  - Which search result was a false lead or a duplicate, and how did you rule it out?
+  - Which remediation is still pending verification?
 mitre_attack:
   - tactic: Reconnaissance
     technique: T1593

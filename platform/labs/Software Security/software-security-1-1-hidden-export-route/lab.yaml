@@ -15,6 +15,30 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+  - Record the exposed route, the client-side token, and the server-side check that should replace it.
+learning_concepts:
+  - client-side trust boundary
+  - source review
+  - route retirement
+competency_tags:
+  - web.client_side_security
+  - web.source_review
+  - web.access_control
+  - secure_design.route_retirement
+defensive_skills:
+  - client_side_secrecy
+  - server_side_authorization
+  - route_retirement
+  - regression_testing
+evidence_required:
+  - source_excerpt
+  - request_and_response
+  - interpretation
+report_questions:
+  - Which shipped file exposed the route and token?
+  - Why is a client-side token not access control?
+  - Which server-side check should replace it?
+  - How would you prove the retired route stays inaccessible?
 mitre_attack:
   - tactic: Initial Access
     technique: T1190
@@ -46,7 +70,7 @@ scenario: |
   of the exercise.
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Remove dangerous execution paths, validate input at the trust boundary, and add a regression test."
+defensive_takeaways: "Client-side code is public. Never put secrets, tokens, privileged routes, or administrative logic in browser-delivered code. Enforce authorization on the server, remove retired routes completely, and add an automated test that proves the endpoint stays inaccessible."
 difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
 difficulty_evidence_source: "reviewer_walkthrough"
 difficulty_evidence_sample: 1

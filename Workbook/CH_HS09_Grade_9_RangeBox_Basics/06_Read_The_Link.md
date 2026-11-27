@@ -124,6 +124,22 @@ Use this checklist before you click an unexpected link:
 6. **Report it.** Send the message to your instructor or IT contact without
    forwarding the live link.
 
+## Concept Check
+
+You receive a message that says your library account will be closed unless you
+sign in through the link.
+
+??? question "What should you do?"
+    A. Click the link to check whether it is real.  
+    B. Reply asking whether the email is real.  
+    C. Open a new browser tab and go directly to the organisation's known website.  
+    D. Forward the message to everyone.
+
+    **Correct answer: C.** Do not use the contact path supplied by the message.
+    Open the organisation's known site yourself, or use a phone number you
+    already trust. Clicking tests the attacker's link; replying confirms your
+    address; forwarding spreads the lure.
+
 ## Analysis Questions
 
 **1. Which part of a URL decides where the browser goes?**

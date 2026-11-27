@@ -16,6 +16,32 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "authentication"
+  - "session management"
+  - "identity assurance"
+  - "from directory to share - reuse a service credential"
+  - "enumerate a directory for service-account descriptions"
+competency_tags:
+  - "identity.ad_to_smb_scenario"
+  - "identity.smb_scenario"
+  - "network.systems"
+  - "identity.fundamentals"
+defensive_skills:
+  - "managed_service_accounts"
+  - "unique_credentials"
+  - "least_privilege_reduce_the_blast_radius_of_a_directory_leak"
+evidence_required:
+  - "flag"
+  - "request_and_response"
+  - "configuration_review"
+  - "interpretation"
+report_questions:
+  - "Which identity or session control failed?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Credential Access
     technique: T1078

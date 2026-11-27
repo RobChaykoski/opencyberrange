@@ -94,6 +94,34 @@ This is a **non-human identity** incident. The missing controls are:
 - short lifetimes and automatic rotation;
 - alerting on unexpected token use.
 
+## What Should Happen After Discovery?
+
+Finding the token is the start of an incident, not the end. Use this lifecycle:
+
+| Step | Action | Why |
+|---|---|---|
+| 1 | **Revoke the token** | Stops the current credential from working, including any copy an attacker holds |
+| 2 | **Issue a replacement** | Restores the worker with a new credential and only the scopes it needs |
+| 3 | **Rotate automatically** | Removes the stale secret and prevents the same long-lived token from recurring |
+| 4 | **Review logs for use** | Shows whether the token was used, from where, and what was accessed |
+| 5 | **Reduce scopes** | Limits the blast radius if the next credential leaks |
+
+Revocation contains the incident. Log review establishes scope. Replacement and
+rotation recover the service. Scope reduction prevents a repeat. Do not skip
+straight to “change the password” and leave the old token valid.
+
+## Concept Check
+
+??? question "What should happen first after a leaked service token is discovered?"
+    A. Wait for it to expire.  
+    B. Revoke the token.  
+    C. Reduce the scopes only.  
+    D. Delete the logs.
+
+    **Correct answer: B.** Revoke first to stop the credential working. Then
+    review the logs, issue a least-privilege replacement, rotate automatically,
+    and reduce scopes. Deleting the logs destroys evidence.
+
 ## Defensive Controls
 
 - **Redact at the logging layer.** Strip `Authorization`, cookies, and

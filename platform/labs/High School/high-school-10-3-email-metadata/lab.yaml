@@ -18,7 +18,35 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
-  - State one header that supports the verdict.
+  - Name one header that influenced the verdict, and explain why it did.
+learning_concepts:
+  - email header analysis
+  - sender authentication
+  - routing evidence
+  - evidence-based verdicts
+competency_tags:
+  - phishing.email_header_analysis
+  - email.authentication_results
+  - email.routing_analysis
+  - evidence.reasoning
+defensive_skills:
+  - preserve_raw_message
+  - compare_from_and_return_path
+  - read_received_chain
+  - explain_authentication_results
+evidence_required:
+  - located_from_header
+  - analyzed_return_path
+  - interpreted_spf
+  - interpreted_dkim
+  - interpreted_dmarc
+  - followed_received_chain
+  - generated_verdict
+report_questions:
+  - Which header influenced your decision, and why?
+  - What did SPF, DKIM, or DMARC report, and what does that result mean?
+  - Which Received hop was the earliest, and how did you know?
+  - What would you preserve before deleting or forwarding the message?
 mitre_attack:
   - tactic: Initial Access
     technique: T1566

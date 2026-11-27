@@ -20,6 +20,35 @@ assessment_criteria:
   - Provide the supporting report or evidence artifact (hash, command transcript, reconstructed output, or timeline).
   - Pass every automated test step in the lab manifest.
 analyst_finding_required: true
+learning_concepts:
+  - "digital forensics"
+  - "evidence handling"
+  - "timeline analysis"
+  - "topology forensics - guided path reconstruction"
+  - "three-node topology from the node status endpoint"
+competency_tags:
+  - "forensics.topology_forensics_guided"
+  - "forensics.forensics_guided"
+  - "incident.forensics"
+  - "network.systems"
+  - "forensics.fundamentals"
+defensive_skills:
+  - "a_path_record_should_name_each_hop"
+  - "that_record_lets_another_analyst_reproduce_the_finding_without_guessing"
+  - "preserve_original_evidence"
+  - "record_timeline"
+  - "verify_hashes"
+evidence_required:
+  - "flag"
+  - "artifact"
+  - "timeline"
+  - "interpretation"
+report_questions:
+  - "Which artifact supports your timeline?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Discovery
     technique: T1016

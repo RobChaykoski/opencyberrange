@@ -17,6 +17,35 @@ assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
   - Complete the triage table in the workbook.
+learning_concepts:
+  - "open-source intelligence"
+  - "identity correlation"
+  - "exposure mapping"
+  - "noise in the nest"
+  - "canary token in a public document without"
+competency_tags:
+  - "osint.noise_in_the_nest"
+  - "osint.the_nest"
+  - "osint"
+  - "incident.forensics"
+  - "osint.fundamentals"
+defensive_skills:
+  - "canary_tokens_are_tripwires"
+  - "not_attribution"
+  - "they_reveal_access"
+  - "not_intent_or_identity"
+  - "triage_automated_noise_before_escalating_a_hit"
+evidence_required:
+  - "flag"
+  - "source_evidence"
+  - "exposure_map"
+  - "interpretation"
+report_questions:
+  - "Which public source exposed the information?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Reconnaissance
     technique: T1592

@@ -17,7 +17,30 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
-  - State which evidence made the message suspicious.
+  - "Record two independent pieces of evidence: the lookalike URL that uses the userinfo trick, and the file extension that did not match the real file type."
+learning_concepts:
+  - phishing analysis
+  - URL analysis
+  - file type identification
+  - evidence-based decisions
+competency_tags:
+  - phishing.evidence_collection
+  - url.analysis
+  - forensics.file_type_identification
+  - cyber_safety.decision_making
+defensive_skills:
+  - collect_two_independent_clues
+  - verify_via_known_site
+  - check_magic_bytes_before_opening
+  - report_without_forwarding
+evidence_required:
+  - suspicious_evidence_1
+  - suspicious_evidence_2
+  - decision_note
+report_questions:
+  - "Suspicious evidence #1: which URL feature made the message suspicious?"
+  - "Suspicious evidence #2: which file property did not match its name?"
+  - What did you recommend to the volunteer, and why?
 mitre_attack:
   - tactic: Initial Access
     technique: T1566

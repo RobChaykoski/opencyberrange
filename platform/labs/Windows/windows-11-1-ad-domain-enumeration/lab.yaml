@@ -15,6 +15,33 @@ mapped_skills:
 assessment_criteria:
 - Submit the correct flag.
 - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "service enumeration"
+  - "protocol identification"
+  - "attack surface mapping"
+  - "active directory: domain enumeration and attack-path mapping"
+  - "bind to a directory and enumerate users,"
+competency_tags:
+  - "enumeration.ad_domain_enumeration"
+  - "enumeration.domain_enumeration"
+  - "identity.access"
+  - "enumeration.fundamentals"
+defensive_skills:
+  - "tier_administration"
+  - "managed_service_accounts"
+  - "least_privilege_acls"
+  - "directory_change_auditing_remove_this_class_of_path"
+evidence_required:
+  - "flag"
+  - "command_output"
+  - "service_inventory"
+  - "interpretation"
+report_questions:
+  - "Which host, port, or service is involved?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
 - tactic: Discovery
   technique: T1087
@@ -47,7 +74,7 @@ test:
     expect: OCR{4d_d0m41n_3num}
 visibility: public
 week: 11
-defensive_takeaways: Tier administration, managed service accounts, least-privilege ACLs, and directory-change auditing remove this class of path.
+defensive_takeaways: "Tier administration, managed service accounts, least-privilege ACLs, and directory-change auditing remove this class of path. In this lab, apply that to active directory: domain enumeration and attack-path mapping and record the evidence before recommending the fix."
 troubleshooting: If the bind fails, use the full DN and confirm the service is healthy. If the search returns nothing, confirm the base DN and the uid filter.
 difficulty_evidence: Pathway implementation with a static directory walkthrough; live learner walkthrough and harness evidence pending.
 difficulty_evidence_source: validator_and_static_walkthrough

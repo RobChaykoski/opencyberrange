@@ -15,6 +15,33 @@ mapped_skills:
 assessment_criteria:
 - Submit the correct flag.
 - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "local privilege escalation"
+  - "misconfiguration analysis"
+  - "least privilege"
+  - "active directory: delegation abuse"
+  - "distinguish unconstrained, constrained, and resource-based delegation"
+competency_tags:
+  - "privesc.delegation_abuse"
+  - "identity.access"
+  - "privesc.fundamentals"
+defensive_skills:
+  - "tier_administration"
+  - "managed_service_accounts"
+  - "least_privilege_acls"
+  - "directory_change_auditing_remove_this_class_of_path"
+evidence_required:
+  - "flag"
+  - "command_output"
+  - "privilege_evidence"
+  - "interpretation"
+  - "report"
+report_questions:
+  - "Which permission or configuration allowed the escalation?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
 - tactic: Credential Access
   technique: T1558
@@ -47,7 +74,7 @@ test:
     expect: OCR{d3l3g4t10n_unb0und3d}
 visibility: public
 week: 11
-defensive_takeaways: Tier administration, managed service accounts, least-privilege ACLs, and directory-change auditing remove this class of path.
+defensive_takeaways: "Tier administration, managed service accounts, least-privilege ACLs, and directory-change auditing remove this class of path. In this lab, apply that to active directory: delegation abuse and record the evidence before recommending the fix."
 troubleshooting: If the bind fails, use the full DN and confirm the service is healthy. If the search returns nothing, confirm the base DN and the uid filter.
 difficulty_evidence: Pathway implementation with a static directory walkthrough; live learner walkthrough and harness evidence pending.
 difficulty_evidence_source: validator_and_static_walkthrough

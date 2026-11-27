@@ -16,6 +16,31 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+  - Explain why the safe action is to navigate to the known site instead of clicking or replying.
+learning_concepts:
+  - phishing identification
+  - URL analysis
+  - social engineering awareness
+  - safe verification
+competency_tags:
+  - phishing.identification
+  - url.analysis
+  - social_engineering.awareness
+  - cyber_safety.verification
+defensive_skills:
+  - inspect_url_before_click
+  - verify_via_known_site
+  - report_without_forwarding
+  - avoid_reply_to_sender
+evidence_required:
+  - url_analysis
+  - concept_check_answer
+  - safe_action_explanation
+report_questions:
+  - Which part of the URL is the real host?
+  - What did the text before the @ try to make you believe?
+  - Why is opening the organisation's known site safer than clicking the link?
+  - Why should you report the message without forwarding the live link?
 mitre_attack:
   - tactic: Initial Access
     technique: T1566

@@ -21,6 +21,36 @@ assessment_criteria:
   - Pass every automated test step in the lab manifest.
   - Record the leaked identity, the trust gap, the decision chain, and the control change in the capstone evidence table.
   - Explain why the stage 1 marker is evidence rather than the graded flag.
+learning_concepts:
+  - "AI security"
+  - "prompt and tool trust"
+  - "agent boundaries"
+  - "shadow deputy: multi-agent privilege escalation capstone"
+  - "enumerate a public agent api and recover"
+competency_tags:
+  - "ai.multi_agent_privilege_escalation"
+  - "ai.privilege_escalation"
+  - "ai.security"
+  - "identity.access"
+  - "incident.forensics"
+defensive_skills:
+  - "give_every_agent_its_own_workload_identity"
+  - "verify_it_with_mtls_or_a_proof_of_possession_token"
+  - "issue_narrowly_scoped"
+  - "audience_bound_oauth_tokens_per_task"
+  - "not_one_broad_internal_credential"
+evidence_required:
+  - "flag"
+  - "prompt_or_trace"
+  - "control_recommendation"
+  - "interpretation"
+  - "report"
+report_questions:
+  - "Which instruction or trust boundary failed?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Credential Access
     technique: T1552.001
@@ -42,6 +72,8 @@ review_status: "automated static proof; live walkthrough pending"
 description: "Trailline's public vendor intake agent forwards questionnaires to a privileged audit agent without verifying the sender. Students recover a leaked machine token, exploit the agent-to-agent trust gap, and then design the controls that would have stopped the export."
 visibility: public
 flag: "OCR{c0nfus3d_d3puty_ag3nt_h1jack_2026}"
+allowed_workbook_flags:
+  - "OCR{n0n_hum4n_1d3nt1ty_l34k_01}"
 
 tools:
   - browser
@@ -142,6 +174,7 @@ test:
     - name: "Debug route leaks the machine identity marker"
       command: "curl -s http://{target.intake}:8080/api/v1/debug/agent-config"
       expect: "OCR{n0n_hum4n_1d3nt1ty_l34k_01}"
+      allow_flag_mismatch: true
       timeout: 20
 
     - name: "Inventory shows an ownerless identity with no workload identity"

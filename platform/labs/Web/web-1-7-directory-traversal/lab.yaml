@@ -15,6 +15,31 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "web application security"
+  - "HTTP request and response"
+  - "attack surface mapping"
+  - "pinnacle cloud - directory traversal"
+  - "file download feature vulnerable to path traversal"
+competency_tags:
+  - "web.directory_traversal"
+  - "web.api"
+  - "web.fundamentals"
+defensive_skills:
+  - "encode_input_at_the_server"
+  - "enforce_authorization_on_every_object"
+  - "monitor_unusual_request_patterns"
+evidence_required:
+  - "flag"
+  - "request_and_response"
+  - "evidence"
+  - "interpretation"
+report_questions:
+  - "Which request or response shows the weakness?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Initial Access
     technique: T1190
@@ -89,7 +114,7 @@ topology:
       access: "direct"
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Validate and encode input at the server, enforce authorization on every object, and monitor unusual request patterns."
+defensive_takeaways: "Validate and encode input at the server, enforce authorization on every object, and monitor unusual request patterns. In this lab, apply that to pinnacle cloud - directory traversal and record the evidence before recommending the fix."
 test:
   steps:
     - name: "Web application responds"

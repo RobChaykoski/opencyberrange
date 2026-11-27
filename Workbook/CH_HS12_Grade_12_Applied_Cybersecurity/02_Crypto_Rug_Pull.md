@@ -90,6 +90,22 @@ Who profited:
 Then add one line: “If I had already lost money, the next safe step is ___.”
 Do not contact a recovery agent who asks for an upfront fee.
 
+## Strongest Evidence
+
+Complete the sentence with the evidence you would defend:
+
+> The strongest evidence was ____________________ because ____________________.
+
+For example:
+
+> The ledger showed liquidity moving from the community wallet into the
+> identified drain wallet before being forwarded externally. That is stronger
+> than the token page's claims because it records what actually happened to the
+> funds.
+
+A red flag is a reason to investigate. The ledger is evidence of the transfer.
+State the narrow conclusion the evidence supports, not the whole story.
+
 ## What Just Happened?
 
 - The offer used guaranteed returns, urgency, an anonymous team, and a

@@ -18,6 +18,32 @@ assessment_criteria:
   - Provide the supporting report or evidence artifact (hash, command transcript, reconstructed output, or timeline).
   - Pass every automated test step in the lab manifest.
 analyst_finding_required: true
+learning_concepts:
+  - "digital forensics"
+  - "evidence handling"
+  - "timeline analysis"
+  - "windows memory analysis with volatility"
+  - "connect to an isolated analyst workstation over"
+competency_tags:
+  - "forensics.windows_memory_volatility"
+  - "forensics.memory_volatility"
+  - "incident.forensics"
+  - "forensics.fundamentals"
+defensive_skills:
+  - "preserve_evidence"
+  - "contain_the_affected_host"
+  - "add_the_observed_indicators_to_detection"
+evidence_required:
+  - "flag"
+  - "artifact"
+  - "timeline"
+  - "interpretation"
+report_questions:
+  - "Which artifact supports your timeline?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Credential Access
     technique: T1003
@@ -53,7 +79,7 @@ scenario: |
   fictional training system; the accounts are not real production credentials.
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Preserve evidence, contain the affected host, and add the observed indicators to detection."
+defensive_takeaways: "Preserve evidence, contain the affected host, and add the observed indicators to detection. In this lab, apply that to windows memory analysis with volatility and record the evidence before recommending the fix."
 difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'intermediate' retained as provisional."
 difficulty_evidence_source: "reviewer_walkthrough"
 difficulty_evidence_sample: 1

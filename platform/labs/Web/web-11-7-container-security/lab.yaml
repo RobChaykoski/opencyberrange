@@ -15,6 +15,32 @@ mapped_skills:
 assessment_criteria:
 - Submit the correct flag.
 - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "web application security"
+  - "HTTP request and response"
+  - "attack surface mapping"
+  - "devsecops: container security"
+  - "container for root and privilege issues"
+competency_tags:
+  - "web.container_security"
+  - "web.api"
+  - "web.fundamentals"
+defensive_skills:
+  - "server_side_authorization"
+  - "strict_token_validation"
+  - "least_privilege_runtime"
+  - "artifact_verification_remove_this_class_of_weakness"
+evidence_required:
+  - "flag"
+  - "request_and_response"
+  - "evidence"
+  - "interpretation"
+report_questions:
+  - "Which request or response shows the weakness?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
 - tactic: Execution
   technique: T1610
@@ -45,7 +71,7 @@ test:
     expect: OCR{c0nt41n3r_r0ot}
 visibility: public
 week: 11
-defensive_takeaways: Server-side authorization, strict token validation, least-privilege runtime, and artifact verification remove this class of weakness.
+defensive_takeaways: "Server-side authorization, strict token validation, least-privilege runtime, and artifact verification remove this class of weakness. In this lab, apply that to devsecops: container security and record the evidence before recommending the fix."
 troubleshooting: If the service is slow, allow the first build to finish. Confirm the container is on the lab network before curling it.
 difficulty_evidence: Pathway implementation with a static endpoint walkthrough; live learner walkthrough and harness evidence pending.
 difficulty_evidence_source: validator_and_static_walkthrough

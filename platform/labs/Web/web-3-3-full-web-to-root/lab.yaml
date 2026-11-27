@@ -16,6 +16,33 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "web application security"
+  - "HTTP request and response"
+  - "attack surface mapping"
+  - "medcore health systems: full web-to-root compromise"
+  - "enumerate the web application and discover hidden"
+competency_tags:
+  - "web.full_web_to_root"
+  - "web.to_root"
+  - "web.api"
+  - "web.fundamentals"
+defensive_skills:
+  - "encode_input_at_the_server"
+  - "enforce_authorization_on_every_object"
+  - "monitor_unusual_request_patterns"
+evidence_required:
+  - "flag"
+  - "request_and_response"
+  - "evidence"
+  - "interpretation"
+  - "report"
+report_questions:
+  - "Which request or response shows the weakness?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Privilege Escalation
     technique: T1068
@@ -57,15 +84,15 @@ scenario: |
 
 credentials:
   - username: "admin"
-    password: "M3dC0r3_Adm1n#"
+    password: "M3dC0r3_Adm1n#"  # security-delta: allow credential-like assignment - lab fixture
     role: "portal"
     description: "Portal admin credentials (extracted via SQL injection)"
   - username: "mdc_admin"
-    password: "Mdc_DB_Pr0d#2025"
+    password: "Mdc_DB_Pr0d#2025"  # security-delta: allow credential-like assignment - lab fixture
     role: "db"
     description: "MySQL admin credentials (discovered on dashboard)"
   - username: "svcproc"
-    password: "Pr0c_SSH_2025#"
+    password: "Pr0c_SSH_2025#"  # security-delta: allow credential-like assignment - lab fixture
     role: "ssh"
     description: "SSH credentials for internal server (found in database)"
 
@@ -152,7 +179,7 @@ topology:
       access: "internal"
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Validate and encode input at the server, enforce authorization on every object, and monitor unusual request patterns."
+defensive_takeaways: "Validate and encode input at the server, enforce authorization on every object, and monitor unusual request patterns. In this lab, apply that to medcore health systems: full web-to-root compromise and record the evidence before recommending the fix."
 test:
   steps:
     - name: "Web application responds on port 80"

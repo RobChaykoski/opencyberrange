@@ -18,6 +18,35 @@ assessment_criteria:
   - Pass every automated test step in the lab manifest.
   - Submit the Karate feature file and the run summary.
   - Explain in one sentence what the status assertion proves.
+learning_concepts:
+  - "web application security"
+  - "HTTP request and response"
+  - "attack surface mapping"
+  - "karate 101: your first api test"
+  - "what karate is and how a feature"
+competency_tags:
+  - "web.security_first_karate_feature"
+  - "web.karate_feature"
+  - "web.api"
+  - "network.systems"
+  - "web.fundamentals"
+defensive_skills:
+  - "a_smoke_test_is_a_control"
+  - "not_a_formality"
+  - "assert_the_status"
+  - "the_shape"
+  - "keep_the_test_small"
+evidence_required:
+  - "flag"
+  - "request_and_response"
+  - "evidence"
+  - "interpretation"
+report_questions:
+  - "Which request or response shows the weakness?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Reconnaissance
     technique: T1595.002

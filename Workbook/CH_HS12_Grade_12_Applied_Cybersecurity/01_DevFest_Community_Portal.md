@@ -90,6 +90,41 @@ metadata. A public file can carry:
 The fix is not "never share slides." The fix is to **review and strip metadata**
 before publishing a file.
 
+## Optional Advanced Path
+
+If your instructor provides the extra artifacts, compare the same event across
+three formats:
+
+| Artifact | Metadata to inspect | What it can reveal |
+|---|---|---|
+| PNG image | Description, author, software | Speaker notes, editing tool, internal context |
+| PDF handout | Author, Title, Producer, XMP | Author identity, software, edit history |
+| Office document | Author, Last modified by, Company, Comments, tracked changes | Identity, internal paths, draft notes, deleted text |
+
+Then answer:
+
+> Which artifact leaks the most context, and why?
+
+There is no single answer. A PDF may expose an author and producer; a document
+may expose tracked changes or comments; an image may carry a description that
+was never meant to be public. The point is to review the artifact, not only the
+rendered page.
+
+The core lab uses the PNG. The extra artifacts are optional and must be
+fictional, with no real personal data.
+
+## Concept Check
+
+??? question "Which item created the greatest exposure?"
+    A. Public employee profiles.  
+    B. A `robots.txt` entry.  
+    C. An HTML comment.  
+    D. All three combined.
+
+    **Correct answer: D.** Each item is a small disclosure. Combined, they map
+    people, paths, and internal notes. Classification is about the aggregate,
+    not only the single field.
+
 ## Analysis Questions
 
 **1. What is the difference between the visible slide and its metadata?**

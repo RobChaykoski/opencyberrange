@@ -166,8 +166,7 @@ If you prefer to analyze the file on your local machine, SCP it separately.
     ```bash
     tshark -r captures/email-exfiltration.pcap \
       -Y 'smtp.req.command == "RCPT"' \
-      -T fields -e frame.number -e ip.src -e smtp.req.parameter \
-      | grep -v medicare.local
+      -T fields -e frame.number -e ip.src -e smtp.req.parameter | grep -v medicare.local
     ```
 
     The `grep -v medicare.local` filter reveals the one external recipient.

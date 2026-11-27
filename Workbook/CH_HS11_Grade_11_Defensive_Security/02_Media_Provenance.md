@@ -100,6 +100,19 @@ What I would do next:
 A strong answer names the source and corroboration, and states that the
 evidence does not prove every detail of the event.
 
+## Supported and Unsupported Statements
+
+Write one statement the evidence supports and one it does not.
+
+| Statement | Supported? | Evidence |
+|---|---|---|
+| The river-cleanup image has independent corroboration. | Yes | Known source, hash, venue log, and a second photographer. |
+| The image is definitely authentic and unaltered. | No | Corroboration supports the event, not every pixel. Metadata can be stripped or edited. |
+| The anonymous lantern-festival image is safe to publish. | No | No original source, no independent corroboration, and synthetic-media metadata. |
+
+The difference is scope. “The event is corroborated” is narrower than “the image
+is authentic.” State the narrow claim the evidence supports.
+
 ## What Just Happened?
 
 - The synthetic item had a polished image but no independent provenance.

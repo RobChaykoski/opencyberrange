@@ -18,6 +18,34 @@ assessment_criteria:
   - Pass every automated test step in the lab manifest.
   - Submit the feature file with at least one Scenario Outline and one negative assertion.
   - Explain the difference between a status assertion and a body assertion.
+learning_concepts:
+  - "web application security"
+  - "HTTP request and response"
+  - "attack surface mapping"
+  - "assertions and data tables"
+  - "match for equality, contains, type, and array"
+competency_tags:
+  - "web.security_assertions_and_examples"
+  - "web.and_examples"
+  - "web.api"
+  - "network.systems"
+  - "web.fundamentals"
+defensive_skills:
+  - "assertions_are_executable_requirements"
+  - "a_negative_example_proves_the_boundary"
+  - "keep_the_table_small_enough_to_review"
+  - "make_each_row_explain_a_real_input_class"
+evidence_required:
+  - "flag"
+  - "request_and_response"
+  - "evidence"
+  - "interpretation"
+report_questions:
+  - "Which request or response shows the weakness?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Reconnaissance
     technique: T1595

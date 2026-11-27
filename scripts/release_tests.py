@@ -17,6 +17,7 @@ import argparse
 import json
 import os
 import subprocess
+import sys
 from pathlib import Path
 
 import yaml
@@ -48,7 +49,12 @@ def run_test(test: dict, live: bool) -> dict:
             "status": "skip",
             "detail": "missing env: " + ", ".join(missing),
         }
-    command = test.get("command") or []
+    command = list(test.get("command") or [])
+    # Run the interpreter that launched this script. A venv's python.exe can
+    # be a symlink, and Windows then searches the target's directory for a
+    # bare "python", which silently selects a different interpreter.
+    if command and command[0] == "python":
+        command[0] = sys.executable
     cwd = ROOT / (test.get("cwd") or ".")
     try:
         result = subprocess.run(

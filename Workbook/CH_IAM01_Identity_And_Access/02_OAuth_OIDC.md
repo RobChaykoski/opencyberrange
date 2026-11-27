@@ -127,6 +127,37 @@ The flow succeeded because:
 - the code was not bound tightly to the client and callback;
 - the access token was accepted without a client-session check.
 
+## ID Token Validation
+
+OpenID Connect adds an **ID token** to the token response. It is a signed JWT
+with claims about the authentication event. Do not treat it as a profile
+decoration; validate it before you trust any claim.
+
+| Claim | Meaning | What to check |
+|---|---|---|
+| `iss` | Issuer | Exact match to the expected provider, not a lookalike |
+| `aud` | Audience | Must include this client's `client_id` |
+| `exp` | Expiration | Reject an expired token; allow only a small clock skew |
+| `iat` | Issued at | Sanity-check it against the current time |
+| `nonce` | Request binding | Must match the value the client sent in the authorization request |
+| `sub` | Subject | Stable user identifier; do not treat it as an email or role |
+
+A token can be validly signed and still be wrong for this client. Signature
+verification is necessary but not sufficient. Check `iss`, `aud`, `exp`, and
+`nonce` on every login.
+
+## Concept Check
+
+??? question "Which claim binds the ID token to this client?"
+    A. `iss`.  
+    B. `aud`.  
+    C. `exp`.  
+    D. `sub`.
+
+    **Correct answer: B.** `aud` is the audience. It must include this client's
+    `client_id`. `iss` identifies the provider, `exp` limits the lifetime, and
+    `sub` identifies the user.
+
 ## The Fixes
 
 | Problem | Fix |
@@ -167,9 +198,12 @@ pattern?**
 
 **5. Why is an access token described as a bearer credential?**
 
-**6. What should the client check before accepting an identity token?**
+**6. Which ID token claims must the client validate, and what does each one
+bind?**
 
-**7. Where should a browser-based client store tokens, and where should it not?**
+**7. Why is `nonce` needed when `state` already exists?**
+
+**8. Where should a browser-based client store tokens, and where should it not?**
 
 ## Accessibility
 

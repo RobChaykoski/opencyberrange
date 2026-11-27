@@ -6,10 +6,11 @@ prerequisites:
   - identity-1-2-oauth-oidc-sso
 # By completion students will be able to:
 learning_outcomes:
-  - Review accounts for status, last login, role, and token scope
+  - Review accounts for status, last login, role, department, and token scope
   - Identify a leaver account that was never disabled
+  - Identify a mover account whose old department access persisted
   - Test an API token and recognize a least-privilege failure
-  - Write the offboarding and access-review fixes
+  - Write the offboarding, mover, and access-review fixes
 mapped_skills:
   - identity_access
   - network_systems
@@ -17,6 +18,33 @@ assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
   - Name the account that should have been disabled and the token to revoke.
+  - Name the mover account and the stale scope that should have been removed.
+learning_concepts:
+  - identity lifecycle
+  - joiner mover leaver
+  - access review
+  - least privilege
+competency_tags:
+  - identity.lifecycle
+  - identity.access_review
+  - identity.least_privilege
+  - identity.mover
+defensive_skills:
+  - disable_on_last_day
+  - revoke_tokens_and_sessions
+  - remove_old_access_on_a_move
+  - review_shared_resources
+  - record_the_review
+evidence_required:
+  - leaver_account
+  - mover_account
+  - stale_scope
+  - offboarding_plan
+report_questions:
+  - Which account is the leaver, and what evidence supports that?
+  - Which account is the mover, and which scope should have been removed?
+  - Why is a department or role change not enough to remove old access?
+  - What should the mover checklist include?
 mitre_attack:
   - tactic: Initial Access
     technique: T1078
@@ -49,7 +77,7 @@ scenario: |
   tokens from a real system.
 
 troubleshooting: "If the reports endpoint returns 401, check that you copied the full token. If it returns 403, the token has read-only scope; the export endpoint requires reports:admin. Use the form on the access-review page or the token query parameter for a browser-only path."
-defensive_takeaways: "Disable accounts on the last day, revoke tokens and sessions, transfer files and ownership, remove shared-drive access, and record the review. Run access reviews on a schedule, give service accounts named owners and minimal scopes, and rotate credentials when someone leaves."
+defensive_takeaways: "Disable accounts on the last day, revoke tokens and sessions, transfer files and ownership, remove shared-drive access, and record the review. On a move, remove the old department's access, grant only the new access, and review shared resources. Run access reviews on a schedule, give service accounts named owners and minimal scopes, and rotate credentials when someone leaves."
 difficulty_evidence: "Static student-tester walkthrough of the lab definition, directory, and workbook; live lab run not recorded; declared difficulty 'beginner' retained as provisional because the task is evidence reading plus one token test."
 difficulty_evidence_source: "reviewer_walkthrough"
 difficulty_evidence_sample: 1
@@ -105,6 +133,11 @@ test:
     - name: "Directory is available"
       command: "curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/directory"
       expect: "200"
+      timeout: 20
+
+    - name: "Directory shows the mover's stale finance scope"
+      command: "curl -s http://{target.portal}:8080/directory | grep -c 'programs:read, finance:read'"
+      expect: "1"
       timeout: 20
 
     - name: "Reports endpoint rejects an anonymous request"

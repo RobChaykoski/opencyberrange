@@ -6,8 +6,8 @@ prerequisites:
   - high-school-10-1-rangebox-network-basics
 # By completion students will be able to:
 learning_outcomes:
-  - Read a small web access log
-  - Identify who, what, when, where, and result
+  - "Apply a simple SOC workflow: collect, analyze, interpret, and document"
+  - Read a small web access log and identify who, what, when, where, and result
   - Separate observation from interpretation
   - Explain why one failed event does not prove an attack
   - Recover the training token and record confidence
@@ -17,6 +17,32 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+  - Document the collect, analyze, interpret, and document workflow with one observation, one interpretation, and one alternative explanation.
+learning_concepts:
+  - security operations
+  - log analysis
+  - evidence documentation
+  - incident triage
+competency_tags:
+  - soc.log_analysis
+  - soc.evidence_collection
+  - soc.interpretation
+  - soc.documentation
+defensive_skills:
+  - establish_a_baseline
+  - separate_observation_from_interpretation
+  - record_confidence
+  - escalate_with_context
+evidence_required:
+  - log_inventory
+  - suspicious_events
+  - interpretation
+  - incident_note
+report_questions:
+  - Which source made the repeated failed requests?
+  - What pattern did you see, and what is one benign explanation?
+  - Which event was the unusual success, and why does it matter?
+  - What would you record before escalating to an analyst?
 mitre_attack:
   - tactic: Discovery
     technique: T1046

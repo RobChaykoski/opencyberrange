@@ -16,6 +16,33 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+learning_concepts:
+  - "local privilege escalation"
+  - "misconfiguration analysis"
+  - "least privilege"
+  - "ssh privilege escalation"
+  - "sudo privileges and configuration"
+competency_tags:
+  - "privesc.ssh_privilege_escalation"
+  - "privesc.privilege_escalation"
+  - "network.systems"
+  - "identity.access"
+  - "privesc.fundamentals"
+defensive_skills:
+  - "disable_unused_services"
+  - "enforce_key_based_ssh_with_least_privilege"
+  - "alert_on_unexpected_authentication_or_command_execution"
+evidence_required:
+  - "flag"
+  - "command_output"
+  - "privilege_evidence"
+  - "interpretation"
+report_questions:
+  - "Which permission or configuration allowed the escalation?"
+  - "What does the evidence not prove?"
+  - "Which control would have prevented or detected the issue?"
+  - "What would you record before escalating?"
+
 mitre_attack:
   - tactic: Privilege Escalation
     technique: T1548
@@ -648,6 +675,7 @@ hints:
 
       # Read SSH key
       $ sudo cat /root/.ssh/id_rsa
+      # security-delta: allow private key block - lab fixture
       -----BEGIN RSA PRIVATE KEY-----
       [SSH private key]
       -----END RSA PRIVATE KEY-----
@@ -889,6 +917,7 @@ hints:
       sysadmin:$6$rounds=4096$sysalt$hashhashhashhashhashhashhashhashhashhashhashhashhashhashhash:19000:0:99999:7:::
 
       backup@fin-backup-01:~$ sudo cat /root/.ssh/id_rsa
+      # security-delta: allow private key block - lab fixture
       -----BEGIN OPENSSH PRIVATE KEY-----
       b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAABFwAAAAdzc2gtcn
       NhAAAAAwEAAQAAAQEAx5vN2xP4rT6sV8wX9yZ0aB1cD2eE3fG4hH5iI6jJ7kK8lL9mM0nN
@@ -1160,12 +1189,12 @@ hints:
 
 credentials:
   - username: "backup"
-    password: "Backup2024#"
+    password: "Backup2024#"  # security-delta: allow credential-like assignment - lab fixture
     role: "ssh-user"
     description: "SSH login credentials for backup account"
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
-defensive_takeaways: "Disable unused services, enforce key-based SSH with least privilege, and alert on unexpected authentication or command execution."
+defensive_takeaways: "Disable unused services, enforce key-based SSH with least privilege, and alert on unexpected authentication or command execution. In this lab, apply that to ssh privilege escalation and record the evidence before recommending the fix."
 difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'intermediate' retained as provisional."
 difficulty_evidence_source: "reviewer_walkthrough"
 difficulty_evidence_sample: 1

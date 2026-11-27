@@ -115,24 +115,53 @@ curl -s http://selfaudit.lab:8080/review/OSINT-SELF-001 | grep -o 'OCR{[^}]*}'
 
 Complete this table in your own words:
 
-| Finding | Evidence | Action | Owner | Verification |
-|---|---|---|---|---|
-| Public email and reused handle |  |  |  |  |
-| Office and travel detail |  |  |  |  |
-| Photo metadata |  |  |  |  |
-| Stale forum page |  |  |  |  |
+| Finding | Risk | Evidence | Action | Owner | Due | Verified |
+|---|---|---|---|---|---|---|
+| Public email | Low |  |  |  |  |  |
+| Reused handle | High |  |  |  |  |  |
+| Office and travel detail | Medium |  |  |  |  |  |
+| Photo metadata | High |  |  |  |  |  |
+| Stale forum page | Medium |  |  |  |  |  |
+
+Risk is a judgement about impact. Use **Low** for limited context, **Medium** for
+useful correlation, and **High** for direct location, contact, or
+account-recovery exposure.
+
+Then calculate the exposure score:
+
+| Signal | Weight | Present? | Score |
+|---|---:|---|---:|
+| Public email | +2 |  |  |
+| Handle reuse | +3 |  |  |
+| Travel schedule | +3 |  |  |
+| Photo metadata | +4 |  |  |
+| **Total** |  |  |  |
+
+Use the score to order the remediation. The score supports the risk rating; it
+does not replace it.
 
 A useful action is specific: "replace the public personal address with a role
 address and remove the old address from the profile" is testable. "Be more
-careful" is not.
+careful" is not. A finding is not closed until the verification date is recorded.
+
+### Step 7: Check the search results for noise
+
+Real OSINT results contain false leads. Look for the result for a different Maya
+Chen at a community school. It is a different person, with no research
+affiliation. Do not merge it into the researcher's record.
+
+Also look for the cached duplicate of the institute profile. It points at the
+same page. Record the canonical URL once, not twice.
 
 ## Evidence to Capture
 
 - One screenshot or text capture of the search result page.
+- One false lead or duplicate you rejected, with the reason.
 - One profile field you would remove and why.
 - One breach-record action you would take.
 - One metadata field you would strip.
-- The remediation table with an owner and verification date.
+- The risk rating and exposure score.
+- The remediation table with an owner, due date, and verification date.
 - The flag from the review ticket source.
 
 ## Defensive Takeaways
