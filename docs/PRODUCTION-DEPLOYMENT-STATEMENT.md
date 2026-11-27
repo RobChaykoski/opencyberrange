@@ -9,6 +9,24 @@ another document disagrees, this page and the signed tag win.
 > replaced with placeholders. The private deployment inventory holds the live
 > values. See [`PUBLICATION-METADATA-POLICY.md`](PUBLICATION-METADATA-POLICY.md).
 
+## 5.59.0 deployment verification
+
+| Check | Result |
+|---|---|
+| `/api/version` | `5.59.0` on production and development |
+| Alembic | **`0068_mfa_replay_guard` (head)** |
+| Health | Production and development backend/frontend containers `healthy`; nginx `-t` passes |
+| Change scope | Capstone Builder editor and Markdown/PDF exports; per-session flags for 149 of 222 labs; runtime flag verifier; flag-exposure Quality gate |
+| Registered labs | Production 218, development 231 |
+| Production wiki | **14** sites rebuilt |
+| Pre-deploy backup (production) | `~/backups/ocr-backup-20261127-220737.dump` |
+| Pre-deploy backup (development) | `~/opencyberrange/.backups/20261127_220417` |
+| Rollback images | `opencyberrange-backend:pre-v5.59.0`, `ocr-frontend:pre-v5.59.0` on production; development rolls back by rebuilding `v5.58.1` |
+
+5.59.0 adds the Capstone Builder editor and plan exports, extends per-session
+flags to 149 labs with a replace mode, adds the runtime flag verifier, and makes
+the flag-exposure audit a Quality gate.
+
 ## 5.58.1 deployment verification
 
 | Check | Result |
