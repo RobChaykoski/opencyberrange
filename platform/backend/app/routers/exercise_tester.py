@@ -598,8 +598,7 @@ async def run_exercise_test(
 
     Body:
         lab_slugs: list of lab slugs, or ["all"]
-        user_id:   optional user ID to test as (platform admin only; defaults
-                   to the shared harness account)
+        user_id:   optional user ID to test as (platform admin only; defaults to the harness account)
 
     Returns: text/event-stream with JSON events.
     """
