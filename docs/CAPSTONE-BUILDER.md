@@ -1,9 +1,9 @@
 # Capstone Builder
 
-Status: **Release 6.1, backend planner and saved plans implemented.** The
-deterministic planner, validation gate, saved-plan API, versioning, and approval
-exist. The editor UI, publication to a course, and exports are not implemented
-yet.
+Status: **Release 6.1, planner, editor UI, and document exports implemented.**
+The deterministic planner, validation gate, saved-plan API, versioning,
+approval, the `/capstone-builder` editor, and Markdown/PDF exports exist.
+Publication to a course and LMS packaging are not implemented yet.
 
 The Capstone Builder turns a role profile into a teachable, assessable capstone.
 An instructor selects a profile such as **Blue Team Analyst** (the existing
@@ -56,6 +56,23 @@ unwaived 40-hour plan does not. That is the planner doing its job, not a bug.
 The endpoints require an instructor, administrator, mentor, or teaching
 assistant. A learner receives `403 capstone_forbidden`.
 
+## Editor UI
+
+`/capstone-builder` (instructor and administrator) is the review surface:
+
+- choose one of the 13 role profiles, the duration, the lab limit, and whether
+  missing prerequisites may be assumed;
+- generate a proposal and read the validation gate, coverage, workload, weight
+  total, and prerequisite result before anything is saved;
+- see every uncovered critical competency, waive a gap only with a written
+  reason, and re-run validation with the waiver on record;
+- review objectives, the lab sequence, assessments, deliverables, and the
+  evidence map;
+- save a draft, save a new version, approve a publishable plan, or archive it,
+  and reopen any saved plan from the sidebar.
+
+Approval still does not publish a course.
+
 ## Exports
 
 `GET /api/capstones/plans/{id}/export.md` and `.pdf` render a saved plan as a
@@ -69,18 +86,15 @@ document for the instructor or the programme file:
 - instructor notes.
 
 The export contains no learner records, prompts, or model output. PDF output
-uses the shared report metadata and accessibility helpers. A Common Cartridge or
-LMS package is still not implemented.
+uses the shared report metadata and accessibility helpers.
 
 ## What is not implemented
 
-- A visual editor.
 - Publishing to a course, event, or standalone capstone.
-- Generating the learner brief and instructor guide as documents.
-- Exporting a Common Cartridge or PDF package.
+- Exporting a Common Cartridge or an LMS package.
 
-Those are the next 6.1 slices. A saved plan can be approved, but approval does
-not publish anything today.
+Those are the next 6.1 slices. A saved plan can be approved and exported, but
+approval does not publish anything today.
 
 ## Saved-plan rules
 

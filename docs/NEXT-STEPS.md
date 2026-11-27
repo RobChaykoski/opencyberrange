@@ -9,8 +9,9 @@ page tracks what is left; the deployed state is
 1. **Competency review is the hard blocker.** 25 of 222 contracts are reviewed;
    197 baseline contracts await subject-matter review. Work the
    [review queue](COMPETENCY-REVIEW-QUEUE.md) in track-sized batches.
-2. **Capstone Builder (6.1).** The planner, saved plans, approval gate, and API
-   exist; the editor UI and exports remain.
+2. **Capstone Builder (6.1).** The planner, saved plans, approval gate, API,
+   `/capstone-builder` editor, and Markdown/PDF exports exist; publication to a
+   course and LMS packaging remain.
 3. **OpenGRC first slice.** Define the evidence export schema, map one track or
    capstone to a small control set, and add the boundary test that proves zero
    learner rows leave the platform.

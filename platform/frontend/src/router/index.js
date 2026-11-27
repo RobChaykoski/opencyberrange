@@ -265,6 +265,12 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/capstone-builder',
+    name: 'CapstoneBuilder',
+    component: () => import('../views/CapstoneBuilder.vue'),
+    meta: { requiresAuth: true, requiresInstructor: true }
+  },
+  {
     path: '/reports',
     name: 'Reports',
     component: () => import('../views/Reports.vue'),
