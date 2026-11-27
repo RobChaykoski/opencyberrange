@@ -92,6 +92,11 @@ scenario: |
   - Password: `WebServer2024#`
 
 flag: "OCR{f1l3_d1sc0v3ry}"
+flag_path: /var/www/html/backups/deployment_notes.txt
+flag_service: target
+flag_command:
+  - /entrypoint.sh
+flag_mode: replace
 
 hints:
   - text: |
