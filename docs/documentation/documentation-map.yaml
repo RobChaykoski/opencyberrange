@@ -5316,6 +5316,31 @@ documents:
     published: true
     evidence: true
     retention: R0
+- path: docs/RELEASE-5.59.0-DELIVERABLES.md
+  title: Release 5.59.0 deliverables
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
 - path: docs/RELEASE-6-SCOPE.md
   title: 'Release 6 scope: competency, evidence, scale, and federation'
   group: product

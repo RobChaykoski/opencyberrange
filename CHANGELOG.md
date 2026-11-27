@@ -2,6 +2,41 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.59.0] - 2026-11-27
+
+### Added
+
+- **Capstone Builder editor:** `/capstone-builder` turns a role profile into a
+  reviewed plan with a validation gate, reasoned waivers, objectives, lab
+  sequence, assessments, deliverables, and an evidence map.
+- **Capstone plan exports:** Markdown and PDF documents for a saved plan, plus
+  download actions in the editor.
+- **Per-session flags at scale:** 149 of 222 labs now rotate. The contract adds
+  `flag_mode: replace`, which swaps the static value inside an existing report,
+  log, history file, or configuration while preserving the content.
+- **Runtime verifier:** `scripts/verify-flag-render.sh` builds a lab image and
+  runs the launcher override on a Docker host before a batch merges.
+- **Flag-exposure audit:** `scripts/audit_flag_exposure.py` separates static
+  declarations, templates, and leaked answers; the Quality workflow runs
+  `--fail-on-leaks`.
+- **Tooling and governance docs:** OSINT and graph tooling register, legal
+  readiness checklist, and an upstream licence permission request.
+
+### Changed
+
+- The launcher creates the flag directory before writing `LAB_FLAG`, and
+  `windows-2-10` honors the rendered value in its entrypoint.
+- Documentation: landing-page README, current claims aligned to the catalogue,
+  historical labels, and a browse-by-intent docs index.
+
+### Verification
+
+- Backend pytest: 679 passed, 576 skipped locally.
+- Frontend: 81 tests; lint, i18n budget, and build pass.
+- Labs: 222 definitions; schema, lint, manifests, and outcomes current.
+- Flag audit: 73 static labs, 0 leaked answers; publication audit clean.
+- CI and Quality checks: pass at `9ac8a755`.
+
 ## [5.58.1] - 2026-11-27
 
 ### Changed

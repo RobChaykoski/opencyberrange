@@ -84,7 +84,7 @@ scale, federation, then the AI mentor.
 
 - [Release 6 scope](RELEASE-6-SCOPE.md)
 - [Next steps](NEXT-STEPS.md) — the open work and the blockers
-- [Release 5.58.1 deliverables](RELEASE-5.58.1-DELIVERABLES.md) — current signed release
+- [Release 5.59.0 deliverables](RELEASE-5.59.0-DELIVERABLES.md) — current signed release
 - [Release tags and release records](RELEASES.md) — every earlier release, in order
 - [Program layer: organizations, scenarios, transcript, and analytics](PROGRAM-LAYER.md)
 - [The Age of Foundations](FOUNDATIONS.md)

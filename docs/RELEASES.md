@@ -22,6 +22,14 @@ Steps 2 and 3 order matters: the manifest copies the lock's `release` field.
 Releases 5.46.0 and 5.46.1 skipped step 3, so the committed manifest still said
 `5.45.0` and the CI integrity gate failed.
 
+## Release 5.59.0
+
+| Tag | Release | Status |
+|---|---|---|
+| `v5.59.0` | SWOCTS Cyber Range Release 5.59.0 | Signed annotated tag: Capstone Builder editor and Markdown/PDF exports, per-session flags for 149 of 222 labs with replace mode, a runtime flag verifier, and the flag-exposure Quality gate. |
+
+Deliverables: [Release 5.59.0 deliverables](RELEASE-5.59.0-DELIVERABLES.md).
+
 ## Release 5.58.1
 
 | Tag | Release | Status |
