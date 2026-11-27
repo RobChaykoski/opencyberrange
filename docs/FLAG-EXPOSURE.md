@@ -24,7 +24,7 @@ This page records the current exposure and the plan to close it.
 `scripts/audit_flag_exposure.py` separates three things:
 
 - static declarations in `platform/labs/**` (expected, but public);
-- template and demo values such as `OCR{token1_token2}` or `OCR{demo}`;
+- template and demo values, such as a `token1_token2` placeholder or `demo`;
 - **leaked answers**: a public file outside the lab tree that repeats a static
   lab flag.
 
