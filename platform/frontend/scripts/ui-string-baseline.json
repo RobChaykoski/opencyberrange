@@ -1,5 +1,5 @@
 {
-  "total": 5534,
+  "total": 5533,
   "files": {
     "src/App.vue": 13,
     "src/components/AchievementStudio.vue": 54,
@@ -70,7 +70,7 @@
     "src/views/About.vue": 82,
     "src/views/Admin.vue": 1062,
     "src/views/BadgeViewer.vue": 11,
-    "src/views/CapstoneBuilder.vue": 61,
+    "src/views/CapstoneBuilder.vue": 60,
     "src/views/Celebrations.vue": 48,
     "src/views/Certificate.vue": 45,
     "src/views/ChangePassword.vue": 12,

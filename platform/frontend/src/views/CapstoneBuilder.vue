@@ -75,8 +75,7 @@
           </label>
           <button type="submit" class="btn btn--primary btn--sm" :disabled="generating || !form.profile_id">
             {{ generating ? 'Building...' : 'Generate proposal' }}
-          </button>
-        </form>
+          </button>        </form>
 
         <p v-if="!plan" class="capstone__empty">
           Choose a profile and generate a proposal. The planner is deterministic;
@@ -128,7 +127,7 @@
                     <span><strong>{{ gap.competency_id }}</strong> {{ gap.name }}</span>
                   </label>
                   <span v-if="gap.alternatives && gap.alternatives.length" class="capstone__muted">
-                    Alternatives: {{ gap.alternatives.join(', ') }}
+                    Alternatives: {{ alternativeLabels(gap) }}
                   </span>
                 </li>
               </ul>
@@ -136,7 +135,7 @@
                 <span>Waiver reason</span>
                 <textarea v-model="waiverReason" class="form-input" rows="2" placeholder="Why is this gap acceptable for this cohort?"></textarea>
               </label>
-              <button type="button" class="btn btn--secondary btn--sm" :disabled="generating || !waivedCompetencies.length || !waiverReason.trim()" @click="generate">
+              <button type="button" class="btn btn--secondary btn--sm" :disabled="generating || !waivedCompetencies.length || !waiverReason.trim()" @click="generate(true)">
                 Re-run validation with waivers
               </button>
             </div>
@@ -245,16 +244,16 @@
               <textarea v-model="notes" class="form-input" rows="2" maxlength="4000" placeholder="Cohort, local adaptations, or reviewer notes"></textarea>
             </label>
             <div class="capstone__buttons">
-              <button type="button" class="btn btn--primary btn--sm" :disabled="saving" @click="saveDraft">
+              <button v-if="!savedPlan" type="button" class="btn btn--primary btn--sm" :disabled="saving" @click="saveDraft">
                 {{ saving ? 'Saving...' : 'Save draft' }}
               </button>
-              <button v-if="savedPlan" type="button" class="btn btn--secondary btn--sm" :disabled="saving" @click="updateDraft">
-                Save new version
+              <button v-else type="button" class="btn btn--primary btn--sm" :disabled="saving" @click="updateDraft">
+                {{ saving ? 'Saving...' : 'Save new version' }}
               </button>
-              <button v-if="savedPlan" type="button" class="btn btn--primary btn--sm" :disabled="!publishable || approving" @click="approve">
+              <button v-if="savedPlan && savedPlan.status === 'draft'" type="button" class="btn btn--primary btn--sm" :disabled="!publishable || approving" @click="approve">
                 {{ approving ? 'Approving...' : 'Approve plan' }}
               </button>
-              <button v-if="savedPlan" type="button" class="btn btn--secondary btn--sm" :disabled="archiving" @click="archive">
+              <button v-if="savedPlan && savedPlan.status !== 'archived'" type="button" class="btn btn--secondary btn--sm" :disabled="archiving" @click="archive">
                 Archive
               </button>
             </div>
@@ -350,7 +349,8 @@ async function loadPlans() {
   }
 }
 
-async function generate() {
+async function generate(keepSaved = false) {
+  if (keepSaved instanceof Event) keepSaved = false
   error.value = ''
   message.value = ''
   generating.value = true
@@ -363,14 +363,25 @@ async function generate() {
       waiver_reason: waiverReason.value.trim() || null,
       assume_entry_level: form.assume_entry_level,
     })
+    if (!keepSaved) {
+      savedPlan.value = null
+      title.value = ''
+      notes.value = ''
+    }
     applyPlan(data)
-    savedPlan.value = null
     message.value = 'Proposal generated. Review the gate before saving or approving.'
   } catch (err) {
     error.value = apiError(err)
   } finally {
     generating.value = false
   }
+}
+
+function alternativeLabels(gap) {
+  return (gap.alternatives || [])
+    .map((item) => (typeof item === 'string' ? item : item.title || item.slug || ''))
+    .filter(Boolean)
+    .join(', ')
 }
 
 function planPayload() {
