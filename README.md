@@ -1,6 +1,6 @@
 ﻿# SWOCTS Cyber Range
 
-> **Release 5 is the current release line (latest signed `v5.56.4`; development and production are on 5.56.4).**
+> **Release 5 is the current release line (latest signed `v5.57.0`; development and production are on 5.57.0).**
 >
 > **Edition: Community / Academic** (single-host, `lite` entitlement). The
 > Professional and Enterprise profiles are separate licence tiers built from the

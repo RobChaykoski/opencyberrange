@@ -2,6 +2,41 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.57.0] - 2026-11-27
+
+### Added
+
+- **Shared curriculum metadata:** all 222 labs now carry `learning_concepts`,
+  `competency_tags`, `defensive_skills`, `evidence_required`, and
+  `report_questions`, so the catalogue, competency model, and evidence engine
+  read the same contract.
+- **Lab quality gate:** `scripts/lint_labs.py` checks manifests, workbook concept
+  coverage, compose privileges/limits, and image pins; Quality CI runs it.
+- **Instructor friction report:** `scripts/lab_friction_report.py` ranks labs by
+  completion, failed flags per solve, and hint use.
+- **Copyable workspace context:** subnet, target IPs, and the hosts-file block
+  have accessible copy controls; a sticky strip shows subnet, targets, and hint
+  usage.
+- **Per-session flags:** environment-driven labs now receive a unique
+  `OCR{...}` value at launch and store its hash on the session. 70 of 222 labs
+  rotate; baked-flag labs remain on the shared hash.
+
+### Fixed
+
+- Skill DNA ignores placeholder completions with an empty flag.
+- Celebration Wall toggle, minor exclusion, and opt-out rejection are covered.
+- Workbook defensive takeaways are normalized; 20 pages gained the missing
+  section.
+- ID token validation, NHI rotation, mover access, media provenance, and
+  OSINT exposure evidence are documented in the reviewed labs.
+
+### Verification
+
+- Backend pytest: 675 passed, 573 skipped.
+- Lab schema: 222/222; `validate-lab`: 222 labs, 0 errors.
+- `lab_qa --static`: 0 errors, 14 warnings.
+- CI and Quality checks: pass.
+
 ## [5.56.4] - 2026-11-26
 
 ### Fixed
