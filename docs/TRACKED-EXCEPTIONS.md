@@ -52,7 +52,7 @@ replace the detailed pages it references.
 | ID | Item | Severity | Status | Evidence / next action |
 |---|---|---|---|---|
 | RB-01 | `admin.py` async endpoints block the event loop | High | Open | Move blocking work to `asyncio.to_thread`; add a latency test. |
-| RB-02 | Middleware decodes the JWT 2–3 times and opens 2–4 DB sessions per request | High | Open | Decode once per request; share the session or close it deterministically. |
+| RB-02 | Middleware decodes the JWT 2–3 times and opens 2–4 DB sessions per request | High | **Closed** | Consent and impersonation middleware now share `request.state.auth_payload`/`auth_revocation_checked`; `get_current_user` reuses the payload. Middleware sessions are path-scoped and cached (wiki frame 30 s, module gate 10 s), not per-request. `tests/test_middleware_efficiency.py` asserts exactly one decode for a GET and a mutating request. |
 | RB-03 | `exercise_tester.py` cross-tenant flag disclosure | Critical | **Closed** | Plaintext flags are redacted in `_ev` and before section tracking, so SSE, run journals, and `sections_json` cannot carry `OCR{...}`. Migration `0069_redact_tester_flags` scrubs existing rows. `user_id` overrides are platform-admin only and tenant-checked; a missing harness account falls back to the caller. Denial tests added. |
 | RB-04 | `exercise_tester.py` `timeout` command injection | Critical | **Closed** | Step and body timeouts pass through `_coerce_timeout` (int, 1–600) and `_exec_in_tester_sync` coerces again as a backstop. Regression test covers `5; rm -rf /`. |
 | RB-05 | Analytics minor exclusion misses `course_pulse_comments` and `survey_responses` | High | Open | Apply the same under-18 exclusion used elsewhere; add a test. |
