@@ -25,7 +25,7 @@ from dataclasses import dataclass
 from datetime import datetime, timezone, timedelta
 from typing import Dict, List
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from fpdf import FPDF
 from app.ratelimit import create_limiter
@@ -35,6 +35,7 @@ from sqlalchemy.orm import Session
 import requests as http_requests
 
 from app.auth import get_current_instructor_user, create_access_token
+from app.services.authorization import require_tenant, tenant_of
 from app.export_reason import require_export_reason
 from app.services.audit import log_admin_action, AuditActions
 from app.timezones import resolve_timezone
@@ -273,7 +274,9 @@ def _ts() -> str:
 
 
 def _ev(data: dict) -> str:
-    return f"data: {json.dumps(data)}\n\n"
+    # Backstop: the tester discovers the plaintext flag, and an SSE event is the
+    # easiest place for it to escape to a browser, a journal, or a PDF.
+    return f"data: {_redact_flags(json.dumps(data))}\n\n"
 
 
 def _load_lab_yaml(lab_slug: str) -> dict:
@@ -316,6 +319,9 @@ def _load_compose_yaml(lab_slug: str) -> dict:
 
 def _exec_in_tester_sync(container, command: str, timeout: int = EXEC_TIMEOUT) -> ExecResult:
     """Run a command inside the tester sidecar (blocking), return structured result."""
+    # The timeout is interpolated into a shell command, so coerce it here even
+    # when a caller forgets: a lab.yaml value must never reach bash as text.
+    timeout = _coerce_timeout(timeout)
     try:
         exit_code, output = container.exec_run(
             ["bash", "-c", f"timeout {timeout} bash -c {shlex.quote(command)}"],
@@ -384,6 +390,46 @@ def _coerce_timeout(value) -> int:
     except (TypeError, ValueError):
         return EXEC_TIMEOUT
     return max(1, min(parsed, EXEC_TIMEOUT_MAX))
+
+
+def _resolve_test_identity(db: Session, caller: User, requested) -> User:
+    """Pick the identity the tester acts as, without leaving the caller's tenant.
+
+    ``user_id`` is operator input. Acting as an arbitrary account lets the run
+    clear that account's completions, submit flags for it, and destroy its lab
+    session, so an identity other than the shared harness account is a
+    platform-admin action. Instructors stay inside their own institution, and
+    a missing harness account falls back to the caller, never to "the first
+    admin in the database" (which could belong to another institution).
+    """
+    try:
+        requested_id = int(requested) if requested not in (None, "") else TESTER_USER_ID
+    except (TypeError, ValueError):
+        raise HTTPException(status_code=400, detail="user_id must be an integer")
+
+    target = db.query(User).filter(User.id == requested_id).first()
+
+    if requested_id != TESTER_USER_ID:
+        # An explicit identity is a platform-admin action; instructors may only
+        # use the shared harness account. require_tenant keeps an
+        # institution_admin from reaching into another institution.
+        if getattr(caller, "role", "") != "admin":
+            raise HTTPException(
+                status_code=403,
+                detail="Only a platform administrator may run the tester as another user",
+            )
+        if target is None:
+            raise HTTPException(status_code=404, detail="Test user not found")
+        require_tenant(caller, target.institution_id)
+        return target
+
+    if target is None:
+        return caller
+    # The harness account is a platform singleton. If it belongs to another
+    # institution, run as the caller instead of crossing the boundary.
+    if getattr(caller, "role", "") == "admin" or tenant_of(caller) == tenant_of(target):
+        return target
+    return caller
 
 
 def _call_submit_flag_api(lab_id: int, flag: str, token: str) -> dict:
@@ -552,13 +598,13 @@ async def run_exercise_test(
 
     Body:
         lab_slugs: list of lab slugs, or ["all"]
-        user_id:   optional user ID to test as (default 249)
-        timeout:   optional per-lab timeout in seconds (default 300)
+        user_id:   optional user ID to test as (platform admin only; defaults to the harness account)
 
     Returns: text/event-stream with JSON events.
     """
     lab_slugs_raw = body.get("lab_slugs", [])
-    user_id = body.get("user_id") or TESTER_USER_ID
+    test_user = _resolve_test_identity(db, admin, body.get("user_id"))
+    user_id = test_user.id
 
     # Resolve lab list (include inactive labs — tester validates before activation)
     if not lab_slugs_raw or lab_slugs_raw == ["all"]:
@@ -568,21 +614,10 @@ async def run_exercise_test(
         query = db.query(Lab).filter(Lab.slug.in_(lab_slugs_raw))
         labs = query.all()
 
-    # Verify test user exists
-    test_user = db.query(User).filter(User.id == user_id).first()
-    if not test_user:
-        test_user = db.query(User).filter(User.role == "admin").first()
-        if test_user:
-            user_id = test_user.id
-
     # JWT token for real API calls (same token a student would use)
-    test_user_token = (
-        create_access_token(
-            data={"sub": test_user.username},
-            security_version=getattr(test_user, "security_version", 1),
-        )
-        if test_user
-        else ""
+    test_user_token = create_access_token(
+        data={"sub": test_user.username},
+        security_version=getattr(test_user, "security_version", 1),
     )
 
     admin_id = admin.id
@@ -687,7 +722,13 @@ async def run_exercise_test(
                 logger.warning("Failed to persist exercise test result for %s: %s", lab_slug, exc)
 
         def _emit(data: dict) -> str:
-            """Yield-helper: emits SSE AND tracks section data for persistence."""
+            """Yield-helper: emits SSE AND tracks section data for persistence.
+
+            Operator-facing text is redacted before it is tracked so the
+            persisted ``sections_json`` cannot carry a plaintext flag.
+            """
+            if isinstance(data.get("message"), str):
+                data["message"] = _redact_flags(data["message"])
             etype = data.get("type")
             tk = data.get("test_key", "")
             lab_slug_from_key = tk.rsplit("_", 1)[0] if "_" in tk else ""
@@ -1337,7 +1378,7 @@ async def run_exercise_test(
                         step_cmd = _resolve_template(
                             step_raw, node_ip_map, subnet, credentials
                         )
-                        step_timeout = step.get("timeout", EXEC_TIMEOUT)
+                        step_timeout = _coerce_timeout(step.get("timeout", EXEC_TIMEOUT))
                         expect = step.get("expect", "")
 
                         display_cmd = _redact_command_template(step_raw)

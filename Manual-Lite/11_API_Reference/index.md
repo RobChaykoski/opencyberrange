@@ -6615,7 +6615,7 @@ Score, accept, reject, or request more evidence.  The decision is appended; the 
 
 **Run Exercise Test**
 
-Run automated exercise tester on one or more labs.  Body:     lab_slugs: list of lab slugs, or ["all"]     user_id:   optional user ID to test as (default 249)     timeout:   optional per-lab timeout in seconds (default 300)  Returns: text/event-stream with JSON events.
+Run automated exercise tester on one or more labs.  Body:     lab_slugs: list of lab slugs, or ["all"]     user_id:   optional user ID to test as (platform admin only; defaults to the harness account)  Returns: text/event-stream with JSON events.
 
 **Authentication:** OAuth2PasswordBearer
 
@@ -6761,7 +6761,7 @@ Delete a single saved test result.
 
 **Run Exercise Test**
 
-Run automated exercise tester on one or more labs.  Body:     lab_slugs: list of lab slugs, or ["all"]     user_id:   optional user ID to test as (default 249)     timeout:   optional per-lab timeout in seconds (default 300)  Returns: text/event-stream with JSON events.
+Run automated exercise tester on one or more labs.  Body:     lab_slugs: list of lab slugs, or ["all"]     user_id:   optional user ID to test as (platform admin only; defaults to the harness account)  Returns: text/event-stream with JSON events.
 
 **Authentication:** OAuth2PasswordBearer
 

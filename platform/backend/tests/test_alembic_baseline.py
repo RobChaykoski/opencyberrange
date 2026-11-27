@@ -19,7 +19,7 @@ def _script() -> ScriptDirectory:
 def test_alembic_head_is_the_metadata_revision():
     script = _script()
     heads = script.get_heads()
-    assert heads == ["0068_mfa_replay_guard"]
+    assert heads == ["0069_redact_tester_flags"]
 
 
 def test_revision_graph_is_linear():
@@ -77,6 +77,7 @@ def test_baseline_revision_exists():
     assert "0066_tenant_baseline.py" in names
     assert "0067_course_content_rls.py" in names
     assert "0068_mfa_replay_guard.py" in names
+    assert "0069_redact_tester_flags.py" in names
 
 
 
