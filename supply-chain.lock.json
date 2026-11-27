@@ -647,7 +647,7 @@
       ]
     },
     "linux-1-6-version-vulnerability-identification": {
-      "content_hash": "dbc248babf125bd9d58e42551380439cb9c55e7dc0e7990ce88a6dcca4b0f950",
+      "content_hash": "fc0f9de0e8cc06035ec91ec96d99845830668164c9b8d94385973a0ac8d59bf1",
       "services": [
         "target"
       ]
