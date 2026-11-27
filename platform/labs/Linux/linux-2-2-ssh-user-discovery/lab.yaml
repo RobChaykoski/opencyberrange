@@ -86,6 +86,12 @@ scenario: |
   - Password: `Finance2024#`
 
 flag: "OCR{us3r_d1sc0v3ry}"
+flag_path: /home/jmitchell/user_info.txt
+flag_service: target
+flag_command:
+  - /entrypoint.sh
+flag_owner: jmitchell
+flag_mode: replace
 
 hints:
   - text: |

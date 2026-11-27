@@ -175,6 +175,12 @@
       "type": "string",
       "description": "Optional user:group for the rendered flag file."
     },
+    "flag_mode": {
+      "type": "string",
+      "enum": ["write", "replace"],
+      "default": "write",
+      "description": "How the launcher renders the per-session flag: write the file (default) or replace the static value in place."
+    },
     "allowed_workbook_flags": {
       "type": "array",
       "items": {"type": "string", "pattern": "^OCR\\{.+\\}$"},

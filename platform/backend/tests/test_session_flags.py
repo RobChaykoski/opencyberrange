@@ -154,3 +154,38 @@ def test_newest_session_hash_wins_even_when_it_is_null(db_session, test_user):
         db_session.query(LabSession).filter(LabSession.lab_id == lab.id).delete()
         db_session.query(Lab).filter(Lab.id == lab.id).delete()
         db_session.commit()
+
+
+def test_flag_render_override_replaces_the_static_flag_in_place():
+    override = DockerManager._flag_render_override(
+        {
+            "service": "target",
+            "path": "/samples/report.txt",
+            "command": ["/usr/sbin/sshd", "-D"],
+            "owner": "analyst",
+            "mode": "replace",
+            "static_flag": "OCR{static_value}",
+            "flag": "OCR{session_value}",
+        }
+    )
+    script = override["command"][0]
+    assert 'sed -i "s#OCR{static_value}#$LAB_FLAG#g" /samples/report.txt' in script
+    assert "chown analyst /samples/report.txt" in script
+    assert script.endswith("exec /usr/sbin/sshd -D")
+
+
+def test_flag_render_override_falls_back_when_replace_value_is_unsafe():
+    override = DockerManager._flag_render_override(
+        {
+            "service": "target",
+            "path": "/tmp/report.txt",
+            "command": ["/usr/sbin/sshd", "-D"],
+            "owner": "",
+            "mode": "replace",
+            "static_flag": "OCR{bad#value}",
+            "flag": "OCR{session_value}",
+        }
+    )
+    script = override["command"][0]
+    assert "sed -i" not in script
+    assert "printf" in script

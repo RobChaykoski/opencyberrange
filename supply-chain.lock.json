@@ -178,7 +178,7 @@
       "sha256": "877500e2e2d33af4263cae4b4b208166f4c500c8e4648d6b5b8d24ac122829c1"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "0e4f293d3433981f95332111eeb27d0a09d0470e325425c67dfb5dafeea4c015"
+      "sha256": "fb59a6ddf3a566c61e8231e3e25a03ba5a2ed527e0e57c797e1667ea0ae9ab6a"
     },
     "platform/backend/app/data/threat-awareness.json": {
       "sha256": "78703d33386e1b62becfa5cfb1b27a22f770fff20a3e38411b0787e76f7c48ea"
@@ -202,7 +202,7 @@
       "sha256": "5bf2e6626d96939b2c4e3d197c3e79dfa72b405ebed3b7e274e236fd857a6a6a"
     },
     "platform/backend/lab_metadata.schema.json": {
-      "sha256": "e3d518d3d3b1bd94aec4c476179219ae33711cd0210573b97afcbaca66584dc4"
+      "sha256": "b11e5780f59a892ed5c0621cb1f7d21c2f4071ce2f534b9d5165abf04f230d26"
     },
     "platform/backend/pyproject.toml": {
       "sha256": "b6722dd013e620bc829bbeba74ce77a8a3fdac42f75d6f9804d74dc91f75196f"
@@ -679,7 +679,7 @@
       ]
     },
     "linux-2-2-ssh-user-discovery": {
-      "content_hash": "2a4dfbfdc277dff5f4060b5b688a7ace9094f5a86ee37cd46f049826ed40183d",
+      "content_hash": "5967e7d9c127340421963a3d4b0fa10ad59e6da1da471543fcd8ee383c6fa202",
       "services": [
         "target"
       ]
@@ -697,7 +697,7 @@
       ]
     },
     "linux-2-5-ssh-history-analysis": {
-      "content_hash": "944b769e56c36dd4372fc6906e11361f782893072ad01d72796fa5c013ca26d8",
+      "content_hash": "4924d72225f7c260b18d407ab714ba83798020e3b8dcf1ded3e3c607791350e2",
       "services": [
         "target"
       ]
@@ -910,13 +910,13 @@
       ]
     },
     "malware-2-2-yara-fundamentals": {
-      "content_hash": "c29a928b3cfcc3b937a42c7303854bf864728e0f6b6e838b7554c5793728a81d",
+      "content_hash": "4730bb6558e78de7b8f4df5e013dd086b7a1957bc71c082909c7049609b1b3b3",
       "services": [
         "target"
       ]
     },
     "malware-2-3-yara-incident-triage": {
-      "content_hash": "d823b1350e95b5b4ffc2fc3a1384cf82e53b0e4dd3be45f45afe347e4457c0d9",
+      "content_hash": "d92ba445e7f59bfda79a59b8fe1a2f07ad379024bdb5f2b535cf94ba50d32c52",
       "services": [
         "target"
       ]
