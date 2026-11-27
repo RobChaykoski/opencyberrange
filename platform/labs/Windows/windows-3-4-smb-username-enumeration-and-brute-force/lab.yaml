@@ -74,6 +74,12 @@ scenario: |
   attack chain and demonstrate the security impact.
 
 flag: "OCR{smb_3num_brut3}"
+flag_path: /tmp/private/flag.txt
+flag_service: target
+flag_command:
+  - smbd
+  - -F
+  - --no-process-group
 
 hints:
   - text: |

@@ -67,6 +67,12 @@ scenario: |
   here will be crucial for identifying potential entry points and attack vectors.
 
 flag: "OCR{b4s1c_p0rt_sc4n}"
+flag_path: /tmp/public/flag.txt
+flag_service: target
+flag_command:
+  - smbd
+  - -F
+  - --no-process-group
 
 hints:
   - text: |

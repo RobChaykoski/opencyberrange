@@ -69,6 +69,12 @@ scenario: |
   passwords can be discovered through brute forcing.
 
 flag: "OCR{smb_s1ngl3_brut3}"
+flag_path: /tmp/private/flag.txt
+flag_service: target
+flag_command:
+  - smbd
+  - -F
+  - --no-process-group
 
 hints:
   - text: |

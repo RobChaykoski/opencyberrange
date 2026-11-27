@@ -69,6 +69,12 @@ scenario: |
   what sensitive information, if any, is exposed through this misconfiguration.
 
 flag: "OCR{smb_f1l3_r3tr13v3}"
+flag_path: /tmp/public/flag.txt
+flag_service: target
+flag_command:
+  - smbd
+  - -F
+  - --no-process-group
 
 hints:
   - text: |

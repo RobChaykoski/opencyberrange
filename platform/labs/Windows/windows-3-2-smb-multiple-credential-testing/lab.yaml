@@ -69,6 +69,12 @@ scenario: |
   patterns in weak credentials.
 
 flag: "OCR{smb_mult1_4uth}"
+flag_path: /tmp/private/flag.txt
+flag_service: target
+flag_command:
+  - smbd
+  - -F
+  - --no-process-group
 
 hints:
   - text: |
