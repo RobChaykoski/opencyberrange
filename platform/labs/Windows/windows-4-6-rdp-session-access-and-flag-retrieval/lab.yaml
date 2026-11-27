@@ -69,6 +69,12 @@ scenario: |
   impact by retrieving sensitive information or system access.
 
 flag: "OCR{rdp_s3ss10n_4cc3ss}"
+flag_path: /home/admin/Desktop/flag.txt
+flag_service: target
+flag_command:
+  - /bin/sh
+  - -c
+  - 'service ssh start && service xrdp start && tail -f /dev/null'
 
 hints:
   - text: |

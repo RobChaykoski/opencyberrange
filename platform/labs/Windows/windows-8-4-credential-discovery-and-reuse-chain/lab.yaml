@@ -69,6 +69,12 @@ scenario: |
   reuse, demonstrate the full attack path and security impact.
 
 flag: "OCR{cr3d_ch41n}"
+flag_path: /tmp/private/flag.txt
+flag_service: target
+flag_command:
+  - /bin/sh
+  - -c
+  - 'service ssh start && service smbd start && service xrdp start && slapd -d 0 -h "ldap:///" && tail -f /dev/null'
 
 hints:
   - id: 1

@@ -69,6 +69,12 @@ scenario: |
   demonstrate lateral movement capabilities.
 
 flag: "OCR{cr3d_r3us3_cr0ss}"
+flag_path: /home/admin/flag.txt
+flag_service: target
+flag_command:
+  - /bin/sh
+  - -c
+  - 'service ssh start && service smbd start && service xrdp start && tail -f /dev/null'
 
 hints:
   - id: 1
