@@ -86,6 +86,12 @@ tools:
   - terminal
   - curl
 flag: "OCR{z4p_b4s3l1n3_tr1ag3}"
+flag_path: /app/files/assessment-token.txt
+flag_service: webapp
+flag_command:
+  - python
+  - app.py
+flag_mode: replace
 
 hostnames:
   - ip_offset: "20"

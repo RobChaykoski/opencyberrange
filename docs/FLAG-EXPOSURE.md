@@ -9,9 +9,9 @@ This page records the current exposure and the plan to close it.
 
 ## How flags work today
 
-- **222 labs.** **147** labs rotate per session: 75 environment-driven labs match a
-  `FLAG` / `*_FLAG` compose value to the graded hash, and 72 baked labs declare a
-  render contract. **75** labs keep a static value. Their flag is written in
+- **222 labs.** **149** labs rotate per session: 75 environment-driven labs match a
+  `FLAG` / `*_FLAG` compose value to the graded hash, and 74 baked labs declare a
+  render contract. **73** labs keep a static value. Their flag is written in
   `lab.yaml`, and often again in the compose environment or the lab source. That
   value is public.
 - A render contract has two modes. `write` (default) writes the flag file.
@@ -76,6 +76,9 @@ read-the-route instruction. The rotation batches so far:
 **Batch 6 (entrypoint and config):** `windows-2-10-ad-to-smb-scenario`,
 `network-0-2-dns-basics`, `network-0-3-name-or-network`.
 
+**Batch 7 (embedded files):** `linux-2-3-ssh-file-discovery`,
+`web-11-11-zap-baseline-triage`.
+
 Each declares a single-file render contract. Two classes are deliberate
 exceptions:
 
@@ -112,7 +115,8 @@ report, history, and log content survives and the value rotates. Batch 4 was
 sampled the same way: a PHP page and `smb.conf` keep their content while the flag
 rotates. Batch 5 was sampled with a multi-service shell chain and an `smb.conf`
 replace. Batch 6 was sampled with an entrypoint that honors `LAB_FLAG`, a
-`dnsmasq.conf` replace, and a served-page replace.
+`dnsmasq.conf` replace, and a served-page replace. Batch 7 was sampled with an
+embedded deployment note and a served token file.
 
 ## Plan
 
