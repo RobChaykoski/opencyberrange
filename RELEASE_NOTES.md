@@ -1,5 +1,9 @@
 # SWOCTS Cyber Range Release 4
 
+> **Historical.** These are the Release 4 notes. For the current release and the
+> full tag history, see [docs/RELEASES.md](docs/RELEASES.md) and
+> [CHANGELOG.md](CHANGELOG.md).
+
 SWOCTS Cyber Range is powered by OpenCyberRange.
 
 Edition: **Enterprise** — Professional plus HA, SSO/identity federation,

@@ -6,7 +6,7 @@ Students open a web portal, launch isolated Docker labs (including an in-browser
 
 Current release: **5.58.0** · Edition: **Community / Academic**, single host
 
-[![Platform](https://img.shields.io/badge/platform-Release%205-8b5cf6)](RELEASE_NOTES.md)
+[![Platform](https://img.shields.io/badge/platform-Release%205-8b5cf6)](docs/RELEASES.md)
 [![Labs](https://img.shields.io/badge/labs-222-blue)](platform/labs/)
 [![Tracks](https://img.shields.io/badge/tracks-13-green)](platform/labs/)
 [![Platform](https://img.shields.io/badge/platform-Docker%20%2B%20WireGuard-orange)](Manual-Lite/00_Server_Deployment/06_Architecture.md)
