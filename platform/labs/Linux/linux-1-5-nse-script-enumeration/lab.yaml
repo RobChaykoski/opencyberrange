@@ -76,6 +76,10 @@ scenario: |
   and vulnerability assessment.
 
 flag: "OCR{nse_scr1pt}"
+flag_path: "/home/student/flag.txt"
+flag_service: "target"
+flag_owner: "student:student"
+flag_command: ["/usr/sbin/sshd", "-D", "-e"]
 
 hints:
   - text: |

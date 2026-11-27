@@ -68,6 +68,9 @@ scenario: |
   services and retrieve complete banner and configuration details.
 
 flag: "OCR{ftp_1nt3r4ct}"
+flag_path: "/root/flag.txt"
+flag_service: "target"
+flag_command: ["proftpd", "--nodaemon"]
 
 hints:
   - text: |

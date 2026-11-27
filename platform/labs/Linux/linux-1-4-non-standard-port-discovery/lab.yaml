@@ -72,6 +72,10 @@ scenario: |
   ensure no services are missed.
 
 flag: "OCR{n0n_st4nd4rd}"
+flag_path: "/home/techstart/flag.txt"
+flag_service: "target"
+flag_owner: "techstart:techstart"
+flag_command: ["/start.sh"]
 
 hints:
   - text: |

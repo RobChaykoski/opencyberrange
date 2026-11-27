@@ -5,6 +5,7 @@ Handles creation, management, and cleanup of Docker containers and networks
 
 import docker
 import ipaddress
+import shlex
 import yaml
 import logging
 import os
@@ -451,6 +452,23 @@ class DockerManager:
     ALLOW_ON_DEMAND_BUILD = os.environ.get(
         "LAB_ALLOW_ON_DEMAND_BUILD", "true"
     ).strip().lower() not in {"0", "false", "no", "off"}
+
+    @staticmethod
+    def _flag_render_override(render: Dict) -> Dict:
+        """Build the entrypoint override that writes the session flag at start."""
+        path = shlex.quote(str(render["path"]))
+        write = f"printf '%s\\n' \"$LAB_FLAG\" > {path}"
+        owner = str(render.get("owner") or "").strip()
+        if owner:
+            write += f" && chown {shlex.quote(owner)} {path}"
+        original = " ".join(
+            shlex.quote(str(part)) for part in (render.get("command") or [])
+        )
+        return {
+            "entrypoint": ["/bin/sh", "-c"],
+            "command": [f"{write}; exec {original}"],
+            "environment": {"LAB_FLAG": str(render["flag"])},
+        }
 
     @classmethod
     def _apply_default_service_limits(cls, svc_cfg: dict, svc_override: dict) -> None:
@@ -1688,6 +1706,7 @@ fi
         compose_content: str,
         hostname_entries: Optional[List[dict]] = None,
         session_flag_env: Optional[Dict[str, Dict[str, str]]] = None,
+        flag_render: Optional[Dict] = None,
     ) -> Dict[str, str]:
         """
         Create Docker network and containers for a lab session
@@ -2114,6 +2133,13 @@ fi
             topo_sysctls = (topology.get("service_sysctls") or {}).get(svc_name)
             if topo_sysctls:
                 svc_override["sysctls"] = dict(topo_sysctls)
+            if flag_render and svc_name == flag_render.get("service"):
+                render_override = self._flag_render_override(flag_render)
+                svc_override["entrypoint"] = render_override["entrypoint"]
+                svc_override["command"] = render_override["command"]
+                svc_override.setdefault("environment", {}).update(
+                    render_override["environment"]
+                )
             services_override[svc_name] = svc_override
         if services_override:
             override_data["services"] = services_override

@@ -280,26 +280,27 @@ unshared DNA breakdown through a profile or DNA endpoint.
 
 ## 12. Per-session flags
 
-**Implemented for environment-driven labs.** The launch path now detects every
-compose `FLAG`/`*_FLAG` value whose SHA-256 matches the graded `labs.flag_hash`,
-generates a per-session `OCR{...}` value, injects it into the matching service
-environment, and stores its hash on `lab_sessions.seeded_flag_hash` only after
-the compose bring-up succeeds. The flag route reads the newest session row and
-falls back to the shared hash when that row has no seeded value.
+**Implemented for 80 of 222 labs.** Environment-driven labs rotate through their
+compose `FLAG`/`*_FLAG` values. The Dockerfile-baked pilot (five Linux labs) uses
+a `flag_path`/`flag_service`/`flag_command` contract: the launcher overrides the
+service entrypoint with a small `/bin/sh` wrapper that writes `$LAB_FLAG` to the
+declared path, chowns it when requested, then execs the original command. The
+session hash is stored only after the compose bring-up succeeds.
 
 **Residual risk**
 
-- Labs that bake the flag into an image or a static file are not rotated. They
-  continue to grade against the shared hash. Add a startup render step or a
-  per-session secret mount before treating their flags as certificate evidence.
+- 142 labs still bake the flag into an image or a static file. They continue to
+  grade against the shared hash until they adopt the render contract.
 - Do not log the generated flag; it is visible in `docker inspect` and the
   transient compose override, which is acceptable for a session the learner owns.
 
 **Follow-up**
 
-1. Move the remaining baked-flag labs to an environment or mounted-secret path.
-2. Add a lab test that proves a copied flag from one session is rejected by a
-   second session on an env-driven lab.
+1. Roll the render contract through the remaining Dockerfile-baked labs.
+2. Use the same wrapper for standalone static flag files; add an nginx template
+   only for flags embedded in HTML.
+3. Add a lab test that proves a copied flag from one session is rejected by a
+   second session on an env-driven or rendered lab.
 
 ## 13. Resource limits and orphan cleanup
 

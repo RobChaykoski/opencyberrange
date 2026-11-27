@@ -155,6 +155,26 @@
       "type": "string",
       "pattern": "^OCR\\{.+\\}$"
     },
+    "flag_path": {
+      "type": "string",
+      "pattern": "^/",
+      "description": "Runtime path the launcher writes the per-session flag to."
+    },
+    "flag_service": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Compose service that receives the runtime flag."
+    },
+    "flag_command": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string"},
+      "description": "Original command to exec after the flag is written."
+    },
+    "flag_owner": {
+      "type": "string",
+      "description": "Optional user:group for the rendered flag file."
+    },
     "allowed_workbook_flags": {
       "type": "array",
       "items": {"type": "string", "pattern": "^OCR\\{.+\\}$"},

@@ -66,6 +66,9 @@ scenario: |
   version and configuration to assess potential security risks.
 
 flag: "OCR{ssh_d3t3ct3d}"
+flag_path: "/root/flag.txt"
+flag_service: "target"
+flag_command: ["python3", "-u", "/opt/ssh-server/ssh_server.py"]
 
 hints:
   - text: |

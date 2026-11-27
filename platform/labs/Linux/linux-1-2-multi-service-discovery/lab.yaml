@@ -70,6 +70,9 @@ scenario: |
   to enumerate them all to find it.
 
 flag: "OCR{mult1_s3rv1c3}"
+flag_path: "/root/flag.txt"
+flag_service: "target"
+flag_command: ["/start.sh"]
 
 hints:
   - text: |

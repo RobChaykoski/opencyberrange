@@ -9,7 +9,12 @@ import pytest
 
 from app.models import Lab, LabSession
 from app.routers.curriculum import _expected_flag_hash
-from app.routers.labs import _session_flag_env
+from app.routers.labs import (
+    _flag_render_plan,
+    _session_flag_env,
+    _session_flag_value,
+)
+from app.services.docker_manager import DockerManager
 
 STATIC_FLAG = "OCR{static_flag}"
 
@@ -71,6 +76,36 @@ def test_session_flag_env_without_shared_hash_is_noop():
     )
     assert env == {}
     assert session_flag is None
+
+
+def test_flag_render_plan_reads_the_lab_contract():
+    plan = _flag_render_plan("linux-1-1-ssh-service-detection")
+    assert plan is not None
+    assert plan["path"] == "/root/flag.txt"
+    assert plan["service"] == "target"
+    assert plan["command"] == [
+        "python3",
+        "-u",
+        "/opt/ssh-server/ssh_server.py",
+    ]
+
+
+def test_flag_render_override_writes_then_execs_the_original_command():
+    session_flag = _session_flag_value(STATIC_FLAG)
+    override = DockerManager._flag_render_override(
+        {
+            "service": "target",
+            "path": "/root/flag.txt",
+            "command": ["python3", "-u", "/opt/server.py"],
+            "owner": "",
+            "flag": session_flag,
+        }
+    )
+    assert override["entrypoint"] == ["/bin/sh", "-c"]
+    script = override["command"][0]
+    assert "/root/flag.txt" in script
+    assert "exec python3 -u /opt/server.py" in script
+    assert override["environment"]["LAB_FLAG"] == session_flag
 
 
 @pytest.mark.db

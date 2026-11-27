@@ -178,7 +178,7 @@
       "sha256": "877500e2e2d33af4263cae4b4b208166f4c500c8e4648d6b5b8d24ac122829c1"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "3d469c9a811497f46b73c2d035cf3856c4cd129ed91120b356523e9e23aea47d"
+      "sha256": "1890d78e709fc2d4c80e69f3833fac12fed036e9e4cba5452d4487e07044a30a"
     },
     "platform/backend/app/data/threat-awareness.json": {
       "sha256": "78703d33386e1b62becfa5cfb1b27a22f770fff20a3e38411b0787e76f7c48ea"
@@ -202,7 +202,7 @@
       "sha256": "cff82a7bef2d4aa65d2030a9908a3e91d7ef7de751391ab83005055d67ad00de"
     },
     "platform/backend/lab_metadata.schema.json": {
-      "sha256": "c61358830b72b8ef5c9bd2799f38836a19ffff3bfd41e10607247c7dc1d89302"
+      "sha256": "e3d518d3d3b1bd94aec4c476179219ae33711cd0210573b97afcbaca66584dc4"
     },
     "platform/backend/pyproject.toml": {
       "sha256": "b6722dd013e620bc829bbeba74ce77a8a3fdac42f75d6f9804d74dc91f75196f"
@@ -617,31 +617,31 @@
       ]
     },
     "linux-1-1-ssh-service-detection": {
-      "content_hash": "6ccc0de82fec6491efd43d777f91dd3a9232daac0f14fde89c8804b03550f5ae",
+      "content_hash": "f83fc3563b17cbb0f81a4607a9ba940bdf8f9064759c268d1c9356f35411394f",
       "services": [
         "target"
       ]
     },
     "linux-1-2-multi-service-discovery": {
-      "content_hash": "0904d6cea136d46fada790c3d8f799e97762b0a2138f9bd6db7fcec4507bb692",
+      "content_hash": "4920d3925bba5671a1800b352d8c7c9a98f9bb4d548e6d9e3889bfb3194531e0",
       "services": [
         "target"
       ]
     },
     "linux-1-3-service-interaction": {
-      "content_hash": "11b7de5cbd0122326fb5f2c4e4d91b5b924409bf2b1f9dbf59580e8445add077",
+      "content_hash": "e7c733e7e13eb575690e280e91922a3724ade0faa4e47a7260ca0ad85f607bdc",
       "services": [
         "target"
       ]
     },
     "linux-1-4-non-standard-port-discovery": {
-      "content_hash": "bbd78728c76baa69994f4dc0d70c6675b0e2912acf26165ba3c48e95481ca473",
+      "content_hash": "a79a57e98fbd392239ab54b5f3c62ce6795ed1457f2007043e2ad42bf56cbfe6",
       "services": [
         "target"
       ]
     },
     "linux-1-5-nse-script-enumeration": {
-      "content_hash": "fc657e5dceb1a4f6cf39895b41f56c42f3e22355a2ba29052a4bf8456d67bddc",
+      "content_hash": "b78ed473dfc7a1d31b83614cee77c10fb12cd16a016065737e08ea6494afa21e",
       "services": [
         "target"
       ]

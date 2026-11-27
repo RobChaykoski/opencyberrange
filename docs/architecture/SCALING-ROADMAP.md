@@ -24,7 +24,7 @@ These are release blockers, not future architecture.
 
 | Item | Why it comes first | Action |
 |---|---|---|
-| Per-session flags | Environment-driven labs rotate at launch; baked-flag labs still use the shared hash | Move the remaining baked-flag labs to an env or mounted-secret path |
+| Per-session flags | 80 of 222 labs rotate: 75 env-driven plus 5 Dockerfile-baked through the render wrapper | Roll the render contract through the remaining 142 baked labs |
 | Upstream image pinning | Moving tags cause build rot and unexpected CVEs | Pin `ubuntu`, `python`, `alpine`, `debian`, and Kali bases by `@sha256:`. Add `scripts/check-image-pins.py --strict` to CI after the pin pass. |
 | Off-host integrity evidence | A database superuser can disable triggers | Keep the signed manifest, ledger archive, and WAL/backups off-host. A restore is not trusted until it matches the off-host manifest. |
 | Lab schema gate | Missing limits, privileged flags, or inconsistent metadata | Keep `validate_lab_metadata.py`, `validate-lab.py`, and `lab_qa.py --static` mandatory in CI. Add image-pin and per-session-flag checks. |

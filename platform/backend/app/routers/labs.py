@@ -15,6 +15,8 @@ import os
 import json
 import secrets
 import yaml
+from functools import lru_cache
+from pathlib import Path
 
 
 def _prebuild_progress():
@@ -62,6 +64,43 @@ def _session_duration(db, user: User | None = None) -> timedelta:
     return timedelta(minutes=minutes)
 
 
+def _session_flag_value(static_flag: str) -> str:
+    if static_flag.startswith("OCR{") and static_flag.endswith("}"):
+        inner = static_flag[4:-1]
+    else:
+        inner = "session_flag"
+    return f"OCR{{{inner}_{secrets.token_hex(4)}}}"
+
+
+@lru_cache(maxsize=512)
+def _flag_render_plan(lab_slug: str) -> dict | None:
+    """Read the runtime flag-render contract from the lab's lab.yaml.
+
+    The metadata is authored in lab.yaml; reading it from the read-only /labs
+    mount avoids a database migration for a launch-only concern.
+    """
+    labs_dir = Path(os.environ.get("LABS_DIR", "/labs"))
+    if not labs_dir.exists():
+        labs_dir = Path(__file__).resolve().parents[3] / "labs"
+    for candidate in labs_dir.rglob(f"{lab_slug}/lab.yaml"):
+        try:
+            data = yaml.safe_load(candidate.read_text(encoding="utf-8")) or {}
+        except (OSError, yaml.YAMLError):
+            continue
+        path = str(data.get("flag_path") or "").strip()
+        service = str(data.get("flag_service") or "").strip()
+        command = [str(part) for part in (data.get("flag_command") or [])]
+        if not path.startswith("/") or not service or not command:
+            continue
+        return {
+            "service": service,
+            "path": path,
+            "command": command,
+            "owner": str(data.get("flag_owner") or "").strip(),
+        }
+    return None
+
+
 def _session_flag_env(
     compose_content: str | None, flag_hash: str | None
 ) -> tuple[dict[str, dict[str, str]], str | None]:
@@ -103,11 +142,7 @@ def _session_flag_env(
         return {}, None
 
     static_value = matches[0][2]
-    if static_value.startswith("OCR{") and static_value.endswith("}"):
-        inner = static_value[4:-1]
-    else:
-        inner = "session_flag"
-    session_flag = f"OCR{{{inner}_{secrets.token_hex(4)}}}"
+    session_flag = _session_flag_value(static_value)
     env_by_service: dict[str, dict[str, str]] = {}
     for service_name, key, _value in matches:
         env_by_service.setdefault(service_name, {})[key] = session_flag
@@ -455,6 +490,11 @@ async def spawn_lab(
     session_flag_env, session_flag = _session_flag_env(
         compose_content, getattr(lab, "flag_hash", None)
     )
+    render_plan = _flag_render_plan(lab_slug)
+    flag_render = None
+    if render_plan and not session_flag:
+        session_flag = _session_flag_value(str(lab.flag or "OCR{session_flag}"))
+        flag_render = {**render_plan, "flag": session_flag}
 
     async def bring_up_lab():
         """Bring up the lab environment and record the outcome on the session row.
@@ -492,6 +532,7 @@ async def spawn_lab(
                     compose_content=compose_content,
                     hostname_entries=hostname_entries,
                     session_flag_env=session_flag_env,
+                    flag_render=flag_render,
                 ),
             )
 
