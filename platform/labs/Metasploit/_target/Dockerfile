@@ -3,7 +3,7 @@
 # The qcow2 is not committed to the repository. Build this image on a
 # KVM-capable host with scripts/provision-metasploitable2.sh, which prepares
 # the disk and passes the build context from a temporary directory.
-FROM debian:bookworm-slim
+FROM debian:bookworm-slim@sha256:e67eeead736ff7bbe258ef088bff683635c561b1fcfefad0806c1df4ab49ce0e
 
 ENV DEBIAN_FRONTEND=noninteractive
 

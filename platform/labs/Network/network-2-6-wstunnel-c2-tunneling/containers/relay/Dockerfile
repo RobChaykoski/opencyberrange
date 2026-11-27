@@ -3,7 +3,7 @@
 # The implant connects here with a WebSocket upgrade.  The relay forwards the
 # tunnel to the tasking server on the protected segment, so the lab network
 # only ever sees the relay half of the conversation.
-FROM debian:bookworm-slim
+FROM debian:bookworm-slim@sha256:e67eeead736ff7bbe258ef088bff683635c561b1fcfefad0806c1df4ab49ce0e
 
 ENV DEBIAN_FRONTEND=noninteractive
 

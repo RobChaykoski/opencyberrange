@@ -3,7 +3,7 @@
 # Runs the tunnel client and a beacon loop.  The beacon only ever talks to
 # 127.0.0.1:9000; the client forwards that port through the WebSocket relay to
 # the tasking server, so the implant never needs a route to the real server.
-FROM debian:bookworm-slim
+FROM debian:bookworm-slim@sha256:e67eeead736ff7bbe258ef088bff683635c561b1fcfefad0806c1df4ab49ce0e
 
 ENV DEBIAN_FRONTEND=noninteractive
 
