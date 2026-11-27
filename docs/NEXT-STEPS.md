@@ -18,6 +18,12 @@ page tracks what is left; the deployed state is
 4. **Cyber DNA decisions.** Confirm whether `advanced_dna_insights_enabled`
    stays on in production while the Career Atlas review is unsigned, and record
    which strand is the new pathway.
+5. **Rotate the remaining static lab flags.** 111 labs still publish their graded
+   value in `lab.yaml` and the compose file; see
+   [flag exposure](FLAG-EXPOSURE.md). Start with the graded, high-stakes labs.
+6. **Licensing and legal readiness.** No licence change until the upstream author
+   gives written permission ([request draft](UPSTREAM-LICENSE-PERMISSION-REQUEST.md));
+   work the [legal readiness](LEGAL-READINESS.md) checklist before pilots.
 
 Blocked: HA witness/collector install and live failover drills (host access);
 `opencyberrange-ha` runtime workflow (GitHub billing); SFIA 9 mapping
