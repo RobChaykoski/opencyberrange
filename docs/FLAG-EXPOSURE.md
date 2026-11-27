@@ -9,9 +9,9 @@ This page records the current exposure and the plan to close it.
 
 ## How flags work today
 
-- **222 labs.** **126** labs rotate per session: 75 environment-driven labs match a
-  `FLAG` / `*_FLAG` compose value to the graded hash, and 51 baked labs declare a
-  render contract. **96** labs keep a static value. Their flag is written in
+- **222 labs.** **136** labs rotate per session: 75 environment-driven labs match a
+  `FLAG` / `*_FLAG` compose value to the graded hash, and 61 baked labs declare a
+  render contract. **86** labs keep a static value. Their flag is written in
   `lab.yaml`, and often again in the compose environment or the lab source. That
   value is public.
 - A render contract has two modes. `write` (default) writes the flag file.
@@ -55,6 +55,15 @@ read-the-route instruction. The rotation batches so far:
 `linux-2-5-ssh-history-analysis`, `malware-2-2-yara-fundamentals`,
 `malware-2-3-yara-incident-triage`.
 
+**Batch 4:** `web-1-3-http-methods-enumeration`,
+`web-1-4-header-analysis`, `windows-2-1-smb-connection-test`,
+`windows-2-2-smb-share-listing`, `windows-2-5-smb-null-session-connection`,
+`windows-2-6-smb-null-session-share-enumeration`,
+`windows-2-7-smb-user-enumeration-via-null-session`,
+`windows-2-8-smb-comprehensive-null-session-enumeration`,
+`windows-3-5-smb-full-credential-attack`,
+`windows-8-1-single-service-credential-discovery`.
+
 Each declares a single-file render contract. Two classes are deliberate
 exceptions:
 
@@ -87,7 +96,9 @@ the file. The launcher creates the parent directory, so a contract can target a
 path the image only creates at runtime. The first runtime pass found
 `malware-1-1` writing to `/tmp/samples`, which the image does not keep; the
 launcher now creates it. The replace-mode batch was verified the same way: the
-report, history, and log content survives and the value rotates.
+report, history, and log content survives and the value rotates. Batch 4 was
+sampled the same way: a PHP page and `smb.conf` keep their content while the flag
+rotates.
 
 ## Plan
 
