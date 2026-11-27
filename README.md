@@ -43,8 +43,20 @@ Current release: **5.59.0** · Edition: **Community / Academic**, single host
 ```bash
 git clone https://github.com/RobChaykoski/opencyberrange.git
 cd opencyberrange
+gpg --import docs/release-signing-key.asc
+TAG=$(git tag --list 'v*' --sort=-v:refname | grep -viE -- '-(rc|beta|alpha|pre|preview|dev)' | head -1)
+git verify-tag "$TAG"
+git checkout --detach "$TAG"
+python3 scripts/supply_chain.py --check \
+  --signature supply-chain.lock.json.asc \
+  --gpg-public-key docs/release-signing-key.asc \
+  --gpg-fingerprint 68A817762C831475F00DB54E775050A4C4921814
 sudo bash scripts/setup-range-server.sh --install
 ```
+
+The verification steps are not optional in a production install: they prove the
+tag signature and the reviewed lock before a root script runs. The installer
+repeats the supply-chain check before it writes the platform.
 
 Open `https://<server-ip>/`, complete the first-run wizard, then verify:
 

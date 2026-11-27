@@ -623,7 +623,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
-      DATABASE_URL: ${DATABASE_URL:-postgresql://labuser:labpass@db:5432/labdb}
+      DATABASE_URL: ${DATABASE_URL:?DATABASE_URL must be set in .env}
       JWT_SECRET: ${JWT_SECRET}
       SETUP_TOKEN: ${SETUP_TOKEN:-}
       JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}

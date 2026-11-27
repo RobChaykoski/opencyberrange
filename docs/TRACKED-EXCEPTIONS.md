@@ -15,6 +15,12 @@ replace the detailed pages it references.
   commit or test that proves it.
 - Review the open rows at every release.
 
+| SEC-01 | Quick-start installer ran before verifying the tag or lock | High | **Closed** | README now imports the release key, picks the newest stable tag, verifies it, checks out the tag, and runs the supply-chain check before `sudo bash`. |
+| SEC-02 | `DATABASE_URL` had a `labuser:labpass` fallback | Medium | **Closed** | The generated compose now requires `DATABASE_URL` and fails loudly when it is unset. |
+| SEC-03 | Docker socket exposure | High | **Verified** | Production and development mount `/var/run/docker.sock` only into `docker-socket-proxy` (read-only); the backend uses `DOCKER_HOST=tcp://docker-socket-proxy:2375` on the internal `docker_control` network. |
+| SEC-04 | Backend port exposure | High | **Verified** | Backend publishes `127.0.0.1:8000`, not `0.0.0.0`. |
+| SEC-05 | Lab container privilege | High | **Verified** | The launcher rejects `privileged`, allow-lists `cap_add` (NET_ADMIN/NET_RAW/SYS_PTRACE only), and applies `no-new-privileges` with a default capability drop. No lab compose declares `privileged` or `SYS_ADMIN`. |
+
 ## Operations
 
 | ID | Item | Status | Next action |
