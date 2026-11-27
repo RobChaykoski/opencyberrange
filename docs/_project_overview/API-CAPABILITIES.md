@@ -1,17 +1,17 @@
 # API capabilities
 
-Generated from the live FastAPI application on 2026-11-27T01:25:41+00:00.
+Generated from the live FastAPI application on 2026-11-27T02:11:48+00:00.
 
 | Item | Value |
 |---|---|
-| Product | SWOCTS Cyber Range Release 5.56.2 (Powered by OpenCyberRange) |
-| Platform version | `5.56.2` |
+| Product | SWOCTS Cyber Range Release 5.56.3 (Powered by OpenCyberRange) |
+| Platform version | `5.56.3` |
 | OpenAPI version | `3.1.0` |
 | API title | SWOCTS Cyber Range |
-| API version | `5.56.2` |
-| Paths | 490 |
-| Operations | 548 |
-| Methods | DELETE 36, GET 288, PATCH 6, POST 187, PUT 31 |
+| API version | `5.56.3` |
+| Paths | 491 |
+| Operations | 549 |
+| Methods | DELETE 36, GET 289, PATCH 6, POST 187, PUT 31 |
 
 The machine-readable contract is [`openapi.json`](openapi.json). It follows the
 OpenAPI specification and can be imported into Swagger UI, Redoc, Postman,
@@ -785,6 +785,7 @@ share with an integrator.
 | GET | `/api/admin/security/events/summary` | Security event counts and top event types | OAuth2PasswordBearer |
 | GET | `/api/admin/security/events/{event_id}` | One security event | OAuth2PasswordBearer |
 | POST | `/api/admin/security/rbac/check` | Explain one authorization decision | OAuth2PasswordBearer |
+| GET | `/api/admin/security/rbac/drift` | Reviewed catalog vs live RBAC grants | OAuth2PasswordBearer |
 | GET | `/api/admin/security/rbac/matrix` | Role and policy access matrix | OAuth2PasswordBearer |
 | GET | `/api/admin/security/rbac/permissions` | Reviewed permission catalog | OAuth2PasswordBearer |
 | GET | `/api/admin/security/rbac/roles` | Roles, grants, and effective permission counts | OAuth2PasswordBearer |
@@ -968,6 +969,7 @@ the application and are documented here for completeness.
 | GET | /api/admin/security/events/summary | Security event counts and top event types | OAuth2PasswordBearer |
 | GET | /api/admin/security/events/{event_id} | One security event | OAuth2PasswordBearer |
 | POST | /api/admin/security/rbac/check | Explain one authorization decision | OAuth2PasswordBearer |
+| GET | /api/admin/security/rbac/drift | Reviewed catalog vs live RBAC grants | OAuth2PasswordBearer |
 | GET | /api/admin/security/rbac/matrix | Role and policy access matrix | OAuth2PasswordBearer |
 | GET | /api/admin/security/rbac/permissions | Reviewed permission catalog | OAuth2PasswordBearer |
 | GET | /api/admin/security/rbac/roles | Roles, grants, and effective permission counts | OAuth2PasswordBearer |

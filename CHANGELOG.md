@@ -2,6 +2,29 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.56.3] - 2026-11-26
+
+### Fixed
+
+- **Analytics privacy:** under-18 learners are excluded from pulse comments and
+  survey responses before the suppression cell is calculated. Survey responses
+  now carry a keyed pseudonymous id instead of the raw user id and display name.
+- **RBAC course scope:** teaching assistants, mentors, and co-instructors are
+  recognised through `CourseStaff` in the central authorization branch, so the
+  reviewed matrix and the enforcement agree. Added a YAML-vs-live RBAC drift
+  report and pruning for permissions removed from the catalog.
+- **Break-glass:** approval is required by default, private permissions always
+  require a second operator, and the admin approval check uses the role instead
+  of a non-existent attribute.
+- **MFA:** TOTP codes are single-use through a stored timestep, recovery codes
+  use Argon2id with legacy verification, and legacy plaintext TOTP secrets are
+  re-encrypted at startup.
+
+### Added
+
+- Release test matrix and runner, accessibility test kit, lab QA/workbook
+  pipeline, and the first-time user test kit.
+
 ## [5.56.2] - 2026-11-26
 
 ### Added

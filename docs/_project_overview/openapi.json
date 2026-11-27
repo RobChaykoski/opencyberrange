@@ -7414,7 +7414,7 @@
   "info": {
     "description": "Cybersecurity training platform, powered by OpenCyberRange.",
     "title": "SWOCTS Cyber Range",
-    "version": "5.56.2"
+    "version": "5.56.3"
   },
   "openapi": "3.1.0",
   "paths": {
@@ -11150,6 +11150,31 @@
           }
         ],
         "summary": "Explain one authorization decision",
+        "tags": [
+          "Security administration"
+        ]
+      }
+    },
+    "/api/admin/security/rbac/drift": {
+      "get": {
+        "description": "Show where the live RBAC tables differ from permissions.yaml.\n\nThis is a review aid, not an automatic accusation: an administrator's\ndeliberate grant is expected to appear here. A permission removed from the\ncatalog is pruned at seed time; a grant removed from the YAML but still in\nthe DB remains the administrator's decision.",
+        "operationId": "rbac_drift_api_admin_security_rbac_drift_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Reviewed catalog vs live RBAC grants",
         "tags": [
           "Security administration"
         ]

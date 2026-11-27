@@ -22,6 +22,14 @@ Steps 2 and 3 order matters: the manifest copies the lock's `release` field.
 Releases 5.46.0 and 5.46.1 skipped step 3, so the committed manifest still said
 `5.45.0` and the CI integrity gate failed.
 
+## Release 5.56.3
+
+| Tag | Release | Status |
+|---|---|---|
+| `v5.56.3` | SWOCTS Cyber Range Release 5.56.3 | Signed annotated tag: analytics minor-exclusion, pseudonymous survey responses, RBAC course-staff scope and drift report, break-glass approval default, TOTP replay protection, and Argon2id recovery codes. |
+
+Deliverables: [Release 5.56.3 deliverables](RELEASE-5.56.3-DELIVERABLES.md).
+
 ## Release 5.56.2
 
 | Tag | Release | Status |
