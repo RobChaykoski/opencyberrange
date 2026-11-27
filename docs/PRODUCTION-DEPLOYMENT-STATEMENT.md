@@ -9,6 +9,24 @@ another document disagrees, this page and the signed tag win.
 > replaced with placeholders. The private deployment inventory holds the live
 > values. See [`PUBLICATION-METADATA-POLICY.md`](PUBLICATION-METADATA-POLICY.md).
 
+## 5.58.1 deployment verification
+
+| Check | Result |
+|---|---|
+| `/api/version` | `5.58.1` on production and development |
+| Alembic | **`0068_mfa_replay_guard` (head)** |
+| Health | Production and development backend/frontend containers `healthy`; nginx `-t` passes |
+| Change scope | Documentation-only patch; runtime behaviour unchanged |
+| Registered labs | Production 218, development 231 |
+| Production wiki | **14** sites rebuilt |
+| Pre-deploy backup (production) | `~/backups/ocr-backup-20261127-134416.dump` |
+| Pre-deploy backup (development) | `~/opencyberrange/.backups/20261127_134100` |
+| Rollback images | `opencyberrange-backend:pre-v5.58.1`, `ocr-frontend:pre-v5.58.1` on production; development rolls back by rebuilding `v5.58.0` |
+
+5.58.1 rebuilds the root README as a landing page, aligns current claims,
+labels older records historical, adds a browse-by-intent documentation index,
+and repairs double-encoded punctuation.
+
 ## 5.58.0 deployment verification
 
 | Check | Result |
