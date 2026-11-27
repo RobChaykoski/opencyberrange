@@ -190,6 +190,9 @@ def build_nginx_namespace_block(namespace, auth, slugs):
         add_header Content-Security-Policy "{CSP}" always;
         add_header X-Content-Type-Options "nosniff" always;
         add_header X-Robots-Tag "noindex, nofollow, noarchive, nosnippet, noimageindex, noai, noimageai" always;
+        add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+        add_header Permissions-Policy "geolocation=(), microphone=(), camera=(), clipboard-read=(self), clipboard-write=(self), fullscreen=(self)" always;
+        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
     }}
 """
 
@@ -250,6 +253,9 @@ def build_nginx_index_block():
         add_header Content-Security-Policy "{CSP}" always;
         add_header X-Content-Type-Options "nosniff" always;
         add_header X-Robots-Tag "noindex, nofollow, noarchive, nosnippet, noimageindex, noai, noimageai" always;
+        add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+        add_header Permissions-Policy "geolocation=(), microphone=(), camera=(), clipboard-read=(self), clipboard-write=(self), fullscreen=(self)" always;
+        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
     }}
 """
 
