@@ -68,6 +68,7 @@ records. OpenIAM is fetched separately as its own compose stack.
 | Supply-chain trust | Sigstore, Cosign, Syft | Release signing and verification labs | Build and release control evidence | Collector and policy-bundle verification | Vendor artifact and image verification |
 | Metadata and policy context | OpenMetadata, OPA, Authentik | Learner and lab metadata context | Decision evidence and policy version | Classification and policy context | PHI policy context and access decisions |
 | Privacy and reporting | Shared role model | Privacy office and auditor dashboards | Evidence requests and audit packs | Classification and discovery reports | PHI access and retention evidence |
+| Graph and topology visualization | Cytoscape, Cytoscape.js, Gephi | Lab and network topology maps; OSINT link analysis | Data and metadata connection maps; AI call graphs | Source and traffic context | Clinical data-flow maps |
 
 Arkime is a full-packet store, not an IDS. In OCR it runs as a lab-scoped
 viewer over OpenSearch with a synthetic capture; the analyst role cannot
@@ -78,6 +79,32 @@ reference only. See `docs/DETECTION-ENGINEERING-PATHWAY.md` (DET-08) and the
 OWASP ZAP is a desktop scanner. OCR exposes a first-party scan planner in the
 Tools panel and uses ZAP in the `web-11-11-zap-baseline-triage` Web lab; the
 planner does not bundle or run ZAP. See `docs/ZAP-SCAN-PLANNER.md`.
+
+### Proposed: graph visualization across the ecosystem
+
+**Status: proposal, not built.** Cytoscape is the general graph platform;
+Cytoscape.js (MIT) is the embeddable option for the OCR web app, and Gephi is
+the analyst alternative for link analysis.
+
+- **Lab and network topology.** Build a graph from `lab.yaml` and the compose
+  files: nodes are labs, services, and targets; edges are shared networks and
+  allow rules. An instructor gets a diagram of a track or a capstone without
+  hand-drawing it.
+- **OpenGRC data and metadata connections.** Export stable identifiers and
+  aggregate counts — asset, control, evidence request, framework, period — into
+  a graph. OpenGRC remains the system of record; OCR exports links and hashes,
+  never learner rows.
+- **AI movement, server to server.** The Open Compliance client records which
+  service called which model endpoint, for what purpose, under which control,
+  with a timestamp and a request hash. Cytoscape renders the call graph and
+  OpenGRC holds the control and evidence links. No prompts, payloads, learner
+  data, or model output are in the graph. It is a reporting surface, not a
+  monitoring agent.
+
+Privacy and licensing: aggregate metadata only; no learner rows, prompts, or
+payloads. Cytoscape desktop is LGPL-2.1 (keep the notice and source access if
+bundled); Cytoscape.js is MIT and is the preferred in-app library. The registry
+entry is in `platform/backend/app/data/external-datasets.yaml`.
 
 ### Cloud assessment selection
 

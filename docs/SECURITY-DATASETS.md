@@ -26,9 +26,30 @@ A link is not a licence. The sources below have different terms:
 | [**OpenCRE**](https://www.opencre.org/explorer) | CC0-1.0 | Public domain | Reference index | Live |
 | [**OWASP Cheat Sheet Series**](https://cheatsheetseries.owasp.org/) | CC BY-SA 4.0 | Allowed with attribution and share-alike | Reference | Live |
 | [**Threat Modeling Manifesto**](https://www.threatmodelingmanifesto.org/) | CC BY 4.0 | Allowed with attribution | Reference | Living document |
+| [**ArchiveBox**](https://archivebox.io/) | MIT | Allowed with the MIT notice | Reference tool | Releases |
+| [**OSINT Case**](https://osintcase.com/) | GPL-3.0 | Allowed with notice and source offer | Reference only | Releases |
+| [**Gephi**](https://gephi.org/) | GPL-3.0 | Allowed with notice and source offer | Reference only | Releases |
+| [**Cytoscape**](https://cytoscape.org/) | LGPL-2.1 (desktop); MIT (Cytoscape.js) | Allowed with notice and source access | Reference only | Releases |
 
 If a source has no declared licence, the default is **reference only**. Public
 visibility does not grant permission to copy, mirror, or serve the material.
+
+## OSINT tooling references
+
+Three investigation tools are registered for the OSINT and forensics tracks.
+None is vendored in this repository or baked into a platform image:
+
+| Tool | Licence | Use | Default |
+|---|---|---|---|
+| ArchiveBox | MIT | Capture and hash a dated snapshot of a public page as evidence | Optional external service |
+| OSINT Case | GPL-3.0 | Organise subjects, links, timelines, and an evidence vault into a report | Learner installs locally |
+| Gephi | GPL-3.0 | Turn an entity graph into centrality and shortest-path findings | Learner installs locally |
+| Cytoscape | LGPL-2.1 (desktop); MIT (Cytoscape.js) | General graph platform for lab, network, metadata, and traffic maps | Reference only; Cytoscape.js for an in-app graph |
+
+The GPL-3.0 tools are reference-only by default. An institution that chooses to
+bake either one into a shared lab image must keep it unmodified, include the
+licence, and offer the corresponding source. The platform itself remains
+separate; running a GPL tool alongside the platform is not a derivative work.
 
 ## Selected datasets
 
