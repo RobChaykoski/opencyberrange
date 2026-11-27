@@ -85,6 +85,9 @@ hostnames:
 
 
 flag: "OCR{subd0m41n_d1sc0v3ry_b4s1c}"
+flag_path: "/var/www/html/flag.txt"
+flag_service: "admin"
+flag_command: ["apache2ctl", "-D", "FOREGROUND"]
 
 hints:
   - text: |

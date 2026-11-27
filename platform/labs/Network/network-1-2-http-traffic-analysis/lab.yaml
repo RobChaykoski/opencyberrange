@@ -76,6 +76,9 @@ scenario: |
   Unencrypted credentials can be captured by anyone on the network path.
 
 flag: "OCR{http_cr3d3nt14ls}"
+flag_path: "/root/flag.txt"
+flag_service: "target"
+flag_command: ["nginx", "-g", "daemon off;"]
 
 hints:
   - text: |

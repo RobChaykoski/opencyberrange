@@ -68,6 +68,9 @@ difficulty_evidence_reviewed_at: "2026-11-08"
 workbook: "wiki/range/netfor/CH_NETSY12_Firewalls/02_Firewall_Policy_Hardening/"
 
 flag: "OCR{d3f4ult_d3ny_m4st3r}"
+flag_path: "/root/flag.txt"
+flag_service: "firewall"
+flag_command: ["/start.sh"]
 
 scenario: |
   Two weeks after you locked down the Meridian Health Partners firewall to block

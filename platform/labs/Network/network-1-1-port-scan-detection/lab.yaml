@@ -70,6 +70,9 @@ scenario: |
   scanning activity. Determine the attacker's source IP address and document the scan pattern.
 
 flag: "OCR{p0rt_sc4n_d3t3ct3d}"
+flag_path: "/root/flag.txt"
+flag_service: "target"
+flag_command: ["nginx", "-g", "daemon off;"]
 
 hints:
   - text: |

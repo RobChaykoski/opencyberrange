@@ -70,6 +70,10 @@ scenario: |
   through systematic credential testing.
 
 flag: "OCR{w1nrm_brut3}"
+flag_path: "/home/admin/flag.txt"
+flag_service: "target"
+flag_command: ["/usr/sbin/sshd", "-D"]
+flag_owner: "admin:admin"
 
 hints:
   - id: 1

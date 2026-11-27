@@ -280,16 +280,16 @@ unshared DNA breakdown through a profile or DNA endpoint.
 
 ## 12. Per-session flags
 
-**Implemented for 80 of 222 labs.** Environment-driven labs rotate through their
-compose `FLAG`/`*_FLAG` values. The Dockerfile-baked pilot (five Linux labs) uses
-a `flag_path`/`flag_service`/`flag_command` contract: the launcher overrides the
+**Implemented for 112 of 222 labs.** Environment-driven labs rotate through their
+compose `FLAG`/`*_FLAG` values. Dockerfile-baked labs use a
+`flag_path`/`flag_service`/`flag_command` contract: the launcher overrides the
 service entrypoint with a small `/bin/sh` wrapper that writes `$LAB_FLAG` to the
 declared path, chowns it when requested, then execs the original command. The
 session hash is stored only after the compose bring-up succeeds.
 
 **Residual risk**
 
-- 142 labs still bake the flag into an image or a static file. They continue to
+- 110 labs still bake the flag into an image or a static file. They continue to
   grade against the shared hash until they adopt the render contract.
 - Do not log the generated flag; it is visible in `docker inspect` and the
   transient compose override, which is acceptable for a session the learner owns.

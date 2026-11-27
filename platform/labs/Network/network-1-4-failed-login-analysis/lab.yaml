@@ -72,6 +72,9 @@ scenario: |
   attempts, and document the attack pattern.
 
 flag: "OCR{brut3_f0rc3_d3t3ct3d}"
+flag_path: "/root/flag.txt"
+flag_service: "target"
+flag_command: ["nginx", "-g", "daemon off;"]
 
 hints:
   - text: |

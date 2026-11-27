@@ -77,6 +77,9 @@ scenario: |
   - PCAP Location: /home/analyst/captures/email-exfiltration.pcap
 
 flag: "OCR{smtp_d4t4_3xf1ltr4t10n}"
+flag_path: "/root/flag.txt"
+flag_service: "analyst-workstation"
+flag_command: ["/usr/sbin/sshd", "-D", "-e"]
 
 hints:
   - text: |

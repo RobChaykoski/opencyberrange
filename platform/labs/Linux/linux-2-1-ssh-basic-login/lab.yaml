@@ -88,6 +88,10 @@ scenario: |
   - Password: `Welcome2024#`
 
 flag: "OCR{m0td_1nf0}"
+flag_path: "/home/financecorp/flag.txt"
+flag_service: "target"
+flag_command: ["/entrypoint.sh"]
+flag_owner: "financecorp:financecorp"
 
 hints:
   - text: |

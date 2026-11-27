@@ -70,6 +70,9 @@ scenario: |
   assess the security risk.
 
 flag: "OCR{mssql_xp_cmdsh3ll}"
+flag_path: "/tmp/flag.txt"
+flag_service: "target"
+flag_command: ["/bin/sh", "-c", "service mysql start && tail -f /dev/null"]
 
 hints:
   - id: 1

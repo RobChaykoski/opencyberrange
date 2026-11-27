@@ -74,6 +74,9 @@ scenario: |
   network assessment report.
 
 flag: "OCR{n3tw0rk_3num}"
+flag_path: "/var/www/html/flag.txt"
+flag_service: "target"
+flag_command: ["/bin/sh", "-c", "service smbd start && service xrdp start && nginx -g \"daemon off;\""]
 
 hints:
   - id: 1

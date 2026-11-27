@@ -68,6 +68,10 @@ scenario: |
   on FinanceCorp's systems. Document all security-relevant configuration details.
 
 flag: "OCR{w1nrm_3num}"
+flag_path: "/home/admin/flag.txt"
+flag_service: "target"
+flag_command: ["/start-services.sh"]
+flag_owner: "admin:admin"
 
 hints:
   - id: 1

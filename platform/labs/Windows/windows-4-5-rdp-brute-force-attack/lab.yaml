@@ -70,6 +70,10 @@ scenario: |
   through systematic credential testing.
 
 flag: "OCR{rdp_brut3_f0rc3}"
+flag_path: "/home/admin/flag.txt"
+flag_service: "target"
+flag_command: ["/bin/sh", "-c", "service ssh start && service xrdp start && tail -f /dev/null"]
+flag_owner: "admin:admin"
 
 hints:
   - text: |

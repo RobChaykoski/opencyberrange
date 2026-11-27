@@ -68,6 +68,9 @@ randomize_ip_offsets: true
 visibility: course
 week: 7
 flag: "OCR{su1d_pr1v3sc_r00t3d}"
+flag_path: "/root/flag.txt"
+flag_service: "target"
+flag_command: ["/start.sh"]
 
 scenario: |
   Meridian Data Corp, a data analytics firm in Portland, Oregon, contracted your

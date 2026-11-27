@@ -68,6 +68,9 @@ scenario: |
 
 
 flag: "OCR{0s_d3t3ct10n}"
+flag_path: "/var/www/html/flag.txt"
+flag_service: "target"
+flag_command: ["/bin/sh", "-c", "service smbd start && nginx -g \"daemon off;\""]
 
 hints:
   - text: |

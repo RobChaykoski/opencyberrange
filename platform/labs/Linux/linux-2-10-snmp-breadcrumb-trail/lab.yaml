@@ -59,6 +59,10 @@ randomize_ip_offsets: true
 visibility: course
 week: 3
 flag: "OCR{snmp_ch41n_l0g1n}"
+flag_path: "/home/ops_user/flag.txt"
+flag_service: "target"
+flag_command: ["/start.sh"]
+flag_owner: "ops_user:ops_user"
 
 scenario: |
   Ridgeline Power Systems operates a hydroelectric monitoring facility in

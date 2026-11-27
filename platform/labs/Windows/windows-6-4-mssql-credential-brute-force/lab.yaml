@@ -71,6 +71,9 @@ scenario: |
   through systematic credential testing.
 
 flag: "OCR{mssql_brut3}"
+flag_path: "/tmp/flag.txt"
+flag_service: "target"
+flag_command: ["/bin/sh", "-c", "service mysql start && tail -f /dev/null"]
 
 hints:
   - id: 1

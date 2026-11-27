@@ -74,6 +74,10 @@ scenario: |
   configuration and version.
 
 flag: "OCR{rdp_d3t3ct}"
+flag_path: "/home/rdpuser/flag.txt"
+flag_service: "target"
+flag_command: ["/bin/sh", "-c", "service ssh start && service xrdp start && tail -f /dev/null"]
+flag_owner: "rdpuser:rdpuser"
 
 hints:
   - text: |

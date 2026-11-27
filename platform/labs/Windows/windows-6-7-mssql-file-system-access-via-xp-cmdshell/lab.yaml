@@ -70,6 +70,9 @@ scenario: |
   system-level access through misconfigurations.
 
 flag: "OCR{mssql_f1l3_4cc3ss}"
+flag_path: "/tmp/flag.txt"
+flag_service: "target"
+flag_command: ["/bin/sh", "-c", "service mysql start && tail -f /dev/null"]
 
 hints:
   - id: 1

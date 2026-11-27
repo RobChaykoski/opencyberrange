@@ -113,6 +113,9 @@ scenario: |
   - Password: `Backup2024#`
 
 flag: "OCR{sud0_3sc}"
+flag_path: "/root/flag.txt"
+flag_service: "target"
+flag_command: ["/entrypoint.sh"]
 
 hints:
   - text: |

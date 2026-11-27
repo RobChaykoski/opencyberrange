@@ -71,6 +71,9 @@ difficulty_evidence_reviewed_at: "2026-11-08"
 workbook: "wiki/range/netfor/CH_NETSY12_Firewalls/01_Firewall_Fundamentals/"
 
 flag: "OCR{tr4ff1c_c0ntr0ll3d}"
+flag_path: "/root/flag.txt"
+flag_service: "firewall"
+flag_command: ["/start.sh"]
 
 scenario: |
   Meridian Health Partners, a healthcare consulting firm in Dallas, hired Apex

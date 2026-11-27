@@ -42,7 +42,7 @@ after the lab contract, workbook, and QA gate agree.
 | `ot-1-1-modbus-register-analysis` | The defensive takeaway was shorter than the modern OT practice it teaches | Expanded it to segmentation, TCP 502 restriction, jump hosts, OT firewalls, register monitoring, asset inventory, and no direct enterprise exposure |
 | Platform-wide | Lab compose files lack healthchecks and port validation | Add a shared healthcheck pattern and a QA gate; track as Release 6 infrastructure work |
 | Security audit | Docker, IDOR, SSO, async, flag races, and the Celebration Wall were reviewed | Recorded in `docs/security/ATTACK-SURFACE-AUDIT.md`; added Celebration Wall toggle/minor tests and a residual-risk list |
-| Per-session flags | 80 of 222 labs rotate: 75 env-driven + 5 Dockerfile-baked via the render wrapper | Roll the render contract through the remaining 142 baked labs |
+| Per-session flags | 112 of 222 labs rotate: 75 env-driven + 37 Dockerfile-baked via the render wrapper | Roll the render contract through the remaining 110 baked labs |
 | Upstream image pinning | 227 upstream `FROM`/`image:` references use tags, not `@sha256:` digests | **Release blocker** for supply-chain drift; pin the common bases, then run `scripts/check-image-pins.py --strict` in CI |
 | Scaling roadmap | Single-host today; worker queue, microVMs, registry, and external audit sink are future work | `docs/architecture/SCALING-ROADMAP.md` |
 | Startup friction | Browser RangeBox is the zero-config path; WireGuard is advanced. Progress is polled; warm pools are not implemented | Add SSE progress, health-gated Open Lab, and warm pools for the introductory labs |

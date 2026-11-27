@@ -77,6 +77,9 @@ scenario: |
   and document the pattern of the C2 communication.
 
 flag: "OCR{dns_3xf1ltr4t10n}"
+flag_path: "/root/flag.txt"
+flag_service: "dns-server"
+flag_command: ["nginx", "-g", "daemon off;"]
 
 hints:
   - text: |
