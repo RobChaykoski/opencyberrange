@@ -164,3 +164,7 @@ message is real?**
   command above.
 - If you use a screen reader, read the URL one part at a time from the scheme
   to the query string.
+
+## Defensive Takeaway
+
+Read the registrable domain from the right and ignore text before @. HTTPS encrypts the connection but does not prove the site is honest. Verify unexpected account messages through a second channel, and report the message without forwarding the link.

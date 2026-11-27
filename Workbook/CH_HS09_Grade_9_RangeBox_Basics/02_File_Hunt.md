@@ -94,3 +94,7 @@ context.
 **4. What could happen if you trusted a filename without reading the file?**
 
 **5. How would you remove the decoy from your results?**
+
+## Defensive Takeaway
+
+Filenames are labels, not evidence. Narrow the set with find and grep, then read the file that matters. Preserve the original archive, do not execute unknown files, and record the path and the evidence you used.

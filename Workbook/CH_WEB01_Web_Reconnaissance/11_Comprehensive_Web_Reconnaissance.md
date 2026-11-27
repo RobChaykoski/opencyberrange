@@ -201,3 +201,7 @@ You can show the scope preflight, one baseline request, one corroborated
 technology clue, one bounded discovery run with a request count, one validated
 path, the header clue, the flag, one finding with a limitation, and a completed
 cleanup. Submit the lab flag.
+
+## Defensive Takeaway
+
+Validate and encode input at the server, enforce authorization on every object, and monitor unusual request patterns. In this lab, apply that to comprehensive web reconnaissance and record the evidence before recommending the fix.

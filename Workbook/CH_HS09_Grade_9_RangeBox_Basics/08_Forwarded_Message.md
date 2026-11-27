@@ -191,3 +191,7 @@ Before you act on an unexpected message:
   `@` and before the first `/`.
 - If you use a screen reader, ask for the notice as plain text and read it in
   sections.
+
+## Defensive Takeaway
+
+Verify a message through a second channel before acting on it. Decode and read the real host, not the display text. Check the actual file type before opening an attachment, and report the message without forwarding the link or the file.

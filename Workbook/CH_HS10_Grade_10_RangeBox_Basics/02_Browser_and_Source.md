@@ -103,3 +103,7 @@ system. A page listed as disallowed can still be opened by a person.
 **4. Does `robots.txt` stop a person from opening a page? Why or why not?**
 
 **5. How would you check a page before publishing it?**
+
+## Defensive Takeaway
+
+Review pages for unintended disclosures before publishing. Remove comments that contain sensitive information. Never leave credentials, tokens, internal URLs, or developer notes in source code. Visitors receive the entire page source, not only what appears on screen.

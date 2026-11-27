@@ -205,3 +205,7 @@ A header name alone is extraction. The reason is the analysis.
   header name if the editor supports it.
 - If the raw file is difficult to navigate, ask for a plain-text copy with one
   header per line.
+
+## Defensive Takeaway
+
+Preserve the full raw message before deleting or forwarding it. Treat a From/Return-Path mismatch and failed SPF, DKIM, or DMARC as evidence to investigate, not proof by itself. Verify unexpected requests through a second channel and report the message through your organisation's process.

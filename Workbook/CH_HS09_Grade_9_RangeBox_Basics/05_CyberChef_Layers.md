@@ -75,3 +75,7 @@ exercise panel.
 **4. What evidence would help you decide whether an unexpected message is genuine?**
 
 **5. What would you do if the decoded message contained real personal data?**
+
+## Defensive Takeaway
+
+Layered encoding can make a message look mysterious, but it is reversible and does not protect a secret. Use a trusted decoder, verify the sender, and never send credentials or personal data through an untrusted tool or channel.

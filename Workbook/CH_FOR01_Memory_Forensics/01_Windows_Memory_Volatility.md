@@ -123,3 +123,7 @@ a reboot can remove it.
 **4. Why is a memory image sensitive even if the disk is encrypted?**
 
 **5. What would you document before and after acquiring memory?**
+
+## Defensive Takeaway
+
+Preserve evidence, contain the affected host, and add the observed indicators to detection. In this lab, apply that to windows memory analysis with volatility and record the evidence before recommending the fix.

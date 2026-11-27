@@ -187,3 +187,7 @@ extension?**
 - If you cannot use a terminal, use the CyberChef path above or ask your
   instructor for an assisted walkthrough.
 - Take breaks if the output is long. Read one command at a time.
+
+## Defensive Takeaway
+
+A filename extension is a label, not proof of content. Check the real type before opening an unexpected file. Do not disable a security warning to inspect an attachment, and report a suspicious file instead of forwarding it.

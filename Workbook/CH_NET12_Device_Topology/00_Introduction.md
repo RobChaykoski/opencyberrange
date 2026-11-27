@@ -55,3 +55,7 @@ for each device. The image runs `sshd` for the training user, enables forwarding
 on a router, installs a default route on a host, and serves `/flag` on a service.
 The node status endpoint on port 8080 reports the role, links, peer addresses,
 and gateway for that device.
+
+## Defensive Takeaway
+
+A routed segment is a natural enforcement and monitoring point. Default routes and forwarding are configuration that should be reviewed and logged.

@@ -105,3 +105,7 @@ and impact.
 
 You can show the header observations, the flag, one missing/weak control, and a
 contextual-risk statement that does not claim exploitability. Submit the lab flag.
+
+## Defensive Takeaway
+
+Validate and encode input at the server, enforce authorization on every object, and monitor unusual request patterns. In this lab, apply that to header analysis and record the evidence before recommending the fix.

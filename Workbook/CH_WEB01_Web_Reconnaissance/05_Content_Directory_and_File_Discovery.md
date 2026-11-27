@@ -117,3 +117,7 @@ Stop if:
 
 You can show the bounded command, the request count, at least one manually
 validated path, one false-positive check, and the flag. Submit the lab flag.
+
+## Defensive Takeaway
+
+Validate and encode input at the server, enforce authorization on every object, and monitor unusual request patterns. In this lab, apply that to basic directory enumeration and record the evidence before recommending the fix.

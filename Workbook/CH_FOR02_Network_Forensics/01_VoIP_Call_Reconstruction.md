@@ -149,3 +149,7 @@ Real VoIP investigations often combine:
 **4. What could an investigator learn from the signalling even without the audio?**
 
 **5. Which controls would make a real call harder to intercept?**
+
+## Defensive Takeaway
+
+Preserve evidence, contain the affected host, and add the observed indicators to detection. In this lab, apply that to voip call reconstruction and record the evidence before recommending the fix.

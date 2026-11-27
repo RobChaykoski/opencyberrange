@@ -105,3 +105,7 @@ Stop if:
 
 You can show three distinct host responses, one sentence about virtual-host
 identity, one sentence about scope, and the flag. Submit the lab flag.
+
+## Defensive Takeaway
+
+Validate and encode input at the server, enforce authorization on every object, and monitor unusual request patterns. In this lab, apply that to subdomain discovery and record the evidence before recommending the fix.

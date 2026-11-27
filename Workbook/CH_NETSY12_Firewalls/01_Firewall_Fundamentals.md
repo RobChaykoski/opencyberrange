@@ -458,3 +458,7 @@ Submit the flag on the platform to complete the exercise.
 > **How to submit:** enter the flag on the exercise page exactly as you recovered it, keeping the `OCR{...}` wrapper.
 >
 > **Flag:** `OCR{________________________________}`
+
+## Defensive Takeaway
+
+Segment the network, deny unnecessary egress, and alert on scanning, credential failures, and unusual data flows. In this lab, apply that to firewall fundamentals - controlling inbound traffic and record the evidence before recommending the fix.

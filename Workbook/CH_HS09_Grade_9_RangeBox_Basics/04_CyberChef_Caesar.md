@@ -102,3 +102,7 @@ confidentiality.
 **4. Why is a Caesar shift a poor choice for protecting a real password?**
 
 **5. What should you do before acting on an unexpected encoded message?**
+
+## Defensive Takeaway
+
+A Caesar shift is easy to try exhaustively, so it does not protect a secret. If a message uses simple obfuscation, decode it with a trusted tool and verify the sender through a second channel.

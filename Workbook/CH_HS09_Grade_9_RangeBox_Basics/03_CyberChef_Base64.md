@@ -95,3 +95,7 @@ resolve, ask your instructor for the address shown in the exercise.
 **4. How could you confirm that the note really came from the partner organisation?**
 
 **5. What is one safe way to share a file that contains real personal data?**
+
+## Defensive Takeaway
+
+Base64 changes how text is represented; it does not protect a secret. Treat encoded content as readable, verify the sender through a second channel, and never paste real credentials or personal data into a public web tool.

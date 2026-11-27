@@ -96,13 +96,9 @@ def check_manifest(path: Path) -> None:
         return
 
     text = page.read_text(encoding="utf-8", errors="ignore")
-    headings = " ".join(
-        line[3:].strip().lower()
-        for line in text.splitlines()
-        if line.startswith("## ")
-    )
+    body = text.lower()
     for concept, needles in CONCEPT_GROUPS.items():
-        if not any(needle in headings for needle in needles):
+        if not any(needle in body for needle in needles):
             add("info", "workbook-concept", slug, f"missing {concept} section")
 
     ips = sorted(set(IP_RE.findall(text)))

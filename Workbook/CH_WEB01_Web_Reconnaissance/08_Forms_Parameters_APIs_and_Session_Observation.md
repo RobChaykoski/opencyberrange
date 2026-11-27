@@ -119,3 +119,7 @@ Do not infer a role or authorization boundary that the lab does not show.
 
 You can show the allowed-method result, one GET, one benign PUT, the flag, and a
 statement separating capability from authorization. Submit the lab flag.
+
+## Defensive Takeaway
+
+Validate and encode input at the server, enforce authorization on every object, and monitor unusual request patterns. In this lab, apply that to http methods enumeration and record the evidence before recommending the fix.

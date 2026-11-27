@@ -108,3 +108,7 @@ Copy the complete `OCR{...}` value into the exercise panel.
 
 You can state one server clue, one framework/CMS clue, one corroborating clue,
 your confidence, and one thing the evidence does not prove. Submit the lab flag.
+
+## Defensive Takeaway
+
+Validate and encode input at the server, enforce authorization on every object, and monitor unusual request patterns. In this lab, apply that to technology identification and record the evidence before recommending the fix.
