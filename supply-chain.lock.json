@@ -178,7 +178,7 @@
       "sha256": "877500e2e2d33af4263cae4b4b208166f4c500c8e4648d6b5b8d24ac122829c1"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "3893c0a4e95fc74da722334b3a9970aaba84bdf347ecb899ad388eb36004fc88"
+      "sha256": "0099d8c7de488658daf252aac57ba75d9b11d64acad4ec728b739ce432295feb"
     },
     "platform/backend/app/data/threat-awareness.json": {
       "sha256": "78703d33386e1b62becfa5cfb1b27a22f770fff20a3e38411b0787e76f7c48ea"
@@ -685,7 +685,7 @@
       ]
     },
     "linux-2-3-ssh-file-discovery": {
-      "content_hash": "3b0cb44d0e35c3436b86b99e8542923097ac78963d109308665260be85220024",
+      "content_hash": "3dc3800dae737eac70755a61e4fc09e24287bddc1dbe0d97776dff14fa15db3f",
       "services": [
         "target"
       ]
@@ -1281,7 +1281,7 @@
       ]
     },
     "web-11-11-zap-baseline-triage": {
-      "content_hash": "d4fc227ad3ac2cbf7d1b53490df7d95a69a02da7a73cf40c6ba88a960187d193",
+      "content_hash": "7ffabc22f1b2d51e45037112a2f927225a529c901192449c060763d60fd0b0b3",
       "services": [
         "webapp"
       ]
