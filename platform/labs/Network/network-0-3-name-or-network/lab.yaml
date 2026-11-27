@@ -86,6 +86,11 @@ topology:
       ip_offset: "10"
 
 flag: "OCR{ch3ck_th3_n4m3_th3n_th3_h0st}"
+flag_path: /srv/index.html
+flag_service: target
+flag_command:
+  - /entrypoint.sh
+flag_mode: replace
 
 hints:
   - text: |

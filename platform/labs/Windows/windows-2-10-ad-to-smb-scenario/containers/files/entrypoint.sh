@@ -6,7 +6,7 @@ if ! id svc-backup >/dev/null 2>&1; then
   (echo 'S3rv1ce!Pass'; echo 'S3rv1ce!Pass') | smbpasswd -s -a svc-backup
 fi
 mkdir -p /srv/evidence
-printf 'OCR{ad_t0_smb_p4th}\n' > /srv/evidence/flag.txt
+printf '%s\n' "${LAB_FLAG:-OCR{ad_t0_smb_p4th}}" > /srv/evidence/flag.txt
 chown -R svc-backup:svc-backup /srv/evidence
 cat > /etc/samba/smb.conf <<'EOF'
 [global]

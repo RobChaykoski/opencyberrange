@@ -84,6 +84,11 @@ topology:
       ip_offset: "10"
 
 flag: "OCR{dns_1s_th3_ph0n3b00k}"
+flag_path: /etc/dnsmasq.conf
+flag_service: target
+flag_command:
+  - /entrypoint.sh
+flag_mode: replace
 
 hints:
   - text: |
