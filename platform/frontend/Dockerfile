@@ -23,7 +23,7 @@ RUN npm run build
 # Pin the multi-arch index digest so a base-image refresh cannot change the
 # runtime silently. Renovate updates the digest with the tag. apk upgrade below
 # still pulls Alpine security fixes that landed after the pinned digest.
-FROM nginx:alpine@sha256:fed7e14be83cbd2661a75cdc5b872d936cf155d46c327084d30b8df19ae88d72
+FROM nginx:alpine@sha256:fb4658584bd9a916ffb6f6e365f97c25cfdb2923801f551ea08356e695f14ff7
 
 ARG PLATFORM_VERSION=4
 ARG BUILD_REVISION=unknown
