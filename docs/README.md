@@ -70,6 +70,7 @@ group, a label set, a review cadence, and a storage/retention class.
   [licensing](../LICENSING.md)
 - [Repository hygiene](REPOSITORY-HYGIENE.md) and
   [MkDocs governance](MKDOCS-GOVERNANCE.md)
+- [Governance](../GOVERNANCE.md) and [citation](../CITATION.cff)
 - [Open-source readiness](OPEN-SOURCE-READINESS.md)
 - [Legal and institutional readiness](LEGAL-READINESS.md)
 - [Flag exposure](FLAG-EXPOSURE.md)

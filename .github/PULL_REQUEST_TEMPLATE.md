@@ -20,6 +20,10 @@
 - [ ] `python scripts/validate-lab.py <lab>` for changed labs
 - [ ] Manually exercised the affected screen or endpoint
 
+## Contributor License Agreement
+
+- [ ] I have signed the [CLA](CLA.md), or this change contains no code contribution.
+
 ## Security checklist
 
 - [ ] OWASP Top 10 categories touched are listed (see `docs/V2-SECURITY-OWASP-TOP-10.md`)

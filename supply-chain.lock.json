@@ -4,28 +4,28 @@
       "sha256": "ff442fa83f123d460e1116ed4ddc1b79bd7ff1f739e3cd18cd3c431a0435cb7f"
     },
     ".github/workflows/ci.yml": {
-      "sha256": "0cd9c34dc748ad7ad2bb2463dd7a6586bb82b390923ad348b335e8e8100e84fd"
+      "sha256": "fcfbc8b78f30a30deb7f26ab86007b7c54e27eab47cbff2cc7fd7aa6b9b8f263"
     },
     ".github/workflows/codeql.yml": {
-      "sha256": "528819da40419208ef852227581745b47d55b666c5fc6726eb5f47b2a9a4dcc5"
+      "sha256": "6164f8001e6787c9f6401bb35ae931f97f01794fa2e1cb93bf9160755b03d6c0"
     },
     ".github/workflows/dependency-audit.yml": {
-      "sha256": "2cc785a27ec18ff5a07edda88690a30f5064219bc6a572e19211d7a80b230c40"
+      "sha256": "fc49b4fb6ed3ab62365d4025705274ad40c4763f51220595ae7b4a306044607d"
     },
     ".github/workflows/docs-publish.yml": {
-      "sha256": "007be2d1fcd0226ba8172b67671b00365eb0d52750c381c579da785a90bd8fe3"
+      "sha256": "20a58d0bbdab29da2491f4292c34be847cfed57631e0cc75c233d658009ef912"
     },
     ".github/workflows/image-scan.yml": {
-      "sha256": "f4824fc426bbfbe23c5ad7c67be4a318dec48d662ad015bf9e9690e212c00232"
+      "sha256": "7a947d8837619bf3ae69b9a20745d561be5c835f796f338e0195789d44f32127"
     },
     ".github/workflows/quality.yml": {
-      "sha256": "98728b63ec1151de8768fe803051fb0271ab7fcc2bdd1384115d8b91ae969a68"
+      "sha256": "25bb293d6e3a7320e6cb286bd66bd6d75c12f5288536b46d1b05553d92e89a5b"
     },
     ".github/workflows/trivy.yml": {
-      "sha256": "4e33daf5440aa286d3144424e8dac52daf6536f36c42b8319e8ea77b635e26a0"
+      "sha256": "9d8a13938d08e4e67a30178d876c9f2241eb09a83ba3169014865a51d176978d"
     },
     ".github/workflows/ui-smoke.yml": {
-      "sha256": "4dd4d773bf74b9bf0cb86038ff443ad028c59176e1aa377fe37dfb544c5e6a9e"
+      "sha256": "16dee93219cfe2c8adeaac8f99738c3e102219fc137c77b5d907fe4fc6c2faae"
     },
     ".trivyignore.yaml": {
       "sha256": "5fc1cdffada725d1dabd6a2d55d9b53e9821390175544bdf86807eb5b1ec37dd"
