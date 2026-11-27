@@ -189,3 +189,17 @@ comment sat above a generated secret.
 
 **Accepted:** the Peer Manager still runs as root. The capability-drop design is
 tracked as HS-09 and needs a host test before rollout.
+
+### `--check-secrets`
+
+`setup-range-server.sh --check-secrets` inspects the deployed configuration
+instead of trusting the installer's own history. It fails on placeholder values
+(`labpass`, `changeme`, `SsoDemoAdmin`, and similar), empty `JWT_SECRET`,
+`DATABASE_URL`, `POSTGRES_PASSWORD`, `WG_ENCRYPTION_KEY`, or `WG_API_KEY`, a
+`WG_ENCRYPTION_KEY` that is not a 44-character Fernet key, and modes other than
+600/400 on `.env`, `peer_manager.env`, the WireGuard private key, and the
+interface config. A remaining `SETUP_TOKEN` is a warning, not a failure,
+because it is expected until the first administrator exists.
+
+Tested on dev with a deliberately weak `.env` (three findings, exit 1) and a
+clean one (exit 0).
