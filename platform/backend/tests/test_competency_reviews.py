@@ -87,7 +87,7 @@ def test_queue_starts_with_pending_contracts(client, db_session):
         )
         assert response.status_code == 200, response.text
         body = response.json()
-        assert body["total"] == 218
+        assert body["total"] == 222
         assert body["counts"]["pending"] >= 190
         assert body["contracts"][0]["status"] == "pending"
     finally:

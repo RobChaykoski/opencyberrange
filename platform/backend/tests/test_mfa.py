@@ -104,6 +104,9 @@ def test_totp_code_cannot_be_replayed(
 def test_recovery_codes_use_argon2_and_remain_single_use(
     client, auth_headers, test_user, db_session
 ):
+    test_user.mfa_enabled = True
+    test_user.totp_secret = pyotp.random_base32()
+    db_session.commit()
     response = client.post("/api/auth/mfa/recovery-codes", headers=auth_headers)
     assert response.status_code == 200, response.text
     codes = response.json()["codes"]

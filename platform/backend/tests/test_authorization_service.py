@@ -37,7 +37,7 @@ DEFAULTS = {
     "tenant_isolation_enabled": "true",
     "break_glass_enabled": "false",
     "break_glass_require_mfa": "true",
-    "break_glass_require_approval": "false",
+    "break_glass_require_approval": "true",
     "break_glass_max_minutes": "60",
 }
 
@@ -290,6 +290,8 @@ def test_revoked_dna_consent_blocks_even_a_break_glass_attempt(db_session):
         reason="incident investigation",
         scope_user_id=learner.id,
     )
+    approver = _user(db_session, "admin", mfa=True)
+    grant = authorization.approve_break_glass(db_session, approver, grant.id)
     assert grant.status == "active"
     decision = authorize(
         db_session, admin, "dna.view.private", resource_user_id=learner.id
@@ -344,6 +346,8 @@ def test_break_glass_grant_allows_private_access_then_revoke_denies(db_session):
         reference="INC-42",
         scope_user_id=learner.id,
     )
+    approver = _user(db_session, "admin", mfa=True)
+    grant = authorization.approve_break_glass(db_session, approver, grant.id)
     decision = authorize(
         db_session,
         admin,
@@ -412,6 +416,8 @@ def test_expired_break_glass_grants_are_closed_with_an_event(db_session):
         reason="expiry test",
         scope_user_id=learner.id,
     )
+    approver = _user(db_session, "admin", mfa=True)
+    grant = authorization.approve_break_glass(db_session, approver, grant.id)
     grant.expires_at = datetime.now(timezone.utc).replace(tzinfo=None)
     db_session.commit()
     assert authorization.expire_stale_grants(db_session) >= 1
