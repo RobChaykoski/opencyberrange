@@ -8,7 +8,7 @@ Scope, releases, deliverables, editions, roadmaps, counts, handoffs, and the pub
 - **NIST SP 800-53 Rev. 5:** CM-3, SA-10, SI-12
 - **Owner:** Product lead
 
-72 document(s) in this group.
+74 document(s) in this group.
 
 | Document | Type | Classification | Review | Score | Next review |
 |---|---|---|---|---:|---|
@@ -17,6 +17,7 @@ Scope, releases, deliverables, editions, roadmaps, counts, handoffs, and the pub
 | [Lab and content counts](../../COUNTS.md) | `generated` | internal | unreviewed |  | unset |
 | [SWOCTS Cyber Range editions](../../EDITIONS.md) | `standard` | public | unreviewed |  | unset |
 | [Federation](../../FEDERATION.md) | `design` | internal | unreviewed |  | unset |
+| [Flag exposure](../../FLAG-EXPOSURE.md) | `reference` | internal | unreviewed |  | unset |
 | [Session handoff — 26 November 2026](../../HANDOFF-2026-11-26.md) | `reference` | internal | unreviewed |  | unset |
 | [Language and localization](../../LANGUAGE-AND-LOCALIZATION.md) | `standard` | internal | unreviewed |  | unset |
 | [LTI 1.3 Advantage: design contract](../../LTI.md) | `reference` | internal | unreviewed |  | unset |
@@ -72,6 +73,7 @@ Scope, releases, deliverables, editions, roadmaps, counts, handoffs, and the pub
 | [Release 6 scope: competency, evidence, scale, and federation](../../RELEASE-6-SCOPE.md) | `release` | internal | unreviewed |  | unset |
 | [Release test plan](../../RELEASE-TEST-PLAN.md) | `release` | internal | unreviewed |  | unset |
 | [Releases](../../RELEASES.md) | `reference` | internal | unreviewed |  | unset |
+| [Upstream relicensing permission request](../../UPSTREAM-LICENSE-PERMISSION-REQUEST.md) | `reference` | internal | unreviewed |  | unset |
 | [V2 Program Charter](../../V2-PROGRAM-CHARTER.md) | `reference` | internal | unreviewed |  | unset |
 | [SWOCTS Cyber Range Enterprise preview parking lot](../../V3-PARKING-LOT.md) | `reference` | internal | unreviewed |  | unset |
 | [Validation report](../../VALIDATION-REPORT.md) | `report` | internal | unreviewed |  | unset |

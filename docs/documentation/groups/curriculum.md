@@ -8,7 +8,7 @@ Learning design, tracks and pathways, labs, competencies, assessment, analytics,
 - **NIST SP 800-53 Rev. 5:** AT-2, PM-5, SA-11
 - **Owner:** Curriculum lead
 
-85 document(s) in this group.
+86 document(s) in this group.
 
 | Document | Type | Classification | Review | Score | Next review |
 |---|---|---|---|---:|---|
@@ -65,6 +65,7 @@ Learning design, tracks and pathways, labs, competencies, assessment, analytics,
 | [Learner-visible scores](../../LEARNER-VISIBLE-SCORES.md) | `reference` | internal | unreviewed |  | unset |
 | [Learning framework](../../LEARNING-FRAMEWORK.md) | `reference` | internal | unreviewed |  | unset |
 | [Learning signal indices](../../LEARNING-SIGNAL-INDICES.md) | `reference` | internal | unreviewed |  | unset |
+| [Legal and institutional readiness](../../LEGAL-READINESS.md) | `reference` | internal | unreviewed |  | unset |
 | [Live memory forensics](../../LIVE-MEMORY-FORENSICS.md) | `reference` | internal | unreviewed |  | unset |
 | [Metasploit Operations track](../../METASPLOIT-TRACK.md) | `reference` | internal | unreviewed |  | unset |
 | [Modern application security pathway](../../MODERN-APP-SECURITY-PATHWAY.md) | `reference` | internal | unreviewed |  | unset |

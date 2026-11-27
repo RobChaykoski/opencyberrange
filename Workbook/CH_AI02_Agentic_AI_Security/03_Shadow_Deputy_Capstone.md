@@ -81,11 +81,8 @@ The response includes:
 - the full machine token for `svc-intake-bot`;
 - the stage 1 marker.
 
-Record the token and the marker in your evidence table. The marker is:
-
-```text
-OCR{n0n_hum4n_1d3nt1ty_l34k_01}
-```
+Record the token and the marker in your evidence table. Read the marker from the
+debug route response; do not copy it from this page.
 
 ### Step 3: Audit the identity inventory
 

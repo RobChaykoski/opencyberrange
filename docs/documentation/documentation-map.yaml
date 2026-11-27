@@ -2166,6 +2166,31 @@ documents:
     published: true
     evidence: false
     retention: R2
+- path: docs/FLAG-EXPOSURE.md
+  title: Flag exposure
+  group: product
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
 - path: docs/FOUNDATIONS.md
   title: The Age of Foundations
   group: curriculum
@@ -2793,6 +2818,31 @@ documents:
     retention: R2
 - path: docs/LEARNING-SIGNAL-INDICES.md
   title: Learning signal indices
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/LEGAL-READINESS.md
+  title: Legal and institutional readiness
   group: curriculum
   doc_type: reference
   audience:
@@ -6144,6 +6194,31 @@ documents:
 - path: docs/UPGRADE-WAVES.md
   title: Upgrade Waves
   group: operations
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/UPSTREAM-LICENSE-PERMISSION-REQUEST.md
+  title: Upstream relicensing permission request
+  group: product
   doc_type: reference
   audience:
   - developer
