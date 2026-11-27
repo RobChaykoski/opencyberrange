@@ -71,6 +71,12 @@ scenario: |
   attacker could gain unauthorized access through weak credentials.
 
 flag: "OCR{smb_full_4tt4ck}"
+flag_path: /tmp/flag/flag.txt
+flag_service: target
+flag_command:
+  - smbd
+  - -F
+  - --no-process-group
 
 hints:
   - text: |

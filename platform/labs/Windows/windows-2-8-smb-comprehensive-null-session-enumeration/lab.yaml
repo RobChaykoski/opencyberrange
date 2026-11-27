@@ -75,6 +75,13 @@ scenario: |
   inform the next phase of your engagement.
 
 flag: "OCR{smb_c0mpl3t3_null}"
+flag_path: /etc/samba/smb.conf
+flag_service: target
+flag_command:
+  - smbd
+  - -F
+  - --no-process-group
+flag_mode: replace
 
 hints:
   - text: |

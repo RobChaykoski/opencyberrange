@@ -178,7 +178,7 @@
       "sha256": "877500e2e2d33af4263cae4b4b208166f4c500c8e4648d6b5b8d24ac122829c1"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "fb59a6ddf3a566c61e8231e3e25a03ba5a2ed527e0e57c797e1667ea0ae9ab6a"
+      "sha256": "29bb7ecebf766b4c41bb5844e65802c58e5cf3b4a93e604f99c4ba4b4df10d52"
     },
     "platform/backend/app/data/threat-awareness.json": {
       "sha256": "78703d33386e1b62becfa5cfb1b27a22f770fff20a3e38411b0787e76f7c48ea"
@@ -1231,13 +1231,13 @@
       ]
     },
     "web-1-3-http-methods-enumeration": {
-      "content_hash": "7f4842b0d0166ac57c9fe2061efca590139ea4a309fac395f74a40ce9e7203f9",
+      "content_hash": "993b72b9d16e2649b26246fa3e7d81b84fbd44865e51777d3486415dc7df73e7",
       "services": [
         "webserver"
       ]
     },
     "web-1-4-header-analysis": {
-      "content_hash": "2a6d11c6187fa03ab82d7ec650bbe5c827d7da829c6fbbe144aa8208fe44f198",
+      "content_hash": "277ccb5dfe5e7f731050dbac3a70cb4d012cbd8b11a77155912dbd05e65fda26",
       "services": [
         "webserver"
       ]
@@ -1490,7 +1490,7 @@
       ]
     },
     "windows-2-1-smb-connection-test": {
-      "content_hash": "c52c04b3d9e326e76083429fa7ceb72763edba1343eb4c475efee62ce1a4e084",
+      "content_hash": "d19c3d6d3f8bbbbd2e668a63aefb39bbc27042454690c5d1bf53958939057eca",
       "services": [
         "target"
       ]
@@ -1503,7 +1503,7 @@
       ]
     },
     "windows-2-2-smb-share-listing": {
-      "content_hash": "c3cf05528096df2ea55b46ab4ecf9d169d451a0646098da27404b84d1e857cc6",
+      "content_hash": "6f53bb9474229acb74279d2ddf0322341e82e5af4c78f8c8ead24040d1bdfaf4",
       "services": [
         "target"
       ]
@@ -1521,25 +1521,25 @@
       ]
     },
     "windows-2-5-smb-null-session-connection": {
-      "content_hash": "8a3d2cb7a0c05336963306acfc2adbb4ac516bc67d9beffc821afb13c6fc2410",
+      "content_hash": "256cdc7d68c0f012a0a79069e9ed1e990ca7606381df4bd47f73c12a8db0da0b",
       "services": [
         "target"
       ]
     },
     "windows-2-6-smb-null-session-share-enumeration": {
-      "content_hash": "0a7699bf18b30ea722d0ee26c03f84ae5e9a51d1a937919b6d378b40d926ebda",
+      "content_hash": "46d4609e1a624f9af6d5cec1f54f45eacdd631fefbaed2b07862272487f26953",
       "services": [
         "target"
       ]
     },
     "windows-2-7-smb-user-enumeration-via-null-session": {
-      "content_hash": "c3ad57d90bfae11e058d59c306f07144f5c5f959d13247c1eb9a996e0e55b1fa",
+      "content_hash": "366f218254131b6ae1f683201ad1d40aa15a2b446a48252f5a0816804783211b",
       "services": [
         "target"
       ]
     },
     "windows-2-8-smb-comprehensive-null-session-enumeration": {
-      "content_hash": "17b314db20aaa0e74e15b36a31a4f2fc99e4f052d238174389cb2be94cb3d46a",
+      "content_hash": "4c1d8d0cbdd1f2b1d0ddfcc62eb8af9de378f5052a37a6fc967d309899a06e2a",
       "services": [
         "target"
       ]
@@ -1575,7 +1575,7 @@
       ]
     },
     "windows-3-5-smb-full-credential-attack": {
-      "content_hash": "89b9cffbbac77d369c887dcd5a11bd8b26537d210227a96671b862ccca7356e1",
+      "content_hash": "dddaa8f42a74a451e4115cde8d1561e4ff3c2694f0a9063ff2de7b1823cb9b83",
       "services": [
         "target"
       ]
@@ -1731,7 +1731,7 @@
       ]
     },
     "windows-8-1-single-service-credential-discovery": {
-      "content_hash": "89a3cf763e2b6eb1b726cf87705059b9caeea653fc187c61da2c4fd150e8f55d",
+      "content_hash": "214aaa49cab2acadd56055691cb8366aeeaf55b2446a6d0ddb1e3bdeb277c584",
       "services": [
         "target"
       ]

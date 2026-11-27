@@ -74,6 +74,13 @@ scenario: |
 
 
 flag: "OCR{smb_c0nn3ct}"
+flag_path: /etc/samba/smb.conf
+flag_service: target
+flag_command:
+  - smbd
+  - -F
+  - --no-process-group
+flag_mode: replace
 
 hints:
   - text: |

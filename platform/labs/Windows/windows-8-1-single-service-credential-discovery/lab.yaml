@@ -75,6 +75,12 @@ scenario: |
   the scope of credential reuse risks.
 
 flag: "OCR{cr3d_r3us3_s4m3}"
+flag_path: /tmp/share2/flag.txt
+flag_service: target
+flag_command:
+  - smbd
+  - -F
+  - --no-process-group
 
 hints:
   - id: 1
