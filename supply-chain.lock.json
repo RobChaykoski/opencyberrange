@@ -19,7 +19,7 @@
       "sha256": "f4824fc426bbfbe23c5ad7c67be4a318dec48d662ad015bf9e9690e212c00232"
     },
     ".github/workflows/quality.yml": {
-      "sha256": "c6debba4490d682c3be784c3c034b9e72cba8b6294b8603900e34e10e4b5da2c"
+      "sha256": "b2f953f3b607053e08ed187fd435052e32eed8a65b3dc5af538ed7a202a0df9f"
     },
     ".github/workflows/trivy.yml": {
       "sha256": "4e33daf5440aa286d3144424e8dac52daf6536f36c42b8319e8ea77b635e26a0"
@@ -178,7 +178,7 @@
       "sha256": "877500e2e2d33af4263cae4b4b208166f4c500c8e4648d6b5b8d24ac122829c1"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "b30b25f7deacc26d77b00ef144d8a9b1c9fd5c4c6774dcc29b74246bdb33be6c"
+      "sha256": "1894c34a2614cb6e94ec01a139ab7746499bd8be1579acd9cdcf836411444369"
     },
     "platform/backend/app/data/threat-awareness.json": {
       "sha256": "78703d33386e1b62becfa5cfb1b27a22f770fff20a3e38411b0787e76f7c48ea"
@@ -1176,7 +1176,7 @@
       ]
     },
     "ot-3-1-ics-pcap-forensics": {
-      "content_hash": "eef3ec1410ee85c05e6916eff0eee45750a4387464dc8af9968b876d1b0d9343",
+      "content_hash": "6bd8a1f6a5f9dee88c51f22d6cb0792850e32da10c419d340d886681b5864272",
       "services": [
         "analyst",
         "guide"

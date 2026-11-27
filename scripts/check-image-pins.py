@@ -56,7 +56,7 @@ def scan() -> list[tuple[str, str]]:
             if not isinstance(service, dict):
                 continue
             image = service.get("image")
-            if not image:
+            if not image or service.get("build"):
                 continue
             image = str(image)
             if not is_local(image) and not is_pinned(image):

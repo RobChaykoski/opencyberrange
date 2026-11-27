@@ -125,7 +125,7 @@
     "ot-1-2-modbus-setpoint-tampering": "1562173ef4d939e0cde152a77f249470b188a59a3989baf5f541968edfc5e0b0",
     "ot-1-3-modbus-gateway-bypass": "81e5a14b2dda958946745ec0ae5c752d2b5745b8a6cf24042e9381dc0081a599",
     "ot-2-1-s7comm-register-access": "6b121c1de8e47ac269c9596856b4b5c46eaed7551fc340b5861035858be06e98",
-    "ot-3-1-ics-pcap-forensics": "eef3ec1410ee85c05e6916eff0eee45750a4387464dc8af9968b876d1b0d9343",
+    "ot-3-1-ics-pcap-forensics": "6bd8a1f6a5f9dee88c51f22d6cb0792850e32da10c419d340d886681b5864272",
     "software-security-1-1-hidden-export-route": "045953f43a1c647bee7eb201a414503d6945eeaccfcb5918c804fbeaea201735",
     "software-security-2-1-diagnostics-command-injection": "30c4482a0b63f073a7255ba315f973641f85035763906f08fc9f2cc206c379b6",
     "software-security-3-1-first-karate-feature": "d5d8a0d1b3a5daf7ede3c8bf8b8cf83e53bf63d8a91e0f176133b12b0f4a553f",

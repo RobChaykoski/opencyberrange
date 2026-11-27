@@ -460,7 +460,8 @@ def check_lab(
     lab_flag = str(lab.get("flag") or "")
     page = workbook_page(lab)
     if page is None:
-        add(findings, "warning", "workbook", slug, "no workbook page resolved")
+        if not lab.get("assessment_workbook_exemption"):
+            add(findings, "warning", "workbook", slug, "no workbook page resolved")
     else:
         text = page.read_text(encoding="utf-8", errors="ignore")
         check_images(slug, page, text, findings)

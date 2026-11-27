@@ -115,6 +115,9 @@ jobs:
       - name: Validate workbook accuracy and path plans
         run: python scripts/lab_qa.py --static
 
+      - name: Lint lab manifests, workbooks, and compose files
+        run: python scripts/lint_labs.py --check
+
       - name: Verify the documentation map and group pages
         run: python scripts/documentation_map.py --check
 

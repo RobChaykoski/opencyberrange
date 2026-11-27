@@ -199,3 +199,4 @@ test:
     command: "echo 'OCR{192.168.1.88_1502_896}'"
     expect: "OCR{192.168.1.88_1502_896}"
 
+assessment_workbook_exemption: "Assessment lab: no learner workbook page is published."
