@@ -236,7 +236,7 @@ Commands and the full runbook are in
   host socket. `CONTAINERS`, `IMAGES`, `NETWORKS`, `VOLUMES`, `INFO`, `POST`,
   `EXEC`, and read-only `SYSTEM` accounting are enabled; `BUILD` remains off so
   a compromised backend cannot submit build recipes.
-- `SYSTEM` is used only for `/system/df` so **Admin â†’ Disk Management** can show
+- `SYSTEM` is used only for `/system/df` so **Admin → Disk Management** can show
   image, container, volume, and build-cache sizes. It does not enable mutation.
 - The proxy is attached only to the internal `docker_control` network. Lab
   containers and the frontend are not on it.
@@ -460,7 +460,7 @@ was created without the private release key, which is held outside the
 repository. Sign the tag on the release workstation if a signed tag is
 required; the lock signature remains valid independently.
 
-## Security review evidence â€” 8 November 2026
+## Security review evidence — 8 November 2026
 
 | Check | Result |
 |---|---|

@@ -24,12 +24,12 @@ institution.
   service), **Consent** (optional survey or research), **Legal** (institutional
   or statutory obligation), or **Public** (minimal certificate verification).
 - **Exports** lists the paths that can include the field:
-  - `self` â€” `GET /api/auth/export`
-  - `admin-users` â€” Admin user import/export
-  - `activity` â€” activity-log CSV/JSON
-  - `reports` â€” course, student, assignment, and ops CSV/PDF
-  - `analytics` â€” cross-course analytics CSV/PDF
-  - `certificate` â€” public certificate verification
+  - `self` — `GET /api/auth/export`
+  - `admin-users` — Admin user import/export
+  - `activity` — activity-log CSV/JSON
+  - `reports` — course, student, assignment, and ops CSV/PDF
+  - `analytics` — cross-course analytics CSV/PDF
+  - `certificate` — public certificate verification
 - **On deletion** is one of **Deleted**, **Anonymised**, **Nulled**, **Kept**
   (non-personal content), or **Suppression hash**.
 - A field marked **Derived** is never accepted directly from a learner; it is
@@ -133,7 +133,7 @@ not stored. The roster keeps only the LMS subject, roles, status, and context.
 | `exercise_quiz_attempts.*` | Optional per-exercise quiz results | Formative feedback | Service | Institution schedule | Self; instructor aggregate; admin | `self`, `reports` | Deleted |
 | `achievements.achievement_type`, `awarded_at`, `course_id`, `lab_id` | Micro-credentials | Progress and celebration | Service | Institution schedule | Self; instructor; admin | `self`, `reports` | Deleted |
 | `custom_achievements.*` | Admin-defined achievement definition: name, description, icon, trigger, threshold, group, tier, difficulty, points | Programme-specific goals | Service | Until deleted | Admin | Not learner data | Kept as course/programme content |
-| `derived.achievement_points` | Tier Ã— difficulty point value for each badge | Show value and progress | Service | Computed on read | Self; instructor aggregate; admin | `self`, `reports` | Recomputed |
+| `derived.achievement_points` | Tier × difficulty point value for each badge | Show value and progress | Service | Computed on read | Self; instructor aggregate; admin | `self`, `reports` | Recomputed |
 | `achievement_celebrations.*` | Anonymous celebration count | Community recognition | Consent (public action) | Until withdrawn or deletion | Aggregate only | Never linked to identity | Deleted |
 | `course_completion_resets.*` | Instructor reset events | Reset rate and report accuracy | Service / Security | Course lifetime | Instructor; admin | `reports` | Deleted or anonymised |
 | `user_accommodations.user_id`, `time_multiplier`, `due_date_extension_days`, `notes` | Per-student accessibility accommodation | Scale timed sessions and shift assignment due dates | Service | Account lifetime | Self (own multiplier); assigned instructor; admin | `self` (values only; notes excluded) | Deleted |
@@ -144,7 +144,7 @@ not stored. The roster keeps only the LMS subject, roles, status, and context.
 
 | Field | Description | Purpose | Authority | Retention | Access | Exports | On deletion |
 |---|---|---|---|---|---|---|---|
-| `exercise_pulse_surveys.difficulty`, `learning` | 1â€“5 pulse ratings | Exercise health and learning value | Consent (survey opt-in) | Until consent withdrawn or study close | Self; instructor aggregate above minimum cohort; admin | `self`, `analytics` (aggregate) | Deleted |
+| `exercise_pulse_surveys.difficulty`, `learning` | 1–5 pulse ratings | Exercise health and learning value | Consent (survey opt-in) | Until consent withdrawn or study close | Self; instructor aggregate above minimum cohort; admin | `self`, `analytics` (aggregate) | Deleted |
 | `exercise_pulse_surveys.unclear`, `topic_interest` | Optional free text and topic signal | Identify unclear instructions and topics | Consent | Until consent withdrawn or study close | Instructor for assigned course above minimum cohort; admin | `self`; `analytics` only as counts/themes | Deleted |
 | `exercise_reactions.reaction` | Like/dislike | Lightweight feedback | Service | Institution schedule | Self; instructor aggregate | `reports`, `analytics` (aggregate) | Deleted |
 | `course_feedback.clarity`, `challenge`, `engagement`, `confidence`, `comment` | Course check-in and coaching notes | Teaching improvement and learner support | Service for course check-in; Consent for optional free text | Institution schedule | Student's own check-in; assigned instructor aggregate; admin | `self`; `reports` aggregate | Deleted |

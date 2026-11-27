@@ -283,7 +283,7 @@ is applied without restarting the platform.
 
 **Run ceiling test** starts a Level 4 RangeBox VNC load test at the computed
 maximum. The test spawns real desktop containers, so run it on an idle host and
-follow progress in **System â†’ Stress Tester**. A run that attempts at least 90%
+follow progress in **System → Stress Tester**. A run that attempts at least 90%
 of the computed maximum is recorded as the measured ceiling and the live cap is
 recalculated from it. Lower the percentage if the test reports failed first-frame
 latency or host pressure.
