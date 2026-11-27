@@ -50,9 +50,27 @@ unwaived 40-hour plan does not. That is the planner doing its job, not a bug.
 | PUT | `/api/capstones/plans/{id}` | Regenerate a draft, increment the version, clear approval |
 | POST | `/api/capstones/plans/{id}/approve` | Approve only when the validation gate passes |
 | POST | `/api/capstones/plans/{id}/archive` | Archive a plan without deleting it |
+| GET | `/api/capstones/plans/{id}/export.md` | Markdown learner brief and instructor guide |
+| GET | `/api/capstones/plans/{id}/export.pdf` | PDF learner brief and instructor guide |
 
 The endpoints require an instructor, administrator, mentor, or teaching
 assistant. A learner receives `403 capstone_forbidden`.
+
+## Exports
+
+`GET /api/capstones/plans/{id}/export.md` and `.pdf` render a saved plan as a
+document for the instructor or the programme file:
+
+- validation gate and waivers;
+- objectives and competencies;
+- lab sequence with hours and contract state;
+- assessments, weights, and rubrics;
+- deliverables and the evidence map;
+- instructor notes.
+
+The export contains no learner records, prompts, or model output. PDF output
+uses the shared report metadata and accessibility helpers. A Common Cartridge or
+LMS package is still not implemented.
 
 ## What is not implemented
 

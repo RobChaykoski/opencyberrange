@@ -339,6 +339,8 @@ owner-only unless an explicit share or break-glass grant exists.
 | `PUT` | `/api/capstones/plans/{plan_id}` | Update Capstone Plan | OAuth2PasswordBearer |
 | `POST` | `/api/capstones/plans/{plan_id}/approve` | Approve Capstone Plan | OAuth2PasswordBearer |
 | `POST` | `/api/capstones/plans/{plan_id}/archive` | Archive Capstone Plan | OAuth2PasswordBearer |
+| `GET` | `/api/capstones/plans/{plan_id}/export.md` | Export Capstone Markdown | OAuth2PasswordBearer |
+| `GET` | `/api/capstones/plans/{plan_id}/export.pdf` | Export Capstone Pdf | OAuth2PasswordBearer |
 | `GET` | `/api/capstones/profiles` | Capstone Profiles | OAuth2PasswordBearer |
 | `GET` | `/api/competencies/{competency_id}/evidence` | Competency Evidence | OAuth2PasswordBearer |
 | `GET` | `/api/competency-reviews/catalogue` | Review Catalogue | OAuth2PasswordBearer |
@@ -3819,6 +3821,40 @@ Chapter directories of a course wiki this user may open right now.  Feeds the wo
 ### `POST /api/capstones/plans/{plan_id}/archive`
 
 **Archive Capstone Plan**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `plan_id` | path | integer | yes |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `GET /api/capstones/plans/{plan_id}/export.md`
+
+**Export Capstone Markdown**
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `plan_id` | path | integer | yes |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `GET /api/capstones/plans/{plan_id}/export.pdf`
+
+**Export Capstone Pdf**
 
 **Authentication:** OAuth2PasswordBearer
 
