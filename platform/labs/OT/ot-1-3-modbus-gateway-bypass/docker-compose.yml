@@ -16,6 +16,8 @@ services:
     restart: unless-stopped
 
   plc:
+    environment:
+      LAB_FLAG: "OCR{m0dbu5_g4t3w4y_byp455}"
     mem_limit: 256m
     cpus: 0.25
     build:

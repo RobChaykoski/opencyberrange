@@ -14,7 +14,9 @@ from datetime import UTC, datetime, timedelta
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
-FLAG = "OCR{c4n4ry_n0ise_tru3}"
+import os
+
+FLAG = os.environ.get("LAB_FLAG", "OCR{c4n4ry_n0ise_tru3}")
 CANARY_LABEL = "incident-timeline"
 MAX_EVENTS = 200
 BOT_MARKERS = (

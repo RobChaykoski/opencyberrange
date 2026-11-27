@@ -11,7 +11,9 @@ import time
 from snap7.server import Server
 from snap7.types import srvAreaDB
 
-FLAG = "OCR{s7c0mm_db_r34d_3xp0s3d}"
+import os
+
+FLAG = os.environ.get("LAB_FLAG", "OCR{s7c0mm_db_r34d_3xp0s3d}")
 
 db1 = bytearray(256)
 

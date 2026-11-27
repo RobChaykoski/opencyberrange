@@ -30,7 +30,9 @@ from pymodbus.datastore import (
 from pymodbus.device import ModbusDeviceIdentification
 from pymodbus.server import StartTcpServer
 
-FLAG = "OCR{m0dbu5_wr1t3_c0ntr0l}"
+import os
+
+FLAG = os.environ.get("LAB_FLAG", "OCR{m0dbu5_wr1t3_c0ntr0l}")
 TRIP_SETPOINT = 250
 ALARM_THRESHOLD = 200
 

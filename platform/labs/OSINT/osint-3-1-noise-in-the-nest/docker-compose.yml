@@ -35,6 +35,7 @@ services:
     hostname: canary
     environment:
       PYTHONDONTWRITEBYTECODE: "1"
+      LAB_FLAG: "OCR{c4n4ry_n0ise_tru3}"
     labels:
       ip_offset: "86"
     security_opt:

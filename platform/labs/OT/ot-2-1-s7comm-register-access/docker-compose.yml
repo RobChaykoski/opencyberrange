@@ -1,5 +1,7 @@
 services:
   plc:
+    environment:
+      LAB_FLAG: "OCR{s7c0mm_db_r34d_3xp0s3d}"
     mem_limit: 256m
     cpus: 0.25
     build:

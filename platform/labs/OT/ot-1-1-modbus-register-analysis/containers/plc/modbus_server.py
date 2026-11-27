@@ -15,7 +15,9 @@ from pymodbus.datastore import (
 from pymodbus.device import ModbusDeviceIdentification
 from pymodbus.server import StartTcpServer
 
-FLAG = "OCR{m0dbu5_r3g15t3r5_r3v34l3d}"
+import os
+
+FLAG = os.environ.get("LAB_FLAG", "OCR{m0dbu5_r3g15t3r5_r3v34l3d}")
 
 # Holding registers: flag chars (one per register) followed by decoy values.
 hr_values = [ord(c) for c in FLAG] + [0x0000, 0x1234, 0xABCD, 0x00FF, 0x0F0F]
