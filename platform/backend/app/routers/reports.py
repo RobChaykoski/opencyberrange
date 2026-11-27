@@ -10,7 +10,16 @@ from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from statistics import mean, median
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile
+from fastapi import (
+    APIRouter,
+    Depends,
+    File,
+    Form,
+    HTTPException,
+    Query,
+    Request,
+    UploadFile,
+)
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import Response
 from sqlalchemy.orm import Session
@@ -18,7 +27,15 @@ from sqlalchemy.orm import Session
 from app.auth import get_current_active_user
 from app.database import get_db
 from app.export_reason import require_export_reason
-from app.models import Course, CourseFeedback, ExerciseQuizAttempt, User
+from app.models import (
+    Course,
+    CourseCompletionReset,
+    CourseEnrollment,
+    CourseFeedback,
+    ExerciseQuizAttempt,
+    FlagAttempt,
+    User,
+)
 from app.ratelimit import create_limiter
 from app.routers.analytics import (
     _course_context,
@@ -26,7 +43,7 @@ from app.routers.analytics import (
     course_exercises,
     course_overview,
 )
-from app.services import report_access
+from app.services import gradebook, report_access
 from app.services.audit import AuditActions
 from app.services.export_labels import csv_with_labels
 from app.services.report_integrity import record_report, verify_report
@@ -71,6 +88,47 @@ def _report_catalog(db: Session, course: Course, user: User) -> list[dict]:
             "formats": [
                 {"id": "pdf", "label": "PDF", "path": f"{base}/exercise-diagnostics.pdf"},
                 {"id": "csv", "label": "CSV", "path": f"{base}/exercise-diagnostics.csv"},
+            ],
+        },
+        {
+            "id": "lab-friction",
+            "group": "Improve the labs",
+            "title": "Lab friction report",
+            "description": "Ranks assigned labs by completion from start, wrong-flag attempts per solve, hint use per solve, and median time. Flags labs where learners start but stall.",
+            "use_when": "You need to decide which lab to fix, rescope, or add scaffolding to before the next cohort.",
+            "privacy": "Aggregated by lab; small cells are suppressed. No learner names. Learners who identify as under 18 are excluded.",
+            "formats": [
+                {"id": "csv", "label": "CSV", "path": f"{base}/lab-friction.csv"}
+            ],
+        },
+        {
+            "id": "lms-gradebook",
+            "group": "Individual records",
+            "title": "LMS gradebook export",
+            "description": "Per-learner scores and per-lab columns in Canvas, Brightspace, Moodle, or a plain CSV layout.",
+            "use_when": "You need to move course scores into the institutional gradebook without retyping them.",
+            "privacy": "Contains learner identity and scores; instructor-only. Learners who identify as under 18 are excluded, so import those records separately if your institution requires them.",
+            "formats": [
+                {
+                    "id": "csv",
+                    "label": "Generic CSV",
+                    "path": f"{base}/lms-gradebook.csv?adapter=generic",
+                },
+                {
+                    "id": "canvas-csv",
+                    "label": "Canvas CSV",
+                    "path": f"{base}/lms-gradebook.csv?adapter=canvas",
+                },
+                {
+                    "id": "brightspace-csv",
+                    "label": "Brightspace CSV",
+                    "path": f"{base}/lms-gradebook.csv?adapter=brightspace",
+                },
+                {
+                    "id": "moodle-csv",
+                    "label": "Moodle CSV",
+                    "path": f"{base}/lms-gradebook.csv?adapter=moodle",
+                },
             ],
         },
         {
@@ -235,6 +293,8 @@ def _csv_bytes(
     headers: list[str],
     rows: list[list],
     labels: list[str] | None = None,
+    *,
+    annotate: bool = True,
 ) -> bytes:
     buffer = io.StringIO()
     writer = csv.writer(buffer)
@@ -245,6 +305,10 @@ def _csv_bytes(
     if labels:
         prefix = "".join(f"# {line}\n" for line in labels)
         data = ("\ufeff" + prefix + data.decode("utf-8-sig")).encode("utf-8")
+    if not annotate:
+        # LMS importers read the header row first. The response headers and
+        # the signed manifest still carry the classification and purpose.
+        return data
     return csv_with_labels(data)
 
 
@@ -505,6 +569,201 @@ def _coaching_rows(db: Session, course: Course) -> list[dict]:
     return rows
 
 
+def _friction_rows(
+    db: Session,
+    course: Course,
+    *,
+    min_starts: int = 0,
+) -> list[dict]:
+    """Per-lab friction metrics for a course.
+
+    A start is a learner who opened a session. Wrong-flag attempts exclude hint
+    requests, which are stored in the same table so the attempt counter can see
+    them. Suppression runs after the shape is built so a small lab is visible
+    as suppressed rather than silently dropped.
+    """
+    labs, user_ids, completions, sessions = _course_context(db, course)
+    cohort_size = len(user_ids)
+    lab_ids = {lab.id for lab in labs}
+    if not lab_ids or not user_ids:
+        return []
+
+    enrollment_map = {
+        row.user_id: row.enrolled_at
+        for row in db.query(CourseEnrollment)
+        .filter(CourseEnrollment.course_id == course.id)
+        .all()
+    }
+    reset_map: dict[tuple[int, int], datetime] = {}
+    for row in (
+        db.query(CourseCompletionReset)
+        .filter(CourseCompletionReset.course_id == course.id)
+        .all()
+    ):
+        key = (row.user_id, row.lab_id)
+        if key not in reset_map or row.reset_at > reset_map[key]:
+            reset_map[key] = row.reset_at
+
+    started: dict[int, set[int]] = defaultdict(set)
+    for row in sessions:
+        started[row.lab_id].add(row.user_id)
+
+    completed: dict[int, list] = defaultdict(list)
+    for row in completions:
+        completed[row.lab_id].append(row)
+
+    attempts: dict[int, list] = defaultdict(list)
+    for row in (
+        db.query(FlagAttempt)
+        .filter(
+            FlagAttempt.user_id.in_(user_ids),
+            FlagAttempt.lab_id.in_(lab_ids),
+        )
+        .all()
+    ):
+        enrolled_at = enrollment_map.get(row.user_id)
+        if enrolled_at and row.attempted_at and row.attempted_at < enrolled_at:
+            continue
+        reset = reset_map.get((row.user_id, row.lab_id))
+        if reset and row.attempted_at and row.attempted_at <= reset:
+            continue
+        attempts[row.lab_id].append(row)
+
+    rows: list[dict] = []
+    for lab in labs:
+        starter_ids = started.get(lab.id, set())
+        lab_completions = completed.get(lab.id, [])
+        lab_attempts = attempts.get(lab.id, [])
+        # A completion or an attempt proves the learner opened the lab, even
+        # when the session row was cleaned up or predates session logging.
+        learners = (
+            starter_ids
+            | {row.user_id for row in lab_completions}
+            | {row.user_id for row in lab_attempts}
+        )
+        hint_rows = [
+            row
+            for row in lab_attempts
+            if (row.flag_submitted or "").upper().startswith("HINT")
+        ]
+        wrong_rows = [
+            row
+            for row in lab_attempts
+            if not row.is_correct
+            and not (row.flag_submitted or "").upper().startswith("HINT")
+        ]
+        hint_uses = len(hint_rows)
+        failed_attempts = len(wrong_rows)
+        starts = len(learners)
+        completer_ids = {row.user_id for row in lab_completions}
+        completion_count = len(completer_ids)
+        completion_rate = (
+            round(completion_count / starts * 100, 1) if starts else None
+        )
+        start_rate = (
+            round(starts / cohort_size * 100, 1) if cohort_size else None
+        )
+        failed_per_completion = (
+            round(failed_attempts / completion_count, 2)
+            if completion_count
+            else None
+        )
+        hints_per_completion = (
+            round(hint_uses / completion_count, 2)
+            if completion_count
+            else None
+        )
+        times = [
+            row.time_spent_minutes
+            for row in lab_completions
+            if row.time_spent_minutes is not None
+        ]
+        attempt_counts = [
+            row.attempts
+            for row in lab_completions
+            if row.attempts is not None
+        ]
+        median_minutes = round(float(median(times)), 1) if times else None
+        median_attempts = (
+            round(float(median(attempt_counts)), 1) if attempt_counts else None
+        )
+        sample_size = len(learners)
+
+        flags: list[str] = []
+        if starts == 0:
+            flags.append("No starts")
+        elif completion_rate is not None and completion_rate < 50:
+            flags.append("Low completion from start")
+        if completion_count and failed_per_completion is not None and failed_per_completion >= 2:
+            flags.append("Repeated wrong flags")
+        if completion_count and hints_per_completion is not None and hints_per_completion >= 1.5:
+            flags.append("High hint use")
+        if (
+            median_minutes is not None
+            and lab.duration_minutes
+            and median_minutes > lab.duration_minutes * 1.5
+        ):
+            flags.append("Slow for its estimate")
+
+        level = getattr(lab, "level", None)
+        track = getattr(level, "track", None)
+        rows.append(
+            {
+                "lab_id": lab.id,
+                "lab_name": lab.name,
+                "slug": lab.slug,
+                "track_name": getattr(track, "name", "") or "",
+                "level_name": getattr(level, "name", "") or "",
+                "difficulty": lab.difficulty or "",
+                "duration_minutes": lab.duration_minutes,
+                "cohort_size": cohort_size,
+                "sample_size": sample_size,
+                "starts": starts,
+                "start_rate": start_rate,
+                "completed_learners": completion_count,
+                "completion_rate": completion_rate,
+                "stalled_learners": max(starts - completion_count, 0),
+                "failed_attempts": failed_attempts,
+                "failed_per_completion": failed_per_completion,
+                "hint_uses": hint_uses,
+                "hints_per_completion": hints_per_completion,
+                "median_minutes": median_minutes,
+                "median_attempts": median_attempts,
+                "friction_flags": flags,
+            }
+        )
+
+    rows = [
+        row
+        for row in rows
+        if row["starts"] >= max(0, min_starts)
+    ]
+    rows.sort(
+        key=lambda row: (
+            row["starts"] == 0,
+            row["completion_rate"] if row["completion_rate"] is not None else 101,
+            -(row["failed_per_completion"] or 0),
+            row["lab_name"].lower(),
+        )
+    )
+    return report_access.suppress_small_cells(
+        rows,
+        _minimum_cohort_size(db),
+        sample_key="sample_size",
+        metric_keys=(
+            "start_rate",
+            "completion_rate",
+            "stalled_learners",
+            "failed_attempts",
+            "failed_per_completion",
+            "hint_uses",
+            "hints_per_completion",
+            "median_minutes",
+            "median_attempts",
+        ),
+    )
+
+
 @router.get("/courses/{course_id}/reports")
 async def list_reports(
     course_id: int,
@@ -706,6 +965,129 @@ async def exercise_diagnostics_csv(
         data=data,
         reason=reason,
     )
+
+
+@router.get("/courses/{course_id}/reports/lab-friction.csv")
+async def lab_friction_csv(
+    course_id: int,
+    request: Request,
+    min_starts: int = Query(0, ge=0, le=100000),
+    reason: str = Depends(require_export_reason),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Per-lab completion, wrong-flag, hint, and time friction."""
+    course = _report_course_or_403(
+        db, request, course_id, current_user, "lab-friction", export=True
+    )
+    rows = _friction_rows(db, course, min_starts=min_starts)
+    report_id = str(uuid.uuid4())
+    headers = [
+        "report_id",
+        "lab_id",
+        "lab",
+        "slug",
+        "track",
+        "level",
+        "difficulty",
+        "duration_minutes",
+        "cohort_size",
+        "sample_size",
+        "suppressed",
+        "starts",
+        "start_rate",
+        "completed_learners",
+        "completion_rate",
+        "stalled_learners",
+        "failed_attempts",
+        "failed_per_completion",
+        "hint_uses",
+        "hints_per_completion",
+        "median_minutes",
+        "median_attempts",
+        "friction_flags",
+    ]
+    data = _csv_bytes(
+        headers,
+        [
+            [
+                report_id,
+                row.get("lab_id"),
+                row.get("lab_name"),
+                row.get("slug"),
+                row.get("track_name"),
+                row.get("level_name"),
+                row.get("difficulty"),
+                row.get("duration_minutes"),
+                row.get("cohort_size"),
+                row.get("sample_size"),
+                row.get("suppressed"),
+                row.get("starts"),
+                row.get("start_rate"),
+                row.get("completed_learners"),
+                row.get("completion_rate"),
+                row.get("stalled_learners"),
+                row.get("failed_attempts"),
+                row.get("failed_per_completion"),
+                row.get("hint_uses"),
+                row.get("hints_per_completion"),
+                row.get("median_minutes"),
+                row.get("median_attempts"),
+                ", ".join(row.get("friction_flags") or []),
+            ]
+            for row in rows
+        ],
+        labels=report_access.csv_label_lines(
+            report_access.policy_for("lab-friction")
+        ),
+    )
+    return _serve(
+        db,
+        request=request,
+        current_user=current_user,
+        course=course,
+        report_id=report_id,
+        report_type="lab-friction",
+        file_format="csv",
+        data=data,
+        reason=reason,
+    )
+
+
+@router.get("/courses/{course_id}/reports/lms-gradebook.csv")
+async def lms_gradebook_csv(
+    course_id: int,
+    request: Request,
+    adapter: str = Query("generic"),
+    reason: str = Depends(require_export_reason),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Per-learner gradebook in the selected LMS layout."""
+    course = _report_course_or_403(
+        db, request, course_id, current_user, "lms-gradebook", export=True
+    )
+    try:
+        book = gradebook.build_gradebook(db, course, adapter)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    report_id = str(uuid.uuid4())
+    headers, rows = gradebook.csv_table(report_id, course, book)
+    data = _csv_bytes(headers, rows, annotate=False)
+    response = _serve(
+        db,
+        request=request,
+        current_user=current_user,
+        course=course,
+        report_id=report_id,
+        report_type="lms-gradebook",
+        file_format="csv",
+        data=data,
+        reason=reason,
+    )
+    response.headers["X-Gradebook-Adapter"] = book["adapter"]
+    response.headers["Access-Control-Expose-Headers"] += ", X-Gradebook-Adapter"
+    return response
 
 
 @router.get("/courses/{course_id}/reports/coaching-queue.csv")

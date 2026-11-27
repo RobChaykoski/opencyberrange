@@ -38,6 +38,8 @@ designed around the next teaching decision, not a record dump:
 |---|---|---|
 | Course health brief | The teaching team needs one page on completion, hint/attempt pressure, time, RAG reasons, an exercise watchlist, and one next step. | PDF |
 | Exercise diagnostics | A course or exercise is underperforming and the team needs per-exercise completion, abandonment, attempts, hints, and cohort time/hint baselines. | PDF, CSV |
+| Lab friction report | The teaching team needs to decide which lab to fix, rescope, or scaffold before the next cohort. Ranks labs by completion from start, wrong-flag burden, hint use, and time. | CSV |
+| LMS gradebook export | Course scores need to move into Canvas, Brightspace, Moodle, or a generic gradebook. | CSV (four layouts) |
 | Coaching queue | Time is limited and the instructor needs one suggested next step and review date per learner. Signals are descriptive, not a ranking. | CSV, PDF |
 | Full student record pack | An individual record is needed for a meeting, file, or appeal. Use the course health brief for class decisions. | PDF |
 
@@ -52,6 +54,33 @@ data.
 ### Baselines and engagement signals
 
 Exercise diagnostics report the cohort mean and median solve time and hint use.
+The lab friction report adds wrong-flag attempts per completion and hint requests
+per completion, so a lab that is technically completable but produces repeated
+guessing is visible before it is judged by completion alone. Hint requests are
+stored in `flag_attempts` with a `HINT_REQUEST_` prefix and are excluded from the
+wrong-flag count.
+
+### LMS gradebook export
+
+The gradebook uses the same per-lab scores as the course scoreboard: 100 base,
+25 hint-free, 25 first-attempt, up to 50 speed, and 50 first-blood. A lab's
+maximum is therefore 200 or 250 depending on whether it declares a duration.
+The export offers four layouts:
+
+- **Generic** — one row per learner with identity, per-lab scores, total,
+  percentage, last activity, and achievements.
+- **Canvas** — `Student, ID, SIS User ID, SIS Login ID, Section`, then one
+  column per lab and a total, with a `Points Possible` row.
+- **Brightspace** — `OrgDefinedId`, `Username`, name and email, one
+  `... Points Grade` column per lab, a total, and the `#` end-of-line marker.
+- **Moodle** — `username, email, firstname, lastname, idnumber`, then one
+  column per lab and total fields.
+
+Unlike the other CSVs, the LMS layouts omit the visible `#` label block because
+an importer reads the first row as the header. The classification, purpose,
+retention, checksum, and signature still travel in the response headers and the
+signed manifest.
+
 The coaching queue compares each learner's completions with those baselines. A
 learner who completes unusually quickly with no hints may be:
 - already skilled and ready for a stretch exercise;
@@ -65,9 +94,12 @@ actions include a short teach-back, a stretch exercise, or an alternative path.
 ### Privacy exclusions
 
 Learners who identify as under 18 are excluded from instructor reports, course
-analytics, coaching queues, public scoreboards, and competition leaderboards
-until they clear the setting. The reports still work for the rest of the cohort;
-the exclusion is automatic and cannot be overridden from the report page.
+analytics, coaching queues, LMS gradebook exports, public scoreboards, and
+competition leaderboards until they clear the setting. The reports still work for
+the rest of the cohort; the exclusion is automatic and cannot be overridden from
+the report page. An institution that must import every grade should export the
+under-18 records from its own student system rather than expecting this report
+to include them.
 
 ## Report 1: Which labs are failing?
 

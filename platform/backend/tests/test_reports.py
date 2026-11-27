@@ -12,6 +12,7 @@ from app.models import (
     CourseEnrollment,
     CourseLabAssignment,
     CourseStaff,
+    FlagAttempt,
     Lab,
     LabCompletion,
     LabSession,
@@ -222,6 +223,36 @@ def report_data(db_session):
             time_spent_minutes=20,
         ),
     ])
+    db_session.add_all([
+        FlagAttempt(
+            user_id=student_one.id,
+            lab_id=labs[0].id,
+            flag_submitted="OCR{wrong}",
+            is_correct=False,
+            attempted_at=now - timedelta(days=4),
+        ),
+        FlagAttempt(
+            user_id=student_one.id,
+            lab_id=labs[0].id,
+            flag_submitted="OCR{still_wrong}",
+            is_correct=False,
+            attempted_at=now - timedelta(days=4),
+        ),
+        FlagAttempt(
+            user_id=student_one.id,
+            lab_id=labs[0].id,
+            flag_submitted="HINT_REQUEST_1",
+            is_correct=False,
+            attempted_at=now - timedelta(days=4),
+        ),
+        FlagAttempt(
+            user_id=student_two.id,
+            lab_id=labs[1].id,
+            flag_submitted="OCR{nope}",
+            is_correct=False,
+            attempted_at=now - timedelta(days=4),
+        ),
+    ])
     db_session.commit()
 
     yield {
@@ -243,6 +274,9 @@ def report_data(db_session):
     ).delete(synchronize_session=False)
     db_session.query(LabSession).filter(
         LabSession.lab_id.in_(lab_ids)
+    ).delete(synchronize_session=False)
+    db_session.query(FlagAttempt).filter(
+        FlagAttempt.lab_id.in_(lab_ids)
     ).delete(synchronize_session=False)
     db_session.query(CourseLabAssignment).filter(
         CourseLabAssignment.course_id == course.id
@@ -427,9 +461,10 @@ def test_report_catalog_enforces_role_policy(client, report_data, db_session):
             )
             assert resp.status_code == 200, resp.text
             ids = {report["id"] for report in resp.json()["reports"]}
-            assert {"course-health", "exercise-diagnostics"} <= ids
+            assert {"course-health", "exercise-diagnostics", "lab-friction"} <= ids
             assert "coaching-queue" not in ids
             assert "student-record-pack" not in ids
+            assert "lms-gradebook" not in ids
 
         health = client.get(
             f"/api/courses/{course.id}/reports/course-health.pdf",
@@ -713,6 +748,140 @@ def test_under_18_learner_is_excluded_from_reports(client, report_data, db_sessi
         headers=instructor,
     )
     assert individual.status_code == 403
+
+
+def test_lab_friction_report_counts_wrong_flags_and_hints(
+    client, report_data, db_session
+):
+    instructor = _login(client, report_data["instructor"])
+    course_id = report_data["course"].id
+
+    resp = client.get(
+        f"/api/courses/{course_id}/reports/lab-friction.csv",
+        params={"reason": "pick the next lab to fix"},
+        headers=instructor,
+    )
+    assert resp.status_code == 200, resp.text
+    assert resp.headers["x-report-retention-days"] == "365"
+    assert "lab-friction" in resp.headers["x-report-filename"]
+    rows = _csv_rows(resp.content)
+    assert len(rows) == 2
+    lab_one = next(
+        row for row in rows if row["lab"] == report_data["labs"][0].name
+    )
+    assert lab_one["starts"] == "3"
+    assert lab_one["completed_learners"] == "3"
+    assert lab_one["completion_rate"] == "100.0"
+    assert lab_one["failed_attempts"] == "2"
+    assert lab_one["hint_uses"] == "1"
+    assert lab_one["failed_per_completion"] == "0.67"
+    assert lab_one["hints_per_completion"] == "0.33"
+    assert lab_one["median_minutes"] == "100.0"
+    assert lab_one["median_attempts"] == "2.0"
+    assert "Slow for its estimate" in lab_one["friction_flags"]
+
+    manifest = db_session.query(ReportExport).filter(
+        ReportExport.report_id == resp.headers["x-report-id"]
+    ).first()
+    assert manifest is not None
+    assert manifest.report_type == "lab-friction"
+
+
+def test_lms_gradebook_adapters_and_access(client, report_data, db_session):
+    instructor = _login(client, report_data["instructor"])
+    course_id = report_data["course"].id
+    lab_names = [lab.name for lab in report_data["labs"]]
+
+    generic = client.get(
+        f"/api/courses/{course_id}/reports/lms-gradebook.csv",
+        params={"reason": "gradebook sync", "adapter": "generic"},
+        headers=instructor,
+    )
+    assert generic.status_code == 200, generic.text
+    assert generic.headers["x-gradebook-adapter"] == "generic"
+    assert generic.content.startswith(b"\xef\xbb\xbfreport_id,")
+    generic_rows = _csv_rows(generic.content)
+    assert len(generic_rows) == 3
+    first = generic_rows[0]
+    assert set(lab_names) <= set(first)
+    assert int(first["max_score"]) > 0
+    assert sum(int(first[name]) for name in lab_names) == int(first["total_score"])
+    assert float(first["percentage"]) >= 0
+
+    canvas = client.get(
+        f"/api/courses/{course_id}/reports/lms-gradebook.csv",
+        params={"reason": "gradebook sync", "adapter": "canvas"},
+        headers=instructor,
+    )
+    assert canvas.status_code == 200, canvas.text
+    assert canvas.headers["x-gradebook-adapter"] == "canvas"
+    canvas_rows = _csv_rows(canvas.content)
+    assert canvas_rows[0]["Student"].strip() == "Points Possible"
+    assert len(canvas_rows) == 4
+    assert {"ID", "SIS User ID", "SIS Login ID", "Section", "Total"} <= set(
+        canvas_rows[0]
+    )
+
+    brightspace = client.get(
+        f"/api/courses/{course_id}/reports/lms-gradebook.csv",
+        params={"reason": "gradebook sync", "adapter": "brightspace"},
+        headers=instructor,
+    )
+    assert brightspace.status_code == 200, brightspace.text
+    brightspace_rows = _csv_rows(brightspace.content)
+    assert len(brightspace_rows) == 3
+    assert "OrgDefinedId" in brightspace_rows[0]
+    assert brightspace_rows[0]["End-of-Line Indicator"] == "#"
+
+    moodle = client.get(
+        f"/api/courses/{course_id}/reports/lms-gradebook.csv",
+        params={"reason": "gradebook sync", "adapter": "moodle"},
+        headers=instructor,
+    )
+    assert moodle.status_code == 200, moodle.text
+    moodle_rows = _csv_rows(moodle.content)
+    assert len(moodle_rows) == 3
+    assert {"username", "email", "firstname", "lastname", "idnumber"} <= set(
+        moodle_rows[0]
+    )
+
+    unknown = client.get(
+        f"/api/courses/{course_id}/reports/lms-gradebook.csv",
+        params={"reason": "gradebook sync", "adapter": "blackboard"},
+        headers=instructor,
+    )
+    assert unknown.status_code == 400
+
+    outsider = _login(client, report_data["outsider"])
+    assert client.get(
+        f"/api/courses/{course_id}/reports/lms-gradebook.csv",
+        params={"reason": "unauthorized attempt"},
+        headers=outsider,
+    ).status_code == 403
+    student = _login(client, report_data["student_one"])
+    assert client.get(
+        f"/api/courses/{course_id}/reports/lms-gradebook.csv",
+        params={"reason": "unauthorized attempt"},
+        headers=student,
+    ).status_code == 403
+
+
+def test_gradebook_excludes_under_18_learners(client, report_data, db_session):
+    minor = report_data["student_three"]
+    minor.is_minor = True
+    db_session.commit()
+
+    instructor = _login(client, report_data["instructor"])
+    course_id = report_data["course"].id
+    resp = client.get(
+        f"/api/courses/{course_id}/reports/lms-gradebook.csv",
+        params={"reason": "privacy check"},
+        headers=instructor,
+    )
+    assert resp.status_code == 200, resp.text
+    rows = _csv_rows(resp.content)
+    assert len(rows) == 2
+    assert minor.username not in resp.content.decode("utf-8-sig")
 
 
 def test_schema_initialization_is_idempotent(db_schema):

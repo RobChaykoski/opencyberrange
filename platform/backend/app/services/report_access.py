@@ -48,6 +48,9 @@ AGGREGATE_ROLES = frozenset(
 INDIVIDUAL_ROLES = frozenset(
     {"instructor", "mentor", "teaching_assistant", "admin"}
 )
+# A gradebook is an academic record, not a coaching view. Mentors and auditors
+# do not need learner-level scores, so they stay out of this set.
+GRADEBOOK_ROLES = frozenset({"instructor", "teaching_assistant", "admin"})
 
 REPORT_POLICIES: dict[str, ReportPolicy] = {
     "course-health": ReportPolicy(
@@ -67,6 +70,25 @@ REPORT_POLICIES: dict[str, ReportPolicy] = {
         retention_days=365,
         audience="aggregate",
         roles=AGGREGATE_ROLES,
+    ),
+    "lab-friction": ReportPolicy(
+        report_id="lab-friction",
+        title="Lab friction report",
+        purpose="Find the exercises where learners start but do not finish, or guess repeatedly.",
+        owner="Course instructor or curriculum lead",
+        retention_days=365,
+        audience="aggregate",
+        roles=AGGREGATE_ROLES,
+    ),
+    "lms-gradebook": ReportPolicy(
+        report_id="lms-gradebook",
+        title="LMS gradebook export",
+        purpose="Import course scores into Canvas, Brightspace, Moodle, or a generic gradebook.",
+        owner="Course instructor",
+        retention_days=365,
+        audience="individual",
+        roles=GRADEBOOK_ROLES,
+        aggregate=False,
     ),
     "coaching-queue": ReportPolicy(
         report_id="coaching-queue",

@@ -52,7 +52,10 @@ completions AS (
 ),
 attempts AS (
     SELECT a.lab_id,
-           COUNT(*) FILTER (WHERE a.is_correct = false) AS failed_attempts,
+           COUNT(*) FILTER (
+               WHERE a.is_correct = false
+                 AND a.flag_submitted NOT LIKE 'HINT%%'
+           ) AS failed_attempts,
            COUNT(*) FILTER (WHERE a.flag_submitted LIKE 'HINT%%') AS hint_uses
     FROM flag_attempts a
     WHERE (:course_id IS NULL OR a.user_id IN (SELECT user_id FROM cohort))

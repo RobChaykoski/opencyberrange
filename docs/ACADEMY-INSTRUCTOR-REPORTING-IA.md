@@ -70,7 +70,7 @@ Course workspace (opened from Courses):
 | Overview | Course health cards, trend chart, next actions |
 | Learners | Enrolled learners, cohort, consent/accommodation flags, history |
 | Exercise plan | Exercise groups, requirements, assignment matrix |
-| Reports | Course diagnostics, exercise health, coaching queue |
+| Reports | Course diagnostics, lab friction, LMS gradebook, coaching queue |
 | Reviews | Human-review requests for this course |
 | Settings | Course details, retention, staff, visibility |
 
