@@ -178,7 +178,7 @@
       "sha256": "877500e2e2d33af4263cae4b4b208166f4c500c8e4648d6b5b8d24ac122829c1"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "f2d3e18672eebcaeb04f02b18bcaf46b4452340d534cbf10e7cbd331daa70d01"
+      "sha256": "670b47c4db96ab4688f77f65cb8b40e1547c66e7e86343e8df64092e95a3ea83"
     },
     "platform/backend/app/data/threat-awareness.json": {
       "sha256": "78703d33386e1b62becfa5cfb1b27a22f770fff20a3e38411b0787e76f7c48ea"
