@@ -110,7 +110,7 @@ a long flat list.
 | Cyber GPS action cards | GPS returns directions and next steps | Turn the top three into launch cards with minutes, points, and trait impact |
 | Celebration Wall polish | Milestone-driven, no free text, opt-out filters | Add batching, privacy preview, and cohort/certificate/first-blood filter pills |
 | Certificate and VPN UX | Certificate verification and VPN config exist | Add a QR code, last-handshake status, and key regeneration |
-| Instructor reports | Live sessions and analytics exist | Add friction/bottleneck, at-risk digest, and objective attainment views |
+| Instructor reports | Live sessions and analytics exist; `scripts/lab_friction_report.py` ranks completion, failed-flag, and hint rates | Add the in-UI live matrix and LMS CSV export |
 | Learner benchmarks and transcript | Cohort aggregates and profile exports exist | Add opt-in anonymised percentile/velocity context and a competency transcript with MITRE tags and DNA scores |
 | Admin ledger viewer | Integrity summary and chain checks exist | Add actor badges, JSON diffs, and a live “verify chain” banner |
 | Import and erasure previews | Suppression ledger and restore checks exist | Add dry-run summaries before bulk import or erasure |
