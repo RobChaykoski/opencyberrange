@@ -31,26 +31,38 @@ CMD_SHELL_RE = re.compile(r"^\s*CMD\s+(.+)$", re.IGNORECASE)
 ENTRYPOINT_RE = re.compile(r"^\s*ENTRYPOINT\s+", re.IGNORECASE)
 
 
-def parse_cmd(text: str) -> list[str] | None:
-    for line in reversed(text.splitlines()):
-        if ENTRYPOINT_RE.match(line):
-            return None
-        match = CMD_JSON_RE.match(line)
-        if match:
-            try:
-                value = json.loads(match.group(1))
-            except json.JSONDecodeError:
-                return None
-            if isinstance(value, list) and value and all(isinstance(part, str) for part in value):
-                return value
-            return None
-        match = CMD_SHELL_RE.match(line)
-        if match:
-            command = match.group(1).strip()
-            if not command or "$" in command:
-                return None
-            return ["/bin/sh", "-c", command]
+def _parse_list(value: str) -> list[str] | None:
+    try:
+        parsed = json.loads(value)
+    except json.JSONDecodeError:
+        return None
+    if isinstance(parsed, list) and parsed and all(isinstance(part, str) for part in parsed):
+        return parsed
     return None
+
+
+def parse_command(text: str) -> list[str] | None:
+    """Return the runtime command, combining ENTRYPOINT and CMD where safe."""
+    entrypoint = None
+    cmd = None
+    for line in text.splitlines():
+        stripped = line.strip()
+        if stripped.upper().startswith("ENTRYPOINT "):
+            value = stripped.split(None, 1)[1].strip()
+            entrypoint = _parse_list(value) if value.startswith("[") else ["/bin/sh", "-c", value]
+        elif stripped.upper().startswith("CMD "):
+            value = stripped.split(None, 1)[1].strip()
+            if value.startswith("["):
+                cmd = _parse_list(value)
+            elif "$" not in value:
+                cmd = ["/bin/sh", "-c", value]
+    if entrypoint and cmd:
+        if entrypoint[:2] == ["/bin/sh", "-c"]:
+            return entrypoint
+        if cmd[:2] == ["/bin/sh", "-c"]:
+            return None
+        return entrypoint + cmd
+    return entrypoint or cmd
 
 
 def parse_service(lab_dir: Path, dockerfile: Path, compose: dict) -> str | None:
@@ -101,20 +113,28 @@ def main() -> int:
             if not dockerfile.is_file():
                 continue
             text = dockerfile.read_text(encoding="utf-8", errors="ignore")
-            writes = FLAG_WRITE_RE.findall(text)
-            if len(set(writes)) != 1:
+            writes = sorted(set(FLAG_WRITE_RE.findall(text)))
+            if not writes:
                 continue
-            path = writes[0]
-            command = parse_cmd(text)
+            flag_paths = [item for item in writes if item.endswith("/flag.txt")]
+            if len(writes) == 1:
+                path = writes[0]
+            elif len(flag_paths) == 1:
+                path = flag_paths[0]
+            else:
+                continue
+            command = parse_command(text)
             if not command:
                 continue
-            # A non-root USER cannot write /root or another user's home.
+            # A non-root USER can only write its own home or /tmp.
             users = [
                 line.split(None, 1)[1].strip()
                 for line in text.splitlines()
                 if line.strip().upper().startswith("USER ")
             ]
-            if users and users[-1].lower() not in {"root", "0"}:
+            user = users[-1] if users else "root"
+            nonroot = user.lower() not in {"root", "0"}
+            if nonroot and not path.startswith((f"/home/{user}/", "/tmp/")):
                 continue
             service = parse_service(lab_path.parent, dockerfile, compose)
             if not service:
