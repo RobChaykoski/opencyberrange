@@ -63,7 +63,8 @@ the most awkward to explain after a learner has shared a link.
 
 ## Plan
 
-1. **Keep the gate.** `--fail-on-leaks` runs on every docs or lab change.
+1. **Keep the gate.** `--fail-on-leaks` runs in the Quality workflow on every
+   push.
 2. **Rotate the static labs in batches.** Environment-driven labs first: add a
    `FLAG` value that matches the graded flag so the launcher can rotate it. Baked
    labs next: add the render contract and let the wrapper write `LAB_FLAG`.
