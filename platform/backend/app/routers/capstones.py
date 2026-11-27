@@ -6,7 +6,7 @@ or bypass instructor review.
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
@@ -14,7 +14,7 @@ from app.api_errors import api_error
 from app.auth import get_current_active_user
 from app.database import get_db
 from app.models import User
-from app.services import capstone_builder, capstone_plans
+from app.services import capstone_builder, capstone_export, capstone_plans
 from app.services.evidence import REVIEW_ROLES
 
 router = APIRouter()
@@ -139,3 +139,47 @@ async def archive_capstone_plan(
         return capstone_plans.archive_plan(db, current_user, plan_id)
     except capstone_plans.PlanError as exc:
         raise api_error(exc.status_code, exc.code, exc.message) from exc
+
+
+@router.get("/plans/{plan_id}/export.md")
+async def export_capstone_markdown(
+    plan_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    try:
+        row = capstone_plans.get_plan(db, current_user, plan_id)
+    except capstone_plans.PlanError as exc:
+        raise api_error(exc.status_code, exc.code, exc.message) from exc
+    filename = capstone_export.export_filename(row, "md")
+    return Response(
+        content=capstone_export.render_markdown(row),
+        media_type="text/markdown; charset=utf-8",
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename}"',
+            "Cache-Control": "no-store",
+            "X-Content-Type-Options": "nosniff",
+        },
+    )
+
+
+@router.get("/plans/{plan_id}/export.pdf")
+async def export_capstone_pdf(
+    plan_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    try:
+        row = capstone_plans.get_plan(db, current_user, plan_id)
+    except capstone_plans.PlanError as exc:
+        raise api_error(exc.status_code, exc.code, exc.message) from exc
+    filename = capstone_export.export_filename(row, "pdf")
+    return Response(
+        content=capstone_export.render_pdf(row),
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename}"',
+            "Cache-Control": "no-store",
+            "X-Content-Type-Options": "nosniff",
+        },
+    )

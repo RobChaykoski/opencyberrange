@@ -1,6 +1,6 @@
 # API capabilities
 
-Generated from the live FastAPI application on 2026-11-27T13:38:33+00:00.
+Generated from the live FastAPI application on 2026-11-27T19:58:22+00:00.
 
 | Item | Value |
 |---|---|
@@ -9,9 +9,9 @@ Generated from the live FastAPI application on 2026-11-27T13:38:33+00:00.
 | OpenAPI version | `3.1.0` |
 | API title | SWOCTS Cyber Range |
 | API version | `5.58.1` |
-| Paths | 493 |
-| Operations | 551 |
-| Methods | DELETE 36, GET 291, PATCH 6, POST 187, PUT 31 |
+| Paths | 495 |
+| Operations | 553 |
+| Methods | DELETE 36, GET 293, PATCH 6, POST 187, PUT 31 |
 
 The machine-readable contract is [`openapi.json`](openapi.json). It follows the
 OpenAPI specification and can be imported into Swagger UI, Redoc, Postman,
@@ -272,6 +272,8 @@ share with an integrator.
 | PUT | `/api/capstones/plans/{plan_id}` | Update Capstone Plan | OAuth2PasswordBearer |
 | POST | `/api/capstones/plans/{plan_id}/approve` | Approve Capstone Plan | OAuth2PasswordBearer |
 | POST | `/api/capstones/plans/{plan_id}/archive` | Archive Capstone Plan | OAuth2PasswordBearer |
+| GET | `/api/capstones/plans/{plan_id}/export.md` | Export Capstone Markdown | OAuth2PasswordBearer |
+| GET | `/api/capstones/plans/{plan_id}/export.pdf` | Export Capstone Pdf | OAuth2PasswordBearer |
 | GET | `/api/capstones/profiles` | Capstone Profiles | OAuth2PasswordBearer |
 
 ### Competencies
@@ -1130,6 +1132,8 @@ the application and are documented here for completeness.
 | PUT | /api/capstones/plans/{plan_id} | Update Capstone Plan | OAuth2PasswordBearer |
 | POST | /api/capstones/plans/{plan_id}/approve | Approve Capstone Plan | OAuth2PasswordBearer |
 | POST | /api/capstones/plans/{plan_id}/archive | Archive Capstone Plan | OAuth2PasswordBearer |
+| GET | /api/capstones/plans/{plan_id}/export.md | Export Capstone Markdown | OAuth2PasswordBearer |
+| GET | /api/capstones/plans/{plan_id}/export.pdf | Export Capstone Pdf | OAuth2PasswordBearer |
 | GET | /api/capstones/profiles | Capstone Profiles | OAuth2PasswordBearer |
 | GET | /api/competencies/{competency_id}/evidence | Competency Evidence | OAuth2PasswordBearer |
 | GET | /api/competency-reviews/catalogue | Review Catalogue | OAuth2PasswordBearer |

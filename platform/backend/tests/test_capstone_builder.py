@@ -310,3 +310,62 @@ def test_another_instructor_cannot_read_the_plan(client, db_session):
         assert response.headers["X-Error-Code"] == "capstone_not_found"
     finally:
         _cleanup(db_session, [owner, other])
+
+
+@pytest.mark.db
+def test_plan_exports_markdown_and_pdf(client, db_session):
+    instructor = _user(db_session, "instructor")
+    try:
+        headers = _headers(client, instructor)
+        saved = client.post(
+            "/api/capstones/plans",
+            json=_waived_payload(title="Blue Team capstone"),
+            headers=headers,
+        )
+        assert saved.status_code == 201, saved.text
+        plan_id = saved.json()["id"]
+
+        markdown = client.get(
+            f"/api/capstones/plans/{plan_id}/export.md", headers=headers
+        )
+        assert markdown.status_code == 200, markdown.text
+        assert markdown.headers["content-type"].startswith("text/markdown")
+        assert "attachment" in markdown.headers["content-disposition"]
+        assert "# Blue Team capstone" in markdown.text
+        assert "## Validation gate" in markdown.text
+        assert "Publishable: yes" in markdown.text
+
+        pdf = client.get(
+            f"/api/capstones/plans/{plan_id}/export.pdf", headers=headers
+        )
+        assert pdf.status_code == 200, pdf.text
+        assert pdf.headers["content-type"] == "application/pdf"
+        assert pdf.content.startswith(b"%PDF")
+    finally:
+        _cleanup(db_session, [instructor])
+
+
+@pytest.mark.db
+def test_plan_export_is_scoped_to_the_owner(client, db_session):
+    owner = _user(db_session, "instructor")
+    other = _user(db_session, "instructor")
+    try:
+        headers = _headers(client, owner)
+        saved = client.post(
+            "/api/capstones/plans",
+            json=_waived_payload(title="Owner capstone"),
+            headers=headers,
+        )
+        assert saved.status_code == 201, saved.text
+        plan_id = saved.json()["id"]
+
+        other_headers = _headers(client, other)
+        for suffix in ("md", "pdf"):
+            response = client.get(
+                f"/api/capstones/plans/{plan_id}/export.{suffix}",
+                headers=other_headers,
+            )
+            assert response.status_code == 404
+            assert response.headers["X-Error-Code"] == "capstone_not_found"
+    finally:
+        _cleanup(db_session, [owner, other])

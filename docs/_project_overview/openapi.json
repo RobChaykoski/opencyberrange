@@ -17693,6 +17693,96 @@
         ]
       }
     },
+    "/api/capstones/plans/{plan_id}/export.md": {
+      "get": {
+        "operationId": "export_capstone_markdown_api_capstones_plans__plan_id__export_md_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plan_id",
+            "required": true,
+            "schema": {
+              "title": "Plan Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Export Capstone Markdown",
+        "tags": [
+          "Capstones"
+        ]
+      }
+    },
+    "/api/capstones/plans/{plan_id}/export.pdf": {
+      "get": {
+        "operationId": "export_capstone_pdf_api_capstones_plans__plan_id__export_pdf_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plan_id",
+            "required": true,
+            "schema": {
+              "title": "Plan Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Export Capstone Pdf",
+        "tags": [
+          "Capstones"
+        ]
+      }
+    },
     "/api/capstones/profiles": {
       "get": {
         "operationId": "capstone_profiles_api_capstones_profiles_get",
