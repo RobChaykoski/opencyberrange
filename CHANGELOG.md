@@ -2,6 +2,19 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.56.4] - 2026-11-26
+
+### Fixed
+
+- **Security test expectations:** break-glass tests now approve private grants
+  with a second admin, competency review counts are 222, and the recovery-code
+  hashing test enables MFA first.
+- **API manual:** regenerated for the RBAC drift endpoint.
+- **i18n baseline:** recorded the reviewed survey response label.
+
+This is a test and documentation patch; the runtime code is unchanged from
+5.56.3.
+
 ## [5.56.3] - 2026-11-26
 
 ### Fixed

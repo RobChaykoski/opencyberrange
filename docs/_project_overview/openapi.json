@@ -7414,7 +7414,7 @@
   "info": {
     "description": "Cybersecurity training platform, powered by OpenCyberRange.",
     "title": "SWOCTS Cyber Range",
-    "version": "5.56.3"
+    "version": "5.56.4"
   },
   "openapi": "3.1.0",
   "paths": {

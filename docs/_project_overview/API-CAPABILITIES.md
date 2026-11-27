@@ -1,14 +1,14 @@
 # API capabilities
 
-Generated from the live FastAPI application on 2026-11-27T02:11:48+00:00.
+Generated from the live FastAPI application on 2026-11-27T02:42:17+00:00.
 
 | Item | Value |
 |---|---|
-| Product | SWOCTS Cyber Range Release 5.56.3 (Powered by OpenCyberRange) |
-| Platform version | `5.56.3` |
+| Product | SWOCTS Cyber Range Release 5.56.4 (Powered by OpenCyberRange) |
+| Platform version | `5.56.4` |
 | OpenAPI version | `3.1.0` |
 | API title | SWOCTS Cyber Range |
-| API version | `5.56.3` |
+| API version | `5.56.4` |
 | Paths | 491 |
 | Operations | 549 |
 | Methods | DELETE 36, GET 289, PATCH 6, POST 187, PUT 31 |

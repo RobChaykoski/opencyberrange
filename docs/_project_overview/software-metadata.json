@@ -3,8 +3,8 @@
   "product": {
     "name": "SWOCTS Cyber Range",
     "powered_by": "OpenCyberRange",
-    "version": "5.56.3",
-    "signed_tag": "v5.56.3",
+    "version": "5.56.4",
+    "signed_tag": "v5.56.4",
     "release_date": "2026-11-26",
     "edition": "Community / Academic",
     "licence": "PolyForm Noncommercial License 1.0.0",
