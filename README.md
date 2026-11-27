@@ -158,6 +158,7 @@ current test and deployment evidence: [validation report](docs/VALIDATION-REPORT
 | [Learning framework](docs/LEARNING-FRAMEWORK.md) | Tracks, levels, labs, and evidence |
 | [Privacy, erasure, and backups](docs/PRIVACY-AND-DATA-DELETION.md) | Data handling for institutions |
 | [Release tags](docs/RELEASES.md) and [changelog](CHANGELOG.md) | Release history |
+| [Governance](GOVERNANCE.md) and [citation](CITATION.cff) | Decision model, editions, and how to cite |
 | [Contributing](CONTRIBUTING.md) | Submitting labs or platform changes |
 
 ## Attribution and licensing

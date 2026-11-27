@@ -15,3 +15,10 @@
 /platform/backend/app/services/production_control.py @RobChaykoski
 /platform/backend/app/services/tenant_rls.py @RobChaykoski
 /platform/backend/app/security/ @RobChaykoski
+
+# Release chain: always require an explicit maintainer review.
+/supply-chain.lock.json @RobChaykoski
+/supply-chain.lock.json.asc @RobChaykoski
+/docs/release-signing-key.asc @RobChaykoski
+/scripts/supply_chain.py @RobChaykoski
+/versions.yaml @RobChaykoski

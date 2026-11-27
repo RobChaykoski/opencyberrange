@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use SWOCTS Cyber Range in teaching, research, or a course, cite this repository."
+title: "SWOCTS Cyber Range"
+abstract: >-
+  A self-hosted cybersecurity training platform with isolated lab sessions,
+  workbooks, automated flag scoring, competency evidence, and a signed release
+  chain. SWOCTS Cyber Range is the SWOCTS-branded build of OpenCyberRange,
+  based on the original Open Cyber Range (OCR-Lite) project by Lewis Heuermann.
+authors:
+  - family-names: Chaykoski
+    given-names: Robert
+    affiliation: "SWOCTS Cyber Range"
+  - family-names: Heuermann
+    given-names: Lewis
+    note: "Original OpenCyberRange (OCR-Lite) author; upstream attribution"
+version: 5.59.0
+date-released: "2026-11-27"
+repository-code: "https://github.com/RobChaykoski/opencyberrange"
+url: "https://github.com/RobChaykoski/opencyberrange"
+license-url: "https://polyformproject.org/licenses/noncommercial/1.0.0/"
+keywords:
+  - cybersecurity education
+  - cyber range
+  - hands-on labs
+  - competency evidence
+  - self-hosted
