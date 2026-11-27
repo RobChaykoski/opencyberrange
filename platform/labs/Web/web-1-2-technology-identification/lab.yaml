@@ -79,6 +79,10 @@ hostnames:
 
 
 flag: "OCR{t3ch_1d3nt1f1c4t10n_b4s1c}"
+flag_path: /var/www/html/wp-admin/flag.txt
+flag_service: webserver
+flag_command:
+  - apache2-foreground
 
 hints:
   - text: |

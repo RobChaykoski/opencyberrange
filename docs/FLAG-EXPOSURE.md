@@ -9,12 +9,11 @@ This page records the current exposure and the plan to close it.
 
 ## How flags work today
 
-- **222 labs.** **111** environment-driven labs rotate per session: on launch the
-  platform compares each `FLAG` / `*_FLAG` value in the compose file with the
-  graded hash and substitutes a generated value.
-- **111** labs keep a static value. Their flag is written in `lab.yaml`, and
-  often again in the compose environment or the lab source. That value is
-  public.
+- **222 labs.** **116** labs rotate per session: 75 environment-driven labs match a
+  `FLAG` / `*_FLAG` compose value to the graded hash, and 41 baked labs declare a
+  render contract. **106** labs keep a static value. Their flag is written in
+  `lab.yaml`, and often again in the compose environment or the lab source. That
+  value is public.
 - Baked labs can declare `flag_path`, `flag_service`, `flag_command`, and
   `flag_owner`. The launcher writes `LAB_FLAG`, sets ownership, and execs the
   original command.
@@ -35,9 +34,18 @@ python scripts/audit_flag_exposure.py
 python scripts/audit_flag_exposure.py --fail-on-leaks
 ```
 
-Current result: **111 static labs**, **0 leaked answers** outside the lab tree.
+Current result: **106 static labs**, **0 leaked answers** outside the lab tree.
 The Workbook capstone page that printed a real marker was replaced with a
-read-the-route instruction. Two classes are deliberate exceptions:
+read-the-route instruction. The first rotation batch is:
+
+- `linux-1-6-version-vulnerability-identification`;
+- `web-1-2-technology-identification`;
+- `web-1-6-comprehensive-web-reconnaissance`;
+- `windows-2-3-smb-anonymous-share-access`;
+- `malware-1-1-eicar-triage`.
+
+Each declares a single-file render contract. Two classes are deliberate
+exceptions:
 
 - `platform/backend/app/data/external-targets.yaml` records public OSINT
   markers that learners are meant to find on the open web;
