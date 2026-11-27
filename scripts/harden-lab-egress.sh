@@ -16,6 +16,29 @@ SOURCES=(
 )
 
 mapfile -t network_ids < <(docker network ls --format '{{.ID}}')
+
+# The rules below are IPv4-only. If any Docker network has IPv6 enabled, the
+# containment model has a hole; stop rather than apply a partial policy.
+v6_networks=$(for id in "${network_ids[@]}"; do
+  docker network inspect "$id" --format '{{.Name}} {{.EnableIPv6}}' 2>/dev/null || true
+done | awk '$2 == "true" {print $1}')
+if [ -n "$v6_networks" ]; then
+  cat >&2 <<EOF
+ERROR: Docker network(s) have IPv6 enabled:
+$(printf '  %s\n' $v6_networks)
+Disable IPv6 on those networks (or add equivalent ip6tables rules) before
+relying on lab egress containment.
+EOF
+  exit 1
+fi
+
+if [[ "$IMAGE" != *"@sha256:"* ]]; then
+  echo "WARN: $IMAGE is not pinned by digest; a mutable tag can run arbitrary code as root." >&2
+  if [ "${HARDEN_STRICT:-0}" = "1" ]; then
+    echo "ERROR: HARDEN_STRICT=1 requires a digest-pinned IMAGE." >&2
+    exit 1
+  fi
+fi
 gateways=()
 for id in "${network_ids[@]}"; do
   while read -r subnet gateway; do

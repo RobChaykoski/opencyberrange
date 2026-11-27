@@ -355,7 +355,7 @@
       "sha256": "107c6c242335d422fa18289528403446f46107397eaf810f9127a38357a49afe"
     },
     "scripts/deploy-updates.sh": {
-      "sha256": "ad181381948e8afbd4ce680a28fc9875f43727babdb0ca3f2c0350c5799e9f38"
+      "sha256": "da5473b7aedf9408dde437342bc1d5e348184bb0cb32d61af0b1e3eb60b0d883"
     },
     "scripts/export-contract-reviews.py": {
       "sha256": "65945aa34ece82cda4eb8aed0d47e10f7fc7bab91dce51b0c94f2ac50ce50b1a"

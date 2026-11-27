@@ -43,12 +43,14 @@ STATE_FILE="$REPO_DIR/scripts/.update-state"
 # out or applies any pulled code. The public key is checked against this
 # fingerprint, so replacing the key file in a compromised tree cannot widen
 # trust.
-RELEASE_GPG_FINGERPRINT="${RELEASE_GPG_FINGERPRINT:-68A817762C831475F00DB54E775050A4C4921814}"
+RELEASE_FINGERPRINT_PINNED="68A817762C831475F00DB54E775050A4C4921814"
+RELEASE_GPG_FINGERPRINT="${RELEASE_GPG_FINGERPRINT:-$RELEASE_FINGERPRINT_PINNED}"
 DEPLOY_TAG="${DEPLOY_TAG:-}"
 ALLOW_UNSIGNED_MAIN="${ALLOW_UNSIGNED_MAIN:-0}"
 ALLOW_UNSIGNED_ZIP="${ALLOW_UNSIGNED_ZIP:-0}"
 SUPPLY_CHAIN_STRICT="${SUPPLY_CHAIN_STRICT:-1}"
 VERIFIED_RELEASE_REF=""
+VERIFIED_RELEASE_SHA=""
 OCR_RELEASE_GNUPGHOME=""
 
 # Default options
@@ -97,6 +99,9 @@ error_exit() {
 
 # Pre-flight checks
 preflight_checks() {
+    if [ "${RELEASE_GPG_FINGERPRINT^^}" != "${RELEASE_FINGERPRINT_PINNED^^}" ]; then
+        log "${YELLOW}[warn] RELEASE_GPG_FINGERPRINT is overridden (${RELEASE_GPG_FINGERPRINT}); the pinned key is ${RELEASE_FINGERPRINT_PINNED}.${NC}"
+    fi
     log "${BLUE}Running pre-flight checks...${NC}"
     # Check if running on server
     if [ ! -d "$PLATFORM_DIR" ]; then
@@ -175,6 +180,7 @@ create_backup() {
     fi
     
     mkdir -p "$backup_path"
+    chmod 700 "$backup_path"
     
     # Backup critical files
     if [ -f "$PLATFORM_DIR/.env" ]; then
@@ -198,6 +204,14 @@ create_backup() {
     fi
     
     log "${GREEN}[ok] Backup created${NC}"
+    # Keep the last BACKUP_KEEP update snapshots; a full backend+frontend copy
+    # per update otherwise fills the disk over a year.
+    local keep="${BACKUP_KEEP:-10}"
+    if [ -d "$BACKUP_DIR" ]; then
+        ls -1dt "$BACKUP_DIR"/*/ 2>/dev/null \
+            | tail -n +$((keep + 1)) \
+            | xargs -r rm -rf
+    fi
     echo "$backup_path"
 }
 
@@ -251,10 +265,15 @@ verify_release_tag() {
         git -c safe.directory="$REPO_DIR" -C "$REPO_DIR" verify-tag "$tag" 2>&1); then
         error_exit "Release tag $tag is not signed or its signature is invalid:\n$output"
     fi
-    local compact
-    compact=$(printf '%s' "$output" | tr -d ' \n' | tr '[:lower:]' '[:upper:]')
-    if [ "${compact#*$RELEASE_GPG_FINGERPRINT}" = "$compact" ]; then
-        error_exit "Release tag $tag was not signed by $RELEASE_GPG_FINGERPRINT"
+    # Parse the signer fingerprint from the "using ... key <fpr>" line. Do not
+    # search the whole output: a tag signed by an attacker key whose UID embeds
+    # the release fingerprint would otherwise pass a substring check.
+    local signer
+    signer=$(printf '%s\n' "$output" \
+        | sed -n 's/.*using .* key \([0-9A-Fa-f]\{40\}\).*/\1/p' \
+        | head -n 1)
+    if [ -z "$signer" ] || [ "${signer^^}" != "${RELEASE_GPG_FINGERPRINT^^}" ]; then
+        error_exit "Release tag $tag was signed by ${signer:-an unknown key}, not $RELEASE_GPG_FINGERPRINT"
     fi
     log "${GREEN}[ok] Release tag $tag is signed by $RELEASE_GPG_FINGERPRINT${NC}"
 }
@@ -277,7 +296,9 @@ fetch_and_verify_release() {
     git_owner fetch --tags --prune
     local tag="${DEPLOY_TAG:-}"
     if [ -z "$tag" ]; then
-        tag=$(git_owner tag --list 'v*' --sort=-v:refname | head -1)
+        tag=$(git_owner tag --list 'v*' --sort=-v:refname \
+        | grep -viE -- '-(rc|beta|alpha|pre|preview|dev)[0-9.]*$' \
+        | head -1)
     fi
     if [ -z "$tag" ]; then
         if [ "${ALLOW_UNSIGNED_MAIN:-0}" = "1" ]; then
@@ -289,8 +310,14 @@ fetch_and_verify_release() {
     fi
 
     load_release_key
-    verify_release_tag "$tag"
+    # Resolve the tag object, verify that exact object, then bind the checkout
+    # to its commit so a tag moved between verification and checkout cannot run
+    # unverified code.
+    local tag_object
+    tag_object=$(git_owner rev-parse "$tag")
+    verify_release_tag "$tag_object"
     VERIFIED_RELEASE_REF="$tag"
+    VERIFIED_RELEASE_SHA=$(git_owner rev-parse "$tag_object^{commit}")
 }
 
 checkout_verified_release() {
@@ -298,7 +325,10 @@ checkout_verified_release() {
         return 0
     fi
 
-    if [ -n "$VERIFIED_RELEASE_REF" ]; then
+    if [ -n "$VERIFIED_RELEASE_SHA" ]; then
+        log "${BLUE}Checking out verified release $VERIFIED_RELEASE_REF ($VERIFIED_RELEASE_SHA)...${NC}"
+        git_owner checkout --detach "$VERIFIED_RELEASE_SHA"
+    elif [ -n "$VERIFIED_RELEASE_REF" ]; then
         log "${BLUE}Checking out verified release $VERIFIED_RELEASE_REF...${NC}"
         git_owner checkout --detach "$VERIFIED_RELEASE_REF"
     else
@@ -868,11 +898,21 @@ update_state() {
     fi
     
     # Try to write state file, but don't fail if we can't
+    local verified_ref_json="null"
+    local verified_sha_json="null"
+    if [ -n "$VERIFIED_RELEASE_REF" ]; then
+        verified_ref_json="\"$VERIFIED_RELEASE_REF\""
+    fi
+    if [ -n "$VERIFIED_RELEASE_SHA" ]; then
+        verified_sha_json="\"$VERIFIED_RELEASE_SHA\""
+    fi
     if cat > "$STATE_FILE" << EOF 2>/dev/null; then
 {
     "last_deployment": "$timestamp",
     "platform_applied": $DEPLOY_PLATFORM,
-    "backup_path": "$BACKUP_DIR"
+    "backup_path": "$BACKUP_DIR",
+    "verified_ref": $verified_ref_json,
+    "verified_sha": $verified_sha_json
 }
 EOF
         log "${GREEN}[ok] State file updated${NC}"
