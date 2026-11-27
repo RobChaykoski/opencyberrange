@@ -1,6 +1,6 @@
 # Production deployment statement
 
-**Statement date:** 26 November 2026
+**Statement date:** 27 November 2026
 
 This is the authoritative statement for the current production deployment. If
 another document disagrees, this page and the signed tag win.
@@ -8,6 +8,26 @@ another document disagrees, this page and the signed tag win.
 > **Public copy.** Real addresses, hostnames, and deployment accounts are
 > replaced with placeholders. The private deployment inventory holds the live
 > values. See [`PUBLICATION-METADATA-POLICY.md`](PUBLICATION-METADATA-POLICY.md).
+
+## 5.58.0 deployment verification
+
+| Check | Result |
+|---|---|
+| `/api/version` | `5.58.0` on production and development |
+| Alembic | **`0068_mfa_replay_guard` (head)** |
+| Health | Production and development backend/frontend containers `healthy`; nginx `-t` passes |
+| Per-session flags | 112 of 222 labs rotate; 110 baked/static labs remain |
+| Lab base images | 225 upstream references pinned by digest in 218 Dockerfiles; image-pin checker clean |
+| Instructor reporting | Lab friction CSV and Canvas, Brightspace, Moodle, and generic gradebook exports |
+| Registered labs | Production 218, development 231 |
+| Production wiki | **14** sites rebuilt |
+| Pre-deploy backup (production) | `~/backups/ocr-backup-20261127-074324.dump` |
+| Pre-deploy backup (development) | `~/opencyberrange/.backups/20261127_073926`; `~/backups/ocr-backup-20261127-073603.dump` |
+| Rollback images | `opencyberrange-backend:pre-v5.58.0`, `ocr-frontend:pre-v5.58.0` on production; development rolls back by rebuilding `v5.57.0` |
+
+5.58.0 ships per-session flags for baked labs, `LAB_FLAG` for the remaining
+runtime labs, digest-pinned lab base images, and the lab friction and LMS
+gradebook reports.
 
 ## 5.57.0 deployment verification
 
