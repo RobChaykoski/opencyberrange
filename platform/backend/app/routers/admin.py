@@ -164,7 +164,7 @@ def list_users(
 
 
 @router.get("/users/pending", response_model=List[UserAdminResponse])
-async def list_pending_users(
+def list_pending_users(
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_institution_admin_user),
 ):
@@ -176,7 +176,7 @@ async def list_pending_users(
 
 
 @router.get("/users/locked", response_model=List[UserAdminResponse])
-async def list_locked_users(
+def list_locked_users(
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_institution_admin_user),
 ):
@@ -187,7 +187,7 @@ async def list_locked_users(
 
 @router.get("/users/export")
 @limiter.limit("10/minute")
-async def export_users(
+def export_users(
     request: Request,
     reason: str = Depends(require_export_reason),
     include_avatars: bool = Query(False),
@@ -231,7 +231,7 @@ async def export_users(
 
 @router.post("/users/import")
 @limiter.limit("5/minute")
-async def import_users(
+def import_users(
     request: Request,
     body: dict,
     db: Session = Depends(get_db),
@@ -281,7 +281,7 @@ async def import_users(
 
 
 @router.get("/users/{user_id}", response_model=UserAdminResponse)
-async def get_user(
+def get_user(
     user_id: int,
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_institution_admin_user),
@@ -326,7 +326,7 @@ class StressCancelRequest(BaseModel):
 
 
 @router.post("/users/{user_id}/mfa/reset", summary="Reset another account's MFA")
-async def reset_user_mfa(
+def reset_user_mfa(
     user_id: int,
     body: MfaResetRequest,
     request: Request,
@@ -516,7 +516,7 @@ def get_user_details(
 
 @router.post("/users/{user_id}/labs/{lab_id}/reset")
 @limiter.limit("10/minute")
-async def reset_user_lab(
+def reset_user_lab(
     request: Request,
     user_id: int,
     lab_id: int,
@@ -775,7 +775,7 @@ async def create_user(
 
 
 @router.put("/users/{user_id}", response_model=UserAdminResponse)
-async def update_user(
+def update_user(
     user_id: int,
     user_request: UpdateUserRequest,
     http_request: Request,
@@ -984,7 +984,7 @@ async def update_user(
 
 
 @router.post("/users/approve")
-async def approve_user(
+def approve_user(
     user_id: int,
     background_tasks: BackgroundTasks,
     approved: bool = True,
@@ -1018,7 +1018,7 @@ async def approve_user(
 
 
 @router.post("/users/{user_id}/unlock")
-async def unlock_user(
+def unlock_user(
     user_id: int,
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user)
@@ -1129,7 +1129,7 @@ async def reset_password(
 
 
 @router.post("/users/{user_id}/force-logout")
-async def force_logout_user(
+def force_logout_user(
     user_id: int,
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user)
@@ -1148,7 +1148,7 @@ async def force_logout_user(
 
 @router.delete("/users/{user_id}")
 @limiter.limit("5/minute")
-async def delete_user(
+def delete_user(
     request: Request,
     user_id: int,
     db: Session = Depends(get_db),
@@ -1203,7 +1203,7 @@ async def delete_user(
 # ==================== Competency Coverage ====================
 
 @router.get("/competency-coverage")
-async def competency_coverage(
+def competency_coverage(
     admin: User = Depends(get_current_admin_user),
 ):
     """Read-only Release 6 coverage for the contract review queue."""
@@ -1215,7 +1215,7 @@ async def competency_coverage(
 # ==================== Lab Management ====================
 
 @router.get("/labs")
-async def list_labs(
+def list_labs(
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user)
 ):
@@ -1263,7 +1263,7 @@ async def list_labs(
 
 
 @router.put("/labs/{lab_id}")
-async def update_lab(
+def update_lab(
     lab_id: int,
     request: UpdateLabRequest,
     db: Session = Depends(get_db),
@@ -1495,7 +1495,7 @@ def _active_session_payload(session) -> dict:
 
 
 @router.get("/sessions/active")
-async def list_active_sessions(
+def list_active_sessions(
     page: int | None = Query(None, ge=1),
     per_page: int | None = Query(None, ge=1, le=200),
     db: Session = Depends(get_db),
@@ -1524,7 +1524,7 @@ async def list_active_sessions(
 
 
 @router.get("/sessions/history")
-async def session_history(
+def session_history(
     page: int = 1,
     per_page: int = 50,
     start_date: str | None = None,
@@ -1823,7 +1823,7 @@ def terminate_all_sessions(
 
 @router.delete("/sessions/history")
 @limiter.limit("5/minute")
-async def clear_session_history(
+def clear_session_history(
     request: Request,
     status_filter: str | None = None,
     db: Session = Depends(get_db),
@@ -2067,7 +2067,7 @@ _admin_impersonation = _AdminImpersonation()
 # BEFORE the parameterized route (/{session_id}) so FastAPI matches them first.
 
 @router.post("/impersonate/disconnect")
-async def disconnect_impersonation(
+def disconnect_impersonation(
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user),
 ):
@@ -2088,7 +2088,7 @@ async def disconnect_impersonation(
 
 
 @router.get("/impersonate/status")
-async def impersonation_status(
+def impersonation_status(
     admin: User = Depends(get_current_admin_user),
 ):
     """Check if admin is currently impersonating a student session."""
@@ -2194,8 +2194,12 @@ async def impersonate_launch_lab(
         bridged = False
         if compose_content:
             try:
-                docker_manager.bridge_standalone_rangebox_to_lab(
-                    admin.id, lab_slug, target_user_id
+                await loop.run_in_executor(
+                    None,
+                    docker_manager.bridge_standalone_rangebox_to_lab,
+                    admin.id,
+                    lab_slug,
+                    target_user_id,
                 )
                 bridged = True
                 _admin_impersonation[admin.id] = {
@@ -2254,7 +2258,7 @@ async def impersonate_launch_lab(
 
 
 @router.post("/impersonate/{session_id}")
-async def impersonate_session(
+def impersonate_session(
     session_id: int,
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user),
@@ -2547,7 +2551,7 @@ def repair_vpn_peer(
 
 
 @router.get("/vpn/status")
-async def vpn_sync_status(
+def vpn_sync_status(
     page: int | None = Query(None, ge=1),
     per_page: int | None = Query(None, ge=1, le=200),
     db: Session = Depends(get_db),
@@ -2925,7 +2929,7 @@ def _download_filename(name: str) -> str:
 
 
 @router.get("/data-labels/policy")
-async def get_data_label_policy(
+def get_data_label_policy(
     role: str | None = Query(None),
     path: str | None = Query(None),
     db: Session = Depends(get_db),
@@ -2941,7 +2945,7 @@ async def get_data_label_policy(
 
 
 @router.get("/labs/{lab_id}/export")
-async def export_exercise(
+def export_exercise(
     request: Request,
     lab_id: int,
     include_flag: bool = Query(False),
@@ -3095,7 +3099,7 @@ def get_stats(
 
 @router.post("/labs")
 @limiter.limit("10/minute")
-async def create_lab(
+def create_lab(
     request: Request,
     payload: LabCreate,
     db: Session = Depends(get_db),
@@ -3265,7 +3269,7 @@ async def create_lab(
 
 
 @router.put("/labs/{lab_id}/compose")
-async def update_lab_compose(
+def update_lab_compose(
     lab_id: int,
     payload: ComposeUpdateRequest,
     db: Session = Depends(get_db),
@@ -3294,7 +3298,7 @@ async def update_lab_compose(
 
 
 @router.get("/labs/{lab_id}/details")
-async def get_lab_details_admin(
+def get_lab_details_admin(
     lab_id: int,
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user)
@@ -3404,7 +3408,7 @@ def _ensure_curriculum_structure(db: Session):
 
 @router.post("/labs/discover")
 @limiter.limit("5/minute")
-async def discover_labs(
+def discover_labs(
     request: Request,
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user)
@@ -3614,7 +3618,7 @@ async def discover_labs(
 # ==================== Activity / Audit Log ====================
 
 @router.get("/system/metrics")
-async def get_system_metrics(
+def get_system_metrics(
     hours: int = 24,
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user),
@@ -3626,7 +3630,7 @@ async def get_system_metrics(
 
 
 @router.post("/system/metrics/sample")
-async def sample_system_metrics(
+def sample_system_metrics(
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user),
 ):
@@ -3782,7 +3786,7 @@ def _activity_export_rows(db: Session, events: list[ActivityEvent]) -> list[dict
 
 
 @router.get("/activity/export")
-async def export_activity_log(
+def export_activity_log(
     request: Request,
     reason: str = Depends(require_export_reason),
     format: str = Query("json", pattern="^(json|csv)$"),
@@ -3854,7 +3858,7 @@ async def export_activity_log(
 
 
 @router.post("/activity/clear")
-async def clear_activity_log(
+def clear_activity_log(
     payload: ActivityClearRequest,
     request: Request,
     db: Session = Depends(get_db),
@@ -3925,7 +3929,7 @@ async def clear_activity_log(
 # ==================== Container Logs ====================
 
 @router.get("/sessions/{session_id}/logs")
-async def get_session_logs(
+def get_session_logs(
     session_id: int,
     tail: int = 100,
     db: Session = Depends(get_db),
@@ -4011,7 +4015,7 @@ def create_backup(
 
 
 @router.get("/system/activity-calendar")
-async def activity_calendar(
+def activity_calendar(
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user)
 ):
@@ -4088,7 +4092,7 @@ async def activity_calendar(
 
 
 @router.get("/system/backups")
-async def list_backups(
+def list_backups(
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user)
 ):
@@ -4113,7 +4117,7 @@ async def list_backups(
 
 
 @router.get("/system/backups/{filename}")
-async def download_backup(
+def download_backup(
     filename: str,
     request: Request,
     reason: str = Depends(require_export_reason),
@@ -4562,7 +4566,7 @@ async def system_release_status(
 
 
 @router.get("/system/software-integrity", summary="Verify deployed lab content against the release manifest")
-async def software_integrity_status(
+def software_integrity_status(
     admin: User = Depends(get_current_admin_user),
 ):
     """Recompute the lab content hashes and compare them with the release manifest.
@@ -4628,7 +4632,7 @@ def _integrity_status(summary: dict) -> tuple[str, str, str]:
 
 
 @router.get("/system/data-integrity")
-async def get_data_integrity_status(
+def get_data_integrity_status(
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user),
 ):
@@ -4661,7 +4665,7 @@ class IntegrityReviewRequest(BaseModel):
 
 @router.post("/system/data-integrity/review")
 @limiter.limit("10/minute")
-async def review_data_integrity_write(
+def review_data_integrity_write(
     request: Request,
     payload: IntegrityReviewRequest,
     db: Session = Depends(get_db),
@@ -4854,7 +4858,7 @@ def _start_stress_test_run(
 
 
 @router.post("/stress-test")
-async def start_stress_test(
+def start_stress_test(
     body: StressTestRequest,
     admin: User = Depends(get_current_admin_user),
 ):
@@ -4877,7 +4881,7 @@ async def start_stress_test(
 
 
 @router.get("/stress-test/active")
-async def get_active_stress_test(
+def get_active_stress_test(
     admin: User = Depends(get_current_admin_user),
 ):
     """Return the currently active stress test (if any)."""
@@ -4895,7 +4899,7 @@ async def get_active_stress_test(
 
 
 @router.get("/stress-test/events/{run_id}")
-async def get_stress_test_events(
+def get_stress_test_events(
     run_id: str,
     after: int = 0,
     admin: User = Depends(get_current_admin_user),
@@ -4918,7 +4922,7 @@ async def get_stress_test_events(
 
 
 @router.post("/stress-test/cancel")
-async def cancel_stress_test(
+def cancel_stress_test(
     body: StressCancelRequest,
     admin: User = Depends(get_current_admin_user),
 ):
@@ -4947,7 +4951,7 @@ async def cancel_stress_test(
 
 
 @router.post("/stress-test/report")
-async def generate_stress_report_pdf(
+def generate_stress_report_pdf(
     body: dict,
     request: Request,
     reason: str = Depends(require_export_reason),
@@ -4984,7 +4988,7 @@ async def generate_stress_report_pdf(
 
 
 @router.get("/stress-test/last-result")
-async def get_last_stress_result(
+def get_last_stress_result(
     admin: User = Depends(get_current_admin_user),
 ):
     """Return the most recent completed/cancelled stress test results."""
@@ -5002,7 +5006,7 @@ async def get_last_stress_result(
 
 
 @router.get("/rangebox-capacity")
-async def get_rangebox_capacity(
+def get_rangebox_capacity(
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user),
 ):
@@ -5057,7 +5061,7 @@ async def get_rangebox_capacity(
 
 
 @router.post("/rangebox-capacity/test")
-async def run_rangebox_capacity_test(
+def run_rangebox_capacity_test(
     body: dict | None = None,
     admin: User = Depends(get_current_admin_user),
 ):
@@ -5086,7 +5090,7 @@ async def run_rangebox_capacity_test(
 
 
 @router.post("/stress-test/cleanup")
-async def stress_test_cleanup(
+def stress_test_cleanup(
     admin: User = Depends(get_current_admin_user),
 ):
     """Clean up stress test users and data from the database."""
@@ -5375,7 +5379,7 @@ def _retention_counts(db, course_id: int) -> dict:
 
 
 @router.get("/retention/due")
-async def list_retention_due(
+def list_retention_due(
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user),
 ):
@@ -5396,7 +5400,7 @@ async def list_retention_due(
 
 
 @router.get("/courses/{course_id}/retention")
-async def get_retention_policy(
+def get_retention_policy(
     course_id: int,
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user),
@@ -5410,7 +5414,7 @@ async def get_retention_policy(
 
 
 @router.put("/courses/{course_id}/retention")
-async def set_retention_policy(
+def set_retention_policy(
     course_id: int,
     payload: RetentionPolicyRequest,
     db: Session = Depends(get_db),
@@ -5441,7 +5445,7 @@ async def set_retention_policy(
 
 
 @router.post("/courses/{course_id}/retention/preview")
-async def preview_retention(
+def preview_retention(
     course_id: int,
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user),
@@ -5480,7 +5484,7 @@ async def preview_retention(
 
 
 @router.post("/courses/{course_id}/retention/complete")
-async def complete_retention(
+def complete_retention(
     course_id: int,
     payload: RetentionCompleteRequest,
     db: Session = Depends(get_db),
@@ -5527,7 +5531,7 @@ async def complete_retention(
 
 
 @router.get("/courses/{course_id}/retention/runs")
-async def list_retention_runs(
+def list_retention_runs(
     course_id: int,
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user),
