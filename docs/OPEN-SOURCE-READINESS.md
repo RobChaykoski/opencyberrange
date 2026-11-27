@@ -2,6 +2,8 @@
 
 A fresh-contributor review for the Community / Academic edition.
 
+Status: **reviewed against release `5.58.0` on 27 November 2026**.
+
 ## Fresh-clone path
 
 1. `git clone https://github.com/RobChaykoski/opencyberrange.git`
@@ -25,7 +27,7 @@ A fresh-contributor review for the Community / Academic edition.
 | Lab files must be world-readable (`a+rX`) | A non-root backend silently skips labs it cannot read | `docs/REPOSITORY-HYGIENE.md` |
 | Lab images are large | First lab launch is slow | `docs/DEPLOYMENT-TOPOLOGY-AND-SIZING.md` |
 | Screenshot refresh needs demo credentials | Manual images can lag the release | `docs/MANUAL-SCREENSHOTS.md` |
-| The live harness is long | 210-lab verification is not a quick local check | `docs/CURRICULUM-DRIFT-REPORT.md` |
+| The live harness is long | 222-lab verification is not a quick local check | `docs/CURRICULUM-DRIFT-REPORT.md` |
 
 ## Score
 
@@ -40,12 +42,12 @@ A fresh-contributor review for the Community / Academic edition.
 
 ## Evidence
 
-- Backend: **908 passed** on a clean PostgreSQL database.
-- Frontend: **6 passed**; build passed.
-- Labs: **215 definitions, 215 manifests, 215 contracts, 205 workbook-mapped**.
-- `validate-lab.py --all`: **215 labs, 0 failed checks**.
+- Backend: **677 passed, 576 skipped** locally without `TEST_DATABASE_URL`; CI runs the DB-backed suite against PostgreSQL.
+- Frontend: lint, i18n budget, build, and bundle-budget checks passed.
+- Labs: **222 definitions, 222 manifests, 222 contracts, 211 workbook-mapped**.
+- `validate_lab_metadata.py`: **222 labs, 0 errors**.
 - Live harness: all **19 new pathway labs** passed one clean run; the full
-  215-lab, three-run harness remains.
+  222-lab, three-run harness remains.
 - Metadata, outcomes, manifests, API manual, licence, external-dataset, and
   documentation-link checks: passed.
 - MkDocs manual strict build: passed.

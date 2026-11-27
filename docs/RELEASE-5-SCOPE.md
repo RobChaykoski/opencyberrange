@@ -1,5 +1,9 @@
 # Release 5 scope: enterprise procurement and compliance
 
+> **Historical.** This page records the Release 5 scope and the `v5.17.5`
+> cutover. For the deployed release, see
+> [`PRODUCTION-DEPLOYMENT-STATEMENT.md`](PRODUCTION-DEPLOYMENT-STATEMENT.md).
+
 Status: **released and deployed as `v5.17.5` (Community / Academic), and
 production is cut over.** Development `<dev-host-ip>` and production
 `<prod-host-ip>` run `main` at `eddaf74f` (`v5.17.5`) with Alembic

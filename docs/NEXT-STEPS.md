@@ -1,14 +1,40 @@
 # Next steps
 
-Status: **Release 5.56.1 is deployed to development and production.** The
-read-only HA status panel (endpoint, Admin card, witness endpoint, host
-collector) is implemented; the witness/collector install and live drills
-remain. The exercise workspace now has a read-only Briefing tab and pop-out.
-The threat-awareness snapshots are refreshed and a weekly operations
-automation is scheduled. Dependency maintenance cleared the dev/tooling
-Dependabot backlog; runtime and OS updates remain for review. This page tracks
-what is left; the deployment record is
-[`RELEASE-5-PRODUCTION-READINESS.md`](RELEASE-5-PRODUCTION-READINESS.md).
+Status: **Release `5.58.0` is deployed to development and production.** This
+page tracks what is left; the deployed state is
+[`PRODUCTION-DEPLOYMENT-STATEMENT.md`](PRODUCTION-DEPLOYMENT-STATEMENT.md).
+
+## Now
+
+1. **Competency review is the hard blocker.** 25 of 222 contracts are reviewed;
+   197 baseline contracts await subject-matter review. Work the
+   [review queue](COMPETENCY-REVIEW-QUEUE.md) in track-sized batches.
+2. **Capstone Builder (6.1).** The planner, saved plans, approval gate, and API
+   exist; the editor UI and exports remain.
+3. **OpenGRC first slice.** Define the evidence export schema, map one track or
+   capstone to a small control set, and add the boundary test that proves zero
+   learner rows leave the platform.
+4. **Cyber DNA decisions.** Confirm whether `advanced_dna_insights_enabled`
+   stays on in production while the Career Atlas review is unsigned, and record
+   which strand is the new pathway.
+
+Blocked: HA witness/collector install and live failover drills (host access);
+`opencyberrange-ha` runtime workflow (GitHub billing); SFIA 9 mapping
+(commercial/academic licence).
+
+## 5.58.0
+
+- **Per-session flags for baked labs:** coverage is 112 of 222, up from 70.
+- **`LAB_FLAG` for runtime labs:** the four OT PLC servers and the OSINT canary
+  read it at startup with a static fallback.
+- **Digest-pinned lab images:** 225 upstream references in 218 Dockerfiles.
+- **Instructor reporting:** course lab friction CSV and Canvas, Brightspace,
+  Moodle, and generic gradebook exports.
+
+---
+
+**Historical records.** The sections below describe earlier waves and keep
+their original counts.
 
 ## 5.56.1
 

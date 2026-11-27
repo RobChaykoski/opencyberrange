@@ -11,14 +11,16 @@ when updating the README, release notes, or a deployment record.
 | Competency contracts | **222** | `platform/backend/app/data/competency-contracts.yaml` |
 | Labs with a workbook link | **211** | non-empty `workbook:` in `lab.yaml` |
 | Labs without a workbook link | **11** | remaining `lab.yaml` files |
-| Registered labs in dev/prod | **218** | `labs` table after discovery; the four Karate labs register on the next discovery run |
+| Registered labs (production) | **218** | `labs` table after discovery |
+| Registered labs (development) | **231** | `labs` table; development keeps extra test rows |
 | Public catalogue labs | **175** | `visibility = 'public'`; what a student sees before course enrolment |
 | Course-scoped labs | **47** | `visibility = 'course'`; visible only inside an assigned course |
 | Tracks | **13** | track folders under `platform/labs` |
 
 The badge and headline should use **222 lab definitions** and, when referring
 to workbook coverage, **211 workbook-mapped labs**. A deployment record should
-say **222 registered labs** only after lab discovery has run.
+state the registered count for that host: production **218**, development
+**231** (development keeps extra test rows).
 
 The student dashboard and exercise catalogue show **175 public exercises**,
 because 47 of the 222 are course-scoped. Do not treat the 175 total as a

@@ -1,5 +1,9 @@
 # Release 5 production readiness
 
+> **Historical.** This page records the Release 5 (`v5.17.5`) cutover. It is not
+> the current deployment record. For the deployed release, see
+> [`PRODUCTION-DEPLOYMENT-STATEMENT.md`](PRODUCTION-DEPLOYMENT-STATEMENT.md).
+
 Status: **`v5.17.5` (Community / Academic edition) is released and deployed, and
 production is cut over.** Development `<dev-host-ip>` and production
 `<prod-host-ip>` both run `main` at the commit tagged `v5.17.5` with Alembic

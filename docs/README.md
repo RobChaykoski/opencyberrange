@@ -14,6 +14,18 @@ The signed tag and [`versions.yaml`](../versions.yaml) win over any page.
 | [Lab and content counts](COUNTS.md) | The canonical 222-lab definitions and counts |
 | [Deployment topology and sizing](DEPLOYMENT-TOPOLOGY-AND-SIZING.md) | Supported shape, ports, and database budget |
 
+## Browse by intent
+
+| I want to… | Start with |
+|---|---|
+| Install the platform | [Server deployment](../Manual-Lite/00_Server_Deployment/), [prerequisites](../Manual-Lite/00_Server_Deployment/01_Prerequisites.md), [local deployment](../Manual-Lite/00_Server_Deployment/02_Local_Deployment.md) |
+| Operate or upgrade a host | [Deployment runbook](DEPLOYMENT-RUNBOOK.md), [upgrade guide](../Manual-Lite/00_Server_Deployment/07_Upgrade_And_Verify.md), [backup and restore](BACKUP-RESTORE-TEST.md) |
+| Understand the design | [Architecture](ARCHITECTURE.md), [architecture hub](architecture/index.md) |
+| Review security and privacy | [Security policy](../SECURITY.md), [privacy notice](PRIVACY-NOTICE.md), [security hub](security/index.md) |
+| Build or review curriculum | [Learning framework](LEARNING-FRAMEWORK.md), [curriculum map](../Workbook/CURRICULUM.md), [NICE mapping](NICE-MAPPING.md) |
+| Look up a fact or limit | [Counts](COUNTS.md), [supported versions](SUPPORTED-VERSIONS.md), [API error codes](API-ERROR-CODES.md), [data dictionary](DATA-DICTIONARY.md) |
+| Trace history or a past release | [Release tags](RELEASES.md), [changelog](../CHANGELOG.md), [archive](archive/README.md) |
+
 ## Browse by area
 
 - [Architecture](architecture/index.md)
@@ -68,25 +80,9 @@ mentor remain. The order is competency, evidence, capstones and analytics,
 scale, federation, then the AI mentor.
 
 - [Release 6 scope](RELEASE-6-SCOPE.md)
-- [Release 5.56.2 deliverables](RELEASE-5.56.2-DELIVERABLES.md)
-- [Release 5.39.0 deliverables](RELEASE-5.39.0-DELIVERABLES.md)
-- [Release 5.40.0 deliverables](RELEASE-5.40.0-DELIVERABLES.md)
-- [Release 5.41.0 deliverables](RELEASE-5.41.0-DELIVERABLES.md)
-- [Release 5.42.0 deliverables](RELEASE-5.42.0-DELIVERABLES.md)
-- [Release 5.43.0 deliverables](RELEASE-5.43.0-DELIVERABLES.md)
-- [Release 5.43.1 deliverables](RELEASE-5.43.1-DELIVERABLES.md)
-- [Release 5.44.0 deliverables](RELEASE-5.44.0-DELIVERABLES.md)
-- [Release 5.45.0 deliverables](RELEASE-5.45.0-DELIVERABLES.md)
-- [Release 5.46.0 deliverables](RELEASE-5.46.0-DELIVERABLES.md)
-- [Release 5.46.1 deliverables](RELEASE-5.46.1-DELIVERABLES.md)
-- [Release 5.46.2 deliverables](RELEASE-5.46.2-DELIVERABLES.md)
-- [Release 5.47.0 deliverables](RELEASE-5.47.0-DELIVERABLES.md)
-- [Release 5.48.0 deliverables](RELEASE-5.48.0-DELIVERABLES.md)
-- [Release 5.49.0 deliverables](RELEASE-5.49.0-DELIVERABLES.md)
-- [Release 5.50.0 deliverables](RELEASE-5.50.0-DELIVERABLES.md)
-- [Release 5.50.1 deliverables](RELEASE-5.50.1-DELIVERABLES.md)
-- [Release 5.51.0 deliverables](RELEASE-5.51.0-DELIVERABLES.md)
-- [Release 5.51.1 deliverables](RELEASE-5.51.1-DELIVERABLES.md)
+- [Next steps](NEXT-STEPS.md) — the open work and the blockers
+- [Release 5.58.0 deliverables](RELEASE-5.58.0-DELIVERABLES.md) — current signed release
+- [Release tags and release records](RELEASES.md) — every earlier release, in order
 - [Program layer: organizations, scenarios, transcript, and analytics](PROGRAM-LAYER.md)
 - [The Age of Foundations](FOUNDATIONS.md)
 - [The Living Archive](LIVING-ARCHIVE.md)

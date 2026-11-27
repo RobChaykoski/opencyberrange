@@ -13,14 +13,14 @@ not ready for Release 6.
 | Piece | Release 5 state |
 |---|---|
 | Taxonomy | 212 competencies across domains and categories (`app/data/competency-taxonomy.yaml`) |
-| Lab contracts | 215 labs mapped; **25 reviewed**, **190 baseline derived** (`app/data/competency-contracts.yaml`) |
+| Lab contracts | 222 labs mapped; **25 reviewed**, **197 baseline derived** (`app/data/competency-contracts.yaml`) |
 | Scoring | Five dimensions: knowledge 20%, execution 30%, troubleshooting 20%, documentation 15%, communication 15% |
 | Pathways | 13 curriculum roles with critical competencies and capstone briefs (`app/data/curriculum-roles.yaml`) |
 | Mapping | Chapter, track, category, and primary-axis mapping (`app/data/competency-mapping.yaml`) |
 | Credentials | Level certificates and Open Badges 3.0 scope |
 | Evidence | Completion, attempt, hint, quiz, workbook, and snapshot records |
 
-The 190 baseline-derived contracts are listed, with their competencies and
+The 197 baseline-derived contracts are listed, with their competencies and
 evidence types, in the [competency-contract review queue](COMPETENCY-REVIEW-QUEUE.md).
 
 The taxonomy is real and the scoring model is defined. The gap is coverage,
@@ -134,7 +134,7 @@ they were computed with.
 
 ## Review queue
 
-The 190 baseline contracts already carry competency IDs, weights, evidence
+The 197 baseline contracts already carry competency IDs, weights, evidence
 weights, prerequisites, duration, and reliability. Release 6 completes the
 subject-matter review:
 
@@ -160,7 +160,7 @@ subject-matter review:
 
 ## Acceptance criteria
 
-- 215 of 215 labs have a reviewed contract, or a documented exception with an
+- 222 of 222 labs have a reviewed contract, or a documented exception with an
   owner and a date.
 - 100% of workbooks, quizzes, assessments, capstones, and badges have a mapping.
 - A read API exposes the taxonomy and mappings with a version and a change log.

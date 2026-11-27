@@ -6,7 +6,7 @@ localization remain. This page is the scope contract for the release; the signed
 tag and [`versions.yaml`](../versions.yaml) remain the source of truth for the
 current release.
 
-Release 5 proved the teaching loop: 215 labs, a competency contract for every
+Release 5 proved the teaching loop: 222 labs, a competency contract for every
 lab, deterministic flag scoring, Cyber DNA v3, and a single-host deployment that
 two campuses can run. Release 6 makes that loop **institution-grade**. It turns
 the competency model into the authoritative vocabulary, makes evidence a
@@ -123,7 +123,7 @@ critical path.
 
 ### Critical path to 6.0
 
-1. **Review the 190 baseline contracts.** This is the hard blocker. It needs
+1. **Review the 197 baseline contracts.** This is the hard blocker. It needs
    subject-matter time, not more code. Work in track-sized batches; the generated
    review queue is the source of truth. The exact workflow is in the
    [Competency contract review guide](COMPETENCY-REVIEW-GUIDE.md).
@@ -211,7 +211,7 @@ Release 6 is designed for the questions an academic review actually asks.
 
 | Measure | Target |
 |---|---|
-| Labs with a reviewed competency contract | 215 of 215 |
+| Labs with a reviewed competency contract | 222 of 222 |
 | Objects with a competency mapping | 100% of labs, quizzes, assessments, capstones, badges |
 | Evidence records with a rubric version and provenance | 100% |
 | Capstone generation coverage of a role profile | At least 90% of critical competencies |

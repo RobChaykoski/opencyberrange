@@ -117,12 +117,12 @@ a warning.
 Before finishing a documentation change, search the touched tree:
 
 ```bash
-rg -n '5\.17\.[0-3]\b|191 labs|\b191\b|Release 4|not yet built|are planned|TODO|FIXME|TBD|ocr\.swocts\.com'
+rg -n '5\.5[0-7]\.[0-9]\b|218 labs|\b218\b|193 pending|Release 4|not yet built|are planned|TODO|FIXME|TBD|ocr\.swocts\.com'
 ```
 
 Triage every hit:
 
-- **Current claim** → update to `5.17.4`, `210 labs`, `<platform-host>`, or the
+- **Current claim** → update to `5.58.0`, `222 labs`, `<platform-host>`, or the
   current state.
 - **Historical record** → keep the value but add a `> **Historical.**` note with
   the date and what superseded it.
