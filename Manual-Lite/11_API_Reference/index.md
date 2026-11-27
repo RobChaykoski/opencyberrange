@@ -180,6 +180,7 @@ owner-only unless an explicit share or break-glass grant exists.
 | `GET` | `/api/admin/security/events/summary` | Security event counts and top event types | OAuth2PasswordBearer |
 | `GET` | `/api/admin/security/events/{event_id}` | One security event | OAuth2PasswordBearer |
 | `POST` | `/api/admin/security/rbac/check` | Explain one authorization decision | OAuth2PasswordBearer |
+| `GET` | `/api/admin/security/rbac/drift` | Reviewed catalog vs live RBAC grants | OAuth2PasswordBearer |
 | `GET` | `/api/admin/security/rbac/matrix` | Role and policy access matrix | OAuth2PasswordBearer |
 | `GET` | `/api/admin/security/rbac/permissions` | Reviewed permission catalog | OAuth2PasswordBearer |
 | `GET` | `/api/admin/security/rbac/roles` | Roles, grants, and effective permission counts | OAuth2PasswordBearer |
@@ -558,8 +559,8 @@ owner-only unless an explicit share or break-glass grant exists.
 | `POST` | `/api/lti/deep-link/{session_token}/response` | Deep Link Response | OAuth2PasswordBearer |
 | `GET` | `/api/lti/jwks` | Tool Jwks | Public |
 | `POST` | `/api/lti/launch` | Lti Launch | Public |
-| `GET` | `/api/lti/login` | Lti Login | Public |
-| `POST` | `/api/lti/login` | Lti Login | Public |
+| `GET` | `/api/lti/login` | Lti Login Get | Public |
+| `POST` | `/api/lti/login` | Lti Login Post | Public |
 | `GET` | `/api/modules/` | Get Modules Status | OAuth2PasswordBearer |
 | `GET` | `/api/nice/components` | Nice Components | OAuth2PasswordBearer |
 | `GET` | `/api/nice/coverage` | Nice Coverage | OAuth2PasswordBearer |
@@ -8159,9 +8160,9 @@ Validate the LMS launch and hand off to the normal SPA exchange.
 
 ### `GET /api/lti/login`
 
-**Lti Login**
+**Lti Login Get**
 
-OIDC third-party initiated login from the LMS (GET or form POST).
+OIDC third-party initiated login from the LMS (GET).
 
 **Authentication:** Public
 
@@ -8171,9 +8172,9 @@ OIDC third-party initiated login from the LMS (GET or form POST).
 
 ### `POST /api/lti/login`
 
-**Lti Login**
+**Lti Login Post**
 
-OIDC third-party initiated login from the LMS (GET or form POST).
+OIDC third-party initiated login from the LMS (form POST).
 
 **Authentication:** Public
 
@@ -10003,6 +10004,18 @@ Verify that a report file matches the platform manifest.  This endpoint is inten
 
 - `200`: Successful Response
 - `422`: Validation Error — `HTTPValidationError`
+
+### `GET /api/admin/security/rbac/drift`
+
+**Reviewed catalog vs live RBAC grants**
+
+Show where the live RBAC tables differ from permissions.yaml.  This is a review aid, not an automatic accusation: an administrator's deliberate grant is expected to appear here. A permission removed from the catalog is pruned at seed time; a grant removed from the YAML but still in the DB remains the administrator's decision.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Responses**
+
+- `200`: Successful Response
 
 ### `GET /api/admin/security/rbac/matrix`
 
