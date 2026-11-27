@@ -79,6 +79,9 @@ jobs:
       - name: Audit publication metadata and answer keys
         run: python scripts/audit-publication.py --summary
 
+      - name: Audit flag exposure
+        run: python scripts/audit_flag_exposure.py --fail-on-leaks
+
       - name: Verify runtime integrity manifest is current
         run: |
           python scripts/generate-integrity-manifest.py
