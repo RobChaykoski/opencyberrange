@@ -29,15 +29,28 @@ field() {
 }
 
 command_parts() {
-  awk '
-    /^flag_command:/ { flag = 1; next }
-    flag && /^[[:space:]]*-[[:space:]]*/ {
-      sub(/^[[:space:]]*-[[:space:]]*/, "")
-      print
-      next
-    }
-    flag { exit }
-  ' "$1"
+  python3 - "$1" <<'PY'
+import sys
+
+lines = open(sys.argv[1], encoding="utf-8").read().splitlines()
+parts = []
+inside = False
+for line in lines:
+    if line.startswith("flag_command:"):
+        inside = True
+        continue
+    if not inside:
+        continue
+    stripped = line.strip()
+    if stripped.startswith("- "):
+        value = stripped[2:].strip()
+        if len(value) >= 2 and value[0] in "'\"" and value[-1] == value[0]:
+            value = value[1:-1]
+        parts.append(value)
+    elif stripped and not stripped.startswith("#"):
+        break
+print("\n".join(parts))
+PY
 }
 
 verify_lab() {
@@ -131,14 +144,20 @@ print(build.get("dockerfile") or "Dockerfile")
 
   local got=""
   got="$($DOCKER exec "$name" grep -oF "$testflag" "$path" 2>/dev/null | head -n1 || true)"
-  $DOCKER rm -f "$name" >/dev/null 2>&1 || true
-  $DOCKER rmi "$tag" >/dev/null 2>&1 || true
 
   if [ "$got" = "$testflag" ]; then
+    $DOCKER rm -f "$name" >/dev/null 2>&1 || true
+    $DOCKER rmi "$tag" >/dev/null 2>&1 || true
     echo "PASS $slug"
     return 0
   fi
   echo "FAIL $slug: expected '$testflag', got '$got'" >&2
+  echo "--- container status ---" >&2
+  $DOCKER inspect "$name" --format '{{.State.Status}} exit={{.State.ExitCode}}' >&2 2>/dev/null || true
+  echo "--- last log lines ---" >&2
+  $DOCKER logs "$name" 2>&1 | tail -n 10 >&2 || true
+  $DOCKER rm -f "$name" >/dev/null 2>&1 || true
+  $DOCKER rmi "$tag" >/dev/null 2>&1 || true
   return 1
 }
 

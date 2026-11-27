@@ -9,9 +9,9 @@ This page records the current exposure and the plan to close it.
 
 ## How flags work today
 
-- **222 labs.** **136** labs rotate per session: 75 environment-driven labs match a
-  `FLAG` / `*_FLAG` compose value to the graded hash, and 61 baked labs declare a
-  render contract. **86** labs keep a static value. Their flag is written in
+- **222 labs.** **144** labs rotate per session: 75 environment-driven labs match a
+  `FLAG` / `*_FLAG` compose value to the graded hash, and 69 baked labs declare a
+  render contract. **78** labs keep a static value. Their flag is written in
   `lab.yaml`, and often again in the compose environment or the lab source. That
   value is public.
 - A render contract has two modes. `write` (default) writes the flag file.
@@ -64,6 +64,15 @@ read-the-route instruction. The rotation batches so far:
 `windows-3-5-smb-full-credential-attack`,
 `windows-8-1-single-service-credential-discovery`.
 
+**Batch 5 (shell chains):** `windows-1-5-comprehensive-windows-enumeration`,
+`windows-4-6-rdp-session-access-and-flag-retrieval`,
+`windows-6-2-mssql-version-and-instance-enumeration`,
+`windows-8-2-cross-service-credential-reuse`,
+`windows-8-3-multi-service-credential-reuse`,
+`windows-8-4-credential-discovery-and-reuse-chain`,
+`windows-9-2-multi-service-exploitation`,
+`windows-9-3-complete-windows-penetration-test`.
+
 Each declares a single-file render contract. Two classes are deliberate
 exceptions:
 
@@ -98,7 +107,8 @@ path the image only creates at runtime. The first runtime pass found
 launcher now creates it. The replace-mode batch was verified the same way: the
 report, history, and log content survives and the value rotates. Batch 4 was
 sampled the same way: a PHP page and `smb.conf` keep their content while the flag
-rotates.
+rotates. Batch 5 was sampled with a multi-service shell chain and an `smb.conf`
+replace.
 
 ## Plan
 
