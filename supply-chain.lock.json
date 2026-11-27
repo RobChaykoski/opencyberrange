@@ -178,7 +178,7 @@
       "sha256": "877500e2e2d33af4263cae4b4b208166f4c500c8e4648d6b5b8d24ac122829c1"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "4481cefb21b8920b52896f22faac73c9b66158c9cff1a517d64f59efff8df816"
+      "sha256": "3893c0a4e95fc74da722334b3a9970aaba84bdf347ecb899ad388eb36004fc88"
     },
     "platform/backend/app/data/threat-awareness.json": {
       "sha256": "78703d33386e1b62becfa5cfb1b27a22f770fff20a3e38411b0787e76f7c48ea"
@@ -961,13 +961,13 @@
       ]
     },
     "network-0-2-dns-basics": {
-      "content_hash": "a4257d92035998c24b8d85df41861149bf662b3a044adf016ce93e920753d7f0",
+      "content_hash": "2eebac50e208d5cf24af08402ed07270aa9c5e6f21ce131451eaf2195f1e9720",
       "services": [
         "target"
       ]
     },
     "network-0-3-name-or-network": {
-      "content_hash": "add9fd13e77608d163af8c3bfa29da90efa595da484ac94cb5cfaa1302a98c99",
+      "content_hash": "e76939257a843f5fb8f0bcc5981226d93e4441e2b7f85b635606404f9881503a",
       "services": [
         "target"
       ]
@@ -1496,7 +1496,7 @@
       ]
     },
     "windows-2-10-ad-to-smb-scenario": {
-      "content_hash": "183d5f3c6ef7ccc587d43677fb378575aefba3d06e63ce093adaafbeb36da801",
+      "content_hash": "52a71e86ceb643f11c6cbe2b635bfcc868ba0bac6f0f20b52a83c6d4d7a50262",
       "services": [
         "files",
         "ldap"
