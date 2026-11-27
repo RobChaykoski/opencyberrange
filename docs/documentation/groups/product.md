@@ -8,7 +8,7 @@ Scope, releases, deliverables, editions, roadmaps, counts, handoffs, and the pub
 - **NIST SP 800-53 Rev. 5:** CM-3, SA-10, SI-12
 - **Owner:** Product lead
 
-64 document(s) in this group.
+65 document(s) in this group.
 
 | Document | Type | Classification | Review | Score | Next review |
 |---|---|---|---|---:|---|
@@ -63,6 +63,7 @@ Scope, releases, deliverables, editions, roadmaps, counts, handoffs, and the pub
 | [Release 5.55.2 deliverables](../../RELEASE-5.55.2-DELIVERABLES.md) | `release` | internal | unreviewed |  | unset |
 | [Release 5.56.0 deliverables](../../RELEASE-5.56.0-DELIVERABLES.md) | `release` | internal | unreviewed |  | unset |
 | [Release 5.56.1 deliverables](../../RELEASE-5.56.1-DELIVERABLES.md) | `release` | internal | unreviewed |  | unset |
+| [Release 5.56.2 deliverables](../../RELEASE-5.56.2-DELIVERABLES.md) | `release` | internal | unreviewed |  | unset |
 | [Release 6 scope: competency, evidence, scale, and federation](../../RELEASE-6-SCOPE.md) | `release` | internal | unreviewed |  | unset |
 | [Releases](../../RELEASES.md) | `reference` | internal | unreviewed |  | unset |
 | [V2 Program Charter](../../V2-PROGRAM-CHARTER.md) | `reference` | internal | unreviewed |  | unset |

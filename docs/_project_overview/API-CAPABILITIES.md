@@ -1,14 +1,14 @@
 # API capabilities
 
-Generated from the live FastAPI application on 2026-11-26T23:19:14+00:00.
+Generated from the live FastAPI application on 2026-11-27T01:25:41+00:00.
 
 | Item | Value |
 |---|---|
-| Product | SWOCTS Cyber Range Release 5.56.1 (Powered by OpenCyberRange) |
-| Platform version | `5.56.1` |
+| Product | SWOCTS Cyber Range Release 5.56.2 (Powered by OpenCyberRange) |
+| Platform version | `5.56.2` |
 | OpenAPI version | `3.1.0` |
 | API title | SWOCTS Cyber Range |
-| API version | `5.56.1` |
+| API version | `5.56.2` |
 | Paths | 490 |
 | Operations | 548 |
 | Methods | DELETE 36, GET 288, PATCH 6, POST 187, PUT 31 |
@@ -600,8 +600,8 @@ share with an integrator.
 | POST | `/api/lti/deep-link/{session_token}/response` | Deep Link Response | OAuth2PasswordBearer |
 | GET | `/api/lti/jwks` | Tool Jwks | public / none |
 | POST | `/api/lti/launch` | Lti Launch | public / none |
-| GET | `/api/lti/login` | Lti Login | public / none |
-| POST | `/api/lti/login` | Lti Login | public / none |
+| GET | `/api/lti/login` | Lti Login Get | public / none |
+| POST | `/api/lti/login` | Lti Login Post | public / none |
 
 ### Labs
 
@@ -1346,8 +1346,8 @@ the application and are documented here for completeness.
 | POST | /api/lti/deep-link/{session_token}/response | Deep Link Response | OAuth2PasswordBearer |
 | GET | /api/lti/jwks | Tool Jwks | public / none |
 | POST | /api/lti/launch | Lti Launch | public / none |
-| GET | /api/lti/login | Lti Login | public / none |
-| POST | /api/lti/login | Lti Login | public / none |
+| GET | /api/lti/login | Lti Login Get | public / none |
+| POST | /api/lti/login | Lti Login Post | public / none |
 | GET | /api/modules/ | Get Modules Status | OAuth2PasswordBearer |
 | GET | /api/nice/components | Nice Components | OAuth2PasswordBearer |
 | GET | /api/nice/coverage | Nice Coverage | OAuth2PasswordBearer |

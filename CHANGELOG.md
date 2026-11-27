@@ -2,6 +2,33 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.56.2] - 2026-11-26
+
+### Added
+
+- **Karate API-testing chapter:** `SWSEC02` adds four CTF-style labs under
+  Software Security. The labs teach a first feature, assertions and data
+  tables, token reuse, and negative testing, with a deterministic shared target,
+  progressive hints, solver steps, and workbook pages.
+- **Documentation governance:** ten NIST CSF-aligned groups cover every
+  `docs/**/*.md`, a required review form records requirement acknowledgment,
+  relevance and quality scores, review cadence, labels, and storage/retention,
+  and `scripts/documentation_map.py --check` runs in the Quality workflow.
+- **Developer onboarding guide:** `.onboarding-docs/` explains the platform,
+  deployment, hardware, OS, stack, subsystems, storage, fixtures, and the major
+  backend and frontend features.
+- **Blackbox security suite:** `security-tests/karate/` covers authentication,
+  access control, input safety, uploads, and privacy with disposable fixtures
+  and cleanup.
+
+### Fixed
+
+- **Curriculum framework map:** added the missing WIN11, WEB11, and FOR03B
+  chapters and the chapter defaults needed for all 44 previously unmapped labs.
+- **Catalogue counts:** the tree now has 222 lab definitions, 211
+  workbook-mapped labs, 175 public exercises, and 197 pending competency
+  reviews.
+
 ## [5.56.1] - 2026-11-26
 
 ### Fixed

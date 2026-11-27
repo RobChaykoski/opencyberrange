@@ -1,6 +1,6 @@
 # Software metadata and versions
 
-Status: **current for release 5.56.1** (26 November 2026).
+Status: **current for release 5.56.2** (26 November 2026).
 
 Latest-version checks were made on 26 November 2026 from PyPI, the npm
 registry, GitHub releases, and endoflife.date. "Latest available" is the
@@ -13,9 +13,9 @@ major line; major upgrades need their own wave.
 | Item | Value |
 |---|---|
 | Product | SWOCTS Cyber Range (powered by OpenCyberRange) |
-| Release | `5.56.1` |
-| Latest signed release | `v5.56.1` (current) |
-| Signed tag | `v5.56.1` |
+| Release | `5.56.2` |
+| Latest signed release | `v5.56.2` (current) |
+| Signed tag | `v5.56.2` |
 | Release date | 26 November 2026 |
 | Edition profile | Community / Academic (`lite`, single-host) |
 | Licence | PolyForm Noncommercial License 1.0.0 |

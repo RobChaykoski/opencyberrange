@@ -7414,7 +7414,7 @@
   "info": {
     "description": "Cybersecurity training platform, powered by OpenCyberRange.",
     "title": "SWOCTS Cyber Range",
-    "version": "5.56.1"
+    "version": "5.56.2"
   },
   "openapi": "3.1.0",
   "paths": {
@@ -28341,8 +28341,8 @@
     },
     "/api/lti/login": {
       "get": {
-        "description": "OIDC third-party initiated login from the LMS (GET or form POST).",
-        "operationId": "lti_login_api_lti_login_get",
+        "description": "OIDC third-party initiated login from the LMS (GET).",
+        "operationId": "lti_login_get",
         "responses": {
           "200": {
             "content": {
@@ -28353,14 +28353,14 @@
             "description": "Successful Response"
           }
         },
-        "summary": "Lti Login",
+        "summary": "Lti Login Get",
         "tags": [
           "LTI 1.3"
         ]
       },
       "post": {
-        "description": "OIDC third-party initiated login from the LMS (GET or form POST).",
-        "operationId": "lti_login_api_lti_login_get",
+        "description": "OIDC third-party initiated login from the LMS (form POST).",
+        "operationId": "lti_login_post",
         "responses": {
           "200": {
             "content": {
@@ -28371,7 +28371,7 @@
             "description": "Successful Response"
           }
         },
-        "summary": "Lti Login",
+        "summary": "Lti Login Post",
         "tags": [
           "LTI 1.3"
         ]

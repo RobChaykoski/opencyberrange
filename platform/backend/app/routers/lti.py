@@ -484,17 +484,8 @@ async def tool_jwks(
     return lti_service.tool_jwks(platforms)
 
 
-@router.api_route("/login", methods=["GET", "POST"])
-@limiter.limit("30/minute")
-async def lti_login(
-    request: Request,
-    db: Session = Depends(get_db),
-):
-    """OIDC third-party initiated login from the LMS (GET or form POST)."""
-    params = dict(request.query_params)
-    if request.method == "POST":
-        form = await request.form()
-        params.update({key: str(value) for key, value in form.items()})
+async def _lti_login(db: Session, params: dict[str, str]):
+    """Shared OIDC third-party initiated login handling."""
     iss = str(params.get("iss") or "").strip()
     client_id = str(params.get("client_id") or "").strip()
     login_hint = str(params.get("login_hint") or "")
@@ -531,6 +522,29 @@ async def lti_login(
         lti_message_hint=lti_message_hint,
     )
     return RedirectResponse(url, status_code=302)
+
+
+@router.get("/login", operation_id="lti_login_get")
+@limiter.limit("30/minute")
+async def lti_login_get(
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    """OIDC third-party initiated login from the LMS (GET)."""
+    return await _lti_login(db, dict(request.query_params))
+
+
+@router.post("/login", operation_id="lti_login_post")
+@limiter.limit("30/minute")
+async def lti_login_post(
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    """OIDC third-party initiated login from the LMS (form POST)."""
+    params = dict(request.query_params)
+    form = await request.form()
+    params.update({key: str(value) for key, value in form.items()})
+    return await _lti_login(db, params)
 
 
 @router.get("/deep-link/{session_token}")

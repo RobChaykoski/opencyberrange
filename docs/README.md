@@ -68,6 +68,7 @@ mentor remain. The order is competency, evidence, capstones and analytics,
 scale, federation, then the AI mentor.
 
 - [Release 6 scope](RELEASE-6-SCOPE.md)
+- [Release 5.56.2 deliverables](RELEASE-5.56.2-DELIVERABLES.md)
 - [Release 5.39.0 deliverables](RELEASE-5.39.0-DELIVERABLES.md)
 - [Release 5.40.0 deliverables](RELEASE-5.40.0-DELIVERABLES.md)
 - [Release 5.41.0 deliverables](RELEASE-5.41.0-DELIVERABLES.md)
