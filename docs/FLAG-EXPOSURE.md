@@ -9,11 +9,14 @@ This page records the current exposure and the plan to close it.
 
 ## How flags work today
 
-- **222 labs.** **122** labs rotate per session: 75 environment-driven labs match a
-  `FLAG` / `*_FLAG` compose value to the graded hash, and 47 baked labs declare a
-  render contract. **100** labs keep a static value. Their flag is written in
+- **222 labs.** **126** labs rotate per session: 75 environment-driven labs match a
+  `FLAG` / `*_FLAG` compose value to the graded hash, and 51 baked labs declare a
+  render contract. **96** labs keep a static value. Their flag is written in
   `lab.yaml`, and often again in the compose environment or the lab source. That
   value is public.
+- A render contract has two modes. `write` (default) writes the flag file.
+  `replace` swaps the static value inside an existing report, log, or history
+  file, so the surrounding content survives.
 - Baked labs can declare `flag_path`, `flag_service`, `flag_command`, and
   `flag_owner`. The launcher writes `LAB_FLAG`, sets ownership, and execs the
   original command.
@@ -34,7 +37,7 @@ python scripts/audit_flag_exposure.py
 python scripts/audit_flag_exposure.py --fail-on-leaks
 ```
 
-Current result: **100 static labs**, **0 leaked answers** outside the lab tree.
+Current result: **96 static labs**, **0 leaked answers** outside the lab tree.
 The Workbook capstone page that printed a real marker was replaced with a
 read-the-route instruction. The rotation batches so far:
 
@@ -47,6 +50,10 @@ read-the-route instruction. The rotation batches so far:
 `windows-3-2-smb-multiple-credential-testing`,
 `windows-3-3-smb-single-user-brute-force`,
 `windows-3-4-smb-username-enumeration-and-brute-force`.
+
+**Batch 3 (replace mode):** `linux-2-2-ssh-user-discovery`,
+`linux-2-5-ssh-history-analysis`, `malware-2-2-yara-fundamentals`,
+`malware-2-3-yara-incident-triage`.
 
 Each declares a single-file render contract. Two classes are deliberate
 exceptions:
@@ -79,7 +86,8 @@ builds each target, writes a test flag through the launcher override, and checks
 the file. The launcher creates the parent directory, so a contract can target a
 path the image only creates at runtime. The first runtime pass found
 `malware-1-1` writing to `/tmp/samples`, which the image does not keep; the
-launcher now creates it.
+launcher now creates it. The replace-mode batch was verified the same way: the
+report, history, and log content survives and the value rotates.
 
 ## Plan
 
