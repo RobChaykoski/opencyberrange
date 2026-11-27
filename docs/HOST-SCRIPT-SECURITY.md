@@ -168,3 +168,24 @@ Residual behaviour, recorded in
 
 Still unaudited: `setup-range-server.sh`, `install-platform.sh`,
 `harden-lab-egress.sh`, and the systemd units (tracked as HS-02 to HS-05).
+
+## Installer audit
+
+Reviewed `setup-range-server.sh` and `install-platform.sh` on 27 November 2026.
+
+**`setup-range-server.sh`** generates secrets under a scoped `umask 077`, sets
+mode 600 on the WireGuard and peer-manager material, validates the peer
+`allowed_ips` against the client subnet, refuses wildcard binds, and hardens the
+Peer Manager unit with `NoNewPrivileges` and `ProtectSystem`. Fixed: the Compose
+fallback downloaded `latest` and trusted a checksum from the same origin; it now
+pins **v5.8.1** with per-arch SHA-256 values.
+
+**`install-platform.sh`** runs the lock and signature check before any install
+or update, always generates a `SETUP_TOKEN` to close the first-admin race, keeps
+`.env` and the erasure ledger across an update, and prints the Microsoft licence
+notice. Fixed: the last-resort Fernet key was a hex string, not a valid Fernet
+key; the generated compose had a `labpass` fallback; and a stale "change this"
+comment sat above a generated secret.
+
+**Accepted:** the Peer Manager still runs as root. The capability-drop design is
+tracked as HS-09 and needs a host test before rollout.

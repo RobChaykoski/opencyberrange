@@ -281,16 +281,19 @@ generate_secret() {
     openssl rand -hex 32 2>/dev/null || head -c 32 /dev/urandom | base64 | tr -d '\n'
 }
 
-# Generate Fernet encryption key for WireGuard
+# Generate a Fernet-format key (32 random bytes, urlsafe base64).
 generate_fernet_key() {
+    _fernet_fallback() {
+        head -c 32 /dev/urandom | base64 | tr '/+' '_-' | tr -d '\n'
+    }
     # Try Python3 with cryptography library
     if command -v python3 &> /dev/null; then
         python3 -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())" 2>/dev/null || \
         python3 -c "import base64, os; print(base64.urlsafe_b64encode(os.urandom(32)).decode())" 2>/dev/null || \
-        generate_secret
+        _fernet_fallback
     else
-        # Fallback to random hex if Python not available
-        generate_secret
+        # Fallback to a correct Fernet-format key, not a hex string
+        _fernet_fallback
     fi
 }
 
@@ -497,7 +500,7 @@ create_env_file() {
 # OpenCyberRange Platform Configuration
 # Generated on $(date)
 
-# JWT Secret - CHANGE THIS IN PRODUCTION
+# JWT secret generated at install
 JWT_SECRET=$JWT_SECRET
 
 # First-run setup token. Required by the /setup wizard to create the first
@@ -583,7 +586,7 @@ services:
     command: ["postgres"]
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-labuser}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-labpass}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in .env}
       POSTGRES_DB: ${POSTGRES_DB:-labdb}
       TZ: UTC
       PGTZ: UTC

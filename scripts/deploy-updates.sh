@@ -57,6 +57,7 @@ OCR_RELEASE_GNUPGHOME=""
 DEPLOY_PLATFORM=false
 DRY_RUN=false
 PREBUILD_IMAGES=false
+FORCE=false
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
@@ -73,9 +74,13 @@ while [[ $# -gt 0 ]]; do
             PREBUILD_IMAGES=true
             shift
             ;;
+        --force|--yes)
+            FORCE=true
+            shift
+            ;;
         *)
             echo -e "${RED}Unknown option: $1${NC}"
-            echo "Usage: $0 [--platform] [--all] [--dry-run]"
+            echo "Usage: $0 [--platform] [--all] [--dry-run] [--prebuild] [--force]"
             exit 1
             ;;
     esac
@@ -97,10 +102,23 @@ error_exit() {
     exit 1
 }
 
+# Surface the failing line in the deploy log instead of a bare exit.
+trap 'code=$?; log "${RED}[fail] ${BASH_SOURCE[0]}:${LINENO}: ${BASH_COMMAND} (exit ${code})${NC}"' ERR
+
 # Pre-flight checks
 preflight_checks() {
     if [ "${RELEASE_GPG_FINGERPRINT^^}" != "${RELEASE_FINGERPRINT_PINNED^^}" ]; then
         log "${YELLOW}[warn] RELEASE_GPG_FINGERPRINT is overridden (${RELEASE_GPG_FINGERPRINT}); the pinned key is ${RELEASE_FINGERPRINT_PINNED}.${NC}"
+    fi
+
+    local avail_kb
+    avail_kb=$(df -Pk "$PLATFORM_DIR" 2>/dev/null | awk 'NR==2 {print $4}')
+    if [ -n "${avail_kb:-}" ]; then
+        if [ "$avail_kb" -lt 5242880 ]; then
+            error_exit "Less than 5 GB free on the platform volume; an update needs room for a build and a backup."
+        elif [ "$avail_kb" -lt 10485760 ]; then
+            log "${YELLOW}[warn] Less than 10 GB free on the platform volume; build and backup may not both fit.${NC}"
+        fi
     fi
     log "${BLUE}Running pre-flight checks...${NC}"
     # Check if running on server
@@ -164,6 +182,26 @@ verify_supply_chain() {
         if ! (cd "$REPO_DIR" && python3 scripts/check-minor-safe.py); then
             error_exit "Minor-safe check failed. Do not deploy live or adult content to the High School stream."
         fi
+    fi
+}
+
+# Refuse to interrupt live classes unless the operator forces it.
+check_active_sessions() {
+    local active
+    active=$(docker network ls --format '{{.Name}}' 2>/dev/null | grep -cE '^lab_' || true)
+    if [ "${active:-0}" -eq 0 ] || [ "$FORCE" = true ]; then
+        return 0
+    fi
+    log "${YELLOW}[warn] ${active} active lab network(s) detected. A rebuild interrupts learners.${NC}"
+    if [ -t 0 ]; then
+        local answer
+        read -r -p "Continue the update? [y/N] " answer
+        case "$answer" in
+            [yY]*) ;;
+            *) error_exit "Update cancelled. Re-run with --force during a maintenance window." ;;
+        esac
+    else
+        error_exit "Active lab sessions detected. Re-run with --force or wait for a maintenance window."
     fi
 }
 
@@ -472,10 +510,10 @@ patch_docker_compose() {
     fi
 
     # Add entrypoint line after "container_name: ocr-db"
-    sed -i '/container_name: ocr-db/a\    entrypoint: ["/usr/local/bin/ensure-db-password.sh"]' "$compose_file"
+    sed -i.bak '/container_name: ocr-db/a\    entrypoint: ["/usr/local/bin/ensure-db-password.sh"]' "$compose_file"
 
     # Add volume mount for the entrypoint script after the postgres_data volume line
-    sed -i '/postgres_data:\/var\/lib\/postgresql\/data/a\      - ./db/ensure-db-password.sh:/usr/local/bin/ensure-db-password.sh:ro' "$compose_file"
+    sed -i.bak '/postgres_data:\/var\/lib\/postgresql\/data/a\      - ./db/ensure-db-password.sh:/usr/local/bin/ensure-db-password.sh:ro' "$compose_file"
 
     log "${GREEN}[ok] docker-compose.yml patched with password sync entrypoint${NC}"
 }
@@ -503,13 +541,13 @@ patch_workbook_volumes() {
     fi
 
     # Add workbook + wiki volumes to backend service (after the /labs:ro line)
-    sed -i '/\${LABS_HOST_PATH}:\/labs:ro/a\      - workbook_data:/workbook\n      - wiki_html:/wiki_output' "$compose_file"
+    sed -i.bak '/\${LABS_HOST_PATH}:\/labs:ro/a\      - workbook_data:/workbook\n      - wiki_html:/wiki_output' "$compose_file"
 
     # Add wiki volume to frontend service (before depends_on: backend)
-    sed -i '/container_name: ocr-frontend/a\    volumes:\n      - wiki_html:/usr/share/nginx/wiki' "$compose_file"
+    sed -i.bak '/container_name: ocr-frontend/a\    volumes:\n      - wiki_html:/usr/share/nginx/wiki' "$compose_file"
 
     # Add named volumes at the end (after postgres_data:)
-    sed -i '/postgres_data:/a\  workbook_data:\n  wiki_html:' "$compose_file"
+    sed -i.bak '/postgres_data:/a\  workbook_data:\n  wiki_html:' "$compose_file"
 
     log "${GREEN}[ok] docker-compose.yml patched with workbook/wiki volumes${NC}"
 }
@@ -545,13 +583,13 @@ patch_wiki_courses_volume() {
     fi
 
     # Add wiki_courses volume to backend service (after wiki_html line)
-    sed -i '/wiki_html:\/wiki_output/a\      - wiki_courses:/wiki_courses' "$compose_file"
+    sed -i.bak '/wiki_html:\/wiki_output/a\      - wiki_courses:/wiki_courses' "$compose_file"
 
     # Add wiki_courses volume to frontend service (after wiki_html line)
-    sed -i '/wiki_html:\/usr\/share\/nginx\/wiki$/a\      - wiki_courses:/usr/share/nginx/wiki-courses' "$compose_file"
+    sed -i.bak '/wiki_html:\/usr\/share\/nginx\/wiki$/a\      - wiki_courses:/usr/share/nginx/wiki-courses' "$compose_file"
 
     # Add named volume at the end (after wiki_html:)
-    sed -i '/^  wiki_html:$/a\  wiki_courses:' "$compose_file"
+    sed -i.bak '/^  wiki_html:$/a\  wiki_courses:' "$compose_file"
 
     log "${GREEN}[ok] docker-compose.yml patched with wiki_courses volume${NC}"
 }
@@ -722,6 +760,9 @@ rebuild_containers() {
     cd "$PLATFORM_DIR"
     
     log "Building containers (this may take a while)..."
+    if ! docker compose config -q; then
+        error_exit "docker compose config failed after the update patches; refusing to build"
+    fi
     if ! docker compose build --no-cache backend frontend; then
         error_exit "Docker build failed"
     fi
@@ -944,6 +985,9 @@ main() {
     fi
     
     preflight_checks
+    log ""
+    
+    check_active_sessions
     log ""
     
     local backup_path=$(create_backup)

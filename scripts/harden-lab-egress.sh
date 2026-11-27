@@ -39,6 +39,16 @@ if [[ "$IMAGE" != *"@sha256:"* ]]; then
     exit 1
   fi
 fi
+
+DRY_RUN=0
+case "${1:-}" in
+  --dry-run) DRY_RUN=1 ;;
+  "") ;;
+  *) echo "usage: $0 [--dry-run]" >&2; exit 2 ;;
+esac
+
+rules_file=$(mktemp)
+trap 'rm -f "$rules_file"' EXIT
 gateways=()
 for id in "${network_ids[@]}"; do
   while read -r subnet gateway; do
@@ -78,7 +88,14 @@ fi
     echo "iptables -C DOCKER-USER -s $src -d 169.254.0.0/16 -j DROP 2>/dev/null || iptables -A DOCKER-USER -s $src -d 169.254.0.0/16 -j DROP"
     echo "iptables -C DOCKER-USER -s $src -j DROP 2>/dev/null || iptables -A DOCKER-USER -s $src -j DROP"
   done
-} | docker run --rm -i --privileged --net=host --user 0 \
-      --entrypoint sh "$IMAGE" -s
+} > "$rules_file"
+
+if [ "$DRY_RUN" = "1" ]; then
+  cat "$rules_file"
+  exit 0
+fi
+
+docker run --rm -i --privileged --net=host --user 0 \
+  --entrypoint sh "$IMAGE" -s < "$rules_file"
 
 echo "Applied egress rules for ${#SOURCES[@]} lab range(s), ${#gateways[@]} gateway(s)"
