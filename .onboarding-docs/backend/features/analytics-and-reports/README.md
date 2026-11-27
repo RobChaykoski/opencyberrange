@@ -14,6 +14,7 @@ suppressed; a missing measurement is shown as unmeasured, never zero.
 | Dashboards | `platform/backend/app/routers/dashboard.py`, `instructor.py` |
 | Reports | `platform/backend/app/routers/reports.py` |
 | Report services | `platform/backend/app/services/analytics_report.py`, `pdf_report.py`, `report_pdf.py`, `report_integrity.py`, `report_access.py` |
+| Gradebook adapters | `platform/backend/app/services/gradebook.py` (Canvas, Brightspace, Moodle, generic) |
 | Export labels | `platform/backend/app/services/export_labels.py`, `data_labels.py` |
 | Readiness | `platform/backend/app/services/readiness_dashboard.py`, `role_readiness.py` |
 | Model | `platform/backend/app/models/` (completions, sessions, achievements) |
@@ -40,6 +41,14 @@ suppressed; a missing measurement is shown as unmeasured, never zero.
   learner sees only their own data.
 - **Report integrity.** The PDF hash and signature let a recipient verify the
   file; a failed check is visible.
+- **Lab friction.** The friction CSV separates wrong-flag attempts from hint
+  requests and ranks labs by starts without completion.
+- **Gradebook.** The LMS export reuses scoreboard scoring and offers Canvas,
+  Brightspace, Moodle, and generic layouts. It omits visible `#` label lines so
+  an importer reads the header, while response headers and the manifest retain
+  the classification.
+- **Under-18 exclusion.** Individual reports and the gradebook exclude learners
+  who identify as under 18; aggregate reports count only the remaining cohort.
 
 ## Persistent state
 
