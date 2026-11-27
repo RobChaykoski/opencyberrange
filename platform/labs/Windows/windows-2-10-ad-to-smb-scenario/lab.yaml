@@ -75,6 +75,10 @@ hints:
       A service credential should be unique, rotated, and restricted to the
       service. Reuse across a directory and a file share is the finding.
 flag: "OCR{ad_t0_smb_p4th}"
+flag_path: /srv/evidence/flag.txt
+flag_service: files
+flag_command:
+  - /entrypoint.sh
 
 visibility: public
 week: 2
