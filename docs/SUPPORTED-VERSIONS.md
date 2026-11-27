@@ -4,8 +4,8 @@ This file records the platform baseline, the target for the latest-supported-GA
 upgrade, and the reason for every exception. It is the human-readable companion
 to `versions.yaml`.
 
-Last reviewed: **2026-11-26**. Current **platform release: 5.57.0**. Development and production are on the
-signed `v5.57.0` tag. **Community /
+Last reviewed: **2026-11-27**. Current **platform release: 5.58.0**. Development and production are on the
+signed `v5.58.0` tag. **Community /
 Academic**, **Professional**, and **Enterprise** are edition profiles on that
 release, not separate platform version lines. **Community / Academic 1.1.3**
 remains a supported maintenance line for existing single-host installations. See

@@ -1,11 +1,11 @@
 {
-  "generated": "2026-11-26",
+  "generated": "2026-11-27",
   "product": {
     "name": "SWOCTS Cyber Range",
     "powered_by": "OpenCyberRange",
-    "version": "5.57.0",
-    "signed_tag": "v5.57.0",
-    "release_date": "2026-11-26",
+    "version": "5.58.0",
+    "signed_tag": "v5.58.0",
+    "release_date": "2026-11-27",
     "edition": "Community / Academic",
     "licence": "PolyForm Noncommercial License 1.0.0",
     "repository": "RobChaykoski/opencyberrange"

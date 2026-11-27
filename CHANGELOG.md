@@ -2,6 +2,41 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.58.0] - 2026-11-27
+
+### Added
+
+- **Per-session flags for baked labs:** the lab contract adds `flag_path`,
+  `flag_service`, `flag_command`, and `flag_owner`; a wrapper writes
+  `LAB_FLAG`, sets ownership, and execs the original entrypoint. Per-session
+  coverage is now 112 of 222 labs, up from 70.
+- **Lab friction and LMS gradebook reports:** a course-scoped lab friction CSV
+  with start rate, completion, wrong-flag burden, hint use, time, and friction
+  flags, plus Canvas, Brightspace, Moodle, and generic gradebook layouts that
+  reuse the scoreboard scoring model.
+- **Flag-render inference:** a conservative Dockerfile/CMD pass adds flag render
+  metadata to 32 baked labs.
+
+### Changed
+
+- **LAB_FLAG for runtime labs:** the four OT PLC servers and the OSINT canary
+  read `LAB_FLAG` at startup with a static fallback, and their compose services
+  declare the matching flag.
+- **Lab base images pinned by digest:** 225 upstream base-image references in
+  218 lab Dockerfiles are pinned to multi-arch manifest digests; the image-pin
+  checker reports zero unpinned upstream references.
+- Flag-render inference combines `ENTRYPOINT` and `CMD` where safe, allows
+  non-root home/tmp paths, and picks a unique `/flag.txt` when a Dockerfile
+  writes more than one path.
+
+### Verification
+
+- Backend pytest: 677 passed, 576 skipped.
+- Lab metadata: 222/222 validated; `lint_labs.py --check`: 0 errors, 0 warnings.
+- Frontend lint: 0 errors; i18n and bundle budgets pass.
+- OpenAPI export, API manual, lab outcomes, links, and documentation map: pass.
+- CI and Quality checks: pass at `551bfead`.
+
 ## [5.57.0] - 2026-11-27
 
 ### Added

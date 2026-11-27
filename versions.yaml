@@ -9,9 +9,9 @@
 # docs/decisions/0004-single-platform-release-version.md.
 platform:
   name: "SWOCTS Cyber Range"
-  version: "5.57.0"
+  version: "5.58.0"
   status: "release"
-  date: "2026-11-26"
+  date: "2026-11-27"
 
 editions:
   community_academic:
@@ -41,13 +41,13 @@ maintenance_lines:
     note: "Existing single-host teaching installs; new installs use the Release 5 tree with the Community / Academic profile."
 
 release:
-  version: "5.57.0"
+  version: "5.58.0"
   status: "release"
-  date: "2026-11-26"
+  date: "2026-11-27"
 
 development:
-  version: "5.57.0"
-  focus: "Next feature line after the researcher self-audit lab"
+  version: "5.58.0"
+  focus: "Next feature line after per-session flags and instructor reporting"
 
 policy:
   name: latest-supported-ga
