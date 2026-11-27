@@ -65,6 +65,22 @@ A static flag that is public is not a control. It weakens completion evidence an
 any certificate that depends on it. It is also the cheapest issue to fix now and
 the most awkward to explain after a learner has shared a link.
 
+## Runtime verification
+
+Static checks prove the contract is well formed, not that the container can write
+the path. Before a batch merges, build the image and run the same wrapper:
+
+```bash
+bash scripts/verify-flag-render.sh <lab-slug> [<lab-slug> ...]
+```
+
+Run it on a host with Docker and the repository checked out at the branch. It
+builds each target, writes a test flag through the launcher override, and checks
+the file. The launcher creates the parent directory, so a contract can target a
+path the image only creates at runtime. The first runtime pass found
+`malware-1-1` writing to `/tmp/samples`, which the image does not keep; the
+launcher now creates it.
+
 ## Plan
 
 1. **Keep the gate.** `--fail-on-leaks` runs in the Quality workflow on every

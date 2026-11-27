@@ -104,6 +104,7 @@ def test_flag_render_override_writes_then_execs_the_original_command():
     assert override["entrypoint"] == ["/bin/sh", "-c"]
     script = override["command"][0]
     assert "/root/flag.txt" in script
+    assert "mkdir -p /root" in script
     assert "exec python3 -u /opt/server.py" in script
     assert override["environment"]["LAB_FLAG"] == session_flag
 

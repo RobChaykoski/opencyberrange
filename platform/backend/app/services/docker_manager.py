@@ -456,8 +456,12 @@ class DockerManager:
     @staticmethod
     def _flag_render_override(render: Dict) -> Dict:
         """Build the entrypoint override that writes the session flag at start."""
-        path = shlex.quote(str(render["path"]))
+        path_value = str(render["path"])
+        path = shlex.quote(path_value)
         write = f"printf '%s\\n' \"$LAB_FLAG\" > {path}"
+        parent = os.path.dirname(path_value)
+        if parent and parent != "/":
+            write = f"mkdir -p {shlex.quote(parent)} && {write}"
         owner = str(render.get("owner") or "").strip()
         if owner:
             write += f" && chown {shlex.quote(owner)} {path}"
