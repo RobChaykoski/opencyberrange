@@ -22,7 +22,7 @@ from datetime import datetime, timedelta, timezone
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from app.models import BreakGlassGrant, Course, User
+from app.models import BreakGlassGrant, Course, CourseStaff, User
 from app.security.permissions import (
     BREAK_GLASS_PERMISSIONS,
     PERMISSION_CATALOG,
@@ -421,6 +421,26 @@ class AuthorizationService:
                     "Institution administrative scope",
                     scope={**scope, "course_id": course_id},
                 )
+            staff = (
+                self.db.query(CourseStaff)
+                .filter(
+                    CourseStaff.course_id == course.id,
+                    CourseStaff.user_id == self.user.id,
+                )
+                .first()
+            )
+            if staff is not None:
+                return _decision(
+                    self.user,
+                    permission,
+                    True,
+                    "Assigned course staff scope",
+                    scope={
+                        **scope,
+                        "course_id": course_id,
+                        "staff_role": staff.staff_role,
+                    },
+                )
             if course.instructor_id != self.user.id:
                 self._deny(
                     permission,
@@ -708,8 +728,12 @@ def create_break_glass(
         return existing
 
     require_approval = _truthy(
-        _setting(db, "break_glass_require_approval", "false"), False
+        _setting(db, "break_glass_require_approval", "true"), True
     )
+    if permission in SENSITIVE_PRIVATE_PERMISSIONS:
+        # Private derived data always needs a second operator, even if the
+        # deployment relaxed the default for ordinary break-glass.
+        require_approval = True
     auto_active = not require_approval and (allow_approval or actor.id == grantee.id)
     row = BreakGlassGrant(
         user_id=grantee.id,
@@ -754,7 +778,11 @@ def approve_break_glass(
         raise HTTPException(status_code=404, detail="Break-glass grant not found.")
     if row.status != "pending":
         raise HTTPException(status_code=409, detail="Grant is not pending approval.")
-    if row.requested_by_id == actor.id and not getattr(actor, "is_admin", False):
+    is_admin = (
+        (getattr(actor, "role", "") or "").strip().lower() == "admin"
+        or bool(getattr(actor, "is_admin", False))
+    )
+    if row.requested_by_id == actor.id and not is_admin:
         raise HTTPException(
             status_code=403, detail="A second operator must approve this request."
         )

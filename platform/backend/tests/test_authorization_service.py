@@ -12,7 +12,11 @@ from app.auth import get_password_hash
 from app.consent import service as consent_service
 from app.models import (
     Course,
+    CourseStaff,
     PlatformSetting,
+    RbacPermission,
+    RbacRole,
+    RbacRolePermission,
     RbacUserRole,
     SecurityEvent,
     User,
@@ -203,6 +207,72 @@ def test_tenant_boundary_denies_cross_institution_access(db_session):
         "student.progress.view",
         resource_user_id=learner_b.id,
     ).allowed
+
+
+def test_course_staff_scope_matches_the_matrix(db_session):
+    rbac.seed(db_session)
+    instructor = _user(db_session, "instructor")
+    course = _course(db_session, instructor)
+    assistant = _user(db_session, "teaching_assistant")
+    outsider = _user(db_session, "teaching_assistant")
+    mentor = _user(db_session, "mentor")
+    db_session.add_all([
+        CourseStaff(
+            course_id=course.id,
+            user_id=assistant.id,
+            staff_role="teaching_assistant",
+        ),
+        CourseStaff(
+            course_id=course.id,
+            user_id=mentor.id,
+            staff_role="mentor",
+        ),
+    ])
+    db_session.commit()
+
+    allowed = authorize(
+        db_session, assistant, "assignment.grade", course_id=course.id
+    )
+    assert allowed.allowed is True
+    assert allowed.reason == "Assigned course staff scope"
+    assert allowed.scope.get("staff_role") == "teaching_assistant"
+
+    denied = authorize(
+        db_session, outsider, "assignment.grade", course_id=course.id
+    )
+    assert denied.allowed is False
+
+    assert authorize(
+        db_session, mentor, "competency.view", course_id=course.id
+    ).allowed is True
+    assert authorize(
+        db_session, mentor, "assignment.grade", course_id=course.id
+    ).allowed is False
+
+
+def test_rbac_drift_reports_and_prunes_unknown_permissions(db_session):
+    rbac.seed(db_session)
+    extra = RbacPermission(
+        key="custom.removed",
+        description="Removed from the reviewed catalog",
+        category="test",
+        sensitivity="low",
+    )
+    db_session.add(extra)
+    db_session.commit()
+    student_role = db_session.query(RbacRole).filter(RbacRole.key == "student").first()
+    db_session.add(
+        RbacRolePermission(role_id=student_role.id, permission_id=extra.id)
+    )
+    db_session.commit()
+
+    report = rbac.drift_report(db_session)
+    assert "custom.removed" in report["extra_in_db"]
+    assert report["drifted"] is True
+
+    result = rbac.seed(db_session)
+    assert result["pruned_permissions"] == 1
+    assert rbac.drift_report(db_session)["extra_in_db"] == []
 
 
 def test_revoked_dna_consent_blocks_even_a_break_glass_attempt(db_session):

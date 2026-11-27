@@ -29,6 +29,8 @@ from app.services import settings_service
 from app.services.curriculum_manifest import chapter_label
 from app.services.forecast import linear_forecast
 from app.services.period import parse_window
+from app.services.privacy import pseudonymous_user_id
+from app.ratelimit import create_limiter
 from app.services.competency_radar import build_cohort_radar, build_individual_radar
 from app.services.competency_taxonomy import build_cohort_competency_summary
 from app.services.curriculum_demand import build_curriculum_demand
@@ -67,6 +69,7 @@ from app.models import (
 )
 
 router = APIRouter()
+limiter = create_limiter()
 
 GROWTH_WINDOW = 3
 MIN_GROWTH_EVIDENCE = GROWTH_WINDOW * 2
@@ -2302,9 +2305,25 @@ async def course_pulse_comments(
     current_user: User = Depends(get_current_instructor_user),
 ):
     course = _course_or_403(db, course_id, current_user)
-    enrolled = db.query(CourseEnrollment.user_id).filter(
-        CourseEnrollment.course_id == course.id
-    ).distinct().count()
+    enrolled_ids = {
+        row[0]
+        for row in db.query(CourseEnrollment.user_id).filter(
+            CourseEnrollment.course_id == course.id
+        ).distinct().all()
+    }
+    minor_ids = (
+        {
+            row[0]
+            for row in db.query(User.id).filter(
+                User.id.in_(enrolled_ids),
+                User.is_minor.is_(True),
+            ).all()
+        }
+        if enrolled_ids
+        else set()
+    )
+    non_minor_ids = enrolled_ids - minor_ids
+    enrolled = len(non_minor_ids)
     cohort = _cohort_state(enrolled, _minimum_cohort_size(db))
     if cohort["state"] != "available":
         return {
@@ -2324,6 +2343,7 @@ async def course_pulse_comments(
     ).filter(
         ExercisePulseSurvey.course_id == course.id,
         ExercisePulseSurvey.lab_id.in_(lab_ids),
+        ExercisePulseSurvey.user_id.in_(non_minor_ids),
         ExercisePulseSurvey.unclear.isnot(None),
         ExercisePulseSurvey.unclear != "",
     ).order_by(ExercisePulseSurvey.updated_at.desc()).limit(100).all()
@@ -2349,7 +2369,9 @@ async def course_pulse_comments(
 
 
 @router.post("/events/workbook-open")
+@limiter.limit("30/minute")
 async def workbook_opened(
+    request: Request,
     payload: WorkbookOpenRequest,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
@@ -2784,6 +2806,23 @@ async def survey_responses(
         SurveyResponse.submitted_at.desc()
     ).all()
 
+    # Under-18 accounts are excluded from instructor-facing reporting. Apply
+    # the rule before the suppression cell is calculated, so a minor never
+    # makes another response visible.
+    respondent_ids = {row.user_id for row in rows if row.user_id is not None}
+    minor_ids = (
+        {
+            row[0]
+            for row in db.query(User.id).filter(
+                User.id.in_(respondent_ids),
+                User.is_minor.is_(True),
+            ).all()
+        }
+        if respondent_ids
+        else set()
+    )
+    rows = [row for row in rows if row.user_id not in minor_ids]
+
     by_course = {}
     for row in rows:
         by_course.setdefault(row.course_id, []).append(row)
@@ -2813,8 +2852,7 @@ async def survey_responses(
         except (TypeError, ValueError):
             answers = {}
         responses.append({
-            "user_id": row.user_id,
-            "display_name": row.user.display_name if row.user else "Unknown learner",
+            "pseudonymous_user_id": pseudonymous_user_id(row.user_id),
             "course_code": row.course.code if row.course else None,
             "answers": answers,
             "submitted_at": row.submitted_at.isoformat() if row.submitted_at else None,

@@ -1,0 +1,21 @@
+version: 1
+reviewed_at: "2026-11-26"
+note: >
+  Minimum versions that a workbook may mention. The check is advisory: it flags
+  a version below the reviewed baseline so a reviewer can confirm whether the
+  screenshot, command, or lab image is stale. Add a tool only when the image
+  version is known; do not invent a minimum.
+
+tools:
+  python:
+    minimum: "3.13"
+    note: "Platform runtime; learner-facing Python examples should not be older."
+  node:
+    minimum: "22"
+    note: "Frontend build baseline."
+  postgresql:
+    minimum: "15"
+    note: "Supported database major."
+  nmap:
+    minimum: "7.90"
+    note: "Tester image package; verify on base-image refresh."

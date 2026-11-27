@@ -8,7 +8,7 @@ Authentication, authorization, tenancy, consent enforcement, threat and vulnerab
 - **NIST SP 800-53 Rev. 5:** AC-3, AC-6, AU-2, CA-7, RA-5, SC-7, SI-4, IR-4
 - **Owner:** Security lead
 
-25 document(s) in this group.
+26 document(s) in this group.
 
 | Document | Type | Classification | Review | Score | Next review |
 |---|---|---|---|---:|---|
@@ -36,6 +36,7 @@ Authentication, authorization, tenancy, consent enforcement, threat and vulnerab
 | [SWOCTS Cyber Range: V2 security baseline (OWASP Top 10)](../../V2-SECURITY-OWASP-TOP-10.md) | `reference` | internal | unreviewed |  | unset |
 | [Windows artifact policy](../../WINDOWS-ARTIFACT-POLICY.md) | `standard` | internal | unreviewed |  | unset |
 | [OWASP ZAP scan planner](../../ZAP-SCAN-PLANNER.md) | `report` | internal | unreviewed |  | unset |
+| [Security validation plan](../../security/SECURITY-VALIDATION-PLAN.md) | `reference` | internal | unreviewed |  | unset |
 | [Security](../../security/index.md) | `reference` | internal | unreviewed |  | unset |
 
 Review a document with the [document review form](../DOCUMENT-REVIEW-FORM.md). Grouping rules and labels are defined in the [documentation standard](../DOCUMENTATION-STANDARDS.md).

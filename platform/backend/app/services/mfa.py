@@ -20,6 +20,8 @@ from sqlalchemy.orm import Session
 from app.models import User
 from app.services import security_events
 from app.services import totp as totp_service
+from app.crypto import is_encrypted
+from pwdlib import PasswordHash
 
 CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
 TRUTHY = {"true", "1", "yes", "on", "enabled"}
@@ -50,8 +52,25 @@ def _normalize(code: str) -> str:
     return (code or "").strip().replace(" ", "").replace("-", "").upper()
 
 
+_RECOVERY_HASH = PasswordHash.recommended()
+
+
 def _hash(code: str) -> str:
-    return hashlib.sha256(_normalize(code).encode("utf-8")).hexdigest()
+    """Hash a recovery code with the same Argon2id family as passwords."""
+    return _RECOVERY_HASH.hash(_normalize(code))
+
+
+def _verify_hash(code: str, stored: str) -> bool:
+    """Verify a recovery code, including legacy unsalted SHA-256 rows."""
+    if not stored:
+        return False
+    if stored.startswith(("$argon2", "$2a$", "$2b$", "$2y$")):
+        try:
+            return _RECOVERY_HASH.verify(_normalize(code), stored)
+        except Exception:
+            return False
+    legacy = hashlib.sha256(_normalize(code).encode("utf-8")).hexdigest()
+    return hmac.compare_digest(stored, legacy)
 
 
 def _load_codes(user: User) -> list[str]:
@@ -189,7 +208,6 @@ def consume_recovery_code(db: Session, user: User, code: str) -> int | None:
             target_label=user.username,
         )
         return None
-    hashed = _hash(code)
     row = (
         db.query(User)
         .filter(User.id == user.id)
@@ -200,7 +218,7 @@ def consume_recovery_code(db: Session, user: User, code: str) -> int | None:
         return None
     stored = _load_codes(row)
     match_index = next(
-        (index for index, item in enumerate(stored) if hmac.compare_digest(item, hashed)),
+        (index for index, item in enumerate(stored) if _verify_hash(code, item)),
         None,
     )
     if match_index is None:
@@ -228,16 +246,33 @@ def recovery_code_valid(db: Session, user: User, code: str) -> bool:
     """
     if codes_expired(db, user):
         return False
-    hashed = _hash(code)
-    return any(
-        hmac.compare_digest(item, hashed) for item in _load_codes(user)
-    )
+    return any(_verify_hash(code, item) for item in _load_codes(user))
 
 
 def verify_totp_or_recovery(db: Session, user: User, code: str) -> tuple[bool, str | None]:
-    """Return ``(valid, method)`` for a login/MFA challenge code."""
-    if totp_service.verify_code(user.totp_secret, code):
+    """Return ``(valid, method)`` for a login/MFA challenge code.
+
+    A TOTP code is accepted at most once. Its timestep is stored so a captured
+    code cannot be replayed inside the 30-second window.
+    """
+    step = totp_service.verify_code_step(user.totp_secret, code)
+    if step is not None:
+        last_step = int(getattr(user, "mfa_last_used_step", 0) or 0)
+        if step <= last_step:
+            security_events.record(
+                "auth.totp_replay_rejected",
+                outcome="denied",
+                severity="warning",
+                actor=user,
+                target_type="user",
+                target_id=user.id,
+                target_label=user.username,
+                detail={"step": step, "last_step": last_step},
+            )
+            return False, None
+        user.mfa_last_used_step = step
         reset_failures(db, user)
+        db.commit()
         return True, "totp"
     remaining = consume_recovery_code(db, user, code)
     if remaining is not None:
@@ -248,3 +283,29 @@ def verify_totp_or_recovery(db: Session, user: User, code: str) -> tuple[bool, s
 
 def verify_totp(user: User, code: str) -> bool:
     return totp_service.verify_code(user.totp_secret, code)
+
+
+def reencrypt_legacy_secrets(db: Session) -> int:
+    """Encrypt any TOTP secrets that predate the encrypted-secret column.
+
+    The read path tolerates legacy plaintext so a deployment never locks out an
+    enrolled user. This startup pass removes the tolerance in practice and logs
+    the count; the read tolerance stays only as a safety net.
+    """
+    changed = 0
+    rows = db.query(User).filter(User.totp_secret.isnot(None)).all()
+    for user in rows:
+        if not user.totp_secret or is_encrypted(user.totp_secret):
+            continue
+        user.totp_secret = totp_service.encrypt_totp_secret(user.totp_secret)
+        changed += 1
+    if changed:
+        db.commit()
+        security_events.record(
+            "auth.totp_secrets_reencrypted",
+            severity="warning",
+            target_type="system",
+            target_id="mfa",
+            detail={"count": changed},
+        )
+    return changed

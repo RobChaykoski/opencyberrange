@@ -1,0 +1,17 @@
+lab_id: software-security-2-1-diagnostics-command-injection
+intended_path: >
+  Use the diagnostics hostname field to inject a shell separator, read the flag
+  from the target container, and explain why passing untrusted input to a shell
+  is the defect.
+bypass_checks:
+  - name: direct flag read without injection
+    command: "cat /tmp/flag 2>/dev/null"
+    must_not_contain: "OCR{"
+    rationale: >
+      A learner who can read the flag without demonstrating the injection has
+      skipped the command-injection lesson.
+  - name: container metadata path
+    command: "cat /proc/1/environ 2>/dev/null"
+    must_not_contain: "OCR{"
+    rationale: >
+      The flag must not be exposed through process environment or metadata.

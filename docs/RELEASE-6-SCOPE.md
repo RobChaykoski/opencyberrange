@@ -70,7 +70,7 @@ Release 6 builds on shipped pieces; it is not a blank page.
 | Foundation | Current state |
 |---|---|
 | Competency taxonomy | 212 competencies in domains and categories (`app/data/competency-taxonomy.yaml`) |
-| Lab contracts | 215 labs mapped; 25 reviewed, 190 baseline derived, awaiting subject-matter review |
+| Lab contracts | 222 labs mapped; 25 reviewed, 197 baseline derived, awaiting subject-matter review |
 | Scoring model | Five dimensions: knowledge 20%, execution 30%, troubleshooting 20%, documentation 15%, communication 15% |
 | Rubric registry | Three versioned rubrics: blue-team timeline, vulnerability report, capstone brief (`app/data/rubrics/`) |
 | Pathways | 13 curriculum roles, including SOC Analyst, Incident Responder, and Detection Engineer |
@@ -83,6 +83,23 @@ Release 6 builds on shipped pieces; it is not a blank page.
 The gap is not invention. It is **completeness, versioning, and a shared evidence
 model** across those pieces.
 
+## Authentication hardening (6.0)
+
+The MFA baseline is already strong: encrypted TOTP secrets, Argon2id recovery
+codes, single-use consumption under a row lock, a separate MFA lockout, and
+reauthentication on high-impact actions. Release 6 adds:
+
+- **Passkeys / WebAuthn** as the promoted phishing-resistant factor, with TOTP
+  retained as a fallback. Security keys for administrators; synced passkeys for
+  learners.
+- **Mandatory MFA for privileged roles**, enforced before the first privileged
+  session rather than relying on voluntary enrollment.
+- **Recovery-code notification**: a used recovery code should email the learner
+  and prompt a new set. The security event exists; delivery is the remaining
+  work.
+- **No SMS or email OTP.** They lower assurance and reintroduce phishing; TOTP
+  remains the floor, passkeys the target.
+
 ## Status at 24 November 2026
 
 The foundation is ahead of the original plan; the review campaign is the
@@ -93,7 +110,7 @@ critical path.
 | Evidence Engine (6.0) | **Shipped** | Records, competency links, rubrics, reviews, appeals, flag/quiz adapters, workbook answers, replay-safe provenance |
 | Rubric registry | **Shipped** | Five versioned rubrics, including the capstone brief |
 | Evidence analytics (6.0) | **Shipped** | Status totals, backlog age, strongest/weakest competencies, documentation coverage, confidence trend, programme effectiveness, small-cohort suppression |
-| Competency contracts | **Partial** | 25 of 215 reviewed; 190 baseline-derived contracts await subject-matter review |
+| Competency contracts | **Partial** | 25 of 222 reviewed; 197 baseline-derived contracts await subject-matter review |
 | Coverage gate for every object | **Partial** | Labs and all 9 quiz pathways are mapped; the CI gate exists as `scripts/audit-release6-coverage.py --fail-on-gaps`; capstones are not implemented and badges are derived |
 | Learner-visible score gate | **Partial** | DNA, portfolio, readiness, and competency views now show an unmeasured state with a regression test; the transcript PDF and exported reports still need the same audit |
 | Capstone Builder (6.1) | **Partial** | Deterministic planner, saved plans, versioning, approval gate, and instructor API exist; editor UI, publication, and exports do not |

@@ -48,7 +48,8 @@ token expires; they do not satisfy a reauthentication check.
 Recovery codes:
 
 - are generated in sets of 10 by default (`mfa_recovery_code_count`);
-- are stored only as SHA-256 hashes;
+- are stored as Argon2id hashes, with legacy SHA-256 rows still accepted and
+  migrated on the next successful use;
 - are single-use and consumed under a row lock;
 - expire after `mfa_recovery_code_ttl_days` (default 365);
 - are replaced as a set when regenerated, invalidating every old code;
@@ -58,6 +59,18 @@ Recovery codes:
 Generation requires a recent password + MFA reauthentication. The response
 contains `codes`, `remaining`, and `expires_at`; the plaintext codes are shown
 exactly once.
+
+### TOTP replay and secret encryption
+
+- A TOTP code is accepted at most once. The accepted timestep is stored in
+  `users.mfa_last_used_step`; a code at or below that step is rejected and
+  recorded as `auth.totp_replay_rejected`.
+- TOTP secrets are Fernet-encrypted at rest. A startup pass re-encrypts any
+  legacy plaintext rows; the read path still tolerates a legacy row so a
+  deployment cannot lock out an enrolled user during the transition.
+- A recovery-code login is a lost-device signal. It is recorded as a warning
+  security event; the operator should notify the learner and prompt a new code
+  set. Email delivery is a follow-up.
 
 ## MFA brute-force throttling
 

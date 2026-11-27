@@ -8,7 +8,7 @@ Learning design, tracks and pathways, labs, competencies, assessment, analytics,
 - **NIST SP 800-53 Rev. 5:** AT-2, PM-5, SA-11
 - **Owner:** Curriculum lead
 
-82 document(s) in this group.
+83 document(s) in this group.
 
 | Document | Type | Classification | Review | Score | Next review |
 |---|---|---|---|---:|---|
@@ -59,6 +59,7 @@ Learning design, tracks and pathways, labs, competencies, assessment, analytics,
 | [Lab Definitions Repository (OpenCyberRange-Labs)](../../LAB-DEFINITIONS-REPOSITORY.md) | `reference` | internal | unreviewed |  | unset |
 | [Lab freshness](../../LAB-FRESHNESS.md) | `reference` | internal | unreviewed |  | unset |
 | [Lab outcomes contract](../../LAB-OUTCOMES.md) | `reference` | internal | unreviewed |  | unset |
+| [Lab QA pipeline](../../LAB-QA-PIPELINE.md) | `reference` | internal | unreviewed |  | unset |
 | [Learner archetypes](../../LEARNER-ARCHETYPES.md) | `reference` | internal | unreviewed |  | unset |
 | [Learner Development Vector (LDV)](../../LEARNER-DEVELOPMENT-VECTOR.md) | `reference` | internal | unreviewed |  | unset |
 | [Learner-visible scores](../../LEARNER-VISIBLE-SCORES.md) | `reference` | internal | unreviewed |  | unset |

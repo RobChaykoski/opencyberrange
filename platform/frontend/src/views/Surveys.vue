@@ -128,8 +128,8 @@
             </div>
             <div v-if="responseData.responses.length" class="response-recent">
               <span class="response-recent__label">Recent submissions</span>
-              <span v-for="response in responseData.responses.slice(0, 8)" :key="response.user_id">
-                {{ response.display_name || 'Deleted learner' }} · {{ formatDate(response.submitted_at) }}
+              <span v-for="(response, index) in responseData.responses.slice(0, 8)" :key="response.pseudonymous_user_id">
+                Response {{ index + 1 }} · {{ formatDate(response.submitted_at) }}
               </span>
             </div>
           </template>

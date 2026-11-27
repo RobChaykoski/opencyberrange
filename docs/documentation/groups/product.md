@@ -8,7 +8,7 @@ Scope, releases, deliverables, editions, roadmaps, counts, handoffs, and the pub
 - **NIST SP 800-53 Rev. 5:** CM-3, SA-10, SI-12
 - **Owner:** Product lead
 
-65 document(s) in this group.
+67 document(s) in this group.
 
 | Document | Type | Classification | Review | Score | Next review |
 |---|---|---|---|---:|---|
@@ -65,6 +65,7 @@ Scope, releases, deliverables, editions, roadmaps, counts, handoffs, and the pub
 | [Release 5.56.1 deliverables](../../RELEASE-5.56.1-DELIVERABLES.md) | `release` | internal | unreviewed |  | unset |
 | [Release 5.56.2 deliverables](../../RELEASE-5.56.2-DELIVERABLES.md) | `release` | internal | unreviewed |  | unset |
 | [Release 6 scope: competency, evidence, scale, and federation](../../RELEASE-6-SCOPE.md) | `release` | internal | unreviewed |  | unset |
+| [Release test plan](../../RELEASE-TEST-PLAN.md) | `release` | internal | unreviewed |  | unset |
 | [Releases](../../RELEASES.md) | `reference` | internal | unreviewed |  | unset |
 | [V2 Program Charter](../../V2-PROGRAM-CHARTER.md) | `reference` | internal | unreviewed |  | unset |
 | [SWOCTS Cyber Range Enterprise preview parking lot](../../V3-PARKING-LOT.md) | `reference` | internal | unreviewed |  | unset |
@@ -75,6 +76,7 @@ Scope, releases, deliverables, editions, roadmaps, counts, handoffs, and the pub
 | [Internal network map](../../_project_overview/NETWORK-MAP.md) | `reference` | internal | unreviewed |  | unset |
 | [Project overview pack](../../_project_overview/README.md) | `reference` | internal | unreviewed |  | unset |
 | [Software metadata and versions](../../_project_overview/SOFTWARE-METADATA.md) | `reference` | internal | unreviewed |  | unset |
+| [Accessibility test report](../../accessibility-test/report-template.md) | `reference` | internal | unreviewed |  | unset |
 | [OCR Lite Quickstart](../../lite/QUICKSTART.md) | `reference` | internal | unreviewed |  | unset |
 | [OCR-Lite Solo Operator Guide](../../lite/SOLO_OPERATOR_GUIDE.md) | `reference` | internal | unreviewed |  | unset |
 

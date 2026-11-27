@@ -37,6 +37,39 @@ def _now() -> datetime:
     return datetime.now(timezone.utc).replace(tzinfo=None)
 
 
+def drift_report(db: Session) -> dict:
+    """Compare the reviewed YAML catalog with the live RBAC tables.
+
+    ``permissions.yaml`` is the reviewed baseline, but the DB is what the
+    Authorization Service reads. Admin edits are legitimate; this report makes
+    the difference visible so an access review compares the right thing.
+    """
+    catalog = set(PERMISSION_CATALOG)
+    db_permissions = {
+        row.key: row for row in db.query(RbacPermission).all()
+    }
+    extra_in_db = sorted(set(db_permissions) - catalog)
+    missing_in_db = sorted(catalog - set(db_permissions))
+    role_drift: dict[str, dict] = {}
+    for role_key, expected in ROLE_PERMISSIONS.items():
+        actual = set(role_permissions(db, role_key))
+        expected_set = set(expected)
+        if actual == expected_set:
+            continue
+        role_drift[role_key] = {
+            "missing_from_live": sorted(expected_set - actual),
+            "extra_in_live": sorted(actual - expected_set),
+        }
+    return {
+        "catalog_permissions": len(catalog),
+        "live_permissions": len(db_permissions),
+        "missing_in_db": missing_in_db,
+        "extra_in_db": extra_in_db,
+        "role_drift": role_drift,
+        "drifted": bool(missing_in_db or extra_in_db or role_drift),
+    }
+
+
 def seed(db: Session) -> dict[str, int]:
     """Idempotently copy the YAML catalog into the RBAC tables."""
     added_permissions = 0
@@ -46,6 +79,22 @@ def seed(db: Session) -> dict[str, int]:
     permission_rows: dict[str, RbacPermission] = {
         row.key: row for row in db.query(RbacPermission).all()
     }
+    # A permission removed from the reviewed catalog is unusable by the
+    # Authorization Service. Remove its grants and row so a later re-add cannot
+    # resurrect an old admin exception. This is the only automatic prune; role
+    # grants for keys that still exist remain admin-authoritative.
+    pruned_permissions = 0
+    for key in list(permission_rows):
+        if key in PERMISSION_CATALOG:
+            continue
+        row = permission_rows.pop(key)
+        db.query(RbacRolePermission).filter(
+            RbacRolePermission.permission_id == row.id
+        ).delete(synchronize_session=False)
+        db.delete(row)
+        pruned_permissions += 1
+    if pruned_permissions:
+        db.flush()
     new_permission_keys: set[str] = set()
     for key, description in PERMISSION_CATALOG.items():
         meta = PERMISSION_META.get(key, {})
@@ -119,9 +168,18 @@ def seed(db: Session) -> dict[str, int]:
         "permissions": added_permissions,
         "roles": added_roles,
         "grants": added_grants,
+        "pruned_permissions": pruned_permissions,
     }
     if any(result.values()):
         logger.info("RBAC catalog seeded: %s", result)
+    drift = drift_report(db)
+    if drift["drifted"]:
+        logger.warning(
+            "RBAC drift from reviewed catalog: missing_in_db=%s extra_in_db=%s roles=%s",
+            drift["missing_in_db"],
+            drift["extra_in_db"],
+            sorted(drift["role_drift"]),
+        )
     return result
 
 

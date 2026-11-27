@@ -183,7 +183,7 @@ DEFAULT_SETTINGS = [
      "description": "Allow time-bound, reasoned emergency access to private data or restricted exports. Every use is a critical security event. Leave off unless the institution has an approved break-glass procedure.", "is_secret": False},
     {"key": "break_glass_require_mfa", "value": "true", "category": "security",
      "description": "Require MFA on the requesting and target accounts before a break-glass grant can be created or used.", "is_secret": False},
-    {"key": "break_glass_require_approval", "value": "false", "category": "security",
+    {"key": "break_glass_require_approval", "value": "true", "category": "security",
      "description": "Require a second operator to approve a break-glass request. Enable this for enterprise deployments.", "is_secret": False},
     {"key": "break_glass_max_minutes", "value": "60", "category": "security",
      "description": "Maximum lifetime of a break-glass grant in minutes. Grants cannot be extended; create a new reviewed grant instead.", "is_secret": False},

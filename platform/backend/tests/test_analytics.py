@@ -1007,3 +1007,71 @@ def test_readiness_calibration_review(client, analytics_data):
     assert body["calibration_counts"]["confirmed"] == 1
     assert body["band_changed"] == 1
 
+
+def test_pulse_comments_exclude_minors(client, analytics_data, db_session):
+    minor = analytics_data["student_one"]
+    minor.is_minor = True
+    db_session.commit()
+
+    headers = _login(client, analytics_data["instructor"])
+    course_id = analytics_data["course"].id
+    response = client.get(
+        f"/api/analytics/courses/{course_id}/pulse-comments", headers=headers
+    )
+    assert response.status_code == 200, response.text
+    assert response.json()["comments"] == []
+
+
+def test_survey_responses_exclude_minors_and_are_pseudonymous(
+    client, analytics_data, db_session
+):
+    minor = analytics_data["student_one"]
+    adult = analytics_data["student_two"]
+    minor.is_minor = True
+    minor.survey_opt_in = True
+    adult.survey_opt_in = True
+    db_session.commit()
+
+    instructor = _login(client, analytics_data["instructor"])
+    minor_headers = _login(client, minor)
+    adult_headers = _login(client, adult)
+    course_id = analytics_data["course"].id
+
+    created = client.post(
+        "/api/analytics/surveys",
+        json={
+            "title": "Minor exclusion check",
+            "description": "Privacy regression",
+            "course_ids": [course_id],
+            "questions": [{"prompt": "What should change?", "type": "text"}],
+        },
+        headers=instructor,
+    )
+    assert created.status_code == 200, created.text
+    survey_id = created.json()["id"]
+    try:
+        for headers, answer in (
+            (minor_headers, "minor answer"),
+            (adult_headers, "adult answer"),
+        ):
+            submitted = client.post(
+                f"/api/analytics/surveys/{survey_id}/responses",
+                json={"answers": {"0": answer}},
+                headers=headers,
+            )
+            assert submitted.status_code == 200, submitted.text
+
+        responses = client.get(
+            f"/api/analytics/surveys/{survey_id}/responses", headers=instructor
+        )
+        assert responses.status_code == 200, responses.text
+        body = responses.json()
+        assert body["survey"]["response_count"] == 1
+        assert len(body["responses"]) == 1
+        row = body["responses"][0]
+        assert row["answers"]["0"] == "adult answer"
+        assert row["pseudonymous_user_id"]
+        assert "user_id" not in row
+        assert "display_name" not in row
+    finally:
+        client.delete(f"/api/analytics/surveys/{survey_id}", headers=instructor)

@@ -259,6 +259,22 @@ async def list_permissions(
     return {"permissions": rbac.permission_catalog(db)}
 
 
+@router.get("/rbac/drift", summary="Reviewed catalog vs live RBAC grants")
+async def rbac_drift(
+    db: Session = Depends(get_db),
+    _decision: PolicyDecision = Depends(require_permission("security.events.view")),
+):
+    """Show where the live RBAC tables differ from permissions.yaml.
+
+    This is a review aid, not an automatic accusation: an administrator's
+    deliberate grant is expected to appear here. A permission removed from the
+    catalog is pruned at seed time; a grant removed from the YAML but still in
+    the DB remains the administrator's decision.
+    """
+    _ensure_seeded(db)
+    return rbac.drift_report(db)
+
+
 @router.get("/rbac/matrix", summary="Role and policy access matrix")
 async def rbac_matrix(
     db: Session = Depends(get_db),

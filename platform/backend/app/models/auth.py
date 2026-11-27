@@ -170,6 +170,9 @@ class User(Base):
     )
     mfa_last_failed_at = Column(DateTime, nullable=True)
     mfa_locked_until = Column(DateTime, nullable=True)
+    # Last accepted TOTP timestep (Unix time // 30). A code at or below this
+    # step is rejected, so a captured code cannot be replayed within its window.
+    mfa_last_used_step = Column(Integer, nullable=True)
     # Recovery-code lifecycle. The hashes remain in mfa_recovery_codes; this
     # timestamp lets the platform expire and rotate the set.
     mfa_recovery_generated_at = Column(DateTime, nullable=True)

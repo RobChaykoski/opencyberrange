@@ -8,10 +8,11 @@ Policy, control mapping, risk, privacy, retention, procurement, audit, and revie
 - **NIST SP 800-53 Rev. 5:** PM-1, PM-4, PM-9, CA-2, CA-5, CA-7, RA-3, SI-12
 - **Owner:** Platform lead with the privacy officer
 
-57 document(s) in this group.
+58 document(s) in this group.
 
 | Document | Type | Classification | Review | Score | Next review |
 |---|---|---|---|---:|---|
+| [Accessibility test plan](../../ACCESSIBILITY-TEST.md) | `reference` | internal | unreviewed |  | unset |
 | [Accessibility statement](../../ACCESSIBILITY.md) | `standard` | public | unreviewed |  | unset |
 | [Code and database review: 24 November 2026](../../CODE-AND-DATABASE-REVIEW-2026-11-24.md) | `assessment` | internal | unreviewed |  | unset |
 | [Compliance posture: privacy, accessibility, automated scoring, and integration](../../COMPLIANCE.md) | `standard` | public | unreviewed |  | unset |

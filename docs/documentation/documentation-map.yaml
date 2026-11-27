@@ -191,6 +191,31 @@ documents:
     published: true
     evidence: false
     retention: R2
+- path: docs/ACCESSIBILITY-TEST.md
+  title: Accessibility test plan
+  group: governance
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
 - path: docs/ACCESSIBILITY.md
   title: Accessibility statement
   group: governance
@@ -2593,6 +2618,31 @@ documents:
     retention: R2
 - path: docs/LAB-OUTCOMES.md
   title: Lab outcomes contract
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/LAB-QA-PIPELINE.md
+  title: Lab QA pipeline
   group: curriculum
   doc_type: reference
   audience:
@@ -5091,6 +5141,31 @@ documents:
     published: true
     evidence: true
     retention: R0
+- path: docs/RELEASE-TEST-PLAN.md
+  title: Release test plan
+  group: product
+  doc_type: release
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: true
+    retention: R0
 - path: docs/RELEASES.md
   title: Releases
   group: product
@@ -6441,6 +6516,31 @@ documents:
     published: true
     evidence: false
     retention: R2
+- path: docs/accessibility-test/report-template.md
+  title: Accessibility test report
+  group: product
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
 - path: docs/architecture/SIZING-AND-SETTINGS.md
   title: OCR Sizing & Settings — Single Source of Truth
   group: architecture
@@ -7391,8 +7491,233 @@ documents:
     published: true
     evidence: false
     retention: R2
+- path: docs/research/FIRST-TIME-USER-TEST.md
+  title: First-time user test
+  group: research
+  doc_type: report
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
 - path: docs/research/REB-SURVEY-PACKAGE.md
   title: REB-ready survey package
+  group: research
+  doc_type: report
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/research/first-time-user-test/README.md
+  title: First-time user test kit
+  group: research
+  doc_type: report
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/research/first-time-user-test/analysis-template.md
+  title: First-time user test analysis
+  group: research
+  doc_type: report
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/research/first-time-user-test/consent-and-privacy.md
+  title: Consent and privacy
+  group: research
+  doc_type: report
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/research/first-time-user-test/environment-setup.md
+  title: Environment setup
+  group: research
+  doc_type: report
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/research/first-time-user-test/moderator-script.md
+  title: Moderator script
+  group: research
+  doc_type: report
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/research/first-time-user-test/observation-log.md
+  title: Observation log
+  group: research
+  doc_type: report
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/research/first-time-user-test/participant-brief.md
+  title: Participant brief
+  group: research
+  doc_type: report
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
+- path: docs/research/first-time-user-test/personas.md
+  title: Personas
   group: research
   doc_type: report
   audience:
@@ -8166,6 +8491,31 @@ documents:
     published: true
     evidence: true
     retention: R0
+- path: docs/security/SECURITY-VALIDATION-PLAN.md
+  title: Security validation plan
+  group: security
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
 - path: docs/security/index.md
   title: Security
   group: security

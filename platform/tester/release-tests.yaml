@@ -1,0 +1,158 @@
+version: 1
+owner: Platform lead
+target: next signed release
+note: >
+  Automated entries run in CI or on a staging host. Manual entries need a
+  recorded evidence page and a named reviewer. A skipped automated entry is a
+  gap, not a pass; `--automated-only` still reports it.
+
+tests:
+  - id: onboarding
+    title: First-time student onboarding
+    type: manual
+    owner: Learning experience
+    evidence: docs/research/FIRST-TIME-USER-TEST.md
+    pass: "Median under 15:00 for every persona; >=80% under 15:00 with L0/L1 help"
+  - id: vpn-setup
+    title: VPN setup
+    type: manual
+    owner: Platform operations
+    evidence: docs/security/SECURITY-VALIDATION-PLAN.md#vpn-separation
+    pass: "A first-time user installs, imports, connects, and reaches only the assigned lab /24"
+  - id: lab-launch
+    title: Lab launch
+    type: command
+    live: true
+    owner: Lab platform
+    cwd: .
+    command: ["python", "scripts/lab_harness.py", "--lab", "linux-1-1-ssh-service-detection", "--runs", "1"]
+    pass: "build, start, health, isolation, ports, flag, repeat solve, resources, teardown"
+  - id: flag-submission
+    title: Flag submission
+    type: command
+    owner: Lab platform
+    cwd: platform/backend
+    requires: [TEST_DATABASE_URL]
+    command: ["python", "-m", "pytest", "tests/test_flag_submit.py", "tests/test_flag_hint.py", "-q"]
+    pass: "wrong flag denied, correct flag accepted, hint-only not counted"
+  - id: course-enrollment
+    title: Course enrollment
+    type: command
+    owner: Curriculum
+    cwd: platform/backend
+    requires: [TEST_DATABASE_URL]
+    command: ["python", "-m", "pytest", "tests/test_course_progress_focus.py", "tests/test_course_feedback.py", "-q"]
+    pass: "join, roster, assignment order, scoped progress"
+  - id: instructor-course-creation
+    title: Instructor course creation
+    type: command
+    owner: Curriculum
+    cwd: platform/backend
+    requires: [TEST_DATABASE_URL]
+    command: ["python", "-m", "pytest", "tests/test_authorization_matrix.py", "tests/test_instructor_learning_metrics.py", "-q"]
+    pass: "instructor creates and owns a course; another instructor cannot read it"
+  - id: achievement-unlocking
+    title: Achievement unlocking
+    type: command
+    owner: Curriculum
+    cwd: platform/backend
+    requires: [TEST_DATABASE_URL]
+    command: ["python", "-m", "pytest", "tests/test_achievements.py", "tests/test_achievement_catalogue.py", "-q"]
+    pass: "award is idempotent, visible to the owner, hidden from others"
+  - id: certificate-generation
+    title: Certificate generation
+    type: command
+    owner: Curriculum
+    cwd: platform/backend
+    requires: [TEST_DATABASE_URL]
+    command: ["python", "-m", "pytest", "tests/test_event_certificates.py", "tests/test_level_certificate_pdf_design.py", "tests/test_certificate_verify.py", "-q"]
+    pass: "PDF generated, hash/manifest valid, verification matches the recipient"
+  - id: transcript-generation
+    title: Transcript generation
+    type: command
+    owner: Curriculum
+    cwd: platform/backend
+    requires: [TEST_DATABASE_URL]
+    command: ["python", "-m", "pytest", "tests/test_profile.py", "tests/test_export_labels.py", "-q"]
+    pass: "transcript includes completions and labels; no other learner rows"
+  - id: data-export
+    title: Data export
+    type: command
+    owner: Privacy
+    cwd: platform/backend
+    requires: [TEST_DATABASE_URL]
+    command: ["python", "-m", "pytest", "tests/test_privacy.py", "tests/test_export_labels.py", "-q"]
+    pass: "achievements, flags, courses, progress, transcript present; secrets absent; other learners absent"
+  - id: account-deletion
+    title: Account deletion
+    type: command
+    owner: Privacy
+    cwd: platform/backend
+    requires: [TEST_DATABASE_URL]
+    command: ["python", "-m", "pytest", "tests/test_erasure.py", "tests/test_purge_erased_accounts.py", "-q"]
+    pass: "records and derived data removed, API access revoked, suppression proof retained"
+  - id: backup-restore
+    title: Backup restore
+    type: manual
+    owner: Platform operations
+    evidence: docs/database/backup-and-restore.md
+    pass: "restore drill passes; suppression ledger reapplied; deleted account does not reappear"
+  - id: docker-isolation
+    title: Docker isolation
+    type: command
+    live: true
+    owner: Lab platform
+    cwd: .
+    command: ["python", "scripts/lab_harness.py", "--lab", "linux-1-1-ssh-service-detection", "--runs", "1"]
+    pass: "no host network, no published ports, no control-plane or other-lab network, no host mounts"
+  - id: rbac
+    title: RBAC verification
+    type: command
+    owner: Security
+    cwd: platform/backend
+    requires: [TEST_DATABASE_URL]
+    command: ["python", "-m", "pytest", "tests/test_access_matrix.py", "tests/test_authorization_matrix.py", "tests/test_idor_matrix.py", "-q"]
+    pass: "anonymous/student/instructor/admin matrix matches the reviewed grants"
+  - id: api-authorization
+    title: API authorization
+    type: command
+    owner: Security
+    cwd: platform/backend
+    requires: [TEST_DATABASE_URL]
+    command: ["python", "-m", "pytest", "tests/test_route_authorization.py", "tests/test_authorization_service.py", "tests/test_horizontal_privilege.py", "-q"]
+    pass: "every protected route has a dependency; BOLA/IDOR denied"
+  - id: concurrent-launches
+    title: Concurrent lab launches
+    type: command
+    owner: Lab platform
+    cwd: platform/backend
+    requires: [TEST_DATABASE_URL]
+    command: ["python", "-m", "pytest", "tests/test_concurrency.py", "tests/test_rangebox_capacity.py", "-q"]
+    pass: "quota and capacity hold under concurrent spawn requests"
+  - id: workbook-accuracy
+    title: Workbook accuracy validation
+    type: command
+    owner: Curriculum
+    cwd: .
+    command: ["python", "scripts/lab_qa.py", "--static"]
+    pass: "no broken images/links, no flag mismatch/leak, no public IPs, no stale tool versions"
+  - id: accessibility
+    title: Accessibility review
+    type: manual
+    owner: Accessibility lead
+    evidence: docs/ACCESSIBILITY-TEST.md
+    pass: "WCAG 2.2 AA review complete; keyboard-only lab, NVDA/JAWS/Narrator, charts and achievements verified"
+  - id: mobile
+    title: Mobile responsiveness review
+    type: command
+    owner: Frontend
+    cwd: .
+    requires: [UI_BASE_URL]
+    command: ["node", "scripts/ui-smoke.mjs"]
+    pass: "390x844 mobile shell, lab briefing, flag form, navigation, and no horizontal overflow"
+  - id: learner-journey
+    title: Complete learner journey
+    type: manual
+    owner: Learning experience
+    evidence: docs/RELEASE-TEST-PLAN.md#complete-learner-journey
+    pass: "register -> course -> VPN -> lab -> flag -> achievement -> transcript -> export -> delete"

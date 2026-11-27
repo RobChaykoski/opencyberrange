@@ -8,7 +8,7 @@ Pilots, research notes, community events, UI and experience studies, and proposa
 - **NIST SP 800-53 Rev. 5:** PM-4, PM-9
 - **Owner:** Research lead
 
-11 document(s) in this group.
+20 document(s) in this group.
 
 | Document | Type | Classification | Review | Score | Next review |
 |---|---|---|---|---:|---|
@@ -22,6 +22,15 @@ Pilots, research notes, community events, UI and experience studies, and proposa
 | [Profile and catalogue experience review](../../PROFILE-EXPERIENCE-REVIEW.md) | `report` | internal | unreviewed |  | unset |
 | [Two-tenant pilot](../../TWO-TENANT-PILOT.md) | `report` | internal | unreviewed |  | unset |
 | [UI affordance and signifier review](../../UI-AFFORDANCE-REVIEW.md) | `report` | internal | unreviewed |  | unset |
+| [First-time user test](../../research/FIRST-TIME-USER-TEST.md) | `report` | internal | unreviewed |  | unset |
 | [REB-ready survey package](../../research/REB-SURVEY-PACKAGE.md) | `report` | internal | unreviewed |  | unset |
+| [First-time user test kit](../../research/first-time-user-test/README.md) | `report` | internal | unreviewed |  | unset |
+| [First-time user test analysis](../../research/first-time-user-test/analysis-template.md) | `report` | internal | unreviewed |  | unset |
+| [Consent and privacy](../../research/first-time-user-test/consent-and-privacy.md) | `report` | internal | unreviewed |  | unset |
+| [Environment setup](../../research/first-time-user-test/environment-setup.md) | `report` | internal | unreviewed |  | unset |
+| [Moderator script](../../research/first-time-user-test/moderator-script.md) | `report` | internal | unreviewed |  | unset |
+| [Observation log](../../research/first-time-user-test/observation-log.md) | `report` | internal | unreviewed |  | unset |
+| [Participant brief](../../research/first-time-user-test/participant-brief.md) | `report` | internal | unreviewed |  | unset |
+| [Personas](../../research/first-time-user-test/personas.md) | `report` | internal | unreviewed |  | unset |
 
 Review a document with the [document review form](../DOCUMENT-REVIEW-FORM.md). Grouping rules and labels are defined in the [documentation standard](../DOCUMENTATION-STANDARDS.md).

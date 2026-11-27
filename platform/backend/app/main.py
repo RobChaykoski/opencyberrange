@@ -869,6 +869,14 @@ async def lifespan(app: FastAPI):
     settings_db = SessionLocal()
     try:
         seed_defaults(settings_db)
+        # A row created before encrypted TOTP secrets must not stay plaintext
+        # forever. Re-encrypt in place; the read path keeps its safety net.
+        try:
+            from app.services import mfa as _mfa
+
+            _mfa.reencrypt_legacy_secrets(settings_db)
+        except Exception as _exc:
+            logger.warning("Legacy TOTP secret re-encryption skipped: %s", _exc)
     finally:
         settings_db.close()
 

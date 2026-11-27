@@ -59,6 +59,8 @@ DEFAULT_TIMEOUT = 300         # Per-lab timeout (seconds)
 CONTAINER_INIT_WAIT = 20      # Seconds to wait after spawning lab
 SIDECAR_INIT_WAIT = 2         # Seconds after attaching sidecar to network
 EXEC_TIMEOUT = 20             # Default per-command timeout
+EXEC_TIMEOUT_MAX = 600        # Hard ceiling for a lab.yaml test.step timeout
+FLAG_RE = re.compile(r"OCR\{[^}\n]+\}")
 SSE_HEARTBEAT = ": heartbeat\n\n"  # SSE comment to keep connection alive
 
 # Characters that cause shell quoting failures through the exec chain
@@ -361,6 +363,29 @@ def _redact_command_template(command: str) -> str:
     return _CRED_PASS_PLACEHOLDER_RE.sub("{cred.<role>.pass:redacted}", command)
 
 
+def _redact_flags(text: str) -> str:
+    """Mask any OCR{...} flag before it reaches an event stream, journal, or result.
+
+    The tester legitimately discovers the plaintext flag to prove a lab is
+    solvable. That value must never be persisted in ExerciseTestResult or shown
+    to another instructor, so every operator-facing line passes through here.
+    """
+    return FLAG_RE.sub("OCR{redacted}", str(text))
+
+
+def _coerce_timeout(value) -> int:
+    """Clamp a lab.yaml step timeout to a safe integer range.
+
+    The value is interpolated into the tester command, so it must never reach
+    the shell as an arbitrary string. Bad values fall back to EXEC_TIMEOUT.
+    """
+    try:
+        parsed = int(value)
+    except (TypeError, ValueError):
+        return EXEC_TIMEOUT
+    return max(1, min(parsed, EXEC_TIMEOUT_MAX))
+
+
 def _call_submit_flag_api(lab_id: int, flag: str, token: str) -> dict:
     """Call the real POST /api/labs/{lab_id}/submit-flag endpoint via HTTP.
 
@@ -403,7 +428,11 @@ def _cleanup_stale_images(slug: str, user_id: int) -> list:
 
     for img in dclient.images.list(all=True):
         for tag in (img.tags or []):
-            if tag.startswith(prefix) or tag.startswith(f"prebuild-{slug}"):
+            # Only remove this tester run's own images. The prebuild-<slug>
+            # images are the shared warm cache used by every student spawn;
+            # deleting them turns the next spawn into a cold multi-minute
+            # build. A Dockerfile change is handled by an explicit prebuild.
+            if tag.startswith(prefix):
                 try:
                     dclient.images.remove(img.id, force=True)
                     removed.append(tag)
