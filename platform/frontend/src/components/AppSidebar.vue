@@ -108,6 +108,13 @@
           </svg>
           <span v-show="!collapsed" class="nav-item__label">Contract review</span>
         </router-link>
+        <router-link to="/capstone-builder" aria-label="Capstone Builder" title="Capstone Builder: turn a role profile into an approved capstone plan" class="nav-item" :class="{ 'nav-item--active': isActive('/capstone-builder') }">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon" aria-hidden="true">
+            <path d="M12 3 2 8l10 5 10-5-10-5z"/>
+            <path d="M4 10v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>
+          </svg>
+          <span v-show="!collapsed" class="nav-item__label">Capstone Builder</span>
+        </router-link>
         <router-link v-if="!showAdmin" to="/reports" aria-label="Reports and analytics" title="Reports &amp; analytics: programme trends and exports" class="nav-item" :class="{ 'nav-item--active': isActive('/reports') }">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon" aria-hidden="true">
             <path d="M3 3v18h18"/>

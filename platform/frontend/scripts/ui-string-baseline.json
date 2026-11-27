@@ -1,10 +1,10 @@
 {
-  "total": 5470,
+  "total": 5534,
   "files": {
     "src/App.vue": 13,
     "src/components/AchievementStudio.vue": 54,
     "src/components/AdminPendingTab.vue": 5,
-    "src/components/AppSidebar.vue": 136,
+    "src/components/AppSidebar.vue": 139,
     "src/components/AuditHistory.vue": 18,
     "src/components/AvailableSurveys.vue": 9,
     "src/components/CareerAssessmentPanel.vue": 8,
@@ -70,6 +70,7 @@
     "src/views/About.vue": 82,
     "src/views/Admin.vue": 1062,
     "src/views/BadgeViewer.vue": 11,
+    "src/views/CapstoneBuilder.vue": 61,
     "src/views/Celebrations.vue": 48,
     "src/views/Certificate.vue": 45,
     "src/views/ChangePassword.vue": 12,

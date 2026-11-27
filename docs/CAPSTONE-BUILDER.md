@@ -1,9 +1,9 @@
 # Capstone Builder
 
-Status: **Release 6.1, backend planner and saved plans implemented.** The
-deterministic planner, validation gate, saved-plan API, versioning, and approval
-exist. The editor UI, publication to a course, and exports are not implemented
-yet.
+Status: **Release 6.1, planner and editor UI implemented.** The deterministic
+planner, validation gate, saved-plan API, versioning, approval, and the
+`/capstone-builder` editor exist. Publication to a course and exports are not
+implemented yet.
 
 The Capstone Builder turns a role profile into a teachable, assessable capstone.
 An instructor selects a profile such as **Blue Team Analyst** (the existing
@@ -54,9 +54,25 @@ unwaived 40-hour plan does not. That is the planner doing its job, not a bug.
 The endpoints require an instructor, administrator, mentor, or teaching
 assistant. A learner receives `403 capstone_forbidden`.
 
+## Editor UI
+
+`/capstone-builder` (instructor and administrator) is the review surface:
+
+- choose one of the 13 role profiles, the duration, the lab limit, and whether
+  missing prerequisites may be assumed;
+- generate a proposal and read the validation gate, coverage, workload, weight
+  total, and prerequisite result before anything is saved;
+- see every uncovered critical competency, waive a gap only with a written
+  reason, and re-run validation with the waiver on record;
+- review objectives, the lab sequence, assessments, deliverables, and the
+  evidence map;
+- save a draft, save a new version, approve a publishable plan, or archive it,
+  and reopen any saved plan from the sidebar.
+
+Approval still does not publish a course or generate documents.
+
 ## What is not implemented
 
-- A visual editor.
 - Publishing to a course, event, or standalone capstone.
 - Generating the learner brief and instructor guide as documents.
 - Exporting a Common Cartridge or PDF package.
