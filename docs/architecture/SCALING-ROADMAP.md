@@ -24,7 +24,7 @@ These are release blockers, not future architecture.
 
 | Item | Why it comes first | Action |
 |---|---|---|
-| Per-session flags | A shared static flag can be copied between learners | Generate a session flag at launch for labs that read `FLAG`, store `lab_sessions.seeded_flag_hash`, and update the harness. Labs that bake the flag into a file need a render step. |
+| Per-session flags | Environment-driven labs rotate at launch; baked-flag labs still use the shared hash | Move the remaining baked-flag labs to an env or mounted-secret path |
 | Upstream image pinning | Moving tags cause build rot and unexpected CVEs | Pin `ubuntu`, `python`, `alpine`, `debian`, and Kali bases by `@sha256:`. Add `scripts/check-image-pins.py --strict` to CI after the pin pass. |
 | Off-host integrity evidence | A database superuser can disable triggers | Keep the signed manifest, ledger archive, and WAL/backups off-host. A restore is not trusted until it matches the off-host manifest. |
 | Lab schema gate | Missing limits, privileged flags, or inconsistent metadata | Keep `validate_lab_metadata.py`, `validate-lab.py`, and `lab_qa.py --static` mandatory in CI. Add image-pin and per-session-flag checks. |

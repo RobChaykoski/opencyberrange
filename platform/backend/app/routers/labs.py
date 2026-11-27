@@ -9,9 +9,11 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timezone, timedelta
 import asyncio
+import hashlib
 import logging
 import os
 import json
+import secrets
 import yaml
 
 
@@ -58,6 +60,58 @@ def _session_duration(db, user: User | None = None) -> timedelta:
     percent = _accommodation_percent(db, user)
     minutes = int(hours * 60 * percent / 100)
     return timedelta(minutes=minutes)
+
+
+def _session_flag_env(
+    compose_content: str | None, flag_hash: str | None
+) -> tuple[dict[str, dict[str, str]], str | None]:
+    """Return per-service FLAG env overrides and the generated session flag.
+
+    Only environment variables whose value already hashes to the graded lab
+    flag are rotated. Labs that bake the flag into an image or a static file are
+    left alone and continue to grade against the shared hash.
+    """
+    if not compose_content or not flag_hash:
+        return {}, None
+    try:
+        data = yaml.safe_load(compose_content) or {}
+    except yaml.YAMLError:
+        return {}, None
+    if not isinstance(data, dict):
+        return {}, None
+
+    matches: list[tuple[str, str, str]] = []
+    for service_name, service in (data.get("services") or {}).items():
+        if not isinstance(service, dict):
+            continue
+        environment = service.get("environment")
+        entries: list[tuple[str, str]] = []
+        if isinstance(environment, dict):
+            entries = [(str(key), str(value)) for key, value in environment.items()]
+        elif isinstance(environment, list):
+            for item in environment:
+                if isinstance(item, str) and "=" in item:
+                    key, value = item.split("=", 1)
+                    entries.append((key, value))
+        for key, value in entries:
+            if key.upper() != "FLAG" and not key.upper().endswith("_FLAG"):
+                continue
+            if hashlib.sha256(value.encode()).hexdigest() == flag_hash:
+                matches.append((service_name, key, value))
+
+    if not matches:
+        return {}, None
+
+    static_value = matches[0][2]
+    if static_value.startswith("OCR{") and static_value.endswith("}"):
+        inner = static_value[4:-1]
+    else:
+        inner = "session_flag"
+    session_flag = f"OCR{{{inner}_{secrets.token_hex(4)}}}"
+    env_by_service: dict[str, dict[str, str]] = {}
+    for service_name, key, _value in matches:
+        env_by_service.setdefault(service_name, {})[key] = session_flag
+    return env_by_service, session_flag
 
 
 def _session_extension(db, user: User | None = None) -> timedelta:
@@ -398,6 +452,9 @@ async def spawn_lab(
             logger.warning("Could not parse hostnames for lab %s", lab_slug)
     diagnostic = bool(is_diagnostic)
     req_client_ip = _client_ip(request)
+    session_flag_env, session_flag = _session_flag_env(
+        compose_content, getattr(lab, "flag_hash", None)
+    )
 
     async def bring_up_lab():
         """Bring up the lab environment and record the outcome on the session row.
@@ -434,6 +491,7 @@ async def spawn_lab(
                     lab_slug=lab_slug,
                     compose_content=compose_content,
                     hostname_entries=hostname_entries,
+                    session_flag_env=session_flag_env,
                 ),
             )
 
@@ -495,6 +553,10 @@ async def spawn_lab(
                 bg_session.network_subnet = result.get("subnet", f"10.{second_octet}.{third_octet}.0/24")
                 if rangebox_disabled:
                     bg_session.rangebox_enabled = False
+                if session_flag:
+                    bg_session.seeded_flag_hash = hashlib.sha256(
+                        session_flag.encode()
+                    ).hexdigest()
                 bg_session.status = "running"
                 bg_db.commit()
 

@@ -278,30 +278,28 @@ unshared DNA breakdown through a profile or DNA endpoint.
 - Add a visual regression at 390 px and 1440 px in light and dark mode for the
   GPS map and profile gauges.
 
-## 12. Per-session flags: current gap
+## 12. Per-session flags
 
-**Finding:** the static-lab path embeds the shared `FLAG` value in the compose
-file or Dockerfile. `lab_sessions.seeded_flag_hash` exists, and the flag route
-prefers it when present, but the static launch path does not set it. A student
-can share a flag string with a classmate.
+**Implemented for environment-driven labs.** The launch path now detects every
+compose `FLAG`/`*_FLAG` value whose SHA-256 matches the graded `labs.flag_hash`,
+generates a per-session `OCR{...}` value, injects it into the matching service
+environment, and stores its hash on `lab_sessions.seeded_flag_hash` only after
+the compose bring-up succeeds. The flag route reads the newest session row and
+falls back to the shared hash when that row has no seeded value.
 
-**Current controls**
+**Residual risk**
 
-- The grader uses `hmac.compare_digest` and prefers a seeded hash if one exists.
-- The flag route is rate-limited and per-user/per-lab throttled.
-- Generated labs from the template engine do receive per-instance `FLAG` and
-  credential values.
+- Labs that bake the flag into an image or a static file are not rotated. They
+  continue to grade against the shared hash. Add a startup render step or a
+  per-session secret mount before treating their flags as certificate evidence.
+- Do not log the generated flag; it is visible in `docker inspect` and the
+  transient compose override, which is acceptable for a session the learner owns.
 
-**Required follow-up**
+**Follow-up**
 
-1. Generate a per-session flag at launch for labs that read `FLAG` from the
-   environment, store its hash on `LabSession.seeded_flag_hash`, and update the
-   lab test/harness to use the session value.
-2. For labs that bake the flag into a file, add a startup render step or a
-   per-session secret mount; do not rely on a shared static file.
-3. Treat flag sharing as a known limitation until the launcher change ships.
-   Flag completion is a teaching signal, not a certificate proof, for static
-   labs.
+1. Move the remaining baked-flag labs to an environment or mounted-secret path.
+2. Add a lab test that proves a copied flag from one session is rejected by a
+   second session on an env-driven lab.
 
 ## 13. Resource limits and orphan cleanup
 

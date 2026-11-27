@@ -398,6 +398,30 @@ def check_rate_limit(db: Session, user_id: int, lab_id: int) -> bool:
     return recent_attempts >= 10
 
 
+def _expected_flag_hash(
+    db: Session,
+    user_id: int,
+    lab_id: int,
+    db_flag_hash: Optional[str],
+) -> Optional[str]:
+    """Return the newest session's seeded hash, or the shared lab hash.
+
+    Reading the newest row even when its seeded hash is NULL prevents a stale
+    seeded session from grading a newer session that fell back to the shared
+    lab flag.
+    """
+    latest_session = (
+        db.query(LabSession.seeded_flag_hash)
+        .filter(
+            LabSession.user_id == user_id,
+            LabSession.lab_id == lab_id,
+        )
+        .order_by(LabSession.started_at.desc())
+        .first()
+    )
+    return latest_session[0] if latest_session and latest_session[0] else db_flag_hash
+
+
 def _wrong_flag_hint(submitted_flag: str, expected_hash: Optional[str]) -> str:
     """Build a format/case hint for an incorrect flag without leaking the answer.
 
@@ -1844,13 +1868,11 @@ async def submit_flag(
     # student's session containers, its hash lives on the LabSession row
     # (seeded_flag_hash) and becomes the grading key. The shared lab hash is
     # only the fallback, so a copied classmate flag will not grade correct on
-    # a lab that seeds per-student values.
-    seeded_row = db.query(LabSession.seeded_flag_hash).filter(
-        LabSession.user_id == current_user.id,
-        LabSession.lab_id == lab_id,
-        LabSession.seeded_flag_hash.isnot(None),
-    ).order_by(LabSession.started_at.desc()).first()
-    expected_hash = seeded_row[0] if seeded_row else db_flag_hash
+    # a lab that seeds per-student values. Read the newest session row even when
+    # its hash is NULL: an older seeded session must not grade a newer one.
+    expected_hash = _expected_flag_hash(
+        db, current_user.id, lab_id, db_flag_hash
+    )
 
     # Check if already completed (only count completions with actual flag submissions)
     existing = db.query(LabCompletion).filter(

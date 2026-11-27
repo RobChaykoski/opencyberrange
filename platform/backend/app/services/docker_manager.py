@@ -1687,6 +1687,7 @@ fi
         lab_slug: str,
         compose_content: str,
         hostname_entries: Optional[List[dict]] = None,
+        session_flag_env: Optional[Dict[str, Dict[str, str]]] = None,
     ) -> Dict[str, str]:
         """
         Create Docker network and containers for a lab session
@@ -2104,6 +2105,12 @@ fi
             topo_env = (topology.get("service_env") or {}).get(svc_name)
             if topo_env:
                 svc_override.setdefault("environment", {}).update(topo_env)
+            # Session-flag env wins over the static compose/topology value so a
+            # per-session flag is what the target renders at startup.
+            if session_flag_env:
+                svc_flag_env = session_flag_env.get(svc_name)
+                if svc_flag_env:
+                    svc_override.setdefault("environment", {}).update(svc_flag_env)
             topo_sysctls = (topology.get("service_sysctls") or {}).get(svc_name)
             if topo_sysctls:
                 svc_override["sysctls"] = dict(topo_sysctls)
