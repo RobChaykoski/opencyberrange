@@ -31,7 +31,7 @@ All notable changes to OpenCyberRange are recorded here.
 
 ### Verification
 
-- Backend pytest: 679 passed, 576 skipped locally.
+- Backend pytest: 679 passed, 578 skipped locally.
 - Frontend: 81 tests; lint, i18n budget, and build pass.
 - Labs: 222 definitions; schema, lint, manifests, and outcomes current.
 - Flag audit: 73 static labs, 0 leaked answers; publication audit clean.
