@@ -8,7 +8,7 @@ Learning design, tracks and pathways, labs, competencies, assessment, analytics,
 - **NIST SP 800-53 Rev. 5:** AT-2, PM-5, SA-11
 - **Owner:** Curriculum lead
 
-84 document(s) in this group.
+85 document(s) in this group.
 
 | Document | Type | Classification | Review | Score | Next review |
 |---|---|---|---|---:|---|
@@ -72,6 +72,7 @@ Learning design, tracks and pathways, labs, competencies, assessment, analytics,
 | [NICE Framework ingestion and lab mapping](../../NICE-FRAMEWORK-INGESTION.md) | `reference` | internal | unreviewed |  | unset |
 | [NICE mapping matrix](../../NICE-MAPPING.md) | `reference` | internal | unreviewed |  | unset |
 | [Open Badges 3.0 — scope and build plan](../../OPEN-BADGES-3.0-SCOPE.md) | `standard` | internal | unreviewed |  | unset |
+| [OSINT resources](../../OSINT-RESOURCES.md) | `reference` | internal | unreviewed |  | unset |
 | [OT/IoT Lab Prompts - SWOCTS Cyber Range](../../OT01-LAB-PROMPTS.md) | `reference` | internal | unreviewed |  | unset |
 | [OWASP Top 10 2025 labs](../../OWASP-TOP10-LABS.md) | `reference` | internal | unreviewed |  | unset |
 | [Phone OSINT exercises](../../PHONE-OSINT-EXERCISES.md) | `reference` | internal | unreviewed |  | unset |

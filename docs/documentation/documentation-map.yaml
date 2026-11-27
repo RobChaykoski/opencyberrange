@@ -3466,6 +3466,31 @@ documents:
     published: true
     evidence: false
     retention: R2
+- path: docs/OSINT-RESOURCES.md
+  title: OSINT resources
+  group: curriculum
+  doc_type: reference
+  audience:
+  - developer
+  classification: internal
+  lifecycle: active
+  sensitivity:
+  - none
+  review:
+    status: unreviewed
+    cadence: annual
+    last_reviewed: null
+    next_review: null
+    reviewer: null
+    approver: null
+  relevance: null
+  score: null
+  requirements: []
+  storage:
+    source: git
+    published: true
+    evidence: false
+    retention: R2
 - path: docs/OT-SCANNING-SAFETY.md
   title: OT/ICS scanning safety
   group: security
