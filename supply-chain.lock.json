@@ -178,7 +178,7 @@
       "sha256": "877500e2e2d33af4263cae4b4b208166f4c500c8e4648d6b5b8d24ac122829c1"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "670b47c4db96ab4688f77f65cb8b40e1547c66e7e86343e8df64092e95a3ea83"
+      "sha256": "0e4f293d3433981f95332111eeb27d0a09d0470e325425c67dfb5dafeea4c015"
     },
     "platform/backend/app/data/threat-awareness.json": {
       "sha256": "78703d33386e1b62becfa5cfb1b27a22f770fff20a3e38411b0787e76f7c48ea"
@@ -1389,7 +1389,7 @@
       ]
     },
     "windows-1-1-basic-port-scan": {
-      "content_hash": "8a4dbb85554709666c58416c8bf84b70def5d337ef5131d4e53c40c40d02793e",
+      "content_hash": "70cbec6e448929989cad6dac3ea644ffb226aa1fea107e22afa260d1c3fd991d",
       "services": [
         "target"
       ]
@@ -1515,7 +1515,7 @@
       ]
     },
     "windows-2-4-smb-file-retrieval": {
-      "content_hash": "fb3913f5d7e9d5aa729f9577a1d03ca3364e1278ce12c43328235e645506e559",
+      "content_hash": "f0484d829252908694ae75a7bfdb26ad0220d3c2fcd94d1a55c14f6effac52a9",
       "services": [
         "target"
       ]
@@ -1551,25 +1551,25 @@
       ]
     },
     "windows-3-1-smb-manual-credential-test": {
-      "content_hash": "3d38065ea303a56f3bc0752a25ac4f2655600c885da9099c11795be86729611c",
+      "content_hash": "e23527b05f1d3b1153840d0b085449fb5b4d18a715462569bee7b1a576792641",
       "services": [
         "target"
       ]
     },
     "windows-3-2-smb-multiple-credential-testing": {
-      "content_hash": "fb3c7145dcdd6b2e12e1dae37d23760621afc14b27629ca46bc88d9607b70610",
+      "content_hash": "be144a2c6d809ab93806c17c995029c2aae2f0c002c3f30592e4eef615953cb9",
       "services": [
         "target"
       ]
     },
     "windows-3-3-smb-single-user-brute-force": {
-      "content_hash": "c7b5a97d8ffaca1cc09119ae0e8c9a054688416e103d9079f2125b965fb7f359",
+      "content_hash": "d8da61dfbaf3a396b8f0b61abcdf3afa31fd7c0726646b22e962ef50095a5901",
       "services": [
         "target"
       ]
     },
     "windows-3-4-smb-username-enumeration-and-brute-force": {
-      "content_hash": "202cb7f20b2cb298efd512f8aac3b4630a1b886670df06d516bee73fe95865fb",
+      "content_hash": "48ce19fc970a3114dff56ea2078fa324a3457587d6e864deb9cea87b494f8ac8",
       "services": [
         "target"
       ]

@@ -76,6 +76,12 @@ scenario: |
   weak credentials are in use.
 
 flag: "OCR{smb_m4nu4l_4uth}"
+flag_path: /tmp/private/flag.txt
+flag_service: target
+flag_command:
+  - smbd
+  - -F
+  - --no-process-group
 
 hints:
   - text: |
