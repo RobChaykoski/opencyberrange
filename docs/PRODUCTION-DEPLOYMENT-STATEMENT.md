@@ -9,6 +9,25 @@ another document disagrees, this page and the signed tag win.
 > replaced with placeholders. The private deployment inventory holds the live
 > values. See [`PUBLICATION-METADATA-POLICY.md`](PUBLICATION-METADATA-POLICY.md).
 
+## 5.57.0 deployment verification
+
+| Check | Result |
+|---|---|
+| `/api/version` | `5.57.0` on production and development |
+| Alembic | **`0068_mfa_replay_guard` (head)** |
+| Health | Production and development backend/frontend containers `healthy` |
+| Shared metadata | All 222 labs carry the five review fields |
+| Per-session flags | 70 environment-driven labs rotate; baked-flag labs remain on the shared hash |
+| Lab lint | 0 errors, 1 warning (unpinned `nginx:alpine`) |
+| Production wiki | **14** sites rebuilt |
+| Pre-deploy backup (production) | `~/backups/ocr-backup-20261127-061433.dump` |
+| Pre-deploy backup (development) | `~/opencyberrange/.backups/20261127_021501` |
+| Rollback images | `opencyberrange-backend:pre-v5.57.0`, `ocr-frontend:pre-v5.57.0` |
+
+5.57.0 ships the shared lab metadata, lab lint gate, workbook normalization,
+instructor friction report, copyable workspace context, and per-session flags
+for environment-driven labs.
+
 ## 5.56.1 deployment verification
 
 | Check | Result |
@@ -604,17 +623,17 @@ because `/tools` collided with the static tool directory route.
 
 | Item | Value |
 |---|---|
-| Edition | **Community / Academic** (`lite` entitlement, single-host) |
-| Release | **5.45.0** |
-| Signed tag | **`v5.45.0`** |
-| Runtime code commit | `a50305fb` (signed tag `v5.45.0`) |
-| Previous release | `5.44.0` (signed tag `v5.44.0` at `47146529`) |
-| Alembic revision | **`0065_legacy_kali_columns`** |
+| Edition | **Community / Academic** (single-host) |
+| Release | **5.57.0** |
+| Signed tag | **`v5.57.0`** |
+| Runtime code commit | `702d0fcb` (signed tag `v5.57.0`) |
+| Previous release | `5.56.4` (signed tag `v5.56.4` at `7c48c691`) |
+| Alembic revision | **`0068_mfa_replay_guard`** |
 | Development host | `<dev-host-ip>` |
 | Production host | `<prod-host-ip>` / `https://<platform-host>` |
 | Repository | `RobChaykoski/opencyberrange` (`main`) |
-| Pre-5.45.0 backup | `~/backups/ocr-backup-20261124-181940.dump` |
-| Post-5.45.0 backup | `~/backups/ocr-backup-20261124-182316.dump` |
+| Pre-5.57.0 backup | `~/backups/ocr-backup-20261127-061433.dump` |
+| Pre-5.56.1 backup | `~/backups/ocr-backup-20261126-225908.dump` |
 | Pre-5.44.0 backup | `~/backups/ocr-backup-20261124-173551.dump` |
 | Post-5.44.0 backup | `~/backups/ocr-backup-20261124-173923.dump` |
 | Pre-5.43.1 backup | `~/backups/ocr-backup-20261124-170800.dump` |
