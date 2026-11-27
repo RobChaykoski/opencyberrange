@@ -421,6 +421,8 @@ owner-only unless an explicit share or break-glass grant exists.
 | `GET` | `/api/courses/{course_id}/reports/course-health.pdf` | Course Health Report | OAuth2PasswordBearer |
 | `GET` | `/api/courses/{course_id}/reports/exercise-diagnostics.csv` | Exercise Diagnostics Csv | OAuth2PasswordBearer |
 | `GET` | `/api/courses/{course_id}/reports/exercise-diagnostics.pdf` | Exercise Diagnostics Report | OAuth2PasswordBearer |
+| `GET` | `/api/courses/{course_id}/reports/lab-friction.csv` | Lab Friction Csv | OAuth2PasswordBearer |
+| `GET` | `/api/courses/{course_id}/reports/lms-gradebook.csv` | Lms Gradebook Csv | OAuth2PasswordBearer |
 | `POST` | `/api/courses/{course_id}/requirements` | Create Requirement | OAuth2PasswordBearer |
 | `DELETE` | `/api/courses/{course_id}/requirements/{requirement_id}` | Delete Requirement | OAuth2PasswordBearer |
 | `PATCH` | `/api/courses/{course_id}/requirements/{requirement_id}` | Update Requirement | OAuth2PasswordBearer |
@@ -9707,6 +9709,48 @@ Return the report library for a course the caller can manage.
 | Parameter | In | Type | Required | Description |
 |---|---|---|---|---|
 | `course_id` | path | integer | yes |  |
+| `reason` | query | string | yes | Why this export is needed (recorded in the audit log) |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `GET /api/courses/{course_id}/reports/lab-friction.csv`
+
+**Lab Friction Csv**
+
+Per-lab completion, wrong-flag, hint, and time friction.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `course_id` | path | integer | yes |  |
+| `min_starts` | query | integer | no |  |
+| `reason` | query | string | yes | Why this export is needed (recorded in the audit log) |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `GET /api/courses/{course_id}/reports/lms-gradebook.csv`
+
+**Lms Gradebook Csv**
+
+Per-learner gradebook in the selected LMS layout.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `course_id` | path | integer | yes |  |
+| `adapter` | query | string | no |  |
 | `reason` | query | string | yes | Why this export is needed (recorded in the audit log) |
 
 **Responses**

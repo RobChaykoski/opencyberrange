@@ -21797,6 +21797,146 @@
         ]
       }
     },
+    "/api/courses/{course_id}/reports/lab-friction.csv": {
+      "get": {
+        "description": "Per-lab completion, wrong-flag, hint, and time friction.",
+        "operationId": "lab_friction_csv_api_courses__course_id__reports_lab_friction_csv_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "course_id",
+            "required": true,
+            "schema": {
+              "title": "Course Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "min_starts",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "maximum": 100000,
+              "minimum": 0,
+              "title": "Min Starts",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Why this export is needed (recorded in the audit log)",
+            "in": "query",
+            "name": "reason",
+            "required": true,
+            "schema": {
+              "description": "Why this export is needed (recorded in the audit log)",
+              "maxLength": 500,
+              "minLength": 5,
+              "title": "Reason",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Lab Friction Csv",
+        "tags": [
+          "Reports"
+        ]
+      }
+    },
+    "/api/courses/{course_id}/reports/lms-gradebook.csv": {
+      "get": {
+        "description": "Per-learner gradebook in the selected LMS layout.",
+        "operationId": "lms_gradebook_csv_api_courses__course_id__reports_lms_gradebook_csv_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "course_id",
+            "required": true,
+            "schema": {
+              "title": "Course Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "adapter",
+            "required": false,
+            "schema": {
+              "default": "generic",
+              "title": "Adapter",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Why this export is needed (recorded in the audit log)",
+            "in": "query",
+            "name": "reason",
+            "required": true,
+            "schema": {
+              "description": "Why this export is needed (recorded in the audit log)",
+              "maxLength": 500,
+              "minLength": 5,
+              "title": "Reason",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Lms Gradebook Csv",
+        "tags": [
+          "Reports"
+        ]
+      }
+    },
     "/api/courses/{course_id}/requirements": {
       "post": {
         "operationId": "create_requirement_api_courses__course_id__requirements_post",

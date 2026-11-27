@@ -1,6 +1,6 @@
 # API capabilities
 
-Generated from the live FastAPI application on 2026-11-27T06:04:39+00:00.
+Generated from the live FastAPI application on 2026-11-27T07:10:38+00:00.
 
 | Item | Value |
 |---|---|
@@ -9,9 +9,9 @@ Generated from the live FastAPI application on 2026-11-27T06:04:39+00:00.
 | OpenAPI version | `3.1.0` |
 | API title | SWOCTS Cyber Range |
 | API version | `5.57.0` |
-| Paths | 491 |
-| Operations | 549 |
-| Methods | DELETE 36, GET 289, PATCH 6, POST 187, PUT 31 |
+| Paths | 493 |
+| Operations | 551 |
+| Methods | DELETE 36, GET 291, PATCH 6, POST 187, PUT 31 |
 
 The machine-readable contract is [`openapi.json`](openapi.json). It follows the
 OpenAPI specification and can be imported into Swagger UI, Redoc, Postman,
@@ -766,6 +766,8 @@ share with an integrator.
 | GET | `/api/courses/{course_id}/reports/course-health.pdf` | Course Health Report | OAuth2PasswordBearer |
 | GET | `/api/courses/{course_id}/reports/exercise-diagnostics.csv` | Exercise Diagnostics Csv | OAuth2PasswordBearer |
 | GET | `/api/courses/{course_id}/reports/exercise-diagnostics.pdf` | Exercise Diagnostics Report | OAuth2PasswordBearer |
+| GET | `/api/courses/{course_id}/reports/lab-friction.csv` | Lab Friction Csv | OAuth2PasswordBearer |
+| GET | `/api/courses/{course_id}/reports/lms-gradebook.csv` | Lms Gradebook Csv | OAuth2PasswordBearer |
 | POST | `/api/reports/verify` | Verify Report File | public / none |
 
 ### Security administration
@@ -1210,6 +1212,8 @@ the application and are documented here for completeness.
 | GET | /api/courses/{course_id}/reports/course-health.pdf | Course Health Report | OAuth2PasswordBearer |
 | GET | /api/courses/{course_id}/reports/exercise-diagnostics.csv | Exercise Diagnostics Csv | OAuth2PasswordBearer |
 | GET | /api/courses/{course_id}/reports/exercise-diagnostics.pdf | Exercise Diagnostics Report | OAuth2PasswordBearer |
+| GET | /api/courses/{course_id}/reports/lab-friction.csv | Lab Friction Csv | OAuth2PasswordBearer |
+| GET | /api/courses/{course_id}/reports/lms-gradebook.csv | Lms Gradebook Csv | OAuth2PasswordBearer |
 | POST | /api/courses/{course_id}/requirements | Create Requirement | OAuth2PasswordBearer |
 | DELETE | /api/courses/{course_id}/requirements/{requirement_id} | Delete Requirement | OAuth2PasswordBearer |
 | PATCH | /api/courses/{course_id}/requirements/{requirement_id} | Update Requirement | OAuth2PasswordBearer |
