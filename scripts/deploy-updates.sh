@@ -78,6 +78,7 @@ DRY_RUN=false
 PREBUILD_IMAGES=false
 FORCE=false
 LIST_BACKUPS=false
+CANARY=false
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
@@ -102,9 +103,13 @@ while [[ $# -gt 0 ]]; do
             LIST_BACKUPS=true
             shift
             ;;
+        --canary)
+            CANARY=true
+            shift
+            ;;
         *)
             echo -e "${RED}Unknown option: $1${NC}"
-            echo "Usage: $0 [--platform] [--all] [--dry-run] [--prebuild] [--force] [--list-backups]"
+            echo "Usage: $0 [--platform] [--all] [--dry-run] [--prebuild] [--force] [--list-backups] [--canary]"
             exit 1
             ;;
     esac
@@ -226,6 +231,28 @@ check_active_sessions() {
         esac
     else
         error_exit "Active lab sessions detected. Re-run with --force or wait for a maintenance window."
+    fi
+}
+
+# Prove the spawn/solve path after a deploy. Containers being "up" does not
+# mean a lab can start and yield its flag.
+run_canary() {
+    local lab="${OCR_CANARY_LAB:-linux-1-1-ssh-service-detection}"
+    log "${BLUE}Running post-deploy canary ($lab)...${NC}"
+
+    if [ "$DRY_RUN" = true ]; then
+        log "${YELLOW}[DRY RUN] Would run the canary lab${NC}"
+        return 0
+    fi
+    if ! command -v python3 >/dev/null 2>&1; then
+        log "${YELLOW}[warn] python3 not found; skipping the canary${NC}"
+        return 0
+    fi
+
+    if ( cd "$REPO_DIR" && python3 scripts/lab_harness.py --lab "$lab" --runs 1 --no-build ); then
+        log "${GREEN}[ok] Canary lab passed${NC}"
+    else
+        error_exit "Canary lab '$lab' failed; containers are up but the spawn/solve path is broken."
     fi
 }
 
@@ -1102,6 +1129,10 @@ main() {
         fi
         verify_deployment
         log ""
+        if [ "$CANARY" = true ]; then
+            run_canary
+            log ""
+        fi
         install_systemd_service
         log ""
     fi
