@@ -37,6 +37,7 @@ TAG=""
 DRY_RUN=0
 SKIP_WIKI=0
 SKIP_BACKUP=0
+CANARY=0
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -44,6 +45,7 @@ while [[ $# -gt 0 ]]; do
         --dry-run) DRY_RUN=1; shift ;;
         --skip-wiki) SKIP_WIKI=1; shift ;;
         --skip-backup) SKIP_BACKUP=1; shift ;;
+        --canary) CANARY=1; shift ;;
         *) echo "Unknown option: $1" >&2; exit 2 ;;
     esac
 done
@@ -171,6 +173,14 @@ EXPECTED="${TAG#v}"
 docker exec ocr-frontend nginx -t >/dev/null 2>&1 || fail "nginx configuration test failed"
 docker ps --format '{{.Names}}' | grep -qx 'ocr-backend' || fail "ocr-backend is not running"
 docker ps --format '{{.Names}}' | grep -qx 'ocr-frontend' || fail "ocr-frontend is not running"
+
+if [[ "$CANARY" == "1" ]]; then
+    CANARY_LAB="${OCR_CANARY_LAB:-linux-1-1-ssh-service-detection}"
+    log "Running post-deploy canary ($CANARY_LAB)"
+    if ! ( cd "$REPO_DIR" && python3 scripts/lab_harness.py --lab "$CANARY_LAB" --runs 1 --no-build ); then
+        fail "Canary lab '$CANARY_LAB' failed; containers are up but the spawn/solve path is broken."
+    fi
+fi
 
 log "Deployment complete: $VERSION"
 log "Rollback: retag pre-$TAG images to latest and run: ${COMPOSE[*]} up -d --force-recreate backend frontend"
