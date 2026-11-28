@@ -8,7 +8,7 @@ Scope, releases, deliverables, editions, roadmaps, counts, handoffs, and the pub
 - **NIST SP 800-53 Rev. 5:** CM-3, SA-10, SI-12
 - **Owner:** Product lead
 
-76 document(s) in this group.
+77 document(s) in this group.
 
 | Document | Type | Classification | Review | Score | Next review |
 |---|---|---|---|---:|---|
@@ -79,6 +79,7 @@ Scope, releases, deliverables, editions, roadmaps, counts, handoffs, and the pub
 | [V2 Program Charter](../../V2-PROGRAM-CHARTER.md) | `reference` | internal | unreviewed |  | unset |
 | [SWOCTS Cyber Range Enterprise preview parking lot](../../V3-PARKING-LOT.md) | `reference` | internal | unreviewed |  | unset |
 | [Validation report](../../VALIDATION-REPORT.md) | `report` | internal | unreviewed |  | unset |
+| [Wiki CSP hardening](../../WIKI-CSP-HARDENING.md) | `reference` | internal | unreviewed |  | unset |
 | [API capabilities](../../_project_overview/API-CAPABILITIES.md) | `reference` | internal | unreviewed |  | unset |
 | [Data dictionary](../../_project_overview/DATA-DICTIONARY.md) | `reference` | internal | unreviewed |  | unset |
 | [Infrastructure and component communications](../../_project_overview/INFRASTRUCTURE.md) | `reference` | internal | unreviewed |  | unset |
