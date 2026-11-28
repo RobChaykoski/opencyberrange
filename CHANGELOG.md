@@ -2,6 +2,36 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.60.0] - 2026-11-28
+
+### Security
+
+- **Exercise tester (RB-03/RB-04):** plaintext flags are redacted from SSE
+  events and persisted sections, migration `0069_redact_tester_flags` scrubs
+  earlier results, `user_id` overrides are platform-admin only and
+  tenant-checked, and step timeouts are coerced before they reach bash.
+- **Analytics (RB-05):** the course overview and exercise endpoints now pass
+  the minor-filtered `user_ids` set to the pulse and reaction helpers.
+- **Admin handlers (RB-01):** 48 async handlers that never awaited no longer
+  block the event loop; the RangeBox bridge is offloaded to an executor.
+- **Host scripts:** updater signature verification, tag-object binding,
+  prerelease filtering, a live-session guard, egress IPv6/dry-run handling,
+  pinned Compose, and a `--check-secrets` mode.
+- **Nginx:** HSTS, Referrer-Policy, and Permissions-Policy now survive the
+  wiki locations that declare their own CSP.
+
+### Added
+
+- `docs/TRACKED-EXCEPTIONS.md` as the register for open findings and accepted
+  risks.
+- `scripts/audit-privacy-exclusions.py`, `docs/PRIVACY-AUDIT.md`, and a Quality
+  gate that regenerates the report and fails on drift.
+
+### Changed
+
+- RB-02 verified: consent and impersonation middleware share the decoded
+  payload, so a request decodes its token once.
+
 ## [5.59.0] - 2026-11-27
 
 ### Added

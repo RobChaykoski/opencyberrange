@@ -4,7 +4,7 @@
 
 Students open a web portal, launch isolated Docker labs (including an in-browser Linux desktop called RangeBox), follow built-in workbooks, and submit flags for automated scoring. Instructors assign tracks, watch progress, and export verifiable transcripts. One Ubuntu server runs the whole platform, with WireGuard-isolated sessions and signed, reproducible releases.
 
-Current release: **5.59.0** · Edition: **Community / Academic**, single host
+Current release: **5.60.0** · Edition: **Community / Academic**, single host
 
 [![Platform](https://img.shields.io/badge/platform-Release%205-8b5cf6)](docs/RELEASES.md)
 [![Labs](https://img.shields.io/badge/labs-222-blue)](platform/labs/)

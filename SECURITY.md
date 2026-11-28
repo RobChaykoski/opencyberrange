@@ -18,16 +18,17 @@ in [Reporting a vulnerability](#reporting-a-vulnerability).
 ## Supported versions
 
 Security fixes land on the current supported release. The current platform
-release is **5.59.0** (`v5.59.0`, signed annotated tag), with security fixes
+release is **5.60.0** (`v5.60.0`, signed annotated tag), with security fixes
 also maintained on the **1.1.3** Community / Academic maintenance line where
 the same defect applies.
 
 | Version | Supported |
 |---|---|
-| `v5.59.x` | Yes - current Community / Academic release |
-| `v5.58.x` | Security fixes only - upgrade to `v5.59` |
-| `v5.57.x` | Security fixes only - upgrade to `v5.59` |
-| `v5.56.x` | Security fixes only - upgrade to `v5.59` |
+| `v5.60.x` | Yes - current Community / Academic release |
+| `v5.59.x` | Security fixes only - upgrade to `v5.60` |
+| `v5.58.x` | Security fixes only - upgrade to `v5.60` |
+| `v5.57.x` | Security fixes only - upgrade to `v5.60` |
+| `v5.56.x` | Security fixes only - upgrade to `v5.60` |
 | `v5` / `main` | Yes |
 | `v4` | Security fixes only - upgrade to `v5` |
 | `v2.7.0` | Security fixes only - upgrade to `v5` |
@@ -46,7 +47,7 @@ Releases and the supply-chain lock are signed with the OCR release key.
 
 - Public key: `docs/release-signing-key.asc`
 - Fingerprint: `68A817762C831475F00DB54E775050A4C4921814`
-- Verify a tag: `git verify-tag v5.59.0`
+- Verify a tag: `git verify-tag v5.60.0`
 - Verify the lock: `python scripts/supply_chain.py --check --signature supply-chain.lock.json.asc --gpg-public-key docs/release-signing-key.asc --gpg-fingerprint 68A817762C831475F00DB54E775050A4C4921814`
 
 The private key is held offline by the maintainer and is never stored in the
