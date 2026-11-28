@@ -32,6 +32,7 @@ replace the detailed pages it references.
 | OP-05 | Weak-default secret detector (`--check-secrets`) | **Closed** | `setup-range-server.sh --check-secrets` fails on placeholder values, empty required keys, a non-Fernet `WG_ENCRYPTION_KEY`, and loose modes; `SETUP_TOKEN` is a warning. Tested on dev with weak and clean `.env` files. |
 | OP-06 | Shared `ocr-doctor` health check | Open | Extract the overlapping `--status` and `verify_deployment` checks. |
 | OP-07 | Log rotation for `deploy.log` / `install.log` | Open | Add a logrotate drop-in. |
+| OP-08 | Development deploy aborts before writing state when sudo is absent | Low | `deploy-updates.sh` treats the `ocr-platform.service` write as fatal; a passwordless-sudo-less deploy exits before `.update-state`. Make the unit write conditional and always write state. |
 
 ## Host scripts and runtime
 
