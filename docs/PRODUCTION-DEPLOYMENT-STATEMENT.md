@@ -1,6 +1,6 @@
 # Production deployment statement
 
-**Statement date:** 27 November 2026
+**Statement date:** 28 November 2026
 
 This is the authoritative statement for the current production deployment. If
 another document disagrees, this page and the signed tag win.
@@ -8,6 +8,30 @@ another document disagrees, this page and the signed tag win.
 > **Public copy.** Real addresses, hostnames, and deployment accounts are
 > replaced with placeholders. The private deployment inventory holds the live
 > values. See [`PUBLICATION-METADATA-POLICY.md`](PUBLICATION-METADATA-POLICY.md).
+
+## 5.60.0 deployment verification
+
+| Check | Result |
+|---|---|
+| `/api/version` | `5.60.0` on production and development |
+| Alembic | **`0069_redact_tester_flags` (head)** |
+| Health | Production and development backend/frontend containers `healthy` |
+| Change scope | Security release: tester flag redaction and timeout coercion (RB-03/RB-04), analytics minor exclusion (RB-05), admin threadpool correction (RB-01), host-script trust and secret-hygiene hardening, and the privacy audit gate |
+| Registered labs | Production 218, development 231 |
+| Production wiki | **14** sites rebuilt |
+| Pre-deploy backup (production) | `~/backups/ocr-backup-20261128-054108.dump` |
+| Pre-deploy backup (development) | `~/opencyberrange/.backups/20261128_053346` |
+| Rollback images | `opencyberrange-backend:pre-v5.60.0`, `ocr-frontend:pre-v5.60.0` on production; development rolls back by rebuilding `v5.59.0` |
+
+The development deploy completed the build, verification, and wiki stages and
+reported `5.60.0` healthy. The final `ocr-platform.service` write was skipped
+because the deploy user has no passwordless sudo; the unit file did not change
+in this release and the running platform was unaffected. The development
+`.update-state` file still shows the 5.59.0 timestamp for the same reason.
+
+5.60.0 closes the four critical tester/analytics blockers found in the security
+review, moves blocking admin handlers into the threadpool, hardens the host
+updater and installers, and adds an automated privacy audit gate.
 
 ## 5.59.0 deployment verification
 

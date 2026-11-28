@@ -1,6 +1,6 @@
 # Next steps
 
-Status: **Release `5.60.0` is tagged and pending deployment.** This
+Status: **Release `5.60.0` is deployed to development and production.** This
 page tracks what is left; the deployed state is
 [`PRODUCTION-DEPLOYMENT-STATEMENT.md`](PRODUCTION-DEPLOYMENT-STATEMENT.md).
 
