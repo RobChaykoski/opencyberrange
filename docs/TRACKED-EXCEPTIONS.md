@@ -31,8 +31,8 @@ replace the detailed pages it references.
 | OP-04 | Egress `--audit` convergence mode | Partial | `--dry-run` prints the rule set; add drift detection and a systemd timer. |
 | OP-05 | Weak-default secret detector (`--check-secrets`) | **Closed** | `setup-range-server.sh --check-secrets` fails on placeholder values, empty required keys, a non-Fernet `WG_ENCRYPTION_KEY`, and loose modes; `SETUP_TOKEN` is a warning. Tested on dev with weak and clean `.env` files. |
 | OP-06 | Shared `ocr-doctor` health check | Open | Extract the overlapping `--status` and `verify_deployment` checks. |
-| OP-07 | Log rotation for `deploy.log` / `install.log` | Open | Add a logrotate drop-in. |
-| OP-08 | Development deploy aborts before writing state when sudo is absent | Low | `deploy-updates.sh` treats the `ocr-platform.service` write as fatal; a passwordless-sudo-less deploy exits before `.update-state`. Make the unit write conditional and always write state. |
+| OP-07 | Log rotation for `deploy.log` / `install.log` | **Closed** | Both scripts rotate at startup above `OCR_LOG_MAX_BYTES` (default 10 MB), keeping `.1`–`.3`; no logrotate dependency or root needed. Verified on dev with a 200-byte fixture. |
+| OP-08 | Development deploy aborts before writing state when sudo is absent | Low | **Closed** | `install_systemd_service` checks the unit directory and warns/skips instead of aborting; the write itself is guarded and `systemctl` calls ignore failure. `OCR_SYSTEMD_DIR` makes the path testable; verified writable and non-writable cases on dev. `.update-state` is now written on a sudo-less deploy. |
 
 ## Host scripts and runtime
 
