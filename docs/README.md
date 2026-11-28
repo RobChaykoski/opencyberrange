@@ -73,6 +73,7 @@ group, a label set, a review cadence, and a storage/retention class.
 - [Tracked exceptions and open findings](TRACKED-EXCEPTIONS.md)
 - [Governance](../GOVERNANCE.md) and [citation](../CITATION.cff)
 - [Privacy exclusion audit](PRIVACY-AUDIT.md)
+- [Wiki CSP hardening design](WIKI-CSP-HARDENING.md)
 - [Open-source readiness](OPEN-SOURCE-READINESS.md)
 - [Legal and institutional readiness](LEGAL-READINESS.md)
 - [Flag exposure](FLAG-EXPOSURE.md)
