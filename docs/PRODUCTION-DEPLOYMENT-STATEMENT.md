@@ -33,6 +33,13 @@ in this release and the running platform was unaffected. The development
 review, moves blocking admin handlers into the threadpool, hardens the host
 updater and installers, and adds an automated privacy audit gate.
 
+Post-deploy artifact check: both checkouts are at tag `v5.60.0`; the deployed
+backend image contains `_redact_flags` and `require_tenant` in
+`app/routers/exercise_tester.py`, and
+`scripts/audit-privacy-exclusions.py --summary` reports **0 findings** on both
+hosts. This confirms the reviewed files, not only the version string, are the
+ones running.
+
 ## 5.59.0 deployment verification
 
 | Check | Result |
