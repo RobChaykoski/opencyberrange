@@ -718,7 +718,16 @@ install_systemd_service() {
         return 0
     fi
 
-    cat > /etc/systemd/system/ocr-platform.service << SVCEOF
+    # A legacy dev deploy often runs without sudo. The platform is already up at
+    # this point, so a non-writable unit directory must not fail the run (and
+    # must not skip the state file).
+    local systemd_dir="${OCR_SYSTEMD_DIR:-/etc/systemd/system}"
+    if [ ! -d "$systemd_dir" ] || { [ ! -w "$systemd_dir" ] && [ "$(id -u)" -ne 0 ]; }; then
+        log "${YELLOW}[warn] Cannot write ${systemd_dir} without root; skipping the unit. The running platform is unaffected.${NC}"
+        return 0
+    fi
+
+    if ! cat > "${systemd_dir}/ocr-platform.service" << SVCEOF
 [Unit]
 Description=OpenCyberRange Docker Compose Platform
 Documentation=https://github.com/RobChaykoski/opencyberrange
@@ -741,8 +750,12 @@ TimeoutStopSec=60
 [Install]
 WantedBy=multi-user.target
 SVCEOF
+    then
+        log "${YELLOW}[warn] Could not write ocr-platform.service; continuing.${NC}"
+        return 0
+    fi
 
-    systemctl daemon-reload
+    systemctl daemon-reload 2>/dev/null || true
     systemctl enable ocr-platform.service 2>/dev/null || true
     log "${GREEN}[ok] ocr-platform.service installed and enabled${NC}"
 }
