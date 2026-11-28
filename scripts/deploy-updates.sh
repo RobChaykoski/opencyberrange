@@ -39,6 +39,25 @@ BACKUP_DIR="$PLATFORM_DIR/.backups"
 LOG_FILE="$REPO_DIR/scripts/deploy.log"
 STATE_FILE="$REPO_DIR/scripts/.update-state"
 
+# Keep the deploy log bounded without depending on logrotate. Rotation happens
+# before the first write, so the current run always starts in a fresh file.
+rotate_log_file() {
+    local file="$1"
+    local max_bytes="${OCR_LOG_MAX_BYTES:-10485760}"
+    [ -f "$file" ] || return 0
+    local size
+    size=$(stat -c %s "$file" 2>/dev/null || echo 0)
+    [ "$size" -ge "$max_bytes" ] || return 0
+    local i
+    for i in 3 2 1; do
+        if [ -f "${file}.${i}" ]; then
+            mv -f "${file}.${i}" "${file}.$((i + 1))"
+        fi
+    done
+    mv -f "$file" "${file}.1"
+}
+rotate_log_file "$LOG_FILE"
+
 # Release trust anchor. The update must verify a signed tag before it checks
 # out or applies any pulled code. The public key is checked against this
 # fingerprint, so replacing the key file in a compromised tree cannot widen
