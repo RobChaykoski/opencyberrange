@@ -77,6 +77,7 @@ DEPLOY_PLATFORM=false
 DRY_RUN=false
 PREBUILD_IMAGES=false
 FORCE=false
+LIST_BACKUPS=false
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
@@ -97,9 +98,13 @@ while [[ $# -gt 0 ]]; do
             FORCE=true
             shift
             ;;
+        --list-backups)
+            LIST_BACKUPS=true
+            shift
+            ;;
         *)
             echo -e "${RED}Unknown option: $1${NC}"
-            echo "Usage: $0 [--platform] [--all] [--dry-run] [--prebuild] [--force]"
+            echo "Usage: $0 [--platform] [--all] [--dry-run] [--prebuild] [--force] [--list-backups]"
             exit 1
             ;;
     esac
@@ -224,15 +229,34 @@ check_active_sessions() {
     fi
 }
 
+# List update snapshots, newest first, with size and whether a DB dump exists.
+list_backups() {
+    log "${BLUE}Update backups in $BACKUP_DIR${NC}"
+    if [ ! -d "$BACKUP_DIR" ]; then
+        log "No backups directory yet"
+        return 0
+    fi
+    local found=0 dir name size db
+    while IFS= read -r dir; do
+        [ -n "$dir" ] || continue
+        name=$(basename "$dir")
+        size=$(du -sh "$dir" 2>/dev/null | cut -f1)
+        if [ -f "$dir/db.dump" ]; then db="db"; else db="no-db"; fi
+        printf '  %-18s %6s  %s\n' "$name" "${size:-?}" "$db"
+        found=$((found + 1))
+    done < <(ls -1dt "$BACKUP_DIR"/*/ 2>/dev/null || true)
+    [ "$found" -gt 0 ] || log "No backups found"
+}
+
 # Create backup
 create_backup() {
     local timestamp=$(date +%Y%m%d_%H%M%S)
     local backup_path="$BACKUP_DIR/$timestamp"
     
-    log "${BLUE}Creating backup at $backup_path...${NC}"
+    log "${BLUE}Creating backup at $backup_path...${NC}" >&2
     
     if [ "$DRY_RUN" = true ]; then
-        log "${YELLOW}[DRY RUN] Would create backup at $backup_path${NC}"
+        log "${YELLOW}[DRY RUN] Would create backup at $backup_path${NC}" >&2
         return 0
     fi
     
@@ -259,8 +283,21 @@ create_backup() {
         docker cp ocr-backend:/workbook/erasure-ledger.jsonl \
             "$backup_path/erasure-ledger.jsonl" 2>/dev/null || true
     fi
+
+    # The database is not in the file tree. Without a dump a rollback restores
+    # old code against new schema and data, which is worse than no rollback.
+    if docker ps --format '{{.Names}}' 2>/dev/null | grep -q '^ocr-db$'; then
+        if docker exec ocr-db pg_dump \
+                -U "${POSTGRES_USER:-labuser}" \
+                -d "${POSTGRES_DB:-labdb}" -Fc \
+                > "$backup_path/db.dump" 2>/dev/null; then
+            log "${GREEN}[ok] Database dump written${NC}" >&2
+        else
+            log "${YELLOW}[warn] Database dump failed; backup contains files only${NC}" >&2
+        fi
+    fi
     
-    log "${GREEN}[ok] Backup created${NC}"
+    log "${GREEN}[ok] Backup created${NC}" >&2
     # Keep the last BACKUP_KEEP update snapshots; a full backend+frontend copy
     # per update otherwise fills the disk over a year.
     local keep="${BACKUP_KEEP:-10}"
@@ -1010,6 +1047,11 @@ main() {
     echo -e "${BOLD}${MAGENTA}    ╚═══════════════════════════════════════╝${NC}"
     echo ""
     log ""
+    
+    if [ "$LIST_BACKUPS" = true ]; then
+        list_backups
+        return 0
+    fi
     
     if [ "$DRY_RUN" = true ]; then
         log "${YELLOW}DRY RUN MODE - No changes will be made${NC}"
