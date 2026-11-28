@@ -203,3 +203,16 @@ because it is expected until the first administrator exists.
 
 Tested on dev with a deliberately weak `.env` (three findings, exit 1) and a
 clean one (exit 0).
+
+### Egress audit mode
+
+`harden-lab-egress.sh --audit` answers "is containment still in place?" without
+changing a rule. It rebuilds the expected set from the current Docker networks
+and runs `iptables -C` for every rule, reports missing rules, and flags any
+`OCR-LAB-INPUT` source that is not in the expected subnet list. It exits 1 on
+drift, or 0 with `--no-fail` for a report-only run.
+
+Verified on the development host: all 85 expected rules were present. A run in
+an isolated network namespace, where none of the rules exist, reported every
+rule as missing and exited 1. A systemd timer can call the audit on a schedule;
+the unit path is deployment-specific, so it is not shipped.

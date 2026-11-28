@@ -28,7 +28,7 @@ replace the detailed pages it references.
 | OP-01 | Guard updates against live class sessions | **Closed** | `deploy-updates.sh` counts active `lab_` networks and prompts; `--force` is required when non-interactive. |
 | OP-02 | Automated rollback (`--rollback [path]`) | Open | Restore files, DB dump, and erasure ledger, then restart; keep-last-N already exists. |
 | OP-03 | Canary post-deploy smoke test (`--canary`) | Open | Spawn and solve one cheap lab end-to-end with `lab_harness.py`. |
-| OP-04 | Egress `--audit` convergence mode | Partial | `--dry-run` prints the rule set; add drift detection and a systemd timer. |
+| OP-04 | Egress `--audit` convergence mode | **Closed** | `harden-lab-egress.sh --audit` checks every expected rule with `iptables -C`, lists missing rules, and flags unexpected `OCR-LAB-INPUT` sources; it changes nothing and exits 1 on drift (`--no-fail` to report only). Verified on dev: 85 rules match; an isolated netns reports every rule and exits 1. A systemd timer is deployment-specific and left to the operator. |
 | OP-05 | Weak-default secret detector (`--check-secrets`) | **Closed** | `setup-range-server.sh --check-secrets` fails on placeholder values, empty required keys, a non-Fernet `WG_ENCRYPTION_KEY`, and loose modes; `SETUP_TOKEN` is a warning. Tested on dev with weak and clean `.env` files. |
 | OP-06 | Shared `ocr-doctor` health check | Open | Extract the overlapping `--status` and `verify_deployment` checks. |
 | OP-07 | Log rotation for `deploy.log` / `install.log` | **Closed** | Both scripts rotate at startup above `OCR_LOG_MAX_BYTES` (default 10 MB), keeping `.1`–`.3`; no logrotate dependency or root needed. Verified on dev with a 200-byte fixture. |
